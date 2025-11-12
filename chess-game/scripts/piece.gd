@@ -77,6 +77,7 @@ func get_moveable_positions():
 		Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()
 		Globals.PIECE_TYPES.QUEEN: return queen_threat_pos()
 		Globals.PIECE_TYPES.KING: return king_threat_pos()
+		Globals.PIECE_TYPES.HORSE_ARCHER: return horse_archer_threat_pos()
 		_: return []
 
 func get_threatened_positions():
@@ -87,6 +88,7 @@ func get_threatened_positions():
 		Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()
 		Globals.PIECE_TYPES.QUEEN: return queen_threat_pos()
 		Globals.PIECE_TYPES.KING: return king_threat_pos()
+		Globals.PIECE_TYPES.HORSE_ARCHER: return horse_archer_threat_pos()
 		_: return []
 
 
@@ -200,6 +202,20 @@ func king_threat_pos():
 			color,
 			board_position[0], board_position[1],
 			inc[0], inc[1]
+		)
+		if pos != null:
+			positions.append(pos)
+	return positions
+
+# Horse Archer Moves
+const HORSE_ARCHER_SPOT_INCREMENTS = [[2,1], [2, -1], [-2, 1], [-2, -1], [1, 2], [1, -2], [-1, 2], [-1, -2]];
+func horse_archer_threat_pos():
+	var positions = []
+	for inc in KNIGHT_SPOT_INCREMENTS:
+		var pos = board_handle.spot_search_threat(
+			color, 
+			board_position[0], board_position[1],
+			inc[0], inc[1] 
 		)
 		if pos != null:
 			positions.append(pos)
