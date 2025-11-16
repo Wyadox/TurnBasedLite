@@ -72,6 +72,7 @@ func clone (_board):
 func get_moveable_positions():
 	match piece_type:
 		Globals.PIECE_TYPES.PAWN: return pawn_threat_pos()
+		Globals.PIECE_TYPES.MITOSIS_PAWN: return pawn_threat_pos()
 		Globals.PIECE_TYPES.BISHOP: return bishop_threat_pos()
 		Globals.PIECE_TYPES.ROOK: return rook_threat_pos()
 		Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()
@@ -82,6 +83,7 @@ func get_moveable_positions():
 func get_threatened_positions():
 	match piece_type:
 		Globals.PIECE_TYPES.PAWN: return pawn_move_pos()
+		Globals.PIECE_TYPES.MITOSIS_PAWN: return pawn_move_pos()
 		Globals.PIECE_TYPES.BISHOP: return bishop_threat_pos()
 		Globals.PIECE_TYPES.ROOK: return rook_threat_pos()
 		Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()
@@ -204,3 +206,30 @@ func king_threat_pos():
 		if pos != null:
 			positions.append(pos)
 	return positions
+	
+
+func get_mitosis_positions():
+	var positions = []
+	var current_x = board_position.x
+	var current_y = board_position.y
+	var side_dir = 1 if color == Globals.COLORS.BLACK else -1
+	
+	var left_pos = Vector2(current_x - 1, current_y + side_dir)
+	if board_handle.is_within_bounds(left_pos) and board_handle.get_piece_at(left_pos) == null:
+		positions.append(left_pos)
+		
+	var right_pos = Vector2(current_x + 1, current_y + side_dir)
+	if board_handle.is_within_bounds(right_pos) and board_handle.get_piece_at(right_pos) == null:
+		positions.append(right_pos)
+		
+	return positions
+	
+func perform_mitosis(new_pawn_pos: Vector2):
+	piece_type = Globals.PIECE_TYPES.PAWN
+	update_sprite()
+	
+	board_handle.create_pieces(
+		Globals.PIECE_TYPES.PAWN,
+		color,
+		new_pawn_pos
+	)
