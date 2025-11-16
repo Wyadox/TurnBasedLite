@@ -72,6 +72,17 @@ func get_piece(pos: Vector2):
 	for piece in pieces:
 		if piece.board_position == pos:
 			return piece
+			
+
+func is_within_bounds(pos: Vector2):
+	return pos.x >= 0 and pos.x < 8 and pos.y >= 0 and pos.y < 8
+
+func create_piece(type: Globals.PIECE_TYPES, col: Globals.COLORS, board_pos: Vector2):
+	var piece = piece_scene.instantiate()
+	add_child(piece)
+	piece.init(type, col, board_pos, self)
+	pieces.append(piece)
+	return piece
 
 func delete_piece(piece):
 	for i in range(len(pieces)):
