@@ -46,12 +46,31 @@ func update_sprite():
 		)
 
 func move_position(to_move: Vector2):
+	var old_pos = board_position #For moving Mitosis Pawn
+	
 	moved = true
 	board_position = to_move
 	position = Vector2(
 		X_OFFSET + board_position[0] * CELL_SIZE,
 		Y_OFFSET + board_position[1] * CELL_SIZE
 	)
+	
+	#This is handling the mitosis process
+	if piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN:
+		var dx = int(to_move.x - old_pos.x)
+		var dy = int(to_move.y - old_pos.y)
+		if abs(dx) == 2 and dy == 0:
+			var mid_pos = Vector2(old_pos.x, old_pos.y)
+			perform_mitosis(mid_pos)
+			piece_type = Globals.PIECE_TYPES.PAWN
+			update_sprite()
+			board_handle.create_piece(
+				Globals.PIECE_TYPES.PAWN,
+				color,
+				to_move
+			)
+			return
+	
 	# Update king position if they are moved
 	if piece_type == Globals.PIECE_TYPES.KING:
 		board_handle.register_king(board_position, color)
@@ -63,6 +82,13 @@ func move_position(to_move: Vector2):
 	):
 		piece_type = Globals.PIECE_TYPES.QUEEN
 		update_sprite()
+		
+	if piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN and (
+		(color == Globals.COLORS.BLACK and to_move[1] == 7) or 
+		(color == Globals.COLORS.WHITE and to_move[1] == 0)
+	):
+		piece_type = Globals.PIECE_TYPES.KING
+		update_sprite()
 
 func clone (_board):
 	var piece = self.duplicate()
@@ -72,7 +98,10 @@ func clone (_board):
 func get_moveable_positions():
 	match piece_type:
 		Globals.PIECE_TYPES.PAWN: return pawn_threat_pos()
-		Globals.PIECE_TYPES.MITOSIS_PAWN: return pawn_threat_pos()
+		Globals.PIECE_TYPES.MITOSIS_PAWN: 
+			var ret = pawn_threat_pos()
+			ret += get_mitosis_positions()
+			return ret
 		Globals.PIECE_TYPES.BISHOP: return bishop_threat_pos()
 		Globals.PIECE_TYPES.ROOK: return rook_threat_pos()
 		Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()
@@ -210,25 +239,22 @@ func king_threat_pos():
 
 func get_mitosis_positions():
 	var positions = []
-	var current_x = board_position.x
-	var current_y = board_position.y
-	var side_dir = 1 if color == Globals.COLORS.BLACK else -1
+	var current_x = int(board_position.x)
+	var current_y = int(board_position.y)
 	
-	var left_pos = Vector2(current_x - 1, current_y + side_dir)
-	if board_handle.is_within_bounds(left_pos) and board_handle.get_piece_at(left_pos) == null:
-		positions.append(left_pos)
-		
-	var right_pos = Vector2(current_x + 1, current_y + side_dir)
-	if board_handle.is_within_bounds(right_pos) and board_handle.get_piece_at(right_pos) == null:
-		positions.append(right_pos)
-		
+	for dir in [-1, 1]:
+		var mid = Vector2(current_x + dir, current_y )
+		var dest = Vector2(current_x + 2 * dir, current_y)
+		if board_handle.is_within_bounds(mid) and board_handle.is_within_bounds(dest):
+			if board_handle.get_piece(mid) == null and board_handle.get_piece(dest) == null:
+				positions.append(dest)
 	return positions
 	
 func perform_mitosis(new_pawn_pos: Vector2):
 	piece_type = Globals.PIECE_TYPES.PAWN
 	update_sprite()
 	
-	board_handle.create_pieces(
+	board_handle.create_piece(
 		Globals.PIECE_TYPES.PAWN,
 		color,
 		new_pawn_pos
