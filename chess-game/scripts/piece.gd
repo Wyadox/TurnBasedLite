@@ -72,6 +72,10 @@ func clone (_board):
 func get_moveable_positions():
 	match piece_type:
 		Globals.PIECE_TYPES.PAWN: return pawn_threat_pos()
+		Globals.PIECE_TYPES.MITOSIS_PAWN: 
+			var ret = pawn_threat_pos()
+			ret += get_mitosis_positions()
+			return ret
 		Globals.PIECE_TYPES.BISHOP: return bishop_threat_pos()
 		Globals.PIECE_TYPES.ROOK: return rook_threat_pos()
 		Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()
@@ -84,6 +88,7 @@ func get_moveable_positions():
 func get_threatened_positions():
 	match piece_type:
 		Globals.PIECE_TYPES.PAWN: return pawn_move_pos()
+		Globals.PIECE_TYPES.MITOSIS_PAWN: return pawn_move_pos()
 		Globals.PIECE_TYPES.BISHOP: return bishop_threat_pos()
 		Globals.PIECE_TYPES.ROOK: return rook_threat_pos()
 		Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()
