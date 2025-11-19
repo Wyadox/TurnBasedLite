@@ -46,22 +46,47 @@ func update_sprite():
 		)
 
 func move_position(to_move: Vector2):
+	var old_pos = board_position #For moving Mitosis Pawn
 	moved = true
 	board_position = to_move
 	position = Vector2(
 		X_OFFSET + board_position[0] * CELL_SIZE,
 		Y_OFFSET + board_position[1] * CELL_SIZE
 	)
+	
+	# Handling Mitosis piece movement
+	if piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN:
+		var dx = int(to_move.x - old_pos.x)
+		var dy = int(to_move.y - old_pos.y)
+		if abs(dx) == 2 and dy == 0:
+			var mid_pos = Vector2(old_pos.x, old_pos.y)
+			perform_mitosis(mid_pos)
+			#piece_type = Globals.PIECE_TYPES.PAWN
+			#update_sprite()
+			#board_handle.create_piece(
+				#Globals.PIECE_TYPES.PAWN,
+				#color,
+				#to_move
+			#)
+			return
+	
 	# Update king position if they are moved
 	if piece_type == Globals.PIECE_TYPES.KING:
 		board_handle.register_king(board_position, color)
 	
 	# Promotion for pawns to queen
 	if piece_type == Globals.PIECE_TYPES.PAWN and (
-		(color == Globals.COLORS.BLACK and to_move[1] == 7) or 
+		(color == Globals.COLORS.BLACK and to_move[1] == 5) or 
 		(color == Globals.COLORS.WHITE and to_move[1] == 0)
 	):
 		piece_type = Globals.PIECE_TYPES.QUEEN
+		update_sprite()
+		
+	if piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN and (
+		(color == Globals.COLORS.BLACK and to_move[1] == 5) or 
+		(color == Globals.COLORS.WHITE and to_move[1] == 0)
+	):
+		piece_type = Globals.PIECE_TYPES.KING
 		update_sprite()
 
 func clone (_board):

@@ -131,3 +131,13 @@ func clone():
 		var piece = pieces[i].clone(board)
 		board.pieces[i] = piece
 	return board
+	
+func is_within_bounds(pos: Vector2):
+	return pos.x >= 0 and pos.x < 6 and pos.y >= 0 and pos.y < 6
+
+func create_piece(type: Globals.PIECE_TYPES, col: Globals.COLORS, board_pos: Vector2):
+	var piece = piece_scene.instantiate()
+	add_child(piece)
+	piece.init_piece(type, col, board_pos, self)
+	pieces.append(piece)
+	return piece
