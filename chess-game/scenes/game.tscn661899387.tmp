@@ -1,0 +1,57 @@
+[gd_scene load_steps=3 format=3 uid="uid://bxdepwhprt4pp"]
+
+[ext_resource type="Script" uid="uid://bj20fx8i5xny6" path="res://scripts/game.gd" id="1_yqjtg"]
+[ext_resource type="Script" uid="uid://dlwh8mqmkmuqo" path="res://scripts/board.gd" id="2_lnu2h"]
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_yqjtg")
+
+[node name="Board" type="Node2D" parent="."]
+script = ExtResource("2_lnu2h")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 96.0
+offset_bottom = 94.0
+
+[node name="ColorRect" type="ColorRect" parent="Control"]
+layout_mode = 0
+offset_top = -2.0
+offset_right = 488.0
+offset_bottom = 484.0
+color = Color(0.4862745, 0.4862745, 0.4862745, 0.5882353)
+
+[node name="Win Label" type="Label" parent="Control"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 45.0
+offset_top = 144.0
+offset_right = 347.25
+offset_bottom = 195.75
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 35
+text = "Player ONE WON"
+
+[node name="Button" type="Button" parent="Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 2.4220002
+anchor_top = 2.015
+anchor_right = 2.4220002
+anchor_bottom = 2.015
+offset_left = -26.512024
+offset_top = 50.589996
+offset_right = 26.487976
+offset_bottom = 88.59
+grow_horizontal = 2
+grow_vertical = 2
+text = "Play
+"
+
+[connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]

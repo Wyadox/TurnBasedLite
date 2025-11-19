@@ -3,10 +3,10 @@ extends Node2D
 @onready var sprite = $Sprite2D
 
 const SPRITE_SIZE = 16
-const CELL_SIZE = 60
+const CELL_SIZE = 120
 
-const X_OFFSET = 30
-const Y_OFFSET = 30
+const X_OFFSET = 60
+const Y_OFFSET = 60
 
 @export var piece_type: Globals.PIECE_TYPES
 @export var color: Globals.COLORS
@@ -46,22 +46,47 @@ func update_sprite():
 		)
 
 func move_position(to_move: Vector2):
+	var old_pos = board_position #For moving Mitosis Pawn
 	moved = true
 	board_position = to_move
 	position = Vector2(
 		X_OFFSET + board_position[0] * CELL_SIZE,
 		Y_OFFSET + board_position[1] * CELL_SIZE
 	)
+	
+	# Handling Mitosis piece movement
+	if piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN:
+		var dx = int(to_move.x - old_pos.x)
+		var dy = int(to_move.y - old_pos.y)
+		if abs(dx) == 2 and dy == 0:
+			var mid_pos = Vector2(old_pos.x, old_pos.y)
+			perform_mitosis(mid_pos)
+			#piece_type = Globals.PIECE_TYPES.PAWN
+			#update_sprite()
+			#board_handle.create_piece(
+				#Globals.PIECE_TYPES.PAWN,
+				#color,
+				#to_move
+			#)
+			return
+	
 	# Update king position if they are moved
 	if piece_type == Globals.PIECE_TYPES.KING:
 		board_handle.register_king(board_position, color)
 	
 	# Promotion for pawns to queen
 	if piece_type == Globals.PIECE_TYPES.PAWN and (
-		(color == Globals.COLORS.BLACK and to_move[1] == 7) or 
+		(color == Globals.COLORS.BLACK and to_move[1] == 5) or 
 		(color == Globals.COLORS.WHITE and to_move[1] == 0)
 	):
 		piece_type = Globals.PIECE_TYPES.QUEEN
+		update_sprite()
+		
+	if piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN and (
+		(color == Globals.COLORS.BLACK and to_move[1] == 5) or 
+		(color == Globals.COLORS.WHITE and to_move[1] == 0)
+	):
+		piece_type = Globals.PIECE_TYPES.KING
 		update_sprite()
 
 func clone (_board):
@@ -72,21 +97,30 @@ func clone (_board):
 func get_moveable_positions():
 	match piece_type:
 		Globals.PIECE_TYPES.PAWN: return pawn_threat_pos()
+		Globals.PIECE_TYPES.MITOSIS_PAWN: 
+			var ret = pawn_threat_pos()
+			ret += get_mitosis_positions()
+			return ret
 		Globals.PIECE_TYPES.BISHOP: return bishop_threat_pos()
 		Globals.PIECE_TYPES.ROOK: return rook_threat_pos()
 		Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()
 		Globals.PIECE_TYPES.QUEEN: return queen_threat_pos()
 		Globals.PIECE_TYPES.KING: return king_threat_pos()
+		Globals.PIECE_TYPES.HORSE_ARCHER: return horse_archer_threat_pos()
+		Globals.PIECE_TYPES.ARCHBISHOP: return archbishop_threat_pos()
 		_: return []
 
 func get_threatened_positions():
 	match piece_type:
 		Globals.PIECE_TYPES.PAWN: return pawn_move_pos()
+		Globals.PIECE_TYPES.MITOSIS_PAWN: return pawn_move_pos()
 		Globals.PIECE_TYPES.BISHOP: return bishop_threat_pos()
 		Globals.PIECE_TYPES.ROOK: return rook_threat_pos()
 		Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()
 		Globals.PIECE_TYPES.QUEEN: return queen_threat_pos()
 		Globals.PIECE_TYPES.KING: return king_threat_pos()
+		Globals.PIECE_TYPES.HORSE_ARCHER: return horse_archer_threat_pos()
+		Globals.PIECE_TYPES.ARCHBISHOP: return archbishop_threat_pos()
 		_: return []
 
 
@@ -204,3 +238,62 @@ func king_threat_pos():
 		if pos != null:
 			positions.append(pos)
 	return positions
+
+# Horse Archer Moves
+const HORSE_ARCHER_SPOT_INCREMENTS = [[2,1], [2, -1], [-2, 1], [-2, -1], [1, 2], [1, -2], [-1, 2], [-1, -2]];
+func horse_archer_threat_pos():
+	var positions = []
+	for inc in HORSE_ARCHER_SPOT_INCREMENTS:
+		var pos = board_handle.spot_search_threat(
+			color, 
+			board_position[0], board_position[1],
+			inc[0], inc[1] 
+		)
+		if pos != null:
+			positions.append(pos)
+	return positions
+	
+	
+# Bishop Moves
+const ARCHBISHOP_BEAM_INCREMENTS = [[1, 1], [1, -1], [-1, 1], [-1, -1]]
+const ARCHBISHOP_SPOT_INCREMENTS = [[0, 1], [1, 0], [0, -1], [-1, 0]]
+func archbishop_threat_pos():
+	var positions = []
+	for inc in ARCHBISHOP_BEAM_INCREMENTS:
+		positions += board_handle.beam_search_threat(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1]
+		)
+	for inc in ARCHBISHOP_SPOT_INCREMENTS:
+		var pos = board_handle.spot_search_threat(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1]
+		)
+		if pos != null:
+			positions.append(pos)
+	return positions
+
+func get_mitosis_positions():
+	var positions = []
+	var current_x = int(board_position.x)
+	var current_y = int(board_position.y)
+	
+	for dir in [-1, 1]:
+		var mid = Vector2(current_x + dir, current_y )
+		var dest = Vector2(current_x + 2 * dir, current_y)
+		if board_handle.is_within_bounds(mid) and board_handle.is_within_bounds(dest):
+			if board_handle.get_piece(mid) == null and board_handle.get_piece(dest) == null:
+				positions.append(dest)
+	return positions
+	
+func perform_mitosis(new_pawn_pos: Vector2):
+	piece_type = Globals.PIECE_TYPES.PAWN
+	update_sprite()
+	
+	board_handle.create_piece(
+		Globals.PIECE_TYPES.PAWN,
+		color,
+		new_pawn_pos
+	)

@@ -63,11 +63,12 @@ func init_game():
 
 func get_pos_under_mouse():
 	var pos = get_global_mouse_position()
-	pos.x = int(pos.x / 60)
-	pos.y = int(pos.y / 60)
+	pos.x = int(pos.x / 120)
+	pos.y = int(pos.y / 120)
 	return pos
 
 func drop_piece():
+	var is_shooting = false
 	var to_move = get_pos_under_mouse()
 	if valid_move(selected_piece.board_position, to_move):
 		# For valid move:
@@ -76,7 +77,13 @@ func drop_piece():
 		# Delete only if the target piece is of different color
 		if dest_piece != null and dest_piece.color != selected_piece.color:
 			board.delete_piece(dest_piece)
-		selected_piece.move_position(to_move)
+			selected_piece.move_position(selected_piece.board_position)
+			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER:
+				is_shooting = true
+		if is_shooting == false:
+			print(selected_piece.board_position - to_move)
+			selected_piece.move_position(to_move)
+			
 		# - change currnet status of active color
 		status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
 		return true
@@ -100,11 +107,11 @@ func valid_move(from_pos, to_pos):
 	src_piece.move_position(to_pos)
 	
 	# Check whether there is no check threaten the color
-	for piece in board_copy.pieces:
-		if status == Globals.COLORS.BLACK and board_copy.black_king_pos in piece.get_threatened_positions():
-			return false
-		if status == Globals.COLORS.WHITE and board_copy.white_king_pos in piece.get_threatened_positions():
-			return false
+	#for piece in board_copy.pieces:
+		#if status == Globals.COLORS.BLACK and board_copy.black_king_pos in piece.get_threatened_positions():
+			#return false
+		#if status == Globals.COLORS.WHITE and board_copy.white_king_pos in piece.get_threatened_positions():
+			#return false
 	
 	return true
 
