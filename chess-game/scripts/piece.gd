@@ -2,7 +2,7 @@ extends Node2D
 
 @onready var sprite = $Sprite2D
 
-const SPRITE_SIZE = 16
+const SPRITE_SIZE = 32
 const CELL_SIZE = 120
 
 const X_OFFSET = 60
