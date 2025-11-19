@@ -244,3 +244,26 @@ func archbishop_threat_pos():
 		if pos != null:
 			positions.append(pos)
 	return positions
+
+func get_mitosis_positions():
+	var positions = []
+	var current_x = int(board_position.x)
+	var current_y = int(board_position.y)
+	
+	for dir in [-1, 1]:
+		var mid = Vector2(current_x + dir, current_y )
+		var dest = Vector2(current_x + 2 * dir, current_y)
+		if board_handle.is_within_bounds(mid) and board_handle.is_within_bounds(dest):
+			if board_handle.get_piece(mid) == null and board_handle.get_piece(dest) == null:
+				positions.append(dest)
+	return positions
+	
+func perform_mitosis(new_pawn_pos: Vector2):
+	piece_type = Globals.PIECE_TYPES.PAWN
+	update_sprite()
+	
+	board_handle.create_piece(
+		Globals.PIECE_TYPES.PAWN,
+		color,
+		new_pawn_pos
+	)
