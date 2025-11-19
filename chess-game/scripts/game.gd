@@ -63,8 +63,8 @@ func init_game():
 
 func get_pos_under_mouse():
 	var pos = get_global_mouse_position()
-	pos.x = int(pos.x / 60)
-	pos.y = int(pos.y / 60)
+	pos.x = int(pos.x / 120)
+	pos.y = int(pos.y / 120)
 	return pos
 
 func drop_piece():
@@ -107,11 +107,11 @@ func valid_move(from_pos, to_pos):
 	src_piece.move_position(to_pos)
 	
 	# Check whether there is no check threaten the color
-	for piece in board_copy.pieces:
-		if status == Globals.COLORS.BLACK and board_copy.black_king_pos in piece.get_threatened_positions():
-			return false
-		if status == Globals.COLORS.WHITE and board_copy.white_king_pos in piece.get_threatened_positions():
-			return false
+	#for piece in board_copy.pieces:
+		#if status == Globals.COLORS.BLACK and board_copy.black_king_pos in piece.get_threatened_positions():
+			#return false
+		#if status == Globals.COLORS.WHITE and board_copy.white_king_pos in piece.get_threatened_positions():
+			#return false
 	
 	return true
 

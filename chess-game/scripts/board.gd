@@ -6,7 +6,7 @@ extends Node2D
 @export var white_king_pos: Vector2
 @export var black_king_pos: Vector2
 
-const CELL_SIZE = 60
+const CELL_SIZE = 120
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -14,8 +14,8 @@ func _ready():
 	init_pieces()
 
 func draw_board():
-	for x in range(8):
-		for y in range(8):
+	for x in range(6):
+		for y in range(6):
 			draw_cell(x, y)
 
 func draw_cell(x, y):
@@ -33,7 +33,7 @@ func init_pieces():
 	for piece_tuple in Globals.INITIAL_PIECE_SET_SINGLE:
 		var piece_type = piece_tuple[0]
 		var black_piece_pos = Vector2(piece_tuple[1], piece_tuple[2])
-		var white_piece_pos = Vector2(piece_tuple[1], 8 -  1 - piece_tuple[2])
+		var white_piece_pos = Vector2(piece_tuple[1], 6 -  1 - piece_tuple[2])
 		
 		# Create black piece
 		var black_piece = piece_scene.instantiate()
@@ -90,7 +90,7 @@ func beam_search_threat(own_color, cur_x, cur_y, inc_x, inc_y):
 	
 	# Keep moving in increment direction to find either a blocked pieces
 	# or out of board
-	while cur_x >= 0 and cur_x < 8 and cur_y >= 0 and cur_y < 8:
+	while cur_x >= 0 and cur_x < 6 and cur_y >= 0 and cur_y < 6:
 		var cur_pos = Vector2(cur_x, cur_y)
 		var cur_piece = get_piece(cur_pos)
 		if cur_piece != null:
@@ -113,7 +113,7 @@ func spot_search_threat(
 	cur_x += inc_x
 	cur_y += inc_y
 	
-	if cur_x >= 8 or cur_x < 0 or cur_y >= 8 or cur_y < 0:
+	if cur_x >= 6 or cur_x < 0 or cur_y >= 6 or cur_y < 0:
 		return
 	
 	var cur_pos = Vector2(cur_x, cur_y)

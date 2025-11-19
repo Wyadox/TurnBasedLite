@@ -3,10 +3,10 @@ extends Node2D
 @onready var sprite = $Sprite2D
 
 const SPRITE_SIZE = 16
-const CELL_SIZE = 60
+const CELL_SIZE = 120
 
-const X_OFFSET = 30
-const Y_OFFSET = 30
+const X_OFFSET = 60
+const Y_OFFSET = 60
 
 @export var piece_type: Globals.PIECE_TYPES
 @export var color: Globals.COLORS
