@@ -70,6 +70,7 @@ func get_pos_under_mouse():
 func drop_piece():
 	var is_shooting = false
 	var to_move = get_pos_under_mouse()
+	var piece_around
 	if valid_move(selected_piece.board_position, to_move):
 		# For valid move:
 		# - if target has piece, then replace it
@@ -78,6 +79,19 @@ func drop_piece():
 		if dest_piece != null and dest_piece.color != selected_piece.color:
 			if dest_piece.piece_type == Globals.PIECE_TYPES.TROJAN_HORSE:
 				dest_piece.trojan_spawn(dest_piece.color)
+			if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
+				for position in dest_piece.bishop_explode():
+					piece_around = board.get_piece(position)
+					if piece_around != null:
+						board.delete_piece(piece_around)
+				if selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER:
+					board.delete_piece(selected_piece)
+			if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
+				for position in dest_piece.bishop_explode():
+					piece_around = board.get_piece(position)
+					if piece_around != null:
+						board.delete_piece(piece_around)
+				board.delete_piece(selected_piece)
 			board.delete_piece(dest_piece)
 			selected_piece.move_position(selected_piece.board_position)
 			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER:

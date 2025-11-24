@@ -124,6 +124,26 @@ func spot_search_threat(
 			return
 		return cur_pos if cur_piece.color != own_color else null
 	return cur_pos if not threat_only else null
+	
+func spot_search_explode( 
+	cur_x, cur_y, 
+	inc_x, inc_y,
+	threat_only = false, free_only = false
+):
+	# Do a single move and check if move is valid or threatens a piece
+	cur_x += inc_x
+	cur_y += inc_y
+	
+	if cur_x >= 6 or cur_x < 0 or cur_y >= 6 or cur_y < 0:
+		return
+	
+	var cur_pos = Vector2(cur_x, cur_y)
+	var cur_piece = get_piece(cur_pos)
+	
+	if cur_piece != null:
+		if free_only:
+			return
+	return cur_pos if not threat_only else null
 
 func clone():
 	var board = self.duplicate()
