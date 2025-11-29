@@ -2,7 +2,7 @@ extends Node2D
 
 @onready var sprite = $Sprite2D
 
-const SPRITE_SIZE = 32
+const SPRITE_SIZE = 16
 const CELL_SIZE = 120
 
 const X_OFFSET = 60
@@ -15,7 +15,6 @@ const Y_OFFSET = 60
 var board_handle;
 
 @export var moved: bool;
-@export var stun_counter: int;
 
 func init_piece(
 	type: Globals.PIECE_TYPES,
@@ -28,7 +27,6 @@ func init_piece(
 	board_position = board_pos
 	board_handle = board
 	moved = false
-	stun_counter = 0
 	
 	update_sprite()
 	
@@ -110,9 +108,6 @@ func get_moveable_positions():
 		Globals.PIECE_TYPES.KING: return king_threat_pos()
 		Globals.PIECE_TYPES.HORSE_ARCHER: return horse_archer_threat_pos()
 		Globals.PIECE_TYPES.ARCHBISHOP: return archbishop_threat_pos()
-		Globals.PIECE_TYPES.STUN_KNIGHT: return knight_threat_pos()
-		Globals.PIECE_TYPES.TROJAN_HORSE: return knight_threat_pos()
-		Globals.PIECE_TYPES.EXPLODING_BISHOP: return bishop_threat_pos()
 		_: return []
 
 func get_threatened_positions():
@@ -126,9 +121,6 @@ func get_threatened_positions():
 		Globals.PIECE_TYPES.KING: return king_threat_pos()
 		Globals.PIECE_TYPES.HORSE_ARCHER: return horse_archer_threat_pos()
 		Globals.PIECE_TYPES.ARCHBISHOP: return archbishop_threat_pos()
-		Globals.PIECE_TYPES.STUN_KNIGHT: return knight_threat_pos()
-		Globals.PIECE_TYPES.TROJAN_HORSE: return knight_threat_pos()
-		Globals.PIECE_TYPES.EXPLODING_BISHOP: return bishop_threat_pos()
 		_: return []
 
 
@@ -262,7 +254,7 @@ func horse_archer_threat_pos():
 	return positions
 	
 	
-# Archbishop Moves
+# Bishop Moves
 const ARCHBISHOP_BEAM_INCREMENTS = [[1, 1], [1, -1], [-1, 1], [-1, -1]]
 const ARCHBISHOP_SPOT_INCREMENTS = [[0, 1], [1, 0], [0, -1], [-1, 0]]
 func archbishop_threat_pos():
@@ -305,52 +297,3 @@ func perform_mitosis(new_pawn_pos: Vector2):
 		color,
 		new_pawn_pos
 	)
-
-# Stun Knight Stun Search
-const STUN_KNIGHT_RANGE_INCREMENT = [[0, 1], [1, 0], [0, -1], [-1, 0]]
-func get_stun_positions():
-	var positions = []
-	for inc in STUN_KNIGHT_RANGE_INCREMENT:
-		var pos = board_handle.spot_search_threat(
-			color,
-			board_position[0], board_position[1],
-			inc[0], inc[1]
-		)
-		if pos != null:
-			positions.append(pos)
-	return positions
-	
-
-# Trojan Horse Spawn Search
-const TROJAN_SPAWN_INCREMENT = [[1, 0], [-1, 0]]
-func get_trojan_spawn_positions():
-	var positions = []
-	for inc in TROJAN_SPAWN_INCREMENT:
-		var pos = board_handle.spot_search_threat(
-			color,
-			board_position[0], board_position[1],
-			inc[0], inc[1]
-		)
-		if pos != null:
-			positions.append(pos)
-	return positions
-	
-func trojan_spawn(color):
-	for position in get_trojan_spawn_positions():
-		board_handle.create_piece(
-			Globals.PIECE_TYPES.PAWN,
-			color,
-			position
-		)
-
-const BISHOP_EXPLODE_INCREMENT = [[1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1]]
-func bishop_explode():
-	var positions = []
-	for inc in BISHOP_EXPLODE_INCREMENT:
-		var pos = board_handle.spot_search_explode(
-			board_position[0], board_position[1],
-			inc[0], inc[1]
-		)
-		if pos != null:
-			positions.append(pos)
-	return positions

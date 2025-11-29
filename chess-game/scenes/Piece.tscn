@@ -1,13 +1,13 @@
 [gd_scene load_steps=3 format=3 uid="uid://duwl4gby1wb7s"]
 
+[ext_resource type="Texture2D" uid="uid://bhdeqh60csma7" path="res://pieces.png" id="1_gksgf"]
 [ext_resource type="Script" uid="uid://3fm4pgf3e52y" path="res://scripts/piece.gd" id="1_tk1p6"]
-[ext_resource type="Texture2D" uid="uid://c2ffhrqxtv6do" path="res://customPiecesSpritesheet.png" id="2_tk1p6"]
 
 [node name="Piece" type="Node2D"]
 script = ExtResource("1_tk1p6")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(3, 3)
-texture = ExtResource("2_tk1p6")
+texture = ExtResource("1_gksgf")
 region_enabled = true
-region_rect = Rect2(0, 0, 32, 32)
+region_rect = Rect2(0, 0, 16, 16)
