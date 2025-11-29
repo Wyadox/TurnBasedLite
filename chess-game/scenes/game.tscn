@@ -64,10 +64,10 @@ script = ExtResource("3_lnu2h")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="SetupPhaseUI"]
 layout_mode = 0
-offset_left = 812.0
+offset_left = 786.0
 offset_top = 41.0
-offset_right = 918.0
-offset_bottom = 81.0
+offset_right = 938.0
+offset_bottom = 247.0
 
 [node name="Pawn_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
 layout_mode = 2
@@ -85,8 +85,23 @@ text = "Spawn Knight"
 layout_mode = 2
 text = "Spawn King"
 
+[node name="Archer_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
+layout_mode = 2
+text = "Spawn Archer"
+
+[node name="Archbishop_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
+layout_mode = 2
+text = "Spawn Archbishop
+"
+
+[node name="Mitosis_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
+layout_mode = 2
+text = "Spawn Mitosis
+"
+
 [connection signal="selected_square" from="." to="Board" method="_on_game_selected_square"]
 [connection signal="set_status" from="Board" to="." method="_on_board_set_status"]
+[connection signal="set_status" from="Board" to="SetupPhaseUI" method="_on_board_set_status"]
 [connection signal="setup_complete" from="Board" to="." method="_on_board_setup_complete"]
 [connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]
 [connection signal="spawn_piece" from="SetupPhaseUI" to="Board" method="_on_setup_phase_ui_spawn_piece"]
@@ -94,3 +109,6 @@ text = "Spawn King"
 [connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Bishop_Button" to="SetupPhaseUI" method="_on_bishop_button_pressed"]
 [connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Knight_Button" to="SetupPhaseUI" method="_on_knight_button_pressed"]
 [connection signal="pressed" from="SetupPhaseUI/VBoxContainer/King_Button" to="SetupPhaseUI" method="_on_king_button_pressed"]
+[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Archer_Button" to="SetupPhaseUI" method="_on_archer_button_pressed"]
+[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Archbishop_Button" to="SetupPhaseUI" method="_on_archbishop_button_pressed"]
+[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Mitosis_Button" to="SetupPhaseUI" method="_on_mitosis_button_pressed"]
