@@ -6,8 +6,6 @@ extends Node2D
 @export var white_king_pos: Vector2
 @export var black_king_pos: Vector2
 
-var selected_pos: Vector2 = Vector2(-1, -1)
-
 const CELL_SIZE = 120
 
 # Called when the node enters the scene tree for the first time.
@@ -163,15 +161,3 @@ func create_piece(type: Globals.PIECE_TYPES, col: Globals.COLORS, board_pos: Vec
 	piece.init_piece(type, col, board_pos, self)
 	pieces.append(piece)
 	return piece
-
-
-func _on_setup_phase_ui_spawn_piece(piece_type: Variant) -> void:
-	if selected_pos == Vector2(-1, -1):
-		print("Select a valid position")
-		return
-	create_piece(piece_type, Globals.COLORS.WHITE, selected_pos)
-
-
-func _on_game_selected_square(pos: Variant) -> void:
-	selected_pos = pos
-	print(pos)

@@ -1,7 +1,5 @@
 extends Node2D
 
-signal selected_square(pos)
-
 # Game States
 var game_over;
 var player_color;
@@ -30,18 +28,8 @@ func _input(event):
 	if Input.is_action_just_pressed("left_click"):
 		var pos = get_pos_under_mouse()
 		selected_piece = board.get_piece(pos)
-		
 		# Drag piece only if they are under the mouse or are of current player
 		if selected_piece == null or selected_piece.color != status or selected_piece.stun_counter != 0:
-		if selected_piece == null:
-			if pos.x < 6 and pos.x > -1 and pos.y < 6 and pos.y > 0:
-				if status == Globals.COLORS.WHITE:
-					emit_signal("selected_square", pos)
-			else:
-				print("no square was selected")
-			return
-			
-		if selected_piece.color != status:
 			return
 		is_dragging = true
 		previous_position = selected_piece.position

@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://bxdepwhprt4pp"]
+[gd_scene load_steps=3 format=3 uid="uid://bxdepwhprt4pp"]
 
 [ext_resource type="Script" uid="uid://bj20fx8i5xny6" path="res://scripts/game.gd" id="1_yqjtg"]
 [ext_resource type="Script" uid="uid://dlwh8mqmkmuqo" path="res://scripts/board.gd" id="2_lnu2h"]
-[ext_resource type="Script" uid="uid://b3kuug82fetu7" path="res://scenes/setup_phase_ui.gd" id="3_lnu2h"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_yqjtg")
@@ -55,25 +54,4 @@ grow_vertical = 2
 text = "Play
 "
 
-[node name="SetupPhaseUI" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-script = ExtResource("3_lnu2h")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="SetupPhaseUI"]
-layout_mode = 0
-offset_left = 812.0
-offset_top = 41.0
-offset_right = 918.0
-offset_bottom = 81.0
-
-[node name="Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
-layout_mode = 2
-text = "Spawn Pawn"
-
-[connection signal="selected_square" from="." to="Board" method="_on_game_selected_square"]
 [connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]
-[connection signal="spawn_piece" from="SetupPhaseUI" to="Board" method="_on_setup_phase_ui_spawn_piece"]
-[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Button" to="SetupPhaseUI" method="_on_button_pressed"]
