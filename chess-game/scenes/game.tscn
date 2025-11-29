@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bj20fx8i5xny6" path="res://scripts/game.gd" id="1_yqjtg"]
 [ext_resource type="Script" uid="uid://dlwh8mqmkmuqo" path="res://scripts/board.gd" id="2_lnu2h"]
-[ext_resource type="Script" uid="uid://b3kuug82fetu7" path="res://scenes/setup_phase_ui.gd" id="3_lnu2h"]
+[ext_resource type="Script" uid="uid://b3kuug82fetu7" path="res://scripts/setup_phase_ui.gd" id="3_lnu2h"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_yqjtg")
@@ -69,11 +69,28 @@ offset_top = 41.0
 offset_right = 918.0
 offset_bottom = 81.0
 
-[node name="Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
+[node name="Pawn_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
 layout_mode = 2
 text = "Spawn Pawn"
 
+[node name="Bishop_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
+layout_mode = 2
+text = "Spawn Bishop"
+
+[node name="Knight_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
+layout_mode = 2
+text = "Spawn Knight"
+
+[node name="King_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
+layout_mode = 2
+text = "Spawn King"
+
 [connection signal="selected_square" from="." to="Board" method="_on_game_selected_square"]
+[connection signal="set_status" from="Board" to="." method="_on_board_set_status"]
+[connection signal="setup_complete" from="Board" to="." method="_on_board_setup_complete"]
 [connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]
 [connection signal="spawn_piece" from="SetupPhaseUI" to="Board" method="_on_setup_phase_ui_spawn_piece"]
-[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Button" to="SetupPhaseUI" method="_on_button_pressed"]
+[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Pawn_Button" to="SetupPhaseUI" method="_on_pawn_button_pressed"]
+[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Bishop_Button" to="SetupPhaseUI" method="_on_bishop_button_pressed"]
+[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Knight_Button" to="SetupPhaseUI" method="_on_knight_button_pressed"]
+[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/King_Button" to="SetupPhaseUI" method="_on_king_button_pressed"]

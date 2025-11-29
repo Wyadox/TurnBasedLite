@@ -1,12 +1,17 @@
 extends Node2D
 
+signal setup_complete
+signal set_status(color)
+
 @export var pieces = [];
 @export var piece_scene = preload("res://scenes/Piece.tscn")
+@export var game_script = preload("res://scripts/game.gd")
 
 @export var white_king_pos: Vector2
 @export var black_king_pos: Vector2
 
 var selected_pos: Vector2 = Vector2(-1, -1)
+var setup_done: bool = false
 
 const CELL_SIZE = 120
 
@@ -71,6 +76,8 @@ func register_king(pos, col):
 			black_king_pos = pos
 
 func get_piece(pos: Vector2):
+	if pieces.size() < 1:
+		return
 	for piece in pieces:
 		if piece.board_position == pos:
 			return piece
@@ -144,14 +151,73 @@ func create_piece(type: Globals.PIECE_TYPES, col: Globals.COLORS, board_pos: Vec
 	pieces.append(piece)
 	return piece
 
+var border_panel
 
 func _on_setup_phase_ui_spawn_piece(piece_type: Variant) -> void:
 	if selected_pos == Vector2(-1, -1):
 		print("Select a valid position")
 		return
-	create_piece(piece_type, Globals.COLORS.WHITE, selected_pos)
+	
+	if setup_done == true:
+		print("Setup phase is over")
+		return
+		
+	# Determine color for current piece
+	var color
+	var total_pieces : int = num_pieces()
+	if total_pieces < 6:
+		color = Globals.COLORS.WHITE
+	else:
+		color = Globals.COLORS.BLACK
+	create_piece(piece_type, color, selected_pos)
+	
+	# Determine if color needs to swap
+	if total_pieces + 1 < 6:
+		color = Globals.COLORS.WHITE
+	else:
+		color = Globals.COLORS.BLACK
+	emit_signal("set_status", color)
+	
+	# Ready to play
+	if total_pieces + 1 > 11:
+		setup_done = true
+		emit_signal("setup_complete")
+		
+	# Reset border visual and selected pos
+	if border_panel and border_panel.is_inside_tree():
+		border_panel.queue_free()
+	selected_pos = Vector2(-1, -1)
 
 
 func _on_game_selected_square(pos: Variant) -> void:
 	selected_pos = pos
 	print(pos)
+	draw_border(pos.x, pos.y)
+	
+func draw_border(x, y):
+	if border_panel and border_panel.is_inside_tree():
+		border_panel.queue_free()
+	border_panel = Panel.new()
+	border_panel.size = Vector2(CELL_SIZE, CELL_SIZE)
+	border_panel.position = Vector2(
+		x * CELL_SIZE,
+		y * CELL_SIZE
+	)
+	border_panel.z_index = 100
+	
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color.TRANSPARENT
+	style.border_color = Color(0.0, 0.0, 1.0)
+	style.border_width_left = 3
+	style.border_width_top = 3
+	style.border_width_right = 3
+	style.border_width_bottom = 3
+	border_panel.add_theme_stylebox_override("panel", style)
+	
+	add_child(border_panel)
+	
+func num_pieces():
+	var count : int = 0
+	for piece in pieces:
+		count += 1
+	return count

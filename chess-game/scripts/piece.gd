@@ -61,13 +61,6 @@ func move_position(to_move: Vector2):
 		if abs(dx) == 2 and dy == 0:
 			var mid_pos = Vector2(old_pos.x, old_pos.y)
 			perform_mitosis(mid_pos)
-			#piece_type = Globals.PIECE_TYPES.PAWN
-			#update_sprite()
-			#board_handle.create_piece(
-				#Globals.PIECE_TYPES.PAWN,
-				#color,
-				#to_move
-			#)
 			return
 	
 	# Update king position if they are moved

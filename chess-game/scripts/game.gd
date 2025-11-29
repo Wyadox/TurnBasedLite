@@ -12,16 +12,20 @@ var player2_type; # Where AI or Human is playinh
 var is_dragging: bool;
 var selected_piece = null;
 var previous_position = null;
+var setup_complete: bool = false
 
 @onready var board = $Board;
 @onready var ui_control = $Control
 @onready var win_label = $"Control/Win Label"
+@onready var setup_ui = $SetupPhaseUI
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	init_game()
 	ui_control.hide()
 	win_label.hide()
+	setup_ui.show()
+	setup_complete = false
 
 func _input(event):
 	if game_over:
@@ -33,8 +37,10 @@ func _input(event):
 		
 		# Drag piece only if they are under the mouse or are of current player
 		if selected_piece == null:
-			if pos.x < 6 and pos.x > -1 and pos.y < 6 and pos.y > 0:
-				if status == Globals.COLORS.WHITE:
+			if pos.x < 6 and pos.x > -1 and pos.y < 6 and pos.y > -1:
+				if status == Globals.COLORS.WHITE and pos.y == 5:
+					emit_signal("selected_square", pos)
+				if status == Globals.COLORS.BLACK and pos.y == 0:
 					emit_signal("selected_square", pos)
 			else:
 				print("no square was selected")
@@ -42,6 +48,10 @@ func _input(event):
 			
 		if selected_piece.color != status:
 			return
+			
+		if setup_complete == false:
+			return
+			
 		is_dragging = true
 		previous_position = selected_piece.position
 		selected_piece.z_index = 100
@@ -187,3 +197,13 @@ func set_win(who: Globals.PLAYER):
 
 func _on_button_pressed():
 	get_tree().reload_current_scene()
+
+func _on_board_setup_complete() -> void:
+	setup_complete = true
+	setup_ui.hide()
+	status = Globals.COLORS.WHITE
+
+
+func _on_board_set_status(color: Variant) -> void:
+	status = color
+	print(color)
