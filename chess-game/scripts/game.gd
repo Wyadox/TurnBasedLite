@@ -32,6 +32,7 @@ func _input(event):
 		selected_piece = board.get_piece(pos)
 		
 		# Drag piece only if they are under the mouse or are of current player
+		if selected_piece == null or selected_piece.color != status or selected_piece.stun_counter != 0:
 		if selected_piece == null:
 			if pos.x < 6 and pos.x > -1 and pos.y < 6 and pos.y > 0:
 				if status == Globals.COLORS.WHITE:
@@ -69,8 +70,8 @@ func init_game():
 	is_dragging = false
 	player_color = Globals.COLORS.WHITE
 	status = Globals.COLORS.WHITE
-	#player2_type = Globals.PLAYER_2_TYPE.HUMAN
-	player2_type = Globals.PLAYER_2_TYPE.AI
+	player2_type = Globals.PLAYER_2_TYPE.HUMAN
+	#player2_type = Globals.PLAYER_2_TYPE.AI
 
 func get_pos_under_mouse():
 	var pos = get_global_mouse_position()
@@ -81,12 +82,28 @@ func get_pos_under_mouse():
 func drop_piece():
 	var is_shooting = false
 	var to_move = get_pos_under_mouse()
+	var piece_around
 	if valid_move(selected_piece.board_position, to_move):
 		# For valid move:
 		# - if target has piece, then replace it
 		var dest_piece = board.get_piece(to_move)
 		# Delete only if the target piece is of different color
 		if dest_piece != null and dest_piece.color != selected_piece.color:
+			if dest_piece.piece_type == Globals.PIECE_TYPES.TROJAN_HORSE:
+				dest_piece.trojan_spawn(dest_piece.color)
+			if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
+				for position in dest_piece.bishop_explode():
+					piece_around = board.get_piece(position)
+					if piece_around != null:
+						board.delete_piece(piece_around)
+				if selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER:
+					board.delete_piece(selected_piece)
+			if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
+				for position in dest_piece.bishop_explode():
+					piece_around = board.get_piece(position)
+					if piece_around != null:
+						board.delete_piece(piece_around)
+				board.delete_piece(selected_piece)
 			board.delete_piece(dest_piece)
 			selected_piece.move_position(selected_piece.board_position)
 			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER:
@@ -94,9 +111,15 @@ func drop_piece():
 		if is_shooting == false:
 			print(selected_piece.board_position - to_move)
 			selected_piece.move_position(to_move)
+			if selected_piece.piece_type == Globals.PIECE_TYPES.STUN_KNIGHT:
+				for space in selected_piece.get_stun_positions():
+					var piece = board.get_piece(space)
+					if piece != null:
+						piece.stun_counter = 2
 			
 		# - change currnet status of active color
-		status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
+		#status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
+		end_turn()
 		return true
 	return false
 
@@ -163,7 +186,8 @@ func player2_move():
 		if dest_piece != null:
 			board.delete_piece(dest_piece)
 		piece.move_position(pos)
-		status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
+		#status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
+		end_turn()
 		evaluate_end_game()
 
 func evaluate_end_game():
@@ -187,3 +211,10 @@ func set_win(who: Globals.PLAYER):
 
 func _on_button_pressed():
 	get_tree().reload_current_scene()
+
+func end_turn():
+	for piece in board.pieces:
+		if piece.stun_counter > 0:
+			piece.stun_counter -= 1
+	status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
+	
