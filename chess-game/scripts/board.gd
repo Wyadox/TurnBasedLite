@@ -5,7 +5,6 @@ signal set_status(color)
 
 @export var pieces = [];
 @export var piece_scene = preload("res://scenes/Piece.tscn")
-@export var game_script = preload("res://scripts/game.gd")
 
 @export var white_king_pos: Vector2
 @export var black_king_pos: Vector2

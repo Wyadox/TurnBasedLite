@@ -15,6 +15,7 @@ const Y_OFFSET = 60
 var board_handle;
 
 @export var moved: bool;
+@export var promoted: bool;
 
 func init_piece(
 	type: Globals.PIECE_TYPES,
@@ -26,6 +27,7 @@ func init_piece(
 	color = col
 	board_position = board_pos
 	board_handle = board
+	promoted = false;
 	moved = false
 	
 	update_sprite()
@@ -67,12 +69,13 @@ func move_position(to_move: Vector2):
 	if piece_type == Globals.PIECE_TYPES.KING:
 		board_handle.register_king(board_position, color)
 	
-	# Promotion for pawns to queen
-	if piece_type == Globals.PIECE_TYPES.PAWN and (
+	# Promotion for pawns to KING BEHAVIOR
+	if (piece_type == Globals.PIECE_TYPES.PAWN or piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN) and (
 		(color == Globals.COLORS.BLACK and to_move[1] == 5) or 
 		(color == Globals.COLORS.WHITE and to_move[1] == 0)
 	):
-		piece_type = Globals.PIECE_TYPES.QUEEN
+		#piece_type = Globals.PIECE_TYPES.PROMOTED_PAWN
+		promoted = true
 		update_sprite()
 		
 	if piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN and (
@@ -89,9 +92,14 @@ func clone (_board):
 	
 func get_moveable_positions():
 	match piece_type:
-		Globals.PIECE_TYPES.PAWN: return pawn_threat_pos()
+		Globals.PIECE_TYPES.PAWN: 
+			if promoted:
+				return king_threat_pos()
+			return pawn_move_pos()
 		Globals.PIECE_TYPES.MITOSIS_PAWN: 
-			var ret = pawn_threat_pos()
+			var ret = pawn_move_pos()
+			if promoted:
+				ret += king_threat_pos()
 			ret += get_mitosis_positions()
 			return ret
 		Globals.PIECE_TYPES.BISHOP: return bishop_threat_pos()
@@ -105,8 +113,14 @@ func get_moveable_positions():
 
 func get_threatened_positions():
 	match piece_type:
-		Globals.PIECE_TYPES.PAWN: return pawn_move_pos()
-		Globals.PIECE_TYPES.MITOSIS_PAWN: return pawn_move_pos()
+		Globals.PIECE_TYPES.PAWN: 
+			if promoted == true:
+				return king_threat_pos()
+			return pawn_threat_pos()
+		Globals.PIECE_TYPES.MITOSIS_PAWN: 
+			if promoted == true:
+				return king_threat_pos()
+			return pawn_threat_pos()
 		Globals.PIECE_TYPES.BISHOP: return bishop_threat_pos()
 		Globals.PIECE_TYPES.ROOK: return rook_threat_pos()
 		Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()

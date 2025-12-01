@@ -47,7 +47,6 @@ func _on_archbishop_button_pressed() -> void:
 	if (valid_spawn(Globals.PIECE_TYPES.ARCHBISHOP)):
 		emit_signal("spawn_piece", Globals.PIECE_TYPES.ARCHBISHOP)
 
-
 func _on_mitosis_button_pressed() -> void:
 	print("Mitosis")
 	if (valid_spawn(Globals.PIECE_TYPES.MITOSIS_PAWN)):

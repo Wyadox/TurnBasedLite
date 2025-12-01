@@ -79,8 +79,8 @@ func init_game():
 	is_dragging = false
 	player_color = Globals.COLORS.WHITE
 	status = Globals.COLORS.WHITE
-	#player2_type = Globals.PLAYER_2_TYPE.HUMAN
-	player2_type = Globals.PLAYER_2_TYPE.AI
+	player2_type = Globals.PLAYER_2_TYPE.HUMAN
+	#player2_type = Globals.PLAYER_2_TYPE.AI
 
 func get_pos_under_mouse():
 	var pos = get_global_mouse_position()
