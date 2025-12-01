@@ -80,7 +80,7 @@ func is_within_bounds(pos: Vector2):
 func create_piece(type: Globals.PIECE_TYPES, col: Globals.COLORS, board_pos: Vector2):
 	var piece = piece_scene.instantiate()
 	add_child(piece)
-	piece.init(type, col, board_pos, self)
+	piece.init_piece(type, col, board_pos, self)
 	pieces.append(piece)
 	return piece
 
