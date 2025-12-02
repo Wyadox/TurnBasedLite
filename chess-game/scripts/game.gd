@@ -65,7 +65,12 @@ func _input(event):
 		# Highlights available moves
 		var highlight_moves = selected_piece.get_moveable_positions()
 		for it in highlight_moves:
-			board.draw_border(it.x, it.y, Color(1.0, 1.0, 0.0), false)
+			var color : Color
+			if board.get_piece(Vector2(it.x, it.y)) != null:
+				color = Color(1.0, 0.0, 0.0)
+			else:
+				color = Color(1.0, 1.0, 0.0)
+			board.draw_border(it.x, it.y, color, false)
 			
 	elif event is InputEventMouseMotion and is_dragging:
 		selected_piece.position = get_global_mouse_position()
