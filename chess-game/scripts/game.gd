@@ -55,6 +55,12 @@ func _input(event):
 		is_dragging = true
 		previous_position = selected_piece.position
 		selected_piece.z_index = 100
+		
+		# Highlights available moves
+		var highlight_moves = selected_piece.get_moveable_positions()
+		for it in highlight_moves:
+			board.draw_border(it.x, it.y, Color(1.0, 1.0, 0.0), false)
+			
 	elif event is InputEventMouseMotion and is_dragging:
 		selected_piece.position = get_global_mouse_position()
 	elif Input.is_action_just_released("left_click") and is_dragging:
@@ -64,6 +70,7 @@ func _input(event):
 		selected_piece.z_index = 0
 		selected_piece = null
 		is_dragging = false
+		board.clear_borders()
 		
 		# Check whether game is over after user's move
 		if evaluate_end_game():
@@ -91,6 +98,7 @@ func get_pos_under_mouse():
 func drop_piece():
 	var is_shooting = false
 	var to_move = get_pos_under_mouse()
+	
 	if valid_move(selected_piece.board_position, to_move):
 		# For valid move:
 		# - if target has piece, then replace it

@@ -2,6 +2,7 @@ extends Node2D
 
 signal setup_complete
 signal set_status(color)
+signal refund_piece(piece_type)
 
 @export var pieces = [];
 @export var piece_scene = preload("res://scenes/Piece.tscn")
@@ -151,10 +152,12 @@ func create_piece(type: Globals.PIECE_TYPES, col: Globals.COLORS, board_pos: Vec
 	return piece
 
 var border_panel
+var borders = []
 
 func _on_setup_phase_ui_spawn_piece(piece_type: Variant) -> void:
 	if selected_pos == Vector2(-1, -1):
 		print("Select a valid position")
+		emit_signal("refund_piece", piece_type)
 		return
 	
 	if setup_done == true:
@@ -191,10 +194,10 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Variant) -> void:
 func _on_game_selected_square(pos: Variant) -> void:
 	selected_pos = pos
 	print(pos)
-	draw_border(pos.x, pos.y)
+	draw_border(pos.x, pos.y, Color(0.0, 0.0, 1.0), true)
 	
-func draw_border(x, y):
-	if border_panel and border_panel.is_inside_tree():
+func draw_border(x, y, color, clear):
+	if clear and border_panel and border_panel.is_inside_tree():
 		border_panel.queue_free()
 	border_panel = Panel.new()
 	border_panel.size = Vector2(CELL_SIZE, CELL_SIZE)
@@ -202,18 +205,25 @@ func draw_border(x, y):
 		x * CELL_SIZE,
 		y * CELL_SIZE
 	)
-	border_panel.z_index = 100
+	border_panel.z_index = 50
 	
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color.TRANSPARENT
-	style.border_color = Color(0.0, 0.0, 1.0)
-	style.border_width_left = 3
-	style.border_width_top = 3
-	style.border_width_right = 3
-	style.border_width_bottom = 3
+	style.border_color = color
+	style.border_width_left = 4
+	style.border_width_top = 4
+	style.border_width_right = 4
+	style.border_width_bottom = 4
 	border_panel.add_theme_stylebox_override("panel", style)
 	
 	add_child(border_panel)
+	if !clear:
+		borders.push_back(border_panel)
+	
+func clear_borders():
+	for it in borders:
+		it.queue_free()
+	borders.clear()
 	
 func num_pieces():
 	var count : int = 0

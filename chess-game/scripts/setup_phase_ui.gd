@@ -14,6 +14,13 @@ func valid_spawn(piece_type : Globals.PIECE_TYPES) -> bool:
 		return true
 	return false
 	
+func _on_board_refund_piece(piece_type: Variant) -> void:
+	if (!valid_spawn(piece_type)):
+		if (status == Globals.COLORS.WHITE):
+			white_dict.erase(piece_type)
+		else:
+			black_dict.erase(piece_type)
+	
 func _on_board_set_status(color: Variant) -> void:
 	status = color
 

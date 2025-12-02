@@ -102,6 +102,7 @@ text = "Spawn Mitosis
 "
 
 [connection signal="selected_square" from="." to="Board" method="_on_game_selected_square"]
+[connection signal="refund_piece" from="Board" to="SetupPhaseUI" method="_on_board_refund_piece"]
 [connection signal="set_status" from="Board" to="." method="_on_board_set_status"]
 [connection signal="set_status" from="Board" to="SetupPhaseUI" method="_on_board_set_status"]
 [connection signal="setup_complete" from="Board" to="." method="_on_board_setup_complete"]
