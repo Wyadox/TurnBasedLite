@@ -16,7 +16,7 @@ var setup_done: bool = false
 const CELL_SIZE = 120
 
 # Called when the node enters the scene tree for the first time.
-func _ready():
+func _on_opponent_ui_setup_ready() -> void:
 	draw_board()
 	init_pieces()
 

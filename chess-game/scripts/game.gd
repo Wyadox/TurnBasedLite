@@ -18,9 +18,15 @@ var setup_complete: bool = false
 @onready var ui_control = $Control
 @onready var win_label = $"Control/Win Label"
 @onready var setup_ui = $SetupPhaseUI
+@onready var main_menu_ui = $MainMenu
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	ui_control.hide()
+	win_label.hide()
+	setup_ui.hide()
+	
+func _on_opponent_ui_setup_ready() -> void:
 	init_game()
 	ui_control.hide()
 	win_label.hide()
@@ -86,8 +92,6 @@ func init_game():
 	is_dragging = false
 	player_color = Globals.COLORS.WHITE
 	status = Globals.COLORS.WHITE
-	player2_type = Globals.PLAYER_2_TYPE.HUMAN
-	#player2_type = Globals.PLAYER_2_TYPE.AI
 
 func get_pos_under_mouse():
 	var pos = get_global_mouse_position()
@@ -215,3 +219,11 @@ func _on_board_setup_complete() -> void:
 func _on_board_set_status(color: Variant) -> void:
 	status = color
 	print(color)
+
+
+func _on_opponent_ui_ai_op() -> void:
+	player2_type = Globals.PLAYER_2_TYPE.AI
+
+
+func _on_opponent_ui_human_op() -> void:
+	player2_type = Globals.PLAYER_2_TYPE.HUMAN

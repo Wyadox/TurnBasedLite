@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="chess-game"
-run/main_scene="uid://bxe7liyqs8vux"
+run/main_scene="uid://bxdepwhprt4pp"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 

@@ -1,8 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://bxdepwhprt4pp"]
+[gd_scene load_steps=6 format=3 uid="uid://bxdepwhprt4pp"]
 
 [ext_resource type="Script" uid="uid://bj20fx8i5xny6" path="res://scripts/game.gd" id="1_yqjtg"]
 [ext_resource type="Script" uid="uid://dlwh8mqmkmuqo" path="res://scripts/board.gd" id="2_lnu2h"]
 [ext_resource type="Script" uid="uid://b3kuug82fetu7" path="res://scripts/setup_phase_ui.gd" id="3_lnu2h"]
+[ext_resource type="Script" uid="uid://ft8v0cp8vk1p" path="res://scenes/main_menu.gd" id="4_lbhrr"]
+[ext_resource type="Script" uid="uid://dh2jkjv5144ew" path="res://scenes/opponent_ui.gd" id="5_iywne"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_yqjtg")
@@ -101,6 +103,53 @@ layout_mode = 2
 text = "Spawn Mitosis
 "
 
+[node name="MainMenu" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 201.0
+offset_bottom = 161.0
+script = ExtResource("4_lbhrr")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainMenu"]
+layout_mode = 0
+offset_right = 218.0
+offset_bottom = 104.0
+
+[node name="StartButton" type="Button" parent="MainMenu/VBoxContainer"]
+layout_mode = 2
+text = "Start"
+
+[node name="OptionsButton" type="Button" parent="MainMenu/VBoxContainer"]
+layout_mode = 2
+text = "Options"
+
+[node name="QuitButton" type="Button" parent="MainMenu/VBoxContainer"]
+layout_mode = 2
+text = "Quit"
+
+[node name="OpponentUI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 152.0
+offset_top = 175.0
+offset_right = 412.0
+offset_bottom = 333.0
+script = ExtResource("5_iywne")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="OpponentUI"]
+layout_mode = 0
+offset_right = 319.0
+offset_bottom = 41.0
+theme_override_constants/separation = 100
+
+[node name="HumanButton" type="Button" parent="OpponentUI/HBoxContainer"]
+layout_mode = 2
+text = "Human"
+
+[node name="AiButton" type="Button" parent="OpponentUI/HBoxContainer"]
+layout_mode = 2
+text = "Computer"
+
 [connection signal="selected_square" from="." to="Board" method="_on_game_selected_square"]
 [connection signal="refund_piece" from="Board" to="SetupPhaseUI" method="_on_board_refund_piece"]
 [connection signal="set_status" from="Board" to="." method="_on_board_set_status"]
@@ -115,3 +164,13 @@ text = "Spawn Mitosis
 [connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Archer_Button" to="SetupPhaseUI" method="_on_archer_button_pressed"]
 [connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Archbishop_Button" to="SetupPhaseUI" method="_on_archbishop_button_pressed"]
 [connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Mitosis_Button" to="SetupPhaseUI" method="_on_mitosis_button_pressed"]
+[connection signal="choose_op" from="MainMenu" to="OpponentUI" method="_on_main_menu_choose_op"]
+[connection signal="pressed" from="MainMenu/VBoxContainer/StartButton" to="MainMenu" method="_on_start_button_pressed"]
+[connection signal="pressed" from="MainMenu/VBoxContainer/OptionsButton" to="MainMenu" method="_on_options_button_pressed"]
+[connection signal="pressed" from="MainMenu/VBoxContainer/QuitButton" to="MainMenu" method="_on_quit_button_pressed"]
+[connection signal="ai_op" from="OpponentUI" to="." method="_on_opponent_ui_ai_op"]
+[connection signal="human_op" from="OpponentUI" to="." method="_on_opponent_ui_human_op"]
+[connection signal="setup_ready" from="OpponentUI" to="." method="_on_opponent_ui_setup_ready"]
+[connection signal="setup_ready" from="OpponentUI" to="Board" method="_on_opponent_ui_setup_ready"]
+[connection signal="pressed" from="OpponentUI/HBoxContainer/HumanButton" to="OpponentUI" method="_on_human_button_pressed"]
+[connection signal="pressed" from="OpponentUI/HBoxContainer/AiButton" to="OpponentUI" method="_on_ai_button_pressed"]
