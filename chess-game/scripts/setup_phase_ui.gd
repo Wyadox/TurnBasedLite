@@ -58,3 +58,27 @@ func _on_mitosis_button_pressed() -> void:
 	print("Mitosis")
 	if (valid_spawn(Globals.PIECE_TYPES.MITOSIS_PAWN)):
 		emit_signal("spawn_piece", Globals.PIECE_TYPES.MITOSIS_PAWN)
+		
+static func determineAiPieces():
+	var piecesToSpawn = []
+	var pieces = [Globals.PIECE_TYPES.ROOK,
+	Globals.PIECE_TYPES.KNIGHT,
+	Globals.PIECE_TYPES.BISHOP,
+	Globals.PIECE_TYPES.QUEEN,
+	Globals.PIECE_TYPES.KING,
+	Globals.PIECE_TYPES.PAWN,
+	Globals.PIECE_TYPES.HORSE_ARCHER,
+	Globals.PIECE_TYPES.ARCHBISHOP,
+	Globals.PIECE_TYPES.MITOSIS_PAWN]
+	
+	var pos
+	for i in 6:
+		var roll = randi() % pieces.size()
+		pos = Vector2(i, 0)
+		piecesToSpawn.push_back(pieces[roll])
+		piecesToSpawn.push_back(pos)
+		pieces.remove_at(roll)
+		print(pos)
+		
+	return piecesToSpawn
+	

@@ -3,9 +3,11 @@ extends Node2D
 signal setup_complete
 signal set_status(color)
 signal refund_piece(piece_type)
+signal spawn_ai
 
 @export var pieces = [];
 @export var piece_scene = preload("res://scenes/Piece.tscn")
+@export var setup_script = preload("res://scripts/setup_phase_ui.gd")
 
 @export var white_king_pos: Vector2
 @export var black_king_pos: Vector2
@@ -180,6 +182,10 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Variant) -> void:
 		color = Globals.COLORS.BLACK
 	emit_signal("set_status", color)
 	
+	if total_pieces == 5:
+		emit_signal("spawn_ai")
+		total_pieces = num_pieces()
+	
 	# Ready to play
 	if total_pieces + 1 > 11:
 		setup_done = true
@@ -230,3 +236,13 @@ func num_pieces():
 	for piece in pieces:
 		count += 1
 	return count
+
+
+func _on_game_init_ai() -> void:
+	var piecesToSpawn = []
+	piecesToSpawn = setup_script.determineAiPieces()
+	
+	var i = 0
+	for it in piecesToSpawn.size() / 2:
+		create_piece(piecesToSpawn[i], Globals.COLORS.BLACK, piecesToSpawn[i + 1])
+		i += 2

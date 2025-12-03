@@ -1,6 +1,7 @@
 extends Node2D
 
 signal selected_square(pos)
+signal init_ai
 
 # Game States
 var game_over;
@@ -32,6 +33,7 @@ func _on_opponent_ui_setup_ready() -> void:
 	win_label.hide()
 	setup_ui.show()
 	setup_complete = false
+	
 
 func _input(event):
 	if game_over:
@@ -232,3 +234,8 @@ func _on_opponent_ui_ai_op() -> void:
 
 func _on_opponent_ui_human_op() -> void:
 	player2_type = Globals.PLAYER_2_TYPE.HUMAN
+
+
+func _on_board_spawn_ai() -> void:
+	if player2_type == Globals.PLAYER_2_TYPE.AI:
+		emit_signal("init_ai")

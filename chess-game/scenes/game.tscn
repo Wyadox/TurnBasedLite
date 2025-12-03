@@ -3,8 +3,8 @@
 [ext_resource type="Script" uid="uid://bj20fx8i5xny6" path="res://scripts/game.gd" id="1_yqjtg"]
 [ext_resource type="Script" uid="uid://dlwh8mqmkmuqo" path="res://scripts/board.gd" id="2_lnu2h"]
 [ext_resource type="Script" uid="uid://b3kuug82fetu7" path="res://scripts/setup_phase_ui.gd" id="3_lnu2h"]
-[ext_resource type="Script" uid="uid://ft8v0cp8vk1p" path="res://scenes/main_menu.gd" id="4_lbhrr"]
-[ext_resource type="Script" uid="uid://dh2jkjv5144ew" path="res://scenes/opponent_ui.gd" id="5_iywne"]
+[ext_resource type="Script" uid="uid://ft8v0cp8vk1p" path="res://scripts/main_menu.gd" id="4_lbhrr"]
+[ext_resource type="Script" uid="uid://dh2jkjv5144ew" path="res://scripts/opponent_ui.gd" id="5_iywne"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_yqjtg")
@@ -56,7 +56,7 @@ offset_right = 592.0
 offset_bottom = 530.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "Play
+text = "Main Menu
 "
 
 [node name="SetupPhaseUI" type="Control" parent="."]
@@ -106,8 +106,10 @@ text = "Spawn Mitosis
 [node name="MainMenu" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 201.0
-offset_bottom = 161.0
+offset_left = 33.0
+offset_top = 29.0
+offset_right = 234.0
+offset_bottom = 190.0
 script = ExtResource("4_lbhrr")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MainMenu"]
@@ -150,11 +152,13 @@ text = "Human"
 layout_mode = 2
 text = "Computer"
 
+[connection signal="init_ai" from="." to="Board" method="_on_game_init_ai"]
 [connection signal="selected_square" from="." to="Board" method="_on_game_selected_square"]
 [connection signal="refund_piece" from="Board" to="SetupPhaseUI" method="_on_board_refund_piece"]
 [connection signal="set_status" from="Board" to="." method="_on_board_set_status"]
 [connection signal="set_status" from="Board" to="SetupPhaseUI" method="_on_board_set_status"]
 [connection signal="setup_complete" from="Board" to="." method="_on_board_setup_complete"]
+[connection signal="spawn_ai" from="Board" to="." method="_on_board_spawn_ai"]
 [connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]
 [connection signal="spawn_piece" from="SetupPhaseUI" to="Board" method="_on_setup_phase_ui_spawn_piece"]
 [connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Pawn_Button" to="SetupPhaseUI" method="_on_pawn_button_pressed"]
