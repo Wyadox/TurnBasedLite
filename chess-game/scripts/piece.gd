@@ -113,6 +113,7 @@ func get_moveable_positions():
 		Globals.PIECE_TYPES.STUN_KNIGHT: return knight_threat_pos()
 		Globals.PIECE_TYPES.TROJAN_HORSE: return knight_threat_pos()
 		Globals.PIECE_TYPES.EXPLODING_BISHOP: return bishop_threat_pos()
+		Globals.PIECE_TYPES.SHIELD_KING: return king_threat_pos()
 		_: return []
 
 func get_threatened_positions():
@@ -129,6 +130,7 @@ func get_threatened_positions():
 		Globals.PIECE_TYPES.STUN_KNIGHT: return knight_threat_pos()
 		Globals.PIECE_TYPES.TROJAN_HORSE: return knight_threat_pos()
 		Globals.PIECE_TYPES.EXPLODING_BISHOP: return bishop_threat_pos()
+		Globals.PIECE_TYPES.SHIELD_KING: return king_threat_pos()
 		_: return []
 
 
@@ -344,10 +346,23 @@ func trojan_spawn(color):
 		)
 
 const BISHOP_EXPLODE_INCREMENT = [[1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1]]
-func bishop_explode():
+func bishop_explode_positions():
 	var positions = []
 	for inc in BISHOP_EXPLODE_INCREMENT:
 		var pos = board_handle.spot_search_explode(
+			board_position[0], board_position[1],
+			inc[0], inc[1]
+		)
+		if pos != null:
+			positions.append(pos)
+	return positions
+
+const SHIELD_KING_PROTECT_INCREMENTS = [[1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1]]
+func shield_king_protect_positions():
+	var positions = []
+	for inc in SHIELD_KING_PROTECT_INCREMENTS:
+		var pos = board_handle.spot_search_protect(
+			color,
 			board_position[0], board_position[1],
 			inc[0], inc[1]
 		)

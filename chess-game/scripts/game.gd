@@ -5,6 +5,8 @@ var game_over;
 var player_color;
 var status; # who is playing
 var player2_type; # Where AI or Human is playinh
+var white_shield_king_alive = false
+var black_shield_king_alive = false
 
 # To drag piece
 var is_dragging: bool;
@@ -59,6 +61,12 @@ func init_game():
 	player_color = Globals.COLORS.WHITE
 	status = Globals.COLORS.WHITE
 	player2_type = Globals.PLAYER_2_TYPE.HUMAN
+	# Check to see if either player has a shield king, and mark it alive if it does.
+	for piece in board.pieces:
+		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING && piece.color == Globals.COLORS.WHITE:
+			white_shield_king_alive = true
+		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING && piece.color == Globals.COLORS.BLACK:
+			black_shield_king_alive = true
 	#player2_type = Globals.PLAYER_2_TYPE.AI
 
 func get_pos_under_mouse():
@@ -80,31 +88,39 @@ func drop_piece():
 			if dest_piece.piece_type == Globals.PIECE_TYPES.TROJAN_HORSE:
 				dest_piece.trojan_spawn(dest_piece.color)
 			if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
-				for position in dest_piece.bishop_explode():
+				for position in dest_piece.bishop_explode_positions():
 					piece_around = board.get_piece(position)
 					if piece_around != null:
 						board.delete_piece(piece_around)
 				if selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER:
 					board.delete_piece(selected_piece)
 			if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
-				for position in dest_piece.bishop_explode():
+				for position in dest_piece.bishop_explode_positions():
 					piece_around = board.get_piece(position)
+					if piece_around != null and piece_around.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
+						board.delete_piece(piece_around)
+						board.delete_piece(selected_piece)
+						end_turn()
+						return true
+				for pos in dest_piece.bishop_explode_positions():
+					piece_around = board.get_piece(pos)
 					if piece_around != null:
 						board.delete_piece(piece_around)
-				board.delete_piece(selected_piece)
+					board.delete_piece(selected_piece)
 			board.delete_piece(dest_piece)
 			selected_piece.move_position(selected_piece.board_position)
 			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER:
 				is_shooting = true
 		if is_shooting == false:
-			print(selected_piece.board_position - to_move)
+			#print(selected_piece.board_position - to_move)
 			selected_piece.move_position(to_move)
 			if selected_piece.piece_type == Globals.PIECE_TYPES.STUN_KNIGHT:
 				for space in selected_piece.get_stun_positions():
 					var piece = board.get_piece(space)
 					if piece != null:
 						piece.stun_counter = 2
-			
+		if selected_piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
+			board.register_king(selected_piece.board_position, selected_piece.color)
 		# - change currnet status of active color
 		#status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
 		end_turn()
@@ -114,6 +130,8 @@ func drop_piece():
 func valid_move(from_pos, to_pos):
 	var board_copy = board.clone()
 	var src_piece = board_copy.get_piece(from_pos)
+	var shield_king_position
+	var shield_king
 	
 	# If we cannot move to threatend or moveable position
 	if(
@@ -123,17 +141,25 @@ func valid_move(from_pos, to_pos):
 	):
 		return false
 	
+	if status == Globals.COLORS.WHITE && black_shield_king_alive:
+		shield_king_position = board.black_king_pos
+		shield_king = board_copy.get_piece(shield_king_position)
+	elif status == Globals.COLORS.BLACK && white_shield_king_alive:
+		shield_king_position = board.white_king_pos
+		shield_king = board_copy.get_piece(shield_king_position)
+	if src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP && shield_king != null:
+		for position in shield_king.shield_king_protect_positions():
+			print(position)
+			if board_copy.get_piece(position) != null && position == to_pos:
+				return false
+			
+	
 	var dst_piece = board_copy.get_piece(to_pos)
 	if dst_piece != null:
 		board_copy.delete_piece(dst_piece)
 	src_piece.move_position(to_pos)
 	
-	# Check whether there is no check threaten the color
-	#for piece in board_copy.pieces:
-		#if status == Globals.COLORS.BLACK and board_copy.black_king_pos in piece.get_threatened_positions():
-			#return false
-		#if status == Globals.COLORS.WHITE and board_copy.white_king_pos in piece.get_threatened_positions():
-			#return false
+	
 	
 	return true
 
@@ -141,6 +167,9 @@ func valid_move(from_pos, to_pos):
 func get_valid_moves():
 	# Get possible moves for current player
 	var valid_moves = []
+#	var shield_king_position
+#	var shield_king
+	
 	for piece in board.pieces:
 		if piece.color == status:
 			var candi_pos = piece.get_moveable_positions()
@@ -150,6 +179,18 @@ func get_valid_moves():
 			for pos in candi_pos:
 				if valid_move(piece.board_position, pos):
 					valid_moves.append([piece, pos])
+#		if status == Globals.COLORS.WHITE && black_shield_king_alive:
+#			shield_king_position = board.black_king_pos
+#			shield_king = board.get_piece(shield_king_position)
+#		elif status == Globals.COLORS.BLACK && white_shield_king_alive:
+#			shield_king_position = board.white_king_pos
+#			shield_king = board.get_piece(shield_king_position)
+#		if piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP && shield_king != null:
+#			for move in valid_moves:
+#				for position in shield_king.shield_king_protect_positions():
+#					var index = valid_moves.find(move)
+#					if valid_moves[index][1] == position:
+#						valid_moves.remove_at(index)
 	return valid_moves
 
 func unique(arr: Array) -> Array: 
@@ -205,4 +246,3 @@ func end_turn():
 		if piece.stun_counter > 0:
 			piece.stun_counter -= 1
 	status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
-	
