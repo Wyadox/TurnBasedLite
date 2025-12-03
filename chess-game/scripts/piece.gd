@@ -110,6 +110,7 @@ func get_moveable_positions():
 		Globals.PIECE_TYPES.HORSE_ARCHER: return horse_archer_threat_pos()
 		Globals.PIECE_TYPES.ARCHBISHOP: return archbishop_threat_pos()
 		Globals.PIECE_TYPES.JOUST_BISHOP: return bishop_threat_pos()
+		Globals.PIECE_TYPES.ARCOBISHOP: return arcobishop_threat_pos()
 		_: return []
 
 func get_threatened_positions():
@@ -130,6 +131,7 @@ func get_threatened_positions():
 		Globals.PIECE_TYPES.HORSE_ARCHER: return horse_archer_threat_pos()
 		Globals.PIECE_TYPES.ARCHBISHOP: return archbishop_threat_pos()
 		Globals.PIECE_TYPES.JOUST_BISHOP: return bishop_threat_pos()
+		Globals.PIECE_TYPES.ARCOBISHOP: return arcobishop_threat_pos()
 		_: return []
 
 
@@ -263,7 +265,7 @@ func horse_archer_threat_pos():
 	return positions
 	
 	
-# Bishop Moves
+# Arch Bishop Moves
 const ARCHBISHOP_BEAM_INCREMENTS = [[1, 1], [1, -1], [-1, 1], [-1, -1]]
 const ARCHBISHOP_SPOT_INCREMENTS = [[0, 1], [1, 0], [0, -1], [-1, 0]]
 func archbishop_threat_pos():
@@ -275,6 +277,20 @@ func archbishop_threat_pos():
 			inc[0], inc[1]
 		)
 	for inc in ARCHBISHOP_SPOT_INCREMENTS:
+		var pos = board_handle.spot_search_threat(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1]
+		)
+		if pos != null:
+			positions.append(pos)
+	return positions
+	
+# Arco Bishop Moves
+const ARCOBISHOP_SPOT_INCREMENTS = [[2, 2], [2, -2], [-2, 2], [-2, -2], [1, 1], [1, -1], [-1, 1], [-1, -1]]
+func arcobishop_threat_pos():
+	var positions = []
+	for inc in ARCOBISHOP_SPOT_INCREMENTS:
 		var pos = board_handle.spot_search_threat(
 			color,
 			board_position[0], board_position[1],

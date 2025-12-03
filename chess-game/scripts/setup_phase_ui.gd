@@ -87,3 +87,9 @@ func _on_joust_button_pressed() -> void:
 	print("Joust")
 	if (valid_spawn(Globals.PIECE_TYPES.JOUST_BISHOP)):
 		emit_signal("spawn_piece", Globals.PIECE_TYPES.JOUST_BISHOP)
+
+
+func _on_arco_button_pressed() -> void:
+	print("Arco")
+	if (valid_spawn(Globals.PIECE_TYPES.ARCOBISHOP)):
+		emit_signal("spawn_piece", Globals.PIECE_TYPES.ARCOBISHOP)

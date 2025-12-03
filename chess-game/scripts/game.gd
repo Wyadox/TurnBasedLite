@@ -109,7 +109,7 @@ func get_pos_under_mouse():
 func drop_piece():
 	var is_shooting = false
 	var is_jousting = false
-	var piece_captured = false
+	var piece_died = false
 	var to_move = get_pos_under_mouse()
 	var old_pos = selected_piece.board_position
 	
@@ -119,7 +119,8 @@ func drop_piece():
 		var dest_piece = board.get_piece(to_move)
 		# Delete only if the target piece is of different color
 		if dest_piece != null and dest_piece.color != selected_piece.color:
-			piece_captured = true
+			if dest_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
+				piece_died = true
 			board.delete_piece(dest_piece)
 			selected_piece.move_position(selected_piece.board_position)
 			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER:
@@ -129,12 +130,14 @@ func drop_piece():
 		if is_shooting == false:
 			print(selected_piece.board_position - to_move)
 			selected_piece.move_position(to_move)
-		if is_jousting and piece_captured:
+		if is_jousting:
 			var joust_pos = to_move + joust_direction(old_pos, to_move)
 			dest_piece = board.get_piece(joust_pos)
 			board.delete_piece(dest_piece)
 			if dest_piece != null and valid_move(to_move, joust_pos):
 				selected_piece.move_position(joust_pos)
+		if piece_died:
+			board.delete_piece(selected_piece)
 			
 		# - change currnet status of active color
 		status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
@@ -206,6 +209,8 @@ func unique(arr: Array) -> Array:
 
 
 func player2_move():
+	var piece_died = false
+	
 	# Make a move when player2 is AI, else default controller is with user itself
 	if player2_type == Globals.PLAYER_2_TYPE.AI:
 		var valid_moves = get_valid_moves()
@@ -218,8 +223,12 @@ func player2_move():
 		var dest_piece = board.get_piece(pos)
 		# Delete only if the target piece is found
 		if dest_piece != null:
+			if dest_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
+				piece_died = true
 			board.delete_piece(dest_piece)
 		piece.move_position(pos)
+		if piece_died:
+			board.delete_piece(piece)
 		status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
 		evaluate_end_game()
 

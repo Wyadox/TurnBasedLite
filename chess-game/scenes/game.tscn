@@ -108,6 +108,11 @@ layout_mode = 2
 text = "Spawn Joust
 "
 
+[node name="Arco_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
+layout_mode = 2
+text = "Spawn ARCO
+"
+
 [node name="MainMenu" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
@@ -174,6 +179,7 @@ text = "Computer"
 [connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Archbishop_Button" to="SetupPhaseUI" method="_on_archbishop_button_pressed"]
 [connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Mitosis_Button" to="SetupPhaseUI" method="_on_mitosis_button_pressed"]
 [connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Joust_Button" to="SetupPhaseUI" method="_on_joust_button_pressed"]
+[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Arco_Button" to="SetupPhaseUI" method="_on_arco_button_pressed"]
 [connection signal="choose_op" from="MainMenu" to="OpponentUI" method="_on_main_menu_choose_op"]
 [connection signal="pressed" from="MainMenu/VBoxContainer/StartButton" to="MainMenu" method="_on_start_button_pressed"]
 [connection signal="pressed" from="MainMenu/VBoxContainer/OptionsButton" to="MainMenu" method="_on_options_button_pressed"]
