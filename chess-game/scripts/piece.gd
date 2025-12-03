@@ -109,6 +109,7 @@ func get_moveable_positions():
 		Globals.PIECE_TYPES.KING: return king_threat_pos()
 		Globals.PIECE_TYPES.HORSE_ARCHER: return horse_archer_threat_pos()
 		Globals.PIECE_TYPES.ARCHBISHOP: return archbishop_threat_pos()
+		Globals.PIECE_TYPES.JOUST_BISHOP: return bishop_threat_pos()
 		_: return []
 
 func get_threatened_positions():
@@ -128,6 +129,7 @@ func get_threatened_positions():
 		Globals.PIECE_TYPES.KING: return king_threat_pos()
 		Globals.PIECE_TYPES.HORSE_ARCHER: return horse_archer_threat_pos()
 		Globals.PIECE_TYPES.ARCHBISHOP: return archbishop_threat_pos()
+		Globals.PIECE_TYPES.JOUST_BISHOP: return bishop_threat_pos()
 		_: return []
 
 

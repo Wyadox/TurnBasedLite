@@ -108,21 +108,33 @@ func get_pos_under_mouse():
 
 func drop_piece():
 	var is_shooting = false
+	var is_jousting = false
+	var piece_captured = false
 	var to_move = get_pos_under_mouse()
+	var old_pos = selected_piece.board_position
 	
-	if valid_move(selected_piece.board_position, to_move):
+	if valid_move(old_pos, to_move):
 		# For valid move:
 		# - if target has piece, then replace it
 		var dest_piece = board.get_piece(to_move)
 		# Delete only if the target piece is of different color
 		if dest_piece != null and dest_piece.color != selected_piece.color:
+			piece_captured = true
 			board.delete_piece(dest_piece)
 			selected_piece.move_position(selected_piece.board_position)
 			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER:
 				is_shooting = true
+			if selected_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
+				is_jousting = true
 		if is_shooting == false:
 			print(selected_piece.board_position - to_move)
 			selected_piece.move_position(to_move)
+		if is_jousting and piece_captured:
+			var joust_pos = to_move + joust_direction(old_pos, to_move)
+			dest_piece = board.get_piece(joust_pos)
+			board.delete_piece(dest_piece)
+			if dest_piece != null and valid_move(to_move, joust_pos):
+				selected_piece.move_position(joust_pos)
 			
 		# - change currnet status of active color
 		status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
@@ -155,6 +167,22 @@ func valid_move(from_pos, to_pos):
 	
 	return true
 
+# Determine the square the jousting bishop should go
+func joust_direction(old_pos, to_move):
+	var pos = Vector2(0, 0)
+	
+	if old_pos.x < to_move.x:
+		pos.x = 1
+	else:
+		pos.x = -1
+	
+	if old_pos.y > to_move.x:
+		pos.y = -1
+	else:
+		pos.y = 1
+	
+	print(pos)
+	return pos
 
 func get_valid_moves():
 	# Get possible moves for current player

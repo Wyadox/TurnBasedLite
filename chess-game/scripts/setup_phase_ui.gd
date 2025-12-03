@@ -64,7 +64,6 @@ static func determineAiPieces():
 	var pieces = [Globals.PIECE_TYPES.ROOK,
 	Globals.PIECE_TYPES.KNIGHT,
 	Globals.PIECE_TYPES.BISHOP,
-	Globals.PIECE_TYPES.QUEEN,
 	Globals.PIECE_TYPES.KING,
 	Globals.PIECE_TYPES.PAWN,
 	Globals.PIECE_TYPES.HORSE_ARCHER,
@@ -82,3 +81,9 @@ static func determineAiPieces():
 		
 	return piecesToSpawn
 	
+
+
+func _on_joust_button_pressed() -> void:
+	print("Joust")
+	if (valid_spawn(Globals.PIECE_TYPES.JOUST_BISHOP)):
+		emit_signal("spawn_piece", Globals.PIECE_TYPES.JOUST_BISHOP)
