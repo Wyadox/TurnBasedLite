@@ -1,15 +1,24 @@
 extends Node2D
 
+signal setup_complete
+signal set_status(color)
+signal refund_piece(piece_type)
+signal spawn_ai
+
 @export var pieces = [];
 @export var piece_scene = preload("res://scenes/Piece.tscn")
+@export var setup_script = preload("res://scripts/setup_phase_ui.gd")
 
 @export var white_king_pos: Vector2
 @export var black_king_pos: Vector2
 
+var selected_pos: Vector2 = Vector2(-1, -1)
+var setup_done: bool = false
+
 const CELL_SIZE = 120
 
 # Called when the node enters the scene tree for the first time.
-func _ready():
+func _on_opponent_ui_setup_ready() -> void:
 	draw_board()
 	init_pieces()
 
@@ -69,6 +78,8 @@ func register_king(pos, col):
 			black_king_pos = pos
 
 func get_piece(pos: Vector2):
+	if pieces.size() < 1:
+		return
 	for piece in pieces:
 		if piece.board_position == pos:
 			return piece
@@ -183,3 +194,97 @@ func create_piece(type: Globals.PIECE_TYPES, col: Globals.COLORS, board_pos: Vec
 	piece.init_piece(type, col, board_pos, self)
 	pieces.append(piece)
 	return piece
+
+var border_panel
+var borders = []
+
+func _on_setup_phase_ui_spawn_piece(piece_type: Variant) -> void:
+	if selected_pos == Vector2(-1, -1):
+		print("Select a valid position")
+		emit_signal("refund_piece", piece_type)
+		return
+	
+	if setup_done == true:
+		print("Setup phase is over")
+		return
+		
+	# Determine color for current piece
+	var color
+	var total_pieces : int = num_pieces()
+	if total_pieces < 6:
+		color = Globals.COLORS.WHITE
+	else:
+		color = Globals.COLORS.BLACK
+	create_piece(piece_type, color, selected_pos)
+	
+	# Determine if color needs to swap
+	if total_pieces + 1 < 6:
+		color = Globals.COLORS.WHITE
+	else:
+		color = Globals.COLORS.BLACK
+	emit_signal("set_status", color)
+	
+	if total_pieces == 5:
+		emit_signal("spawn_ai")
+		total_pieces = num_pieces()
+	
+	# Ready to play
+	if total_pieces + 1 > 11:
+		setup_done = true
+		emit_signal("setup_complete")
+		
+	# Reset border visual and selected pos
+	if border_panel and border_panel.is_inside_tree():
+		border_panel.queue_free()
+	selected_pos = Vector2(-1, -1)
+
+
+func _on_game_selected_square(pos: Variant) -> void:
+	selected_pos = pos
+	print(pos)
+	draw_border(pos.x, pos.y, Color(0.0, 0.0, 1.0), true)
+	
+func draw_border(x, y, color, clear):
+	if clear and border_panel and border_panel.is_inside_tree():
+		border_panel.queue_free()
+	border_panel = Panel.new()
+	border_panel.size = Vector2(CELL_SIZE, CELL_SIZE)
+	border_panel.position = Vector2(
+		x * CELL_SIZE,
+		y * CELL_SIZE
+	)
+	border_panel.z_index = 50
+	
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color.TRANSPARENT
+	style.border_color = color
+	style.border_width_left = 4
+	style.border_width_top = 4
+	style.border_width_right = 4
+	style.border_width_bottom = 4
+	border_panel.add_theme_stylebox_override("panel", style)
+	
+	add_child(border_panel)
+	if !clear:
+		borders.push_back(border_panel)
+	
+func clear_borders():
+	for it in borders:
+		it.queue_free()
+	borders.clear()
+	
+func num_pieces():
+	var count : int = 0
+	for piece in pieces:
+		count += 1
+	return count
+
+
+func _on_game_init_ai() -> void:
+	var piecesToSpawn = []
+	piecesToSpawn = setup_script.determineAiPieces()
+	
+	var i = 0
+	for it in piecesToSpawn.size() / 2:
+		create_piece(piecesToSpawn[i], Globals.COLORS.BLACK, piecesToSpawn[i + 1])
+		i += 2

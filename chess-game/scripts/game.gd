@@ -1,5 +1,8 @@
 extends Node2D
 
+signal selected_square(pos)
+signal init_ai
+
 # Game States
 var game_over;
 var player_color;
@@ -12,16 +15,27 @@ var black_shield_king_alive = false
 var is_dragging: bool;
 var selected_piece = null;
 var previous_position = null;
+var setup_complete: bool = false
 
 @onready var board = $Board;
 @onready var ui_control = $Control
 @onready var win_label = $"Control/Win Label"
+@onready var setup_ui = $SetupPhaseUI
+@onready var main_menu_ui = $MainMenu
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	ui_control.hide()
+	win_label.hide()
+	setup_ui.hide()
+	
+func _on_opponent_ui_setup_ready() -> void:
 	init_game()
 	ui_control.hide()
 	win_label.hide()
+	setup_ui.show()
+	setup_complete = false
+	
 
 func _input(event):
 	if game_over:
@@ -31,11 +45,36 @@ func _input(event):
 		var pos = get_pos_under_mouse()
 		selected_piece = board.get_piece(pos)
 		# Drag piece only if they are under the mouse or are of current player
-		if selected_piece == null or selected_piece.color != status or selected_piece.stun_counter != 0:
+		if selected_piece == null:
+			if pos.x < 6 and pos.x > -1 and pos.y < 6 and pos.y > -1:
+				if status == Globals.COLORS.WHITE and pos.y == 5:
+					emit_signal("selected_square", pos)
+				if status == Globals.COLORS.BLACK and pos.y == 0:
+					emit_signal("selected_square", pos)
+			else:
+				print("no square was selected")
 			return
+			
+		if selected_piece.color != status:
+			return
+			
+		if setup_complete == false:
+			return
+			
 		is_dragging = true
 		previous_position = selected_piece.position
 		selected_piece.z_index = 100
+		
+		# Highlights available moves
+		var highlight_moves = selected_piece.get_moveable_positions()
+		for it in highlight_moves:
+			var color : Color
+			if board.get_piece(Vector2(it.x, it.y)) != null:
+				color = Color(1.0, 0.0, 0.0)
+			else:
+				color = Color(1.0, 1.0, 0.0)
+			board.draw_border(it.x, it.y, color, false)
+			
 	elif event is InputEventMouseMotion and is_dragging:
 		selected_piece.position = get_global_mouse_position()
 	elif Input.is_action_just_released("left_click") and is_dragging:
@@ -45,6 +84,7 @@ func _input(event):
 		selected_piece.z_index = 0
 		selected_piece = null
 		is_dragging = false
+		board.clear_borders()
 		
 		# Check whether game is over after user's move
 		if evaluate_end_game():
@@ -77,9 +117,12 @@ func get_pos_under_mouse():
 
 func drop_piece():
 	var is_shooting = false
+	var is_jousting = false
+	var piece_died = false
 	var to_move = get_pos_under_mouse()
-	var piece_around
-	if valid_move(selected_piece.board_position, to_move):
+	var old_pos = selected_piece.board_position
+	
+	if valid_move(old_pos, to_move):
 		# For valid move:
 		# - if target has piece, then replace it
 		var dest_piece = board.get_piece(to_move)
@@ -107,10 +150,14 @@ func drop_piece():
 					if piece_around != null:
 						board.delete_piece(piece_around)
 					board.delete_piece(selected_piece)
+			if dest_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
+				piece_died = true
 			board.delete_piece(dest_piece)
 			selected_piece.move_position(selected_piece.board_position)
 			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER:
 				is_shooting = true
+			if selected_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
+				is_jousting = true
 		if is_shooting == false:
 			#print(selected_piece.board_position - to_move)
 			selected_piece.move_position(to_move)
@@ -121,9 +168,17 @@ func drop_piece():
 						piece.stun_counter = 2
 		if selected_piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
 			board.register_king(selected_piece.board_position, selected_piece.color)
+		if is_jousting:
+			var joust_pos = to_move + joust_direction(old_pos, to_move)
+			dest_piece = board.get_piece(joust_pos)
+			board.delete_piece(dest_piece)
+			if dest_piece != null and valid_move(to_move, joust_pos):
+				selected_piece.move_position(joust_pos)
+		if piece_died:
+			board.delete_piece(selected_piece)
+			
 		# - change currnet status of active color
-		#status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
-		end_turn()
+		status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
 		return true
 	return false
 
@@ -163,6 +218,22 @@ func valid_move(from_pos, to_pos):
 	
 	return true
 
+# Determine the square the jousting bishop should go
+func joust_direction(old_pos, to_move):
+	var pos = Vector2(0, 0)
+	
+	if old_pos.x < to_move.x:
+		pos.x = 1
+	else:
+		pos.x = -1
+	
+	if old_pos.y > to_move.x:
+		pos.y = -1
+	else:
+		pos.y = 1
+	
+	print(pos)
+	return pos
 
 func get_valid_moves():
 	# Get possible moves for current player
@@ -201,6 +272,8 @@ func unique(arr: Array) -> Array:
 
 
 func player2_move():
+	var piece_died = false
+	
 	# Make a move when player2 is AI, else default controller is with user itself
 	if player2_type == Globals.PLAYER_2_TYPE.AI:
 		var valid_moves = get_valid_moves()
@@ -213,10 +286,13 @@ func player2_move():
 		var dest_piece = board.get_piece(pos)
 		# Delete only if the target piece is found
 		if dest_piece != null:
+			if dest_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
+				piece_died = true
 			board.delete_piece(dest_piece)
 		piece.move_position(pos)
-		#status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
-		end_turn()
+		if piece_died:
+			board.delete_piece(piece)
+		status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
 		evaluate_end_game()
 
 func evaluate_end_game():
@@ -246,3 +322,25 @@ func end_turn():
 		if piece.stun_counter > 0:
 			piece.stun_counter -= 1
 	status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
+func _on_board_setup_complete() -> void:
+	setup_complete = true
+	setup_ui.hide()
+	status = Globals.COLORS.WHITE
+
+
+func _on_board_set_status(color: Variant) -> void:
+	status = color
+	print(color)
+
+
+func _on_opponent_ui_ai_op() -> void:
+	player2_type = Globals.PLAYER_2_TYPE.AI
+
+
+func _on_opponent_ui_human_op() -> void:
+	player2_type = Globals.PLAYER_2_TYPE.HUMAN
+
+
+func _on_board_spawn_ai() -> void:
+	if player2_type == Globals.PLAYER_2_TYPE.AI:
+		emit_signal("init_ai")
