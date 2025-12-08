@@ -10,8 +10,8 @@ signal spawn_ai
 @export var setup_script = preload("res://scripts/setup_phase_ui.gd")
 @export var status_indicator = preload("res://scenes/StatusIndicator.tscn")
 
-@export var white_king_pos: Vector2
-@export var black_king_pos: Vector2
+@export var white_king_pos: Vector2 = Vector2(-2, -2)
+@export var black_king_pos: Vector2 = Vector2(-2, -2)
 
 var selected_pos: Vector2 = Vector2(-1, -1)
 var setup_done: bool = false
@@ -21,7 +21,6 @@ const CELL_SIZE = 120
 # Called when the node enters the scene tree for the first time.
 func _on_opponent_ui_setup_ready() -> void:
 	draw_board()
-	init_pieces()
 	clear_borders()
 
 func draw_board():
@@ -39,38 +38,6 @@ func draw_cell(x, y):
 	)
 	rect.z_index = -100
 	add_child(rect)
-
-func init_pieces():
-	for piece_tuple in Globals.INITIAL_PIECE_SET_SINGLE:
-		var piece_type = piece_tuple[0]
-		var black_piece_pos = Vector2(piece_tuple[1], piece_tuple[2])
-		var white_piece_pos = Vector2(piece_tuple[1], 6 -  1 - piece_tuple[2])
-		
-		# Create black piece
-		var black_piece = piece_scene.instantiate()
-		add_child(black_piece)
-		black_piece.init_piece(
-			piece_type,
-			Globals.COLORS.BLACK,
-			black_piece_pos,
-			self
-		)
-		pieces.append(black_piece)
-		
-		# Create white piece
-		var white_piece = piece_scene.instantiate()
-		add_child(white_piece)
-		white_piece.init_piece(
-			piece_type,
-			Globals.COLORS.WHITE,
-			white_piece_pos,
-			self
-		)
-		pieces.append(white_piece)
-		
-		if piece_type == Globals.PIECE_TYPES.SHIELD_KING:
-			register_king(white_piece_pos, Globals.COLORS.WHITE)
-			register_king(black_piece_pos, Globals.COLORS.BLACK)
 
 func register_king(pos, col):
 	match col:
@@ -316,10 +283,23 @@ func update_indicators():
 			spawn_indicator(pos, "protected")
 
 func piece_is_protected(piece):
-	var shield_king = get_piece(white_king_pos if piece.color == Globals.COLORS.WHITE else black_king_pos)
+	var king_pos
+	if piece.color == Globals.COLORS.WHITE:
+		king_pos = white_king_pos
+	else:
+		king_pos = black_king_pos
+
+	# Check if the king actually exists
+	if king_pos == Vector2(-2, -2):
+		return false
+
+	var shield_king = get_piece(king_pos)
 	if shield_king == null:
 		return false
+
 	return piece.board_position in shield_king.shield_king_protect_positions()
+
+
 	
 func num_pieces():
 	var count : int = 0

@@ -30,9 +30,9 @@ func _ready():
 	ui_control.hide()
 	win_label.hide()
 	setup_ui.hide()
+	init_game()
 	
 func _on_opponent_ui_setup_ready() -> void:
-	init_game()
 	ui_control.hide()
 	win_label.hide()
 	setup_ui.show()
@@ -74,11 +74,14 @@ func _input(event):
 		var highlight_moves = selected_piece.get_moveable_positions() + selected_piece.get_threatened_positions()
 		for it in highlight_moves:
 			var color : Color
-			if board.get_piece(Vector2(it.x, it.y)) != null:
+			var dest_piece = board.get_piece(Vector2(it.x, it.y))
+			if dest_piece != null and !board.piece_is_protected(dest_piece):
 				color = Color(1.0, 0.0, 0.0)
-			else:
+				board.draw_border(it.x, it.y, color, false)
+			elif dest_piece == null:
 				color = Color(1.0, 1.0, 0.0)
-			board.draw_border(it.x, it.y, color, false)
+				board.draw_border(it.x, it.y, color, false)
+				
 			
 	elif event is InputEventMouseMotion and is_dragging:
 		selected_piece.position = get_global_mouse_position()
@@ -175,21 +178,6 @@ func drop_piece():
 						board.delete_piece(piece_around)
 				if selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER:
 					board.delete_piece(selected_piece)
-			if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
-				for position in dest_piece.bishop_explode_positions():
-					spawn_explosion(position)
-					piece_around = board.get_piece(position)
-					if piece_around != null and piece_around.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
-						board.delete_piece(piece_around)
-						board.delete_piece(selected_piece)
-						end_turn()
-						return true
-				for pos in dest_piece.bishop_explode_positions():
-					spawn_explosion(position)
-					piece_around = board.get_piece(pos)
-					if piece_around != null:
-						board.delete_piece(piece_around)
-					board.delete_piece(selected_piece)
 			if dest_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
 				piece_died = true
 			board.delete_piece(dest_piece)
@@ -208,6 +196,7 @@ func drop_piece():
 						piece.stun_counter = 2
 		if selected_piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
 			board.register_king(selected_piece.board_position, selected_piece.color)
+			print("drop_piece registered king")
 		if is_jousting:
 			var joust_pos = to_move + joust_direction(old_pos, to_move)
 			dest_piece = board.get_piece(joust_pos)
@@ -247,6 +236,10 @@ func valid_move(from_pos, to_pos):
 			print(position)
 			if board_copy.get_piece(position) != null && position == to_pos:
 				return false
+	
+	var dest_piece = board.get_piece(to_pos)
+	if dest_piece != null and board.piece_is_protected(dest_piece):
+		return false
 			
 	
 	var dst_piece = board_copy.get_piece(to_pos)
@@ -395,6 +388,8 @@ func _on_board_setup_complete() -> void:
 	setup_complete = true
 	setup_ui.hide()
 	status = Globals.COLORS.WHITE
+	print("init_pieces call")
+	init_pieces()
 	board.update_indicators()
 
 
@@ -418,3 +413,8 @@ func _on_board_spawn_ai() -> void:
 		emit_signal("init_ai")
 	else:
 		print("fail")
+
+func init_pieces():
+	for piece in board.pieces:
+		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
+			board.register_king(piece.board_position, piece.color)

@@ -68,7 +68,7 @@ func move_position(to_move: Vector2):
 			return
 	
 	# Update king position if they are moved
-	if piece_type == Globals.PIECE_TYPES.KING:
+	if piece_type == Globals.PIECE_TYPES.SHIELD_KING:
 		board_handle.register_king(board_position, color)
 	
 	# Promotion for pawns to KING BEHAVIOR
@@ -80,12 +80,12 @@ func move_position(to_move: Vector2):
 		promoted = true
 		update_sprite()
 		
-	if piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN and (
-		(color == Globals.COLORS.BLACK and to_move[1] == 5) or 
-		(color == Globals.COLORS.WHITE and to_move[1] == 0)
-	):
-		piece_type = Globals.PIECE_TYPES.KING
-		update_sprite()
+	#if piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN and (
+		#(color == Globals.COLORS.BLACK and to_move[1] == 5) or 
+		#(color == Globals.COLORS.WHITE and to_move[1] == 0)
+	#):
+		#piece_type = Globals.PIECE_TYPES.KING
+		#update_sprite()
 
 func clone (_board):
 	var piece = self.duplicate()
@@ -107,7 +107,6 @@ func get_moveable_positions():
 		Globals.PIECE_TYPES.BISHOP: return bishop_threat_pos()
 		Globals.PIECE_TYPES.ROOK: return rook_threat_pos()
 		Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()
-		Globals.PIECE_TYPES.QUEEN: return queen_threat_pos()
 		Globals.PIECE_TYPES.KING: return king_threat_pos()
 		Globals.PIECE_TYPES.HORSE_ARCHER: return horse_archer_threat_pos()
 		Globals.PIECE_TYPES.ARCHBISHOP: return archbishop_threat_pos()
@@ -139,7 +138,6 @@ func get_threatened_positions():
 		Globals.PIECE_TYPES.BISHOP: return bishop_threat_pos()
 		Globals.PIECE_TYPES.ROOK: return rook_threat_pos()
 		Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()
-		Globals.PIECE_TYPES.QUEEN: return queen_threat_pos()
 		Globals.PIECE_TYPES.KING: return king_threat_pos()
 		Globals.PIECE_TYPES.HORSE_ARCHER: return horse_archer_threat_pos()
 		Globals.PIECE_TYPES.ARCHBISHOP: return archbishop_threat_pos()
@@ -448,6 +446,6 @@ func shield_king_protect_positions():
 			board_position[0], board_position[1],
 			inc[0], inc[1]
 		)
-		if pos != null and board_handle.get_piece(pos) != null:
+		if pos != null:
 			positions.append(pos)
 	return positions
