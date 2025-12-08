@@ -342,6 +342,27 @@ func evaluate_end_game():
 		game_over = true
 		set_win(Globals.PLAYER.TWO if status == player_color else Globals.PLAYER.ONE)
 		return true
+		
+	# Check if Duck is only remaining piece
+	var white_piece_count : int = 0
+	var white_duck : bool = false
+	var black_piece_count : int = 0
+	var black_duck : bool = false
+	for piece in board.pieces:
+		if piece.color == Globals.COLORS.WHITE:
+			white_piece_count += 1
+			if piece.piece_type == Globals.PIECE_TYPES.DUCK:
+				white_duck = true
+		elif piece.color == Globals.COLORS.BLACK:
+			black_piece_count += 1
+			if piece.piece_type == Globals.PIECE_TYPES.DUCK:
+				black_duck = true
+				
+	if white_piece_count == 1 and white_duck or black_piece_count == 1 and black_duck:
+		game_over = true
+		set_win(Globals.PLAYER.TWO if status == player_color else Globals.PLAYER.ONE)
+		return true
+			
 	return false
 
 func set_win(who: Globals.PLAYER):

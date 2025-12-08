@@ -290,10 +290,10 @@ func spawn_indicator(pos : Vector2, status : String):
 	var indicator = status_indicator.instantiate()
 	var offset : int
 	if (status == "protected"):
-		offset = 50
+		offset = 40
 	else:
-		offset = -50
-	indicator.position = Vector2(pos.x * 120 + 60 + offset, pos.y * 120 + 60 + offset)
+		offset = -40
+	indicator.position = Vector2(pos.x * 120 + 60 + offset, pos.y * 120 + 60 + 40)
 	indicator.z_index = 101
 	indicator.set_status(status)
 	add_child(indicator)
