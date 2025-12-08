@@ -2,7 +2,7 @@ extends Node2D
 
 @onready var sprite = $Sprite2D
 
-const SPRITE_SIZE = 16
+const SPRITE_SIZE = 32
 const CELL_SIZE = 120
 
 const X_OFFSET = 60
@@ -16,6 +16,7 @@ var board_handle;
 
 @export var moved: bool;
 @export var promoted: bool;
+@export var stun_counter: int;
 
 func init_piece(
 	type: Globals.PIECE_TYPES,
@@ -29,6 +30,7 @@ func init_piece(
 	board_handle = board
 	promoted = false;
 	moved = false
+	stun_counter = 0
 	
 	update_sprite()
 	
@@ -70,7 +72,7 @@ func move_position(to_move: Vector2):
 		board_handle.register_king(board_position, color)
 	
 	# Promotion for pawns to KING BEHAVIOR
-	if (piece_type == Globals.PIECE_TYPES.PAWN or piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN) and (
+	if (piece_type == Globals.PIECE_TYPES.PAWN or piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN or piece_type == Globals.PIECE_TYPES.WORM) and (
 		(color == Globals.COLORS.BLACK and to_move[1] == 5) or 
 		(color == Globals.COLORS.WHITE and to_move[1] == 0)
 	):
@@ -114,7 +116,14 @@ func get_moveable_positions():
 		Globals.PIECE_TYPES.EXPLODING_BISHOP: return bishop_threat_pos()
 		Globals.PIECE_TYPES.SHIELD_KING: return king_threat_pos()
 		Globals.PIECE_TYPES.JOUST_BISHOP: return bishop_threat_pos()
-		Globals.PIECE_TYPES.ARCOBISHOP: return arcobishop_threat_pos()
+		Globals.PIECE_TYPES.ACROBISHOP: return acrobishop_threat_pos()
+		Globals.PIECE_TYPES.WORM: 
+			var positions = pawn_move_pos()
+			positions += worm_move_pos()
+			if promoted:
+				positions += king_threat_pos()
+			return positions
+		Globals.PIECE_TYPES.DUCK: return duck_move_pos()
 		_: return []
 
 func get_threatened_positions():
@@ -139,7 +148,15 @@ func get_threatened_positions():
 		Globals.PIECE_TYPES.EXPLODING_BISHOP: return bishop_threat_pos()
 		Globals.PIECE_TYPES.SHIELD_KING: return king_threat_pos()
 		Globals.PIECE_TYPES.JOUST_BISHOP: return bishop_threat_pos()
-		Globals.PIECE_TYPES.ARCOBISHOP: return arcobishop_threat_pos()
+		Globals.PIECE_TYPES.ACROBISHOP: return acrobishop_threat_pos()
+		Globals.PIECE_TYPES.CHECKER: return pawn_threat_pos()
+		Globals.PIECE_TYPES.WORM: 
+			var positions = pawn_threat_pos()
+			positions += worm_threat_pos()
+			if promoted:
+				positions += king_threat_pos()
+			return positions
+		Globals.PIECE_TYPES.DUCK: return []
 		_: return []
 
 
@@ -192,6 +209,38 @@ func pawn_move_pos():
 			positions.append(pos)
 	
 	return positions
+	
+const WORM_SPOT_THREAT_INCREMENTS = [[-5,1], [5, 1]];
+const WORM_SPOT_THREAT_OPPOSITE_INCREMENTS = [[-5,-1], [5, -1]];
+const WORM_SPOT_MOVE_INCREMENTS = [[-5,0], [5, 0], [-1, 0], [1, 0]];
+func worm_threat_pos():
+	var positions = []
+	var WORM_INCREMENTS = WORM_SPOT_THREAT_INCREMENTS
+	if promoted:
+		WORM_INCREMENTS += WORM_SPOT_THREAT_OPPOSITE_INCREMENTS
+	for inc in WORM_INCREMENTS:
+		var pos = board_handle.spot_search_threat(
+			color, 
+			board_position[0], board_position[1],
+			inc[0], inc[1] if color == Globals.COLORS.BLACK and !promoted else -inc[1],
+			true, false
+		)
+		if pos != null:
+			positions.append(pos)
+	return positions
+	
+func worm_move_pos():
+	var positions = []
+	for inc in WORM_SPOT_MOVE_INCREMENTS:
+		var pos = board_handle.spot_search_threat(
+			color, 
+			board_position[0], board_position[1],
+			inc[0], inc[1] if color == Globals.COLORS.BLACK else -inc[1],
+			false, true
+		)
+		if pos != null:
+			positions.append(pos)
+	return positions
 
 # Bishop Moves
 const BISHOP_BEAM_INCREMENTS = [[1, 1], [1, -1], [-1, 1], [-1, -1]]
@@ -235,6 +284,16 @@ func knight_threat_pos():
 # Queen Moves
 const QUEEN_BEAM_INCREMENTS = [[1, 1], [1, -1], [-1, 1], [-1, -1], [0, 1], [0, -1], [1, 0], [-1, 0]];
 func queen_threat_pos():
+	var positions = []
+	for inc in QUEEN_BEAM_INCREMENTS:
+		positions += board_handle.beam_search_threat(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1]
+		)
+	return positions
+	
+func duck_move_pos():
 	var positions = []
 	for inc in QUEEN_BEAM_INCREMENTS:
 		positions += board_handle.beam_search_threat(
@@ -294,11 +353,11 @@ func archbishop_threat_pos():
 			positions.append(pos)
 	return positions
 	
-# Arco Bishop Moves
-const ARCOBISHOP_SPOT_INCREMENTS = [[2, 2], [2, -2], [-2, 2], [-2, -2], [1, 1], [1, -1], [-1, 1], [-1, -1]]
-func arcobishop_threat_pos():
+# ACRO Bishop Moves
+const ACROBISHOP_SPOT_INCREMENTS = [[2, 2], [2, -2], [-2, 2], [-2, -2], [1, 1], [1, -1], [-1, 1], [-1, -1]]
+func acrobishop_threat_pos():
 	var positions = []
-	for inc in ARCOBISHOP_SPOT_INCREMENTS:
+	for inc in ACROBISHOP_SPOT_INCREMENTS:
 		var pos = board_handle.spot_search_threat(
 			color,
 			board_position[0], board_position[1],
@@ -389,6 +448,6 @@ func shield_king_protect_positions():
 			board_position[0], board_position[1],
 			inc[0], inc[1]
 		)
-		if pos != null:
+		if pos != null and board_handle.get_piece(pos) != null:
 			positions.append(pos)
 	return positions

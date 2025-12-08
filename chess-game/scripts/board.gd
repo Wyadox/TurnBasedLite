@@ -8,6 +8,7 @@ signal spawn_ai
 @export var pieces = [];
 @export var piece_scene = preload("res://scenes/Piece.tscn")
 @export var setup_script = preload("res://scripts/setup_phase_ui.gd")
+@export var status_indicator = preload("res://scenes/StatusIndicator.tscn")
 
 @export var white_king_pos: Vector2
 @export var black_king_pos: Vector2
@@ -21,6 +22,7 @@ const CELL_SIZE = 120
 func _on_opponent_ui_setup_ready() -> void:
 	draw_board()
 	init_pieces()
+	clear_borders()
 
 func draw_board():
 	for x in range(6):
@@ -95,6 +97,11 @@ func beam_search_threat(own_color, cur_x, cur_y, inc_x, inc_y):
 	# Moves a pointer in a line in given inc_x/y direction
 	# to find the thratened pieces
 	var threat_pos = []
+	var is_duck = false
+	
+	var check_piece = get_piece(Vector2(cur_x, cur_y))
+	if check_piece.piece_type == Globals.PIECE_TYPES.DUCK:
+		is_duck = true
 	
 	cur_x += inc_x
 	cur_y += inc_y
@@ -105,7 +112,7 @@ func beam_search_threat(own_color, cur_x, cur_y, inc_x, inc_y):
 		var cur_pos = Vector2(cur_x, cur_y)
 		var cur_piece = get_piece(cur_pos)
 		if cur_piece != null:
-			if cur_piece.color != own_color:
+			if cur_piece.color != own_color and cur_piece.piece_type != Globals.PIECE_TYPES.DUCK and !is_duck:
 				threat_pos.append(cur_pos)
 			break
 		threat_pos.append(cur_pos)
@@ -129,6 +136,9 @@ func spot_search_threat(
 	
 	var cur_pos = Vector2(cur_x, cur_y)
 	var cur_piece = get_piece(cur_pos)
+	
+	if cur_piece != null and cur_piece.piece_type == Globals.PIECE_TYPES.DUCK:
+		return null
 	
 	if cur_piece != null:
 		if free_only:
@@ -225,6 +235,7 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Variant) -> void:
 	emit_signal("set_status", color)
 	
 	if total_pieces == 5:
+		print("emit spawn ai")
 		emit_signal("spawn_ai")
 		total_pieces = num_pieces()
 	
@@ -272,6 +283,43 @@ func clear_borders():
 	for it in borders:
 		it.queue_free()
 	borders.clear()
+	
+var indicators = []
+	
+func spawn_indicator(pos : Vector2, status : String):
+	var indicator = status_indicator.instantiate()
+	var offset : int
+	if (status == "protected"):
+		offset = 50
+	else:
+		offset = -50
+	indicator.position = Vector2(pos.x * 120 + 60 + offset, pos.y * 120 + 60 + offset)
+	indicator.z_index = 101
+	indicator.set_status(status)
+	add_child(indicator)
+	indicators.push_back(indicator)
+	
+func clear_indicators():
+	for it in indicators:
+		it.queue_free()
+	indicators.clear()
+			
+func update_indicators():
+	clear_indicators()
+	
+	for piece in pieces:
+		var pos = piece.board_position
+		
+		if piece.stun_counter > 0:
+			spawn_indicator(pos, "stunned")
+		elif piece_is_protected(piece):
+			spawn_indicator(pos, "protected")
+
+func piece_is_protected(piece):
+	var shield_king = get_piece(white_king_pos if piece.color == Globals.COLORS.WHITE else black_king_pos)
+	if shield_king == null:
+		return false
+	return piece.board_position in shield_king.shield_king_protect_positions()
 	
 func num_pieces():
 	var count : int = 0

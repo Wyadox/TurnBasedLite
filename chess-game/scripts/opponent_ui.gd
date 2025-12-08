@@ -16,6 +16,7 @@ func _on_human_button_pressed() -> void:
 
 
 func _on_ai_button_pressed() -> void:
+	print("ai_op emit")
 	emit_signal("ai_op")
 	emit_signal("setup_ready")
 	opponent_ui.hide()

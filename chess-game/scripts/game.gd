@@ -3,6 +3,8 @@ extends Node2D
 signal selected_square(pos)
 signal init_ai
 
+var explosionScene = preload("res://scenes/Explosion.tscn")
+
 # Game States
 var game_over;
 var player_color;
@@ -45,7 +47,7 @@ func _input(event):
 		var pos = get_pos_under_mouse()
 		selected_piece = board.get_piece(pos)
 		# Drag piece only if they are under the mouse or are of current player
-		if selected_piece == null:
+		if selected_piece == null and !setup_complete:
 			if pos.x < 6 and pos.x > -1 and pos.y < 6 and pos.y > -1:
 				if status == Globals.COLORS.WHITE and pos.y == 5:
 					emit_signal("selected_square", pos)
@@ -55,10 +57,13 @@ func _input(event):
 				print("no square was selected")
 			return
 			
-		if selected_piece.color != status:
+		if selected_piece == null:
 			return
 			
-		if setup_complete == false:
+		if selected_piece.color != status or selected_piece.stun_counter != 0:
+			return
+			
+		if !setup_complete:
 			return
 			
 		is_dragging = true
@@ -66,7 +71,7 @@ func _input(event):
 		selected_piece.z_index = 100
 		
 		# Highlights available moves
-		var highlight_moves = selected_piece.get_moveable_positions()
+		var highlight_moves = selected_piece.get_moveable_positions() + selected_piece.get_threatened_positions()
 		for it in highlight_moves:
 			var color : Color
 			if board.get_piece(Vector2(it.x, it.y)) != null:
@@ -100,7 +105,6 @@ func init_game():
 	is_dragging = false
 	player_color = Globals.COLORS.WHITE
 	status = Globals.COLORS.WHITE
-	player2_type = Globals.PLAYER_2_TYPE.HUMAN
 	# Check to see if either player has a shield king, and mark it alive if it does.
 	for piece in board.pieces:
 		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING && piece.color == Globals.COLORS.WHITE:
@@ -108,6 +112,13 @@ func init_game():
 		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING && piece.color == Globals.COLORS.BLACK:
 			black_shield_king_alive = true
 	#player2_type = Globals.PLAYER_2_TYPE.AI
+	
+	# Check to see if either player has a shield king, and mark it alive if it does.
+	for piece in board.pieces:
+		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING && piece.color == Globals.COLORS.WHITE:
+			white_shield_king_alive = true
+		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING && piece.color == Globals.COLORS.BLACK:
+			black_shield_king_alive = true
 
 func get_pos_under_mouse():
 	var pos = get_global_mouse_position()
@@ -121,6 +132,7 @@ func drop_piece():
 	var piece_died = false
 	var to_move = get_pos_under_mouse()
 	var old_pos = selected_piece.board_position
+	var piece_around
 	
 	if valid_move(old_pos, to_move):
 		# For valid move:
@@ -132,6 +144,7 @@ func drop_piece():
 				dest_piece.trojan_spawn(dest_piece.color)
 			if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
 				for position in dest_piece.bishop_explode_positions():
+					spawn_explosion(position)
 					piece_around = board.get_piece(position)
 					if piece_around != null:
 						board.delete_piece(piece_around)
@@ -139,6 +152,7 @@ func drop_piece():
 					board.delete_piece(selected_piece)
 			if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
 				for position in dest_piece.bishop_explode_positions():
+					spawn_explosion(position)
 					piece_around = board.get_piece(position)
 					if piece_around != null and piece_around.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
 						board.delete_piece(piece_around)
@@ -146,6 +160,32 @@ func drop_piece():
 						end_turn()
 						return true
 				for pos in dest_piece.bishop_explode_positions():
+					spawn_explosion(position)
+					piece_around = board.get_piece(pos)
+					if piece_around != null:
+						board.delete_piece(piece_around)
+					board.delete_piece(selected_piece)
+			if dest_piece.piece_type == Globals.PIECE_TYPES.TROJAN_HORSE:
+				dest_piece.trojan_spawn(dest_piece.color)
+			if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
+				for position in dest_piece.bishop_explode_positions():
+					spawn_explosion(position)
+					piece_around = board.get_piece(position)
+					if piece_around != null:
+						board.delete_piece(piece_around)
+				if selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER:
+					board.delete_piece(selected_piece)
+			if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
+				for position in dest_piece.bishop_explode_positions():
+					spawn_explosion(position)
+					piece_around = board.get_piece(position)
+					if piece_around != null and piece_around.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
+						board.delete_piece(piece_around)
+						board.delete_piece(selected_piece)
+						end_turn()
+						return true
+				for pos in dest_piece.bishop_explode_positions():
+					spawn_explosion(position)
 					piece_around = board.get_piece(pos)
 					if piece_around != null:
 						board.delete_piece(piece_around)
@@ -178,7 +218,7 @@ func drop_piece():
 			board.delete_piece(selected_piece)
 			
 		# - change currnet status of active color
-		status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
+		end_turn()
 		return true
 	return false
 
@@ -292,7 +332,7 @@ func player2_move():
 		piece.move_position(pos)
 		if piece_died:
 			board.delete_piece(piece)
-		status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
+		end_turn()
 		evaluate_end_game()
 
 func evaluate_end_game():
@@ -312,6 +352,12 @@ func set_win(who: Globals.PLAYER):
 		win_label.text = "Player Two Won"
 	win_label.show()
 	ui_control.show()
+	
+func spawn_explosion(pos : Vector2):
+	var actual_pos = Vector2(pos.x * 120 + 60, pos.y * 120 + 60)
+	var explosion = explosionScene.instantiate()
+	explosion.position = actual_pos
+	add_child(explosion)
 
 
 func _on_button_pressed():
@@ -322,10 +368,13 @@ func end_turn():
 		if piece.stun_counter > 0:
 			piece.stun_counter -= 1
 	status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
+	board.update_indicators()
+	
 func _on_board_setup_complete() -> void:
 	setup_complete = true
 	setup_ui.hide()
 	status = Globals.COLORS.WHITE
+	board.update_indicators()
 
 
 func _on_board_set_status(color: Variant) -> void:
@@ -335,6 +384,7 @@ func _on_board_set_status(color: Variant) -> void:
 
 func _on_opponent_ui_ai_op() -> void:
 	player2_type = Globals.PLAYER_2_TYPE.AI
+	print("ai set")
 
 
 func _on_opponent_ui_human_op() -> void:
@@ -343,4 +393,7 @@ func _on_opponent_ui_human_op() -> void:
 
 func _on_board_spawn_ai() -> void:
 	if player2_type == Globals.PLAYER_2_TYPE.AI:
+		print("emit init_ai")
 		emit_signal("init_ai")
+	else:
+		print("fail")
