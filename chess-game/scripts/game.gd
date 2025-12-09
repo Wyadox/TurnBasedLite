@@ -18,6 +18,8 @@ var is_dragging: bool;
 var selected_piece = null;
 var previous_position = null;
 var setup_complete: bool = false
+var allow_select : bool = false
+var failed_to_move : bool = false
 
 @onready var board = $Board;
 @onready var ui_control = $Control
@@ -25,18 +27,27 @@ var setup_complete: bool = false
 @onready var setup_ui = $SetupPhaseUI
 @onready var main_menu_ui = $MainMenu
 
+@onready var move_timer : Timer = $MoveTimer
+@onready var timer_label : Label = $TimerLabel
+@onready var timer_bar : TextureProgressBar = $MoveTimerBar
+var move_time := 15.0
+var time_remaining := 15.0
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	ui_control.hide()
 	win_label.hide()
 	setup_ui.hide()
+	timer_bar.hide()
 	init_game()
+	allow_select = false
 	
 func _on_opponent_ui_setup_ready() -> void:
 	ui_control.hide()
 	win_label.hide()
 	setup_ui.show()
 	setup_complete = false
+	allow_select = true
 	
 
 func _input(event):
@@ -47,6 +58,9 @@ func _input(event):
 		var pos = get_pos_under_mouse()
 		selected_piece = board.get_piece(pos)
 		# Drag piece only if they are under the mouse or are of current player
+		if !allow_select:
+			return
+		
 		if selected_piece == null and !setup_complete:
 			if pos.x < 6 and pos.x > -1 and pos.y < 6 and pos.y > -1:
 				if status == Globals.COLORS.WHITE and pos.y == 5:
@@ -238,7 +252,7 @@ func valid_move(from_pos, to_pos):
 				return false
 	
 	var dest_piece = board.get_piece(to_pos)
-	if dest_piece != null and board.piece_is_protected(dest_piece):
+	if dest_piece != null and (board.piece_is_protected(dest_piece) or dest_piece.piece_type == Globals.PIECE_TYPES.DUCK):
 		return false
 			
 	
@@ -327,12 +341,36 @@ func player2_move():
 			board.delete_piece(piece)
 		end_turn()
 		evaluate_end_game()
+		
+func move_from_timeout(otherPlayer : Globals.PLAYER):
+	var piece_died = false
+	
+	var valid_moves = get_valid_moves()
+	if len(valid_moves) == 0:
+		set_win(otherPlayer)
+		return
+	var move = valid_moves.pick_random()
+	var piece = move[0]
+	var pos = move[1]
+	var dest_piece = board.get_piece(pos)
+	
+	if dest_piece != null:
+		if dest_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
+			piece_died = true
+		board.delete_piece(dest_piece)
+	piece.move_position(pos)
+	if piece_died:
+		board.delete_piece(piece)
+	end_turn()
+	evaluate_end_game()
+			
 
 func evaluate_end_game():
 	# Check whether the current user can make any legal move
 	var moves = get_valid_moves()
 	if len(moves) == 0:
 		game_over = true
+		move_timer.stop()
 		set_win(Globals.PLAYER.TWO if status == player_color else Globals.PLAYER.ONE)
 		return true
 		
@@ -353,6 +391,7 @@ func evaluate_end_game():
 				
 	if white_piece_count == 1 and white_duck or black_piece_count == 1 and black_duck:
 		game_over = true
+		move_timer.stop()
 		set_win(Globals.PLAYER.TWO if status == player_color else Globals.PLAYER.ONE)
 		return true
 			
@@ -382,14 +421,18 @@ func end_turn():
 		if piece.stun_counter > 0:
 			piece.stun_counter -= 1
 	status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
+	
+	reset_timer()
 	board.update_indicators()
 	
 func _on_board_setup_complete() -> void:
 	setup_complete = true
 	setup_ui.hide()
+	timer_bar.show()
 	status = Globals.COLORS.WHITE
 	print("init_pieces call")
 	init_pieces()
+	reset_timer()
 	board.update_indicators()
 
 
@@ -418,3 +461,31 @@ func init_pieces():
 	for piece in board.pieces:
 		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
 			board.register_king(piece.board_position, piece.color)
+
+
+
+# Timer code
+
+func _on_move_timer_timeout() -> void:
+	print("ran out of time")
+	
+	var player
+	if status == Globals.COLORS.WHITE:
+		player = Globals.PLAYER.ONE
+	else:
+		player = Globals.PLAYER.TWO
+	move_from_timeout(player)
+
+func _process(delta):
+	if move_timer.is_stopped():
+		return
+	
+	time_remaining -= delta
+	#timer_label.text = str(max(0, int(time_remaining)))
+	timer_bar.value = time_remaining
+	
+func reset_timer():
+	time_remaining = move_time
+	#timer_label.text = str(int(time_remaining))
+	timer_bar.value = move_time
+	move_timer.start(move_time)

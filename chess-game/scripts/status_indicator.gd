@@ -6,5 +6,7 @@ func set_status(type : String):
 			$Sprite2D.texture = preload("res://ShieldIndicator.png")
 		"stunned":
 			$Sprite2D.texture = preload("res://StunIndicator.png")
+		"promoted":
+			$Sprite2D.texture = preload("res://PromotedIndicator.png")
 		"none":
 				queue_free()

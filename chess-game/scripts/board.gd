@@ -255,12 +255,17 @@ var indicators = []
 	
 func spawn_indicator(pos : Vector2, status : String):
 	var indicator = status_indicator.instantiate()
-	var offset : int
+	var xOffset : int
+	var yOffset : int
 	if (status == "protected"):
-		offset = 40
+		xOffset = 40
 	else:
-		offset = -40
-	indicator.position = Vector2(pos.x * 120 + 60 + offset, pos.y * 120 + 60 + 40)
+		xOffset = -40
+	if (status == "promoted"):
+		yOffset = 40
+	else:
+		yOffset = -40
+	indicator.position = Vector2(pos.x * 120 + 60 + xOffset, pos.y * 120 + 60 + yOffset)
 	indicator.z_index = 101
 	indicator.set_status(status)
 	add_child(indicator)
@@ -279,8 +284,10 @@ func update_indicators():
 		
 		if piece.stun_counter > 0:
 			spawn_indicator(pos, "stunned")
-		elif piece_is_protected(piece):
+		if piece_is_protected(piece):
 			spawn_indicator(pos, "protected")
+		if piece.promoted:
+			spawn_indicator(pos, "promoted")
 
 func piece_is_protected(piece):
 	var king_pos
