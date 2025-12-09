@@ -150,11 +150,25 @@ func drop_piece():
 	var to_move = get_pos_under_mouse()
 	var old_pos = selected_piece.board_position
 	var piece_around
+	var checker_captured = false
+	var jumped
+	var jumped_piece_location
 	
 	if valid_move(old_pos, to_move):
 		# For valid move:
 		# - if target has piece, then replace it
 		var dest_piece = board.get_piece(to_move)
+		#If piece is checker, delete the jumped piece
+		if selected_piece.piece_type == Globals.PIECE_TYPES.CHECKER:
+			jumped_piece_location = selected_piece.checker_capture_pos()
+			if selected_piece.checker_capture_pos() != []:
+			#	print("the current capture value is: ")
+			#	print(jumped_piece_location)
+				jumped = board.get_piece(Vector2(jumped_piece_location[0]))
+				dest_piece = jumped
+				#board.delete_piece(jumped)
+				checker_captured = true
+		
 		# Delete only if the target piece is of different color
 		if dest_piece != null and dest_piece.color != selected_piece.color:
 			if dest_piece.piece_type == Globals.PIECE_TYPES.TROJAN_HORSE:
@@ -221,7 +235,11 @@ func drop_piece():
 			board.delete_piece(selected_piece)
 			
 		# - change currnet status of active color
-		end_turn()
+		if !checker_captured:
+			end_turn()
+		else:
+			reset_timer()
+			board.update_indicators()
 		return true
 	return false
 

@@ -123,6 +123,7 @@ func get_moveable_positions():
 				positions += king_threat_pos()
 			return positions
 		Globals.PIECE_TYPES.DUCK: return duck_move_pos()
+		Globals.PIECE_TYPES.CHECKER: return pawn_move_pos()
 		_: return []
 
 func get_threatened_positions():
@@ -155,6 +156,7 @@ func get_threatened_positions():
 				positions += king_threat_pos()
 			return positions
 		Globals.PIECE_TYPES.DUCK: return []
+		Globals.PIECE_TYPES.CHECKER: return checker_jump_pos()
 		_: return []
 
 
@@ -448,4 +450,81 @@ func shield_king_protect_positions():
 		)
 		if pos != null:
 			positions.append(pos)
+	return positions
+
+# Checker Threat Check
+const CHECKER_JUMP_INCREMENTS = [[-2,2],[2,2],[2,-2],[-2,-2]]
+const CHECKER_SPOT_INCREMENTS_TAKE = [[-1, 1], [1, 1],[1,-1],[-1,-1]]
+# Checker Jump Check
+# Only return a position if there is a piece in the capture inc and an empty space in final spot
+func checker_jump_pos():
+
+	var positions = []
+	var outerIndex = 0
+	var innerIndex = 0
+
+	# Check the capture spots, if there's something there, return that pos
+	for inc in CHECKER_SPOT_INCREMENTS_TAKE:
+		outerIndex += 1
+
+		# Search the capture increments
+		var pos = board_handle.spot_search_threat(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1] if color == Globals.COLORS.BLACK else -inc[1],
+			true, false
+		)
+		
+		# Something found in capture spot
+		if pos != null:
+			# Search the jump move increments, return if there's nothing there
+			for jumpInc in CHECKER_JUMP_INCREMENTS:
+				innerIndex += 1
+				var jumpPos = board_handle.spot_search_threat(
+				color,
+				board_position[0], board_position[1],
+				jumpInc[0], jumpInc[1] if color == Globals.COLORS.BLACK else -jumpInc[1],
+				false, true
+				)
+				#if there's nothing in the jump increment
+				if jumpPos != null:
+					if innerIndex == outerIndex:
+						positions.append(jumpPos)
+	return positions
+
+# Behind spots
+const CHECKER_CAPTURED = [[1, -1],[-1, -1],[-1,1],[1,1]]
+#Checker Jumped Piece Pos Return
+func checker_capture_pos():
+
+	var positions = []
+	var outerIndex = 0
+	var innerIndex = 0
+
+	# Check the capture spots, if there's something there, return that pos
+	for inc in CHECKER_CAPTURED:
+		outerIndex += 1
+
+		# Search the capture increments
+		var pos = board_handle.spot_search_threat(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1] if color == Globals.COLORS.BLACK else -inc[1],
+			true, false
+		)
+		# Something found in capture spot
+		if pos != null:
+			# Search the jump move increments, return if there's nothing there
+			for jumpInc in CHECKER_JUMP_INCREMENTS:
+				innerIndex += 1
+				var jumpPos = board_handle.spot_search_threat(
+				color,
+				board_position[0], board_position[1],
+				-jumpInc[0], jumpInc[1] if color == Globals.COLORS.WHITE else -jumpInc[1],
+				false, true
+				)
+				#if there's nothing in the jump increment
+				if jumpPos != null:
+					if innerIndex == outerIndex:
+						positions.append(pos)
 	return positions
