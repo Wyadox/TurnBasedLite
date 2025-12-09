@@ -374,7 +374,7 @@ func get_mitosis_positions():
 		var mid = Vector2(current_x + dir, current_y )
 		var dest = Vector2(current_x + 2 * dir, current_y)
 		if board_handle.is_within_bounds(mid) and board_handle.is_within_bounds(dest):
-			if board_handle.get_piece(mid) == null and board_handle.get_piece(dest) == null:
+			if board_handle.get_piece(dest) == null:
 				positions.append(dest)
 	return positions
 	

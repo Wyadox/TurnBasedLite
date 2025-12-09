@@ -1,0 +1,61 @@
+[gd_scene load_steps=4 format=3 uid="uid://c6ulmyy15jdeu"]
+
+[ext_resource type="Script" uid="uid://dbjmnp715fnbm" path="res://descriptions.gd" id="1_yr26l"]
+[ext_resource type="Texture2D" uid="uid://bhpcvx2c3573d" path="res://StunIndicator.png" id="2_5jbt0"]
+[ext_resource type="Texture2D" uid="uid://c2ffhrqxtv6do" path="res://customPiecesSpritesheet.png" id="3_n6byr"]
+
+[node name="descriptions" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_yr26l")
+
+[node name="Left_Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 385.0
+offset_top = 305.0
+offset_right = 471.0
+offset_bottom = 336.0
+text = "PREVIOUS"
+
+[node name="Right_Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 491.0
+offset_top = 306.0
+offset_right = 540.0
+offset_bottom = 337.0
+text = "NEXT"
+
+[node name="image_preview" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 397.0
+offset_top = 43.0
+offset_right = 555.0
+offset_bottom = 201.0
+texture = ExtResource("2_5jbt0")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 303.0
+offset_top = 223.0
+offset_right = 659.0
+offset_bottom = 296.0
+text = "HELLO THERE "
+autowrap_mode = 2
+
+[node name="Exit_Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 454.0
+offset_top = 371.0
+offset_right = 495.0
+offset_bottom = 402.0
+text = "EXIT"
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+visible = false
+texture = ExtResource("3_n6byr")
+
+[connection signal="pressed" from="Left_Button" to="." method="_on_left_button_pressed"]
+[connection signal="pressed" from="Right_Button" to="." method="_on_right_button_pressed"]
+[connection signal="pressed" from="Exit_Button" to="." method="_on_exit_button_pressed"]
