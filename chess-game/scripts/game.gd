@@ -79,14 +79,17 @@ func drop_piece():
 	var is_shooting = false
 	var to_move = get_pos_under_mouse()
 	var piece_around
-	if valid_move(selected_piece.board_position, to_move):
+	var checker_captured = false
+	if valid_move(selected_piece.board_position, to_move) :
 		# For valid move:
 		# - if target has piece, then replace it
 		var dest_piece = board.get_piece(to_move)
 		# Delete only if the target piece is of different color
 		if dest_piece != null and dest_piece.color != selected_piece.color:
+			# If taken piece is trojan horse, spawn the pawns.
 			if dest_piece.piece_type == Globals.PIECE_TYPES.TROJAN_HORSE:
 				dest_piece.trojan_spawn(dest_piece.color)
+			# If taken piece is an exploding bishop, explode.
 			if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
 				for position in dest_piece.bishop_explode_positions():
 					piece_around = board.get_piece(position)
@@ -94,6 +97,7 @@ func drop_piece():
 						board.delete_piece(piece_around)
 				if selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER:
 					board.delete_piece(selected_piece)
+			# If selected piece is an exploding bishop, explode upon capture.
 			if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
 				for position in dest_piece.bishop_explode_positions():
 					piece_around = board.get_piece(position)
@@ -107,13 +111,17 @@ func drop_piece():
 					if piece_around != null:
 						board.delete_piece(piece_around)
 					board.delete_piece(selected_piece)
+			# Delete piece at the move destination
 			board.delete_piece(dest_piece)
+			# Move piece to new location
 			selected_piece.move_position(selected_piece.board_position)
 			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER:
 				is_shooting = true
 		if is_shooting == false:
 			#print(selected_piece.board_position - to_move)
+			
 			selected_piece.move_position(to_move)
+		
 			if selected_piece.piece_type == Globals.PIECE_TYPES.STUN_KNIGHT:
 				for space in selected_piece.get_stun_positions():
 					var piece = board.get_piece(space)
@@ -123,7 +131,22 @@ func drop_piece():
 			board.register_king(selected_piece.board_position, selected_piece.color)
 		# - change currnet status of active color
 		#status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
-		end_turn()
+		
+		#If piece is checker, delete the jumped piece
+		if selected_piece.piece_type == Globals.PIECE_TYPES.CHECKER:
+			var jumped_piece_location = selected_piece.checker_capture_pos()
+			if selected_piece.checker_capture_pos() != []:
+			#	print("the current capture value is: ")
+			#	print(jumped_piece_location)
+				var jumped = board.get_piece(Vector2(jumped_piece_location[0]))
+				board.delete_piece(jumped)
+				checker_captured = true
+			
+		#If piece is not checker, end the turn
+		#if selected_piece.piece_type != Globals.PIECE_TYPES.CHECKER:
+	#if selected_piece.piece_type != Globals.PIECE_TYPES.CHECKER:
+		if checker_captured == false:
+			end_turn()
 		return true
 	return false
 
@@ -149,17 +172,22 @@ func valid_move(from_pos, to_pos):
 		shield_king = board_copy.get_piece(shield_king_position)
 	if src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP && shield_king != null:
 		for position in shield_king.shield_king_protect_positions():
-			print(position)
+			#print(position)
 			if board_copy.get_piece(position) != null && position == to_pos:
 				return false
-			
+
+		#for position in src_piece.checker_jump_pos():
+		#	if board_copy.get_piece(position) == null:
+		#		for position in src_piece.checker_threat_pos():
+		#			if board.copy.get_piece(position) != null:
+		#				delete_piece(board.copy.get_piece(position))
+		#				src_piece.move_position
+	
 	
 	var dst_piece = board_copy.get_piece(to_pos)
 	if dst_piece != null:
 		board_copy.delete_piece(dst_piece)
 	src_piece.move_position(to_pos)
-	
-	
 	
 	return true
 

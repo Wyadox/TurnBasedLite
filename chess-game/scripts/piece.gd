@@ -98,11 +98,12 @@ func clone (_board):
 	
 func get_moveable_positions():
 	match piece_type:
-		Globals.PIECE_TYPES.PAWN: return pawn_threat_pos()
+		Globals.PIECE_TYPES.PAWN: return pawn_move_pos()
 		Globals.PIECE_TYPES.MITOSIS_PAWN: 
-			var ret = pawn_threat_pos()
+			var ret = pawn_move_pos()
 			ret += get_mitosis_positions()
 			return ret
+		Globals.PIECE_TYPES.CHECKER: return pawn_move_pos()
 		Globals.PIECE_TYPES.BISHOP: return bishop_threat_pos()
 		Globals.PIECE_TYPES.ROOK: return rook_threat_pos()
 		Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()
@@ -114,12 +115,14 @@ func get_moveable_positions():
 		Globals.PIECE_TYPES.TROJAN_HORSE: return knight_threat_pos()
 		Globals.PIECE_TYPES.EXPLODING_BISHOP: return bishop_threat_pos()
 		Globals.PIECE_TYPES.SHIELD_KING: return king_threat_pos()
+		
 		_: return []
 
 func get_threatened_positions():
 	match piece_type:
 		Globals.PIECE_TYPES.PAWN: return pawn_move_pos()
 		Globals.PIECE_TYPES.MITOSIS_PAWN: return pawn_move_pos()
+		Globals.PIECE_TYPES.CHECKER: return checker_jump_pos()
 		Globals.PIECE_TYPES.BISHOP: return bishop_threat_pos()
 		Globals.PIECE_TYPES.ROOK: return rook_threat_pos()
 		Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()
@@ -138,6 +141,8 @@ func get_threatened_positions():
 const PAWN_SPOT_INCREMENTS_MOVE = [[0, 1]] # Pawn move only one
 const PAWN_SPOT_INCREMENTS_MOVE_FIRST = [[0, 1], [0, 2]] # Pawn can move one and two times initially
 const PAWN_SPOT_INCREMENTS_TAKE = [[-1, 1], [1, 1]] # Pawn taking other piece at side 
+
+
 
 func pawn_threat_pos():
 	var positions = []
@@ -184,6 +189,147 @@ func pawn_move_pos():
 	
 	return positions
 
+# Checker Threat Check
+const CHECKER_JUMP_INCREMENTS = [[-2,2],[2,2],[2,-2],[-2,-2]]
+const CHECKER_SPOT_INCREMENTS_TAKE = [[-1, 1], [1, 1],[1,-1],[-1,-1]]
+# Checker Jump Check
+# Only return a position if there is a piece in the capture inc and an empty space in final spot
+func checker_jump_pos():
+	
+	var positions = []
+	var outerIndex = 0
+	var innerIndex = 0
+	
+	# Check the capture spots, if there's something there, return that pos
+	for inc in CHECKER_SPOT_INCREMENTS_TAKE:
+		outerIndex += 1
+		
+		# Search the capture increments
+		var pos = board_handle.spot_search_threat(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1] if color == Globals.COLORS.BLACK else -inc[1],
+			true, false
+		)
+		#print(board_position[0])
+		#print(board_position[1])
+	
+		#print(color)
+		#print(board_position[0])
+		#print(board_position[1])
+		#print("printing capture increment 1: ")
+		#print(inc[0])
+		#if color == Globals.COLORS.BLACK:
+		#	print("printing capture increment 2: ")
+		#	print(inc[1])
+		#else:
+		#	print ("printing capture increment 2: ")
+		#	print(-inc[1])
+		#var jumpPos = board_handle.spot_search_threat(
+		#	color,
+		#	board_position[0], board_position[1],
+		#	2*inc[0], 2*inc[1] if color == Globals.COLORS.BLACK else -2*inc[1],
+		#	true, false
+		#
+		# Something found in capture spot
+		if pos != null:
+		#	print("there is something at position :")
+		#	print(pos)
+			# Search the jump move increments, return if there's nothing there
+			for jumpInc in CHECKER_JUMP_INCREMENTS:
+				innerIndex += 1
+				var jumpPos = board_handle.spot_search_threat(
+				color,
+				board_position[0], board_position[1],
+				jumpInc[0], jumpInc[1] if color == Globals.COLORS.BLACK else -jumpInc[1],
+				false, true
+				)
+				#if there's nothing in the jump increment
+				if jumpPos != null:
+		#			print("there is nothing at position :")
+		#			print(jumpPos)
+					if innerIndex == outerIndex:
+						positions.append(jumpPos)
+		#print("printing valid move positions: ")
+		#print(positions)
+	return positions
+
+# Behind spots
+const CHECKER_CAPTURED = [[1, -1],[-1, -1],[-1,1],[1,1]]
+#Checker Jumped Piece Pos Return
+func checker_capture_pos():
+	
+	var positions = []
+	var outerIndex = 0
+	var innerIndex = 0
+	
+	# Check the capture spots, if there's something there, return that pos
+	for inc in CHECKER_CAPTURED:
+		outerIndex += 1
+		
+		# Search the capture increments
+		var pos = board_handle.spot_search_threat(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1] if color == Globals.COLORS.BLACK else -inc[1],
+			true, false
+		)
+		#print(board_position[0])
+		#print(board_position[1])
+	
+		#print(color)
+		#print(board_position[0])
+		#print(board_position[1])
+		#print("printing capture increment 1: ")
+		#print(inc[0])
+		#if color == Globals.COLORS.BLACK:
+		#	print("printing capture increment 2: ")
+		#	print(inc[1])
+		#else:
+		#	print ("printing capture increment 2: ")
+		#	print(-inc[1])
+		#var jumpPos = board_handle.spot_search_threat(
+		#	color,
+		#	board_position[0], board_position[1],
+		#	2*inc[0], 2*inc[1] if color == Globals.COLORS.BLACK else -2*inc[1],
+		#	true, false
+		#
+		# Something found in capture spot
+		if pos != null:
+		#	print("there is something at position :")
+		#	print(pos)
+			# Search the jump move increments, return if there's nothing there
+			for jumpInc in CHECKER_JUMP_INCREMENTS:
+				innerIndex += 1
+				var jumpPos = board_handle.spot_search_threat(
+				color,
+				board_position[0], board_position[1],
+				-jumpInc[0], jumpInc[1] if color == Globals.COLORS.WHITE else -jumpInc[1],
+				false, true
+				)
+				#if there's nothing in the jump increment
+				if jumpPos != null:
+				#	print("there is nothing at position :")
+				#	print(jumpPos)
+					if innerIndex == outerIndex:
+						positions.append(pos)
+		#print("printing valid capture positions: ")
+		#print(positions)
+	return positions
+	
+	#var positions = []
+	#for jumpInc in PAWN_SPOT_INCREMENTS_TAKE:
+	#			var jumpPos = board_handle.spot_search_threat(
+	#			color,
+	#			board_position[0], board_position[1],
+	#			jumpInc[0], jumpInc[1] if color == Globals.COLORS.BLACK else -jumpInc[1],
+	#			false, true
+	#			)
+	#			positions.append(jumpPos)
+	#			print("In checker capture pos")
+	#			print(jumpPos)
+	#return positions
+
 # Bishop Moves
 const BISHOP_BEAM_INCREMENTS = [[1, 1], [1, -1], [-1, 1], [-1, -1]]
 func bishop_threat_pos():
@@ -195,6 +341,7 @@ func bishop_threat_pos():
 			inc[0], inc[1]
 		)
 	return positions
+
 
 # Rook Moves
 const ROOK_BEAM_INCREMENTS = [[0, 1], [0, -1], [1, 0], [-1, 0]]
@@ -345,6 +492,7 @@ func trojan_spawn(color):
 			position
 		)
 
+#Bishop Explode Search
 const BISHOP_EXPLODE_INCREMENT = [[1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1]]
 func bishop_explode_positions():
 	var positions = []
@@ -357,6 +505,7 @@ func bishop_explode_positions():
 			positions.append(pos)
 	return positions
 
+#Shield King Protect Search
 const SHIELD_KING_PROTECT_INCREMENTS = [[1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1]]
 func shield_king_protect_positions():
 	var positions = []
