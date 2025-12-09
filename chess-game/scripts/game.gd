@@ -80,10 +80,23 @@ func drop_piece():
 	var to_move = get_pos_under_mouse()
 	var piece_around
 	var checker_captured = false
+	var jumped
+	var jumped_piece_location
 	if valid_move(selected_piece.board_position, to_move) :
 		# For valid move:
 		# - if target has piece, then replace it
 		var dest_piece = board.get_piece(to_move)
+				#If piece is checker, delete the jumped piece
+		if selected_piece.piece_type == Globals.PIECE_TYPES.CHECKER:
+			jumped_piece_location = selected_piece.checker_capture_pos()
+			if selected_piece.checker_capture_pos() != []:
+			#	print("the current capture value is: ")
+			#	print(jumped_piece_location)
+				jumped = board.get_piece(Vector2(jumped_piece_location[0]))
+				dest_piece = jumped
+				#board.delete_piece(jumped)
+				checker_captured = true
+				
 		# Delete only if the target piece is of different color
 		if dest_piece != null and dest_piece.color != selected_piece.color:
 			# If taken piece is trojan horse, spawn the pawns.
@@ -132,15 +145,7 @@ func drop_piece():
 		# - change currnet status of active color
 		#status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
 		
-		#If piece is checker, delete the jumped piece
-		if selected_piece.piece_type == Globals.PIECE_TYPES.CHECKER:
-			var jumped_piece_location = selected_piece.checker_capture_pos()
-			if selected_piece.checker_capture_pos() != []:
-			#	print("the current capture value is: ")
-			#	print(jumped_piece_location)
-				var jumped = board.get_piece(Vector2(jumped_piece_location[0]))
-				board.delete_piece(jumped)
-				checker_captured = true
+
 			
 		#If piece is not checker, end the turn
 		#if selected_piece.piece_type != Globals.PIECE_TYPES.CHECKER:
@@ -173,6 +178,10 @@ func valid_move(from_pos, to_pos):
 	if src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP && shield_king != null:
 		for position in shield_king.shield_king_protect_positions():
 			#print(position)
+			if src_piece.piece_type == Globals.PIECE_TYPES.CHECKER:
+				for checker_pos in src_piece.checker_capture_pos():
+					if board_copy.get_piece(checker_pos) != null && position == checker_pos:
+						return false
 			if board_copy.get_piece(position) != null && position == to_pos:
 				return false
 
