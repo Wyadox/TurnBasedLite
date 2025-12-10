@@ -99,6 +99,13 @@ func _input(event):
 			
 	elif event is InputEventMouseMotion and is_dragging:
 		selected_piece.position = get_global_mouse_position()
+		if move_timer.time_left < 0.5:
+			selected_piece.position = previous_position
+			selected_piece.z_index = 0
+			selected_piece = null
+			is_dragging = false
+			board.clear_borders()
+			print("dropped piece INPUT")
 	elif Input.is_action_just_released("left_click") and is_dragging:
 		var is_valid_move = drop_piece()
 		if !is_valid_move:
@@ -159,12 +166,19 @@ func drop_piece():
 		# - if target has piece, then replace it
 		var dest_piece = board.get_piece(to_move)
 		#If piece is checker, delete the jumped piece
+		#if selected_piece.piece_type == Globals.PIECE_TYPES.CHECKER:
+			#var delta = to_move - old_pos
+			#if abs(int(delta.x)) == 2 and abs(int(delta.y)) == 2:
+				#var jumped_pos = Vector2(int((old_pos.x + to_move.x) / 2), int((old_pos.y + to_move.y) / 2))
+				#var jumped_piece = board.get_piece(jumped_pos)
+				#if jumped_piece != null and jumped_piece.color != selected_piece.color:
+					#checker_captured = true
 		if selected_piece.piece_type == Globals.PIECE_TYPES.CHECKER:
-			jumped_piece_location = selected_piece.checker_capture_pos()
-			if selected_piece.checker_capture_pos() != []:
-			#	print("the current capture value is: ")
-			#	print(jumped_piece_location)
-				jumped = board.get_piece(Vector2(jumped_piece_location[0]))
+			jumped_piece_location = selected_piece.checker_threat_pos(true)
+			if jumped_piece_location != []:
+				print("the current capture value is: ")
+				print(jumped_piece_location[0])
+				jumped = board.get_piece(jumped_piece_location[0])
 				dest_piece = jumped
 				#board.delete_piece(jumped)
 				checker_captured = true
@@ -292,7 +306,7 @@ func joust_direction(old_pos, to_move):
 	else:
 		pos.x = -1
 	
-	if old_pos.y > to_move.x:
+	if old_pos.y > to_move.y:
 		pos.y = -1
 	else:
 		pos.y = 1
