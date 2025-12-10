@@ -61,14 +61,22 @@ func _on_mitosis_button_pressed() -> void:
 		
 static func determineAiPieces():
 	var piecesToSpawn = []
-	var pieces = [Globals.PIECE_TYPES.ROOK,
-	Globals.PIECE_TYPES.KNIGHT,
+	var pieces = [Globals.PIECE_TYPES.KNIGHT,
 	Globals.PIECE_TYPES.BISHOP,
 	Globals.PIECE_TYPES.KING,
 	Globals.PIECE_TYPES.PAWN,
 	Globals.PIECE_TYPES.HORSE_ARCHER,
 	Globals.PIECE_TYPES.ARCHBISHOP,
-	Globals.PIECE_TYPES.MITOSIS_PAWN]
+	Globals.PIECE_TYPES.MITOSIS_PAWN,
+	Globals.PIECE_TYPES.SHIELD_KING,
+	Globals.PIECE_TYPES.DUCK,
+	Globals.PIECE_TYPES.WORM,
+	Globals.PIECE_TYPES.CHECKER,
+	Globals.PIECE_TYPES.EXPLODING_BISHOP,
+	Globals.PIECE_TYPES.ACROBISHOP,
+	Globals.PIECE_TYPES.JOUST_BISHOP,
+	Globals.PIECE_TYPES.STUN_KNIGHT,
+	Globals.PIECE_TYPES.TROJAN_HORSE]
 	
 	var pos
 	for i in 6:

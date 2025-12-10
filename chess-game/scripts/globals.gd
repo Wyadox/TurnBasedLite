@@ -10,7 +10,6 @@ enum COLORS {
 }
 
 enum PIECE_TYPES {
-	ROOK,
 	KNIGHT,
 	BISHOP,
 	KING,
@@ -31,7 +30,6 @@ enum PIECE_TYPES {
 
 const SPRITE_MAPPING = {
 	COLORS.BLACK : {
-		PIECE_TYPES.ROOK: Vector2i(0, 4),
 		PIECE_TYPES.KNIGHT: Vector2i(0, 3),
 		PIECE_TYPES.BISHOP: Vector2i(0, 2),
 		PIECE_TYPES.KING: Vector2i(0, 0),
@@ -50,7 +48,6 @@ const SPRITE_MAPPING = {
 		PIECE_TYPES.TROJAN_HORSE: Vector2i(0, 15)
 	},
 	COLORS.WHITE:{
-		PIECE_TYPES.ROOK: Vector2i(1, 4),
 		PIECE_TYPES.KNIGHT: Vector2i(1, 3),
 		PIECE_TYPES.BISHOP: Vector2i(1, 2),
 		PIECE_TYPES.KING: Vector2i(1, 0),

@@ -105,7 +105,6 @@ func get_moveable_positions():
 			ret += get_mitosis_positions()
 			return ret
 		Globals.PIECE_TYPES.BISHOP: return bishop_threat_pos()
-		Globals.PIECE_TYPES.ROOK: return rook_threat_pos()
 		Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()
 		Globals.PIECE_TYPES.KING: return king_threat_pos()
 		Globals.PIECE_TYPES.HORSE_ARCHER: return horse_archer_threat_pos()
@@ -123,7 +122,9 @@ func get_moveable_positions():
 				positions += king_threat_pos()
 			return positions
 		Globals.PIECE_TYPES.DUCK: return duck_move_pos()
-		Globals.PIECE_TYPES.CHECKER: 
+		Globals.PIECE_TYPES.CHECKER:
+			if promoted:
+				return promoted_checker_pos()
 			return pawn_move_pos()
 		_: return []
 
@@ -138,7 +139,6 @@ func get_threatened_positions():
 				return king_threat_pos()
 			return pawn_threat_pos()
 		Globals.PIECE_TYPES.BISHOP: return bishop_threat_pos()
-		Globals.PIECE_TYPES.ROOK: return rook_threat_pos()
 		Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()
 		Globals.PIECE_TYPES.KING: return king_threat_pos()
 		Globals.PIECE_TYPES.HORSE_ARCHER: return horse_archer_threat_pos()
@@ -497,3 +497,17 @@ func get_checker_increments():
 		increments.append({"take": Vector2(1, -direction), "jump": Vector2(2, -direction * 2)})
 		
 	return increments
+
+const PROMOTED_CHECKER_INCREMENTS = [[0, -1], [0, 1]]
+func promoted_checker_pos():
+	var positions = []
+	for inc in PROMOTED_CHECKER_INCREMENTS:
+		var pos = board_handle.spot_search_protect(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1],
+			false, true
+		)
+		if pos != null:
+			positions.append(pos)
+	return positions

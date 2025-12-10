@@ -27,6 +27,9 @@ var failed_to_move : bool = false
 @onready var setup_ui = $SetupPhaseUI
 @onready var main_menu_ui = $MainMenu
 
+@onready var turn_indicator : TextureRect = $TurnIndicator
+@onready var sprite = $IndicatorImage
+
 @onready var move_timer : Timer = $MoveTimer
 @onready var timer_label : Label = $TimerLabel
 @onready var timer_bar : TextureProgressBar = $MoveTimerBar
@@ -39,6 +42,7 @@ func _ready():
 	win_label.hide()
 	setup_ui.hide()
 	timer_bar.hide()
+	turn_indicator.hide()
 	init_game()
 	allow_select = false
 	
@@ -165,23 +169,25 @@ func drop_piece():
 		# For valid move:
 		# - if target has piece, then replace it
 		var dest_piece = board.get_piece(to_move)
-		#If piece is checker, delete the jumped piece
-		#if selected_piece.piece_type == Globals.PIECE_TYPES.CHECKER:
-			#var delta = to_move - old_pos
-			#if abs(int(delta.x)) == 2 and abs(int(delta.y)) == 2:
-				#var jumped_pos = Vector2(int((old_pos.x + to_move.x) / 2), int((old_pos.y + to_move.y) / 2))
-				#var jumped_piece = board.get_piece(jumped_pos)
-				#if jumped_piece != null and jumped_piece.color != selected_piece.color:
-					#checker_captured = true
+		# If piece is checker, delete the jumped piece
 		if selected_piece.piece_type == Globals.PIECE_TYPES.CHECKER:
-			jumped_piece_location = selected_piece.checker_threat_pos(true)
-			if jumped_piece_location != []:
-				print("the current capture value is: ")
-				print(jumped_piece_location[0])
-				jumped = board.get_piece(jumped_piece_location[0])
-				dest_piece = jumped
-				#board.delete_piece(jumped)
-				checker_captured = true
+			var delta = to_move - old_pos
+			if abs(int(delta.x)) == 2 and abs(int(delta.y)) == 2:
+				var jumped_pos = Vector2(int((old_pos.x + to_move.x) / 2), int((old_pos.y + to_move.y) / 2))
+				var jumped_piece = board.get_piece(jumped_pos)
+				if jumped_piece != null and jumped_piece.color != selected_piece.color:
+					board.delete_piece(jumped_piece)
+					checker_captured = true
+					dest_piece = null
+		#if selected_piece.piece_type == Globals.PIECE_TYPES.CHECKER:
+			#jumped_piece_location = selected_piece.checker_threat_pos(true)
+			#if jumped_piece_location != []:
+				#print("the current capture value is: ")
+				#print(jumped_piece_location[0])
+				#jumped = board.get_piece(jumped_piece_location[0])
+				#dest_piece = jumped
+				##board.delete_piece(jumped)
+				#checker_captured = true
 		
 		# Delete only if the target piece is of different color
 		if dest_piece != null and dest_piece.color != selected_piece.color:
@@ -454,8 +460,27 @@ func end_turn():
 			piece.stun_counter -= 1
 	status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
 	
+	turn_indicator.texture = get_turn_indicator_tex(status)
+	
 	reset_timer()
 	board.update_indicators()
+
+func get_turn_indicator_tex(color):
+	if sprite:
+		var SPRITE_SIZE = 32
+		var region_pos = Globals.SPRITE_MAPPING[color][Globals.PIECE_TYPES.PAWN]
+		var region = Rect2(
+			region_pos.y * SPRITE_SIZE,
+			region_pos.x * SPRITE_SIZE,
+			SPRITE_SIZE,
+			SPRITE_SIZE
+		)
+		
+		var atlas := AtlasTexture.new()
+		atlas.atlas = sprite.texture
+		atlas.region = region
+		
+		return atlas
 	
 func _on_board_setup_complete() -> void:
 	setup_complete = true
@@ -466,6 +491,8 @@ func _on_board_setup_complete() -> void:
 	init_pieces()
 	reset_timer()
 	board.update_indicators()
+	turn_indicator.texture = get_turn_indicator_tex(status)
+	turn_indicator.show()
 
 
 func _on_board_set_status(color: Variant) -> void:
