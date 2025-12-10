@@ -19,7 +19,7 @@ var items = [
 	{"piece_type": Globals.PIECE_TYPES.CHECKER, "description": "Checker - Based on the Pawn, but this piece jumps over pieces to capture them and after a capture you get to move again"},
 	{"piece_type": Globals.PIECE_TYPES.EXPLODING_BISHOP, "description": "Exploding Bishop - Based on the Bishop, but this piece explodes when captured or when capturing"},
 	{"piece_type": Globals.PIECE_TYPES.ACROBISHOP, "description": "Acrobishop - Based on the Bishop, but can jump over pieces and is limited to moving 2 squares on any diagonal"},
-	{"piece_type": Globals.PIECE_TYPES.JOUST_BISHOP, "description": "Jouster - Based on the Bishop, but when this piece captures it will capture any piece directly behind it"},
+	{"piece_type": Globals.PIECE_TYPES.JOUST_BISHOP, "description": "Jouster - Based on the Bishop, but when this piece captures it will capture any piece directly behind it and when captured the opposing piece is also captured"},
 	{"piece_type": Globals.PIECE_TYPES.STUN_KNIGHT, "description": "Stun Knight - Based on the Knight, but when this piece is moved any opposing piece in orthogonal squares are stunned for one turn"},
 	{"piece_type": Globals.PIECE_TYPES.TROJAN_HORSE, "description": "Trojan Horse - Based on the Knight, but when this piece is captured two pawns are spawned"}
 ]

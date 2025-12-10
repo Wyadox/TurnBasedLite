@@ -80,50 +80,9 @@ offset_bottom = 247.0
 layout_mode = 2
 text = "Pawn"
 
-[node name="Bishop_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
-layout_mode = 2
-text = "Bishop"
-
-[node name="Knight_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
-layout_mode = 2
-text = "Knight"
-
-[node name="King_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
-layout_mode = 2
-text = "King"
-
-[node name="Archer_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
-layout_mode = 2
-text = "Archer"
-
-[node name="Archbishop_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
-layout_mode = 2
-text = "Archbishop
-"
-
 [node name="Mitosis_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
 layout_mode = 2
 text = "Mitosis
-"
-
-[node name="Joust_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
-layout_mode = 2
-text = "Joust
-"
-
-[node name="Arco_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
-layout_mode = 2
-text = "Acrobishop
-"
-
-[node name="Shield_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
-layout_mode = 2
-text = "Shield
-"
-
-[node name="Duck_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
-layout_mode = 2
-text = "Duck
 "
 
 [node name="Worm_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
@@ -136,10 +95,37 @@ layout_mode = 2
 text = "Checker
 "
 
+[node name="Bishop_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
+layout_mode = 2
+text = "Bishop"
+
+[node name="Archbishop_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
+layout_mode = 2
+text = "Archbishop
+"
+
+[node name="Arco_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
+layout_mode = 2
+text = "Acrobishop
+"
+
+[node name="Joust_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
+layout_mode = 2
+text = "Joust
+"
+
 [node name="Explode_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
 layout_mode = 2
 text = "Exploding Bishop
 "
+
+[node name="Knight_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
+layout_mode = 2
+text = "Knight"
+
+[node name="Archer_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
+layout_mode = 2
+text = "Archer"
 
 [node name="Stun_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
 layout_mode = 2
@@ -149,6 +135,20 @@ text = "Stun Knight
 [node name="Trojan_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
 layout_mode = 2
 text = "Trojan Horse
+"
+
+[node name="King_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
+layout_mode = 2
+text = "King"
+
+[node name="Shield_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
+layout_mode = 2
+text = "Shield
+"
+
+[node name="Duck_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
+layout_mode = 2
+text = "Duck
 "
 
 [node name="MainMenu" type="Control" parent="."]
@@ -268,21 +268,21 @@ texture = ExtResource("8_gee14")
 [connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]
 [connection signal="spawn_piece" from="SetupPhaseUI" to="Board" method="_on_setup_phase_ui_spawn_piece"]
 [connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Pawn_Button" to="SetupPhaseUI" method="_on_pawn_button_pressed"]
-[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Bishop_Button" to="SetupPhaseUI" method="_on_bishop_button_pressed"]
-[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Knight_Button" to="SetupPhaseUI" method="_on_knight_button_pressed"]
-[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/King_Button" to="SetupPhaseUI" method="_on_king_button_pressed"]
-[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Archer_Button" to="SetupPhaseUI" method="_on_archer_button_pressed"]
-[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Archbishop_Button" to="SetupPhaseUI" method="_on_archbishop_button_pressed"]
 [connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Mitosis_Button" to="SetupPhaseUI" method="_on_mitosis_button_pressed"]
-[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Joust_Button" to="SetupPhaseUI" method="_on_joust_button_pressed"]
-[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Arco_Button" to="SetupPhaseUI" method="_on_arco_button_pressed"]
-[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Shield_Button" to="SetupPhaseUI" method="_on_shield_button_pressed"]
-[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Duck_Button" to="SetupPhaseUI" method="_on_duck_button_pressed"]
 [connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Worm_Button" to="SetupPhaseUI" method="_on_worm_button_pressed"]
 [connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Checker_Button" to="SetupPhaseUI" method="_on_checker_button_pressed"]
+[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Bishop_Button" to="SetupPhaseUI" method="_on_bishop_button_pressed"]
+[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Archbishop_Button" to="SetupPhaseUI" method="_on_archbishop_button_pressed"]
+[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Arco_Button" to="SetupPhaseUI" method="_on_arco_button_pressed"]
+[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Joust_Button" to="SetupPhaseUI" method="_on_joust_button_pressed"]
 [connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Explode_Button" to="SetupPhaseUI" method="_on_explode_button_pressed"]
+[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Knight_Button" to="SetupPhaseUI" method="_on_knight_button_pressed"]
+[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Archer_Button" to="SetupPhaseUI" method="_on_archer_button_pressed"]
 [connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Stun_Button" to="SetupPhaseUI" method="_on_stun_button_pressed"]
 [connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Trojan_Button" to="SetupPhaseUI" method="_on_trojan_button_pressed"]
+[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/King_Button" to="SetupPhaseUI" method="_on_king_button_pressed"]
+[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Shield_Button" to="SetupPhaseUI" method="_on_shield_button_pressed"]
+[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Duck_Button" to="SetupPhaseUI" method="_on_duck_button_pressed"]
 [connection signal="choose_op" from="MainMenu" to="OpponentUI" method="_on_main_menu_choose_op"]
 [connection signal="pressed" from="MainMenu/VBoxContainer/StartButton" to="MainMenu" method="_on_start_button_pressed"]
 [connection signal="pressed" from="MainMenu/VBoxContainer/OptionsButton" to="MainMenu" method="_on_options_button_pressed"]
