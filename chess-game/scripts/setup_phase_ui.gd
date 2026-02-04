@@ -4,15 +4,64 @@ signal spawn_piece(piece_type)
 var status = Globals.COLORS.WHITE
 var white_dict = {}
 var black_dict = {}
+var white_base_dict = {Globals.PIECE_BASE.PAWN : 0, Globals.PIECE_BASE.BISHOP : 0, Globals.PIECE_BASE.ROOK : 0, Globals.PIECE_BASE.KNIGHT : 0, Globals.PIECE_BASE.KING : 0, Globals.PIECE_BASE.QUEEN : 0}
+var black_base_dict = {Globals.PIECE_BASE.PAWN : 0, Globals.PIECE_BASE.BISHOP : 0, Globals.PIECE_BASE.ROOK : 0, Globals.PIECE_BASE.KNIGHT : 0, Globals.PIECE_BASE.KING : 0, Globals.PIECE_BASE.QUEEN : 0}
+
+const PIECE_LIMIT = 2
 
 func valid_spawn(piece_type : Globals.PIECE_TYPES) -> bool:
+	var piece_base = piece_base_converter(piece_type)
+	if (status == Globals.COLORS.WHITE):
+		if white_base_dict[piece_base] + 1 > PIECE_LIMIT:
+			return false
+	if (status == Globals.COLORS.BLACK):
+		if black_base_dict[piece_base] + 1 > PIECE_LIMIT:
+			return false
+	
 	if (status == Globals.COLORS.WHITE and !white_dict.has(piece_type)) or (status == Globals.COLORS.BLACK and !black_dict.has(piece_type)):
 		if (status == Globals.COLORS.WHITE):
 			white_dict[piece_type] = true
+			white_base_dict[piece_base] += 1
 		else:
 			black_dict[piece_type] = true
+			black_base_dict[piece_base] += 1
 		return true
 	return false
+	
+func piece_base_converter(piece_type : Globals.PIECE_TYPES):
+	match piece_type:
+		Globals.PIECE_TYPES.PAWN:
+			return Globals.PIECE_BASE.PAWN
+		Globals.PIECE_TYPES.KNIGHT:
+			return Globals.PIECE_BASE.KNIGHT
+		Globals.PIECE_TYPES.BISHOP:
+			return Globals.PIECE_BASE.BISHOP
+		Globals.PIECE_TYPES.KING:
+			return Globals.PIECE_BASE.KING
+		Globals.PIECE_TYPES.HORSE_ARCHER:
+			return Globals.PIECE_BASE.KNIGHT
+		Globals.PIECE_TYPES.ARCHBISHOP:
+			return Globals.PIECE_BASE.BISHOP
+		Globals.PIECE_TYPES.MITOSIS_PAWN:
+			return Globals.PIECE_BASE.PAWN
+		Globals.PIECE_TYPES.SHIELD_KING:
+			return Globals.PIECE_BASE.KING
+		Globals.PIECE_TYPES.DUCK:
+			return Globals.PIECE_BASE.QUEEN
+		Globals.PIECE_TYPES.WORM:
+			return Globals.PIECE_BASE.PAWN
+		Globals.PIECE_TYPES.CHECKER:
+			return Globals.PIECE_BASE.PAWN
+		Globals.PIECE_TYPES.EXPLODING_BISHOP:
+			return Globals.PIECE_BASE.BISHOP
+		Globals.PIECE_TYPES.ACROBISHOP:
+			return Globals.PIECE_BASE.BISHOP
+		Globals.PIECE_TYPES.JOUST_BISHOP:
+			return Globals.PIECE_BASE.BISHOP
+		Globals.PIECE_TYPES.STUN_KNIGHT:
+			return Globals.PIECE_BASE.KNIGHT
+		Globals.PIECE_TYPES.TROJAN_HORSE:
+			return Globals.PIECE_BASE.KNIGHT
 	
 func _on_board_refund_piece(piece_type: Variant) -> void:
 	if (!valid_spawn(piece_type)):

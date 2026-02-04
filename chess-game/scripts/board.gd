@@ -175,7 +175,7 @@ func create_piece(type: Globals.PIECE_TYPES, col: Globals.COLORS, board_pos: Vec
 var border_panel
 var borders = []
 
-func _on_setup_phase_ui_spawn_piece(piece_type: Variant) -> void:
+func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 	if selected_pos == Vector2(-1, -1):
 		print("Select a valid position")
 		emit_signal("refund_piece", piece_type)
