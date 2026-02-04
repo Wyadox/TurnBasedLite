@@ -6,10 +6,6 @@ var SPRITE_SIZE = 32
 var CELL_SIZE = 120
 
 var items = [
-	{"piece_type": Globals.PIECE_TYPES.PAWN, "description": "Pawn - Just your regular pawn"},
-	{"piece_type": Globals.PIECE_TYPES.BISHOP, "description": "Bishop - Excatly what you think"},
-	{"piece_type": Globals.PIECE_TYPES.KNIGHT, "description": "Knight - *Neigh*"},
-	{"piece_type": Globals.PIECE_TYPES.KING, "description": "King - No checks or checkmate, so watch out king"},
 	{"piece_type": Globals.PIECE_TYPES.HORSE_ARCHER, "description": "Archer - Based on the Knight, but this piece makes captures from a distance"},
 	{"piece_type": Globals.PIECE_TYPES.ARCHBISHOP, "description": "Archbishop - Based on the Bishop, but this piece can switch diagonals"},
 	{"piece_type": Globals.PIECE_TYPES.MITOSIS_PAWN, "description": "Mitosis - Based on the Pawn, but this piece can split into two regular pawns"},
