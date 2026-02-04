@@ -248,8 +248,8 @@ func drop_piece():
 		if is_jousting:
 			var joust_pos = to_move + joust_direction(old_pos, to_move)
 			dest_piece = board.get_piece(joust_pos)
-			board.delete_piece(dest_piece)
 			if dest_piece != null and valid_move(to_move, joust_pos):
+				board.delete_piece(dest_piece)
 				selected_piece.move_position(joust_pos)
 		if piece_died:
 			board.delete_piece(selected_piece)
