@@ -211,7 +211,7 @@ func drop_piece():
 						end_turn()
 						return true
 				for pos in dest_piece.bishop_explode_positions():
-					spawn_explosion(position)
+					#spawn_explosion(position)
 					piece_around = board.get_piece(pos)
 					if piece_around != null:
 						board.delete_piece(piece_around)
@@ -446,6 +446,7 @@ func set_win(who: Globals.PLAYER):
 	
 func spawn_explosion(pos : Vector2):
 	var actual_pos = Vector2(pos.x * 120 + 60, pos.y * 120 + 60)
+	#print("spawning explosion at ", pos.x, ", ", pos.y, "(", pos.x * 120 + 60, ",", pos.y * 120 + 60,")")
 	var explosion = explosionScene.instantiate()
 	explosion.position = actual_pos
 	add_child(explosion)
