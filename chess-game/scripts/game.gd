@@ -3,7 +3,7 @@ extends Node2D
 signal selected_square(pos)
 signal init_ai
 
-var explosionScene = preload("res://scenes/Explosion.tscn")
+#var explosionScene = preload("res://scenes/Explosion.tscn")
 
 # Game States
 var game_over;
@@ -164,6 +164,7 @@ func drop_piece():
 	var checker_captured = false
 	var jumped
 	var jumped_piece_location
+	var shield_king_killed = false
 	
 	if valid_move(old_pos, to_move):
 		# For valid move:
@@ -188,47 +189,19 @@ func drop_piece():
 				#dest_piece = jumped
 				##board.delete_piece(jumped)
 				#checker_captured = true
-		
 		# Delete only if the target piece is of different color
 		if dest_piece != null and dest_piece.color != selected_piece.color:
 			if dest_piece.piece_type == Globals.PIECE_TYPES.TROJAN_HORSE:
 				dest_piece.trojan_spawn(dest_piece.color)
-			if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
-				for position in dest_piece.bishop_explode_positions():
-					spawn_explosion(position)
-					piece_around = board.get_piece(position)
-					if piece_around != null:
-						board.delete_piece(piece_around)
-				if selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER:
-					board.delete_piece(selected_piece)
-			if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
-				for position in dest_piece.bishop_explode_positions():
-					spawn_explosion(position)
-					piece_around = board.get_piece(position)
-					if piece_around != null and piece_around.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
-						board.delete_piece(piece_around)
-						board.delete_piece(selected_piece)
-						end_turn()
-						return true
-				for pos in dest_piece.bishop_explode_positions():
-					spawn_explosion(position)
-					piece_around = board.get_piece(pos)
-					if piece_around != null:
-						board.delete_piece(piece_around)
-					board.delete_piece(selected_piece)
+			if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP or selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
+				shield_king_killed = ExplodingBishop.explode_range(dest_piece, selected_piece, board)
 			if dest_piece.piece_type == Globals.PIECE_TYPES.TROJAN_HORSE:
 				dest_piece.trojan_spawn(dest_piece.color)
-			if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
-				for position in dest_piece.bishop_explode_positions():
-					spawn_explosion(position)
-					piece_around = board.get_piece(position)
-					if piece_around != null:
-						board.delete_piece(piece_around)
-				if selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER:
-					board.delete_piece(selected_piece)
+			
 			if dest_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
 				piece_died = true
-			board.delete_piece(dest_piece)
+			if not shield_king_killed:
+				board.delete_piece(dest_piece)
 			selected_piece.move_position(selected_piece.board_position)
 			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER:
 				is_shooting = true
@@ -277,20 +250,20 @@ func valid_move(from_pos, to_pos):
 	):
 		return false
 	
-	if status == Globals.COLORS.WHITE && black_shield_king_alive:
-		shield_king_position = board.black_king_pos
-		shield_king = board_copy.get_piece(shield_king_position)
-	elif status == Globals.COLORS.BLACK && white_shield_king_alive:
-		shield_king_position = board.white_king_pos
-		shield_king = board_copy.get_piece(shield_king_position)
-	if src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP && shield_king != null:
-		for position in shield_king.shield_king_protect_positions():
-			print(position)
-			if board_copy.get_piece(position) != null && position == to_pos:
-				return false
+#	if status == Globals.COLORS.WHITE && black_shield_king_alive:
+#		shield_king_position = board.black_king_pos
+#		shield_king = board_copy.get_piece(shield_king_position)
+#	elif status == Globals.COLORS.BLACK && white_shield_king_alive:
+#		shield_king_position = board.white_king_pos
+#		shield_king = board_copy.get_piece(shield_king_position)
+#	if src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP && shield_king != null:
+#		for position in shield_king.shield_king_protect_positions():
+#			print(position)
+#			if board_copy.get_piece(position) != null && position == to_pos:
+#				return false
 	
 	var dest_piece = board.get_piece(to_pos)
-	if dest_piece != null and (board.piece_is_protected(dest_piece) or dest_piece.piece_type == Globals.PIECE_TYPES.DUCK):
+	if dest_piece != null and ((board.piece_is_protected(dest_piece) && src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP) or dest_piece.piece_type == Globals.PIECE_TYPES.DUCK):
 		return false
 			
 	
@@ -444,11 +417,11 @@ func set_win(who: Globals.PLAYER):
 	win_label.show()
 	ui_control.show()
 	
-func spawn_explosion(pos : Vector2):
-	var actual_pos = Vector2(pos.x * 120 + 60, pos.y * 120 + 60)
-	var explosion = explosionScene.instantiate()
-	explosion.position = actual_pos
-	add_child(explosion)
+#func spawn_explosion(pos : Vector2):
+	#var actual_pos = Vector2(pos.x * 120 + 60, pos.y * 120 + 60)
+	#var explosion = explosionScene.instantiate()
+	#explosion.position = actual_pos
+	#add_child(explosion)
 
 
 func _on_button_pressed():
@@ -548,3 +521,20 @@ func reset_timer():
 	#timer_label.text = str(int(time_remaining))
 	timer_bar.value = move_time
 	move_timer.start(move_time)
+
+#func explode_range(dest_piece, selected_piece):
+	#spawn_explosion(dest_piece.position)
+	#for position in dest_piece.bishop_explode_positions():
+		#var piece_around = board.get_piece(position)
+		#if piece_around != null && piece_around.piece_type == Globals.PIECE_TYPES.SHIELD_KING && selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
+			#spawn_explosion(piece_around.position)
+			#board.delete_piece(piece_around)
+			#board.delete_piece(selected_piece)
+			#return
+	#for position in dest_piece.bishop_explode_positions():
+		#var piece_around = board.get_piece(position)
+		#if piece_around != null && piece_around.piece_type != Globals.PIECE_TYPES.DUCK:
+			#spawn_explosion(position)
+			#board.delete_piece(piece_around)
+		#if selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER:
+				#board.delete_piece(selected_piece)

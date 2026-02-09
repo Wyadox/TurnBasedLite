@@ -438,6 +438,7 @@ func bishop_explode_positions():
 		if pos != null:
 			positions.append(pos)
 	return positions
+	
 
 const SHIELD_KING_PROTECT_INCREMENTS = [[1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1]]
 func shield_king_protect_positions():
