@@ -1,0 +1,44 @@
+[gd_scene load_steps=2 format=3 uid="uid://cec8ttfqyv3h"]
+
+[ext_resource type="Script" uid="uid://ft8v0cp8vk1p" path="res://scripts/main_menu.gd" id="1_l6cm7"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 372.0
+offset_top = 333.0
+offset_right = 573.0
+offset_bottom = 494.0
+script = ExtResource("1_l6cm7")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = -140.0
+offset_top = -149.0
+offset_right = 374.0
+offset_bottom = -6.0
+theme_override_font_sizes/font_size = 77
+text = "CHAOS CHESS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 218.0
+offset_bottom = 104.0
+
+[node name="StartButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Start"
+
+[node name="OptionsButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Pieces"
+
+[node name="QuitButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Quit"
+
+[connection signal="pressed" from="VBoxContainer/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/OptionsButton" to="." method="_on_options_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/QuitButton" to="." method="_on_quit_button_pressed"]

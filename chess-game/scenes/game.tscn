@@ -1,10 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://bxdepwhprt4pp"]
+[gd_scene load_steps=7 format=3 uid="uid://bxdepwhprt4pp"]
 
 [ext_resource type="Script" uid="uid://bj20fx8i5xny6" path="res://scripts/game.gd" id="1_yqjtg"]
 [ext_resource type="Script" uid="uid://dlwh8mqmkmuqo" path="res://scripts/board.gd" id="2_lnu2h"]
-[ext_resource type="Script" uid="uid://b3kuug82fetu7" path="res://scripts/setup_phase_ui.gd" id="3_lnu2h"]
-[ext_resource type="Script" uid="uid://ft8v0cp8vk1p" path="res://scripts/main_menu.gd" id="4_lbhrr"]
-[ext_resource type="Script" uid="uid://dh2jkjv5144ew" path="res://scripts/opponent_ui.gd" id="5_iywne"]
+[ext_resource type="PackedScene" uid="uid://dlld2p1r0gxox" path="res://scenes/setup_phase_ui.tscn" id="6_p57ef"]
 [ext_resource type="Texture2D" uid="uid://d31qmqe0kjyid" path="res://EmptyBar.png" id="6_u5sy4"]
 [ext_resource type="Texture2D" uid="uid://3dyvehvtliv5" path="res://FullBar.png" id="7_gee14"]
 [ext_resource type="Texture2D" uid="uid://c2ffhrqxtv6do" path="res://customPiecesSpritesheet.png" id="8_gee14"]
@@ -62,152 +60,6 @@ grow_vertical = 2
 text = "Main Menu
 "
 
-[node name="SetupPhaseUI" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-script = ExtResource("3_lnu2h")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="SetupPhaseUI"]
-layout_mode = 0
-offset_left = 786.0
-offset_top = 41.0
-offset_right = 938.0
-offset_bottom = 247.0
-
-[node name="Mitosis_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
-layout_mode = 2
-text = "Mitosis
-"
-
-[node name="Worm_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
-layout_mode = 2
-text = "Worm
-"
-
-[node name="Checker_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
-layout_mode = 2
-text = "Checker
-"
-
-[node name="Archbishop_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
-layout_mode = 2
-text = "Archbishop
-"
-
-[node name="Arco_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
-layout_mode = 2
-text = "Acrobishop
-"
-
-[node name="Joust_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
-layout_mode = 2
-text = "Joust
-"
-
-[node name="Explode_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
-layout_mode = 2
-text = "Exploding Bishop
-"
-
-[node name="Archer_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
-layout_mode = 2
-text = "Archer"
-
-[node name="Stun_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
-layout_mode = 2
-text = "Stun Knight
-"
-
-[node name="Trojan_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
-layout_mode = 2
-text = "Trojan Horse
-"
-
-[node name="Shield_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
-layout_mode = 2
-text = "Shield
-"
-
-[node name="Duck_Button" type="Button" parent="SetupPhaseUI/VBoxContainer"]
-layout_mode = 2
-text = "Duck
-"
-
-[node name="MainMenu" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-offset_left = 372.0
-offset_top = 333.0
-offset_right = 573.0
-offset_bottom = 494.0
-script = ExtResource("4_lbhrr")
-
-[node name="Label" type="Label" parent="MainMenu"]
-layout_mode = 0
-offset_left = -140.0
-offset_top = -149.0
-offset_right = 374.0
-offset_bottom = -6.0
-theme_override_font_sizes/font_size = 77
-text = "CHAOS CHESS"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MainMenu"]
-layout_mode = 0
-offset_right = 218.0
-offset_bottom = 104.0
-
-[node name="StartButton" type="Button" parent="MainMenu/VBoxContainer"]
-layout_mode = 2
-text = "Start"
-
-[node name="OptionsButton" type="Button" parent="MainMenu/VBoxContainer"]
-layout_mode = 2
-text = "Pieces"
-
-[node name="QuitButton" type="Button" parent="MainMenu/VBoxContainer"]
-layout_mode = 2
-text = "Quit"
-
-[node name="OpponentUI" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-offset_left = 173.0
-offset_top = 47.0
-offset_right = 433.0
-offset_bottom = 205.0
-script = ExtResource("5_iywne")
-
-[node name="Label" type="Label" parent="OpponentUI"]
-layout_mode = 0
-offset_left = 40.0
-offset_top = 186.0
-offset_right = 631.0
-offset_bottom = 320.0
-theme_override_font_sizes/font_size = 46
-text = "CHOOSE YOUR OPPONENT"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="HBoxContainer" type="HBoxContainer" parent="OpponentUI"]
-layout_mode = 0
-offset_left = 188.0
-offset_top = 317.0
-offset_right = 507.0
-offset_bottom = 358.0
-theme_override_constants/separation = 100
-
-[node name="HumanButton" type="Button" parent="OpponentUI/HBoxContainer"]
-layout_mode = 2
-text = "Human"
-
-[node name="AiButton" type="Button" parent="OpponentUI/HBoxContainer"]
-layout_mode = 2
-text = "Computer"
-
 [node name="MoveTimer" type="Timer" parent="."]
 wait_time = 15.0
 one_shot = true
@@ -242,35 +94,12 @@ offset_bottom = 538.0
 position = Vector2(-301, 57)
 texture = ExtResource("8_gee14")
 
+[node name="SetupPhaseUI" parent="." instance=ExtResource("6_p57ef")]
+
 [connection signal="init_ai" from="." to="Board" method="_on_game_init_ai"]
 [connection signal="selected_square" from="." to="Board" method="_on_game_selected_square"]
-[connection signal="refund_piece" from="Board" to="SetupPhaseUI" method="_on_board_refund_piece"]
 [connection signal="set_status" from="Board" to="." method="_on_board_set_status"]
-[connection signal="set_status" from="Board" to="SetupPhaseUI" method="_on_board_set_status"]
 [connection signal="setup_complete" from="Board" to="." method="_on_board_setup_complete"]
 [connection signal="spawn_ai" from="Board" to="." method="_on_board_spawn_ai"]
 [connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]
-[connection signal="spawn_piece" from="SetupPhaseUI" to="Board" method="_on_setup_phase_ui_spawn_piece"]
-[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Mitosis_Button" to="SetupPhaseUI" method="_on_mitosis_button_pressed"]
-[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Worm_Button" to="SetupPhaseUI" method="_on_worm_button_pressed"]
-[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Checker_Button" to="SetupPhaseUI" method="_on_checker_button_pressed"]
-[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Archbishop_Button" to="SetupPhaseUI" method="_on_archbishop_button_pressed"]
-[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Arco_Button" to="SetupPhaseUI" method="_on_arco_button_pressed"]
-[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Joust_Button" to="SetupPhaseUI" method="_on_joust_button_pressed"]
-[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Explode_Button" to="SetupPhaseUI" method="_on_explode_button_pressed"]
-[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Archer_Button" to="SetupPhaseUI" method="_on_archer_button_pressed"]
-[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Stun_Button" to="SetupPhaseUI" method="_on_stun_button_pressed"]
-[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Trojan_Button" to="SetupPhaseUI" method="_on_trojan_button_pressed"]
-[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Shield_Button" to="SetupPhaseUI" method="_on_shield_button_pressed"]
-[connection signal="pressed" from="SetupPhaseUI/VBoxContainer/Duck_Button" to="SetupPhaseUI" method="_on_duck_button_pressed"]
-[connection signal="choose_op" from="MainMenu" to="OpponentUI" method="_on_main_menu_choose_op"]
-[connection signal="pressed" from="MainMenu/VBoxContainer/StartButton" to="MainMenu" method="_on_start_button_pressed"]
-[connection signal="pressed" from="MainMenu/VBoxContainer/OptionsButton" to="MainMenu" method="_on_options_button_pressed"]
-[connection signal="pressed" from="MainMenu/VBoxContainer/QuitButton" to="MainMenu" method="_on_quit_button_pressed"]
-[connection signal="ai_op" from="OpponentUI" to="." method="_on_opponent_ui_ai_op"]
-[connection signal="human_op" from="OpponentUI" to="." method="_on_opponent_ui_human_op"]
-[connection signal="setup_ready" from="OpponentUI" to="." method="_on_opponent_ui_setup_ready"]
-[connection signal="setup_ready" from="OpponentUI" to="Board" method="_on_opponent_ui_setup_ready"]
-[connection signal="pressed" from="OpponentUI/HBoxContainer/HumanButton" to="OpponentUI" method="_on_human_button_pressed"]
-[connection signal="pressed" from="OpponentUI/HBoxContainer/AiButton" to="OpponentUI" method="_on_ai_button_pressed"]
 [connection signal="timeout" from="MoveTimer" to="." method="_on_move_timer_timeout"]

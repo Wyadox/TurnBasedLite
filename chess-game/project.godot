@@ -11,13 +11,14 @@ config_version=5
 [application]
 
 config/name="chess-game"
-run/main_scene="uid://bxdepwhprt4pp"
+run/main_scene="uid://cec8ttfqyv3h"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
 Globals="*res://scripts/globals.gd"
+SignalBus="*res://scripts/signal_bus.gd"
 
 [display]
 

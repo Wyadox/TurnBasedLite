@@ -1,26 +1,26 @@
 extends Control
 
-signal setup_ready
-signal ai_op
-signal human_op
+var option
 
-@onready var opponent_ui = $"."
-
-func _ready():
-	opponent_ui.hide()
+func _ready() -> void:
+	tree_exited.connect(_on_tree_exited)
 
 func _on_human_button_pressed() -> void:
-	emit_signal("human_op")
-	emit_signal("setup_ready")
-	opponent_ui.hide()
+	option = "human"
+	SignalBus.emit_signal("test", "hi")
+	get_tree().change_scene_to_file("res://scenes/game.tscn")
+	SignalBus.emit_signal("human_op")
 
 
 func _on_ai_button_pressed() -> void:
-	print("ai_op emit")
-	emit_signal("ai_op")
-	emit_signal("setup_ready")
-	opponent_ui.hide()
+	option = "ai"
+	SignalBus.emit_signal("ai_op")
+	get_tree().change_scene_to_file("res://scenes/game.tscn")
 
-
-func _on_main_menu_choose_op() -> void:
-	opponent_ui.show()
+func _on_tree_exited():
+	if option == "human":
+		SignalBus.emit_signal("human_op")
+		print("human_op emit")
+	else:
+		SignalBus.emit_signal("ai_op")
+		print("ai_op emit")

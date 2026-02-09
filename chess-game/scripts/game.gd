@@ -25,7 +25,7 @@ var failed_to_move : bool = false
 @onready var ui_control = $Control
 @onready var win_label = $"Control/Win Label"
 @onready var setup_ui = $SetupPhaseUI
-@onready var main_menu_ui = $MainMenu
+#@onready var main_menu_ui = $MainMenu
 
 @onready var turn_indicator : TextureRect = $TurnIndicator
 @onready var sprite = $IndicatorImage
@@ -40,19 +40,24 @@ var time_remaining := 15.0
 func _ready():
 	ui_control.hide()
 	win_label.hide()
-	setup_ui.hide()
 	timer_bar.hide()
 	turn_indicator.hide()
 	init_game()
-	allow_select = false
 	
-func _on_opponent_ui_setup_ready() -> void:
-	ui_control.hide()
-	win_label.hide()
 	setup_ui.show()
 	setup_complete = false
 	allow_select = true
 	
+	SignalBus.human_op.connect(_on_opponent_ui_human_op)
+	SignalBus.ai_op.connect(_on_opponent_ui_ai_op)
+	SignalBus.set_status.connect(_on_board_set_status)
+	SignalBus.spawn_ai.connect(_on_board_spawn_ai)
+	SignalBus.setup_complete.connect(_on_board_setup_complete)
+	SignalBus.test.connect(tests)
+	print("connections")
+	
+func tests(data):
+	print(data)
 
 func _input(event):
 	if game_over:
@@ -211,7 +216,7 @@ func drop_piece():
 						end_turn()
 						return true
 				for pos in dest_piece.bishop_explode_positions():
-					#spawn_explosion(position)
+					#spawn_explosion(position) <<<<<<<<< REMOVE HERE
 					piece_around = board.get_piece(pos)
 					if piece_around != null:
 						board.delete_piece(piece_around)
@@ -488,17 +493,17 @@ func _on_board_setup_complete() -> void:
 	setup_ui.hide()
 	timer_bar.show()
 	status = Globals.COLORS.WHITE
-	print("init_pieces call")
 	init_pieces()
 	reset_timer()
 	board.update_indicators()
 	turn_indicator.texture = get_turn_indicator_tex(status)
 	turn_indicator.show()
+	print("setup complete connected")
 
 
 func _on_board_set_status(color: Variant) -> void:
 	status = color
-	print(color)
+	print("status connected")
 
 
 func _on_opponent_ui_ai_op() -> void:
@@ -508,12 +513,14 @@ func _on_opponent_ui_ai_op() -> void:
 
 func _on_opponent_ui_human_op() -> void:
 	player2_type = Globals.PLAYER_2_TYPE.HUMAN
+	print("helloooooooooooooooooooooooooooooooooo")
 
 
 func _on_board_spawn_ai() -> void:
 	if player2_type == Globals.PLAYER_2_TYPE.AI:
 		print("emit init_ai")
-		emit_signal("init_ai")
+		SignalBus.emit_signal("init_ai")
+		print("spawn_ai connected")
 	else:
 		print("fail")
 

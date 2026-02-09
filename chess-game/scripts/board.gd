@@ -19,9 +19,12 @@ var setup_done: bool = false
 const CELL_SIZE = 120
 
 # Called when the node enters the scene tree for the first time.
-func _on_opponent_ui_setup_ready() -> void:
+func _ready() -> void:
 	draw_board()
 	clear_borders()
+	
+	SignalBus.spawn_piece.connect(_on_setup_phase_ui_spawn_piece)
+	SignalBus.init_ai.connect(_on_game_init_ai)
 
 func draw_board():
 	for x in range(6):
@@ -178,7 +181,7 @@ var borders = []
 func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 	if selected_pos == Vector2(-1, -1):
 		print("Select a valid position")
-		emit_signal("refund_piece", piece_type)
+		SignalBus.emit_signal("refund_piece", piece_type)
 		return
 	
 	if setup_done == true:
@@ -199,17 +202,17 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 		color = Globals.COLORS.WHITE
 	else:
 		color = Globals.COLORS.BLACK
-	emit_signal("set_status", color)
+	SignalBus.emit_signal("set_status", color)
 	
 	if total_pieces == 5:
 		print("emit spawn ai")
-		emit_signal("spawn_ai")
+		SignalBus.emit_signal("spawn_ai")
 		total_pieces = num_pieces()
 	
 	# Ready to play
 	if total_pieces + 1 > 11:
 		setup_done = true
-		emit_signal("setup_complete")
+		SignalBus.emit_signal("setup_complete")
 		
 	# Reset border visual and selected pos
 	if border_panel and border_panel.is_inside_tree():

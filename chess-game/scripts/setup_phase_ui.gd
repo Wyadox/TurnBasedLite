@@ -1,5 +1,4 @@
 extends Control
-signal spawn_piece(piece_type)
 
 var status = Globals.COLORS.WHITE
 var white_dict = {}
@@ -8,6 +7,9 @@ var white_base_dict = {Globals.PIECE_BASE.PAWN : 0, Globals.PIECE_BASE.BISHOP : 
 var black_base_dict = {Globals.PIECE_BASE.PAWN : 0, Globals.PIECE_BASE.BISHOP : 0, Globals.PIECE_BASE.ROOK : 0, Globals.PIECE_BASE.KNIGHT : 0, Globals.PIECE_BASE.KING : 0, Globals.PIECE_BASE.QUEEN : 0}
 
 const PIECE_LIMIT = 2
+
+func _ready() -> void:
+	SignalBus.refund_piece.connect(_on_board_refund_piece)
 
 func valid_spawn(piece_type : Globals.PIECE_TYPES) -> bool:
 	var piece_base = piece_base_converter(piece_type)
@@ -64,11 +66,14 @@ func piece_base_converter(piece_type : Globals.PIECE_TYPES):
 			return Globals.PIECE_BASE.KNIGHT
 	
 func _on_board_refund_piece(piece_type: Variant) -> void:
+	var piece_base = piece_base_converter(piece_type)
 	if (!valid_spawn(piece_type)):
 		if (status == Globals.COLORS.WHITE):
 			white_dict.erase(piece_type)
+			white_base_dict[piece_base] -= 1
 		else:
 			black_dict.erase(piece_type)
+			black_base_dict[piece_base] -= 1
 	
 func _on_board_set_status(color: Variant) -> void:
 	status = color
@@ -96,17 +101,17 @@ func _on_king_button_pressed() -> void:
 func _on_archer_button_pressed() -> void:
 	print("Archer")
 	if (valid_spawn(Globals.PIECE_TYPES.HORSE_ARCHER)):
-		emit_signal("spawn_piece", Globals.PIECE_TYPES.HORSE_ARCHER)
+		SignalBus.emit_signal("spawn_piece", Globals.PIECE_TYPES.HORSE_ARCHER)
 
 func _on_archbishop_button_pressed() -> void:
 	print("Archbishop")
 	if (valid_spawn(Globals.PIECE_TYPES.ARCHBISHOP)):
-		emit_signal("spawn_piece", Globals.PIECE_TYPES.ARCHBISHOP)
+		SignalBus.emit_signal("spawn_piece", Globals.PIECE_TYPES.ARCHBISHOP)
 
 func _on_mitosis_button_pressed() -> void:
 	print("Mitosis")
 	if (valid_spawn(Globals.PIECE_TYPES.MITOSIS_PAWN)):
-		emit_signal("spawn_piece", Globals.PIECE_TYPES.MITOSIS_PAWN)
+		SignalBus.emit_signal("spawn_piece", Globals.PIECE_TYPES.MITOSIS_PAWN)
 		
 static func determineAiPieces():
 	var piecesToSpawn = []
@@ -143,52 +148,52 @@ static func determineAiPieces():
 func _on_joust_button_pressed() -> void:
 	print("Joust")
 	if (valid_spawn(Globals.PIECE_TYPES.JOUST_BISHOP)):
-		emit_signal("spawn_piece", Globals.PIECE_TYPES.JOUST_BISHOP)
+		SignalBus.emit_signal("spawn_piece", Globals.PIECE_TYPES.JOUST_BISHOP)
 
 
 func _on_arco_button_pressed() -> void:
 	print("Arco")
 	if (valid_spawn(Globals.PIECE_TYPES.ACROBISHOP)):
-		emit_signal("spawn_piece", Globals.PIECE_TYPES.ACROBISHOP)
+		SignalBus.emit_signal("spawn_piece", Globals.PIECE_TYPES.ACROBISHOP)
 
 
 func _on_shield_button_pressed() -> void:
 	print("Shield")
 	if (valid_spawn(Globals.PIECE_TYPES.SHIELD_KING)):
-		emit_signal("spawn_piece", Globals.PIECE_TYPES.SHIELD_KING)
+		SignalBus.emit_signal("spawn_piece", Globals.PIECE_TYPES.SHIELD_KING)
 
 
 func _on_duck_button_pressed() -> void:
 	print("Duck")
 	if (valid_spawn(Globals.PIECE_TYPES.DUCK)):
-		emit_signal("spawn_piece", Globals.PIECE_TYPES.DUCK)
+		SignalBus.emit_signal("spawn_piece", Globals.PIECE_TYPES.DUCK)
 
 
 func _on_worm_button_pressed() -> void:
 	print("Worm")
 	if (valid_spawn(Globals.PIECE_TYPES.WORM)):
-		emit_signal("spawn_piece", Globals.PIECE_TYPES.WORM)
+		SignalBus.emit_signal("spawn_piece", Globals.PIECE_TYPES.WORM)
 
 
 func _on_checker_button_pressed() -> void:
 	print("Checker")
 	if (valid_spawn(Globals.PIECE_TYPES.CHECKER)):
-		emit_signal("spawn_piece", Globals.PIECE_TYPES.CHECKER)
+		SignalBus.emit_signal("spawn_piece", Globals.PIECE_TYPES.CHECKER)
 
 
 func _on_explode_button_pressed() -> void:
 	print("Explode")
 	if (valid_spawn(Globals.PIECE_TYPES.EXPLODING_BISHOP)):
-		emit_signal("spawn_piece", Globals.PIECE_TYPES.EXPLODING_BISHOP)
+		SignalBus.emit_signal("spawn_piece", Globals.PIECE_TYPES.EXPLODING_BISHOP)
 
 
 func _on_stun_button_pressed() -> void:
 	print("Stun")
 	if (valid_spawn(Globals.PIECE_TYPES.STUN_KNIGHT)):
-		emit_signal("spawn_piece", Globals.PIECE_TYPES.STUN_KNIGHT)
+		SignalBus.emit_signal("spawn_piece", Globals.PIECE_TYPES.STUN_KNIGHT)
 
 
 func _on_trojan_button_pressed() -> void:
 	print("Trojan")
 	if (valid_spawn(Globals.PIECE_TYPES.TROJAN_HORSE)):
-		emit_signal("spawn_piece", Globals.PIECE_TYPES.TROJAN_HORSE)
+		SignalBus.emit_signal("spawn_piece", Globals.PIECE_TYPES.TROJAN_HORSE)
