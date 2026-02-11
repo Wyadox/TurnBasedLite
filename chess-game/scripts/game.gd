@@ -194,7 +194,7 @@ func drop_piece():
 			if dest_piece.piece_type == Globals.PIECE_TYPES.TROJAN_HORSE:
 				dest_piece.trojan_spawn(dest_piece.color)
 			if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP or selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
-				shield_king_killed = ExplodingBishop.explode_range(dest_piece, selected_piece, board)
+				ExplodingBishop.explode_range(dest_piece, selected_piece, board)
 			if dest_piece.piece_type == Globals.PIECE_TYPES.TROJAN_HORSE:
 				dest_piece.trojan_spawn(dest_piece.color)
 			

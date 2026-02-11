@@ -11,7 +11,7 @@ func explode_range(dest_piece, selected_piece, board):
 		return
 	for position in dest_piece.bishop_explode_positions():
 		var piece_around = board.get_piece(position)
-		if piece_around != null && piece_around.piece_type == Globals.PIECE_TYPES.SHIELD_KING && selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
+		if piece_around != null and piece_around.piece_type == Globals.PIECE_TYPES.SHIELD_KING and selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
 			spawn_explosion(position)
 			board.delete_piece(piece_around)
 			board.delete_piece(selected_piece)
@@ -19,12 +19,14 @@ func explode_range(dest_piece, selected_piece, board):
 			# When we have multiple shield kings on board, will need to fix this.
 	for position in dest_piece.bishop_explode_positions():
 		var piece_around = board.get_piece(position)
-		if piece_around != null && piece_around.piece_type != Globals.PIECE_TYPES.DUCK && board.piece_is_protected(piece_around) == false:
+		print(str(position))
+		if piece_around != null && (piece_around.piece_type != Globals.PIECE_TYPES.DUCK) && board.piece_is_protected(piece_around) == false:
+			print("Test")
 			spawn_explosion(position)
 			board.delete_piece(piece_around)
 		if selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER:
 				board.delete_piece(selected_piece)
-		return false
+	return false
 
 func spawn_explosion(pos : Vector2):
 	var actual_pos = Vector2(pos.x * 120 + 60, pos.y * 120 + 60)
