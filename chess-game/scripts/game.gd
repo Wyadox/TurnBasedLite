@@ -206,7 +206,8 @@ func drop_piece():
 			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER:
 				is_shooting = true
 			if selected_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
-				is_jousting = true
+				if dest_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP:
+					is_jousting = true
 		if is_shooting == false:
 			#print(selected_piece.board_position - to_move)
 			selected_piece.move_position(to_move)
@@ -221,8 +222,8 @@ func drop_piece():
 		if is_jousting:
 			var joust_pos = to_move + joust_direction(old_pos, to_move)
 			dest_piece = board.get_piece(joust_pos)
-			board.delete_piece(dest_piece)
-			if dest_piece != null and valid_move(to_move, joust_pos):
+			if dest_piece != null and valid_move(to_move, joust_pos) and dest_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP:
+				board.delete_piece(dest_piece)
 				selected_piece.move_position(joust_pos)
 		if piece_died:
 			board.delete_piece(selected_piece)
