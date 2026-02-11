@@ -1,7 +1,6 @@
 extends Node2D
 
 signal selected_square(pos)
-signal init_ai
 
 var explosionScene = preload("res://scenes/Explosion.tscn")
 
@@ -56,6 +55,8 @@ func _ready():
 	SignalBus.test.connect(tests)
 	print("connections")
 	
+	print(player2_type)
+	
 func tests(data):
 	print(data)
 
@@ -105,16 +106,8 @@ func _input(event):
 				color = Color(1.0, 1.0, 0.0)
 				board.draw_border(it.x, it.y, color, false)
 				
-			
 	elif event is InputEventMouseMotion and is_dragging:
 		selected_piece.position = get_global_mouse_position()
-		if move_timer.time_left < 0.5:
-			selected_piece.position = previous_position
-			selected_piece.z_index = 0
-			selected_piece = null
-			is_dragging = false
-			board.clear_borders()
-			print("dropped piece INPUT")
 	elif Input.is_action_just_released("left_click") and is_dragging:
 		var is_valid_move = drop_piece()
 		if !is_valid_move:
@@ -458,7 +451,7 @@ func spawn_explosion(pos : Vector2):
 
 
 func _on_button_pressed():
-	get_tree().reload_current_scene()
+	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
 func end_turn():
 	for piece in board.pieces:
@@ -536,12 +529,18 @@ func init_pieces():
 func _on_move_timer_timeout() -> void:
 	print("ran out of time")
 	
-	var player
-	if status == Globals.COLORS.WHITE:
-		player = Globals.PLAYER.ONE
-	else:
-		player = Globals.PLAYER.TWO
-	move_from_timeout(player)
+	if selected_piece and setup_complete:
+		selected_piece.position = previous_position
+		selected_piece.z_index = 0
+		selected_piece = null
+		is_dragging = false
+		board.clear_borders()
+		print("dropped piece INPUT")
+		
+	#move_from_timeout(player)
+	
+	end_turn()
+	player2_move()
 
 func _process(delta):
 	if move_timer.is_stopped():

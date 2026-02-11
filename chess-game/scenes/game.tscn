@@ -96,10 +96,6 @@ texture = ExtResource("8_gee14")
 
 [node name="SetupPhaseUI" parent="." instance=ExtResource("6_p57ef")]
 
-[connection signal="init_ai" from="." to="Board" method="_on_game_init_ai"]
 [connection signal="selected_square" from="." to="Board" method="_on_game_selected_square"]
-[connection signal="set_status" from="Board" to="." method="_on_board_set_status"]
-[connection signal="setup_complete" from="Board" to="." method="_on_board_setup_complete"]
-[connection signal="spawn_ai" from="Board" to="." method="_on_board_spawn_ai"]
 [connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]
 [connection signal="timeout" from="MoveTimer" to="." method="_on_move_timer_timeout"]

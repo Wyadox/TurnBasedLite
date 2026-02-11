@@ -2,25 +2,27 @@ extends Control
 
 var option
 
-func _ready() -> void:
-	tree_exited.connect(_on_tree_exited)
-
 func _on_human_button_pressed() -> void:
 	option = "human"
-	SignalBus.emit_signal("test", "hi")
-	get_tree().change_scene_to_file("res://scenes/game.tscn")
-	SignalBus.emit_signal("human_op")
-
+	load_game_scene()
 
 func _on_ai_button_pressed() -> void:
 	option = "ai"
-	SignalBus.emit_signal("ai_op")
-	get_tree().change_scene_to_file("res://scenes/game.tscn")
+	load_game_scene()
 
-func _on_tree_exited():
+func load_game_scene():
+	var player_type : Globals.PLAYER_2_TYPE
 	if option == "human":
-		SignalBus.emit_signal("human_op")
-		print("human_op emit")
+		player_type = Globals.PLAYER_2_TYPE.HUMAN
 	else:
-		SignalBus.emit_signal("ai_op")
-		print("ai_op emit")
+		player_type = Globals.PLAYER_2_TYPE.AI
+		
+	const GAME_SCENE = preload("res://scenes/game.tscn")
+	var game_scene = GAME_SCENE.instantiate()
+	
+	game_scene.player2_type = player_type
+	
+	var scene_tree = get_tree()
+	scene_tree.current_scene.queue_free()
+	scene_tree.root.add_child(game_scene)
+	scene_tree.current_scene = game_scene

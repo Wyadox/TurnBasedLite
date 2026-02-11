@@ -1,10 +1,5 @@
 extends Node2D
 
-signal setup_complete
-signal set_status(color)
-signal refund_piece(piece_type)
-signal spawn_ai
-
 @export var pieces = [];
 @export var piece_scene = preload("res://scenes/Piece.tscn")
 @export var setup_script = preload("res://scripts/setup_phase_ui.gd")
@@ -196,21 +191,22 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 	else:
 		color = Globals.COLORS.BLACK
 	create_piece(piece_type, color, selected_pos)
+	print("Piece created")
 	
 	# Determine if color needs to swap
 	if total_pieces + 1 < 6:
 		color = Globals.COLORS.WHITE
 	else:
 		color = Globals.COLORS.BLACK
+		print("Color is now black")
 	SignalBus.emit_signal("set_status", color)
 	
 	if total_pieces == 5:
-		print("emit spawn ai")
 		SignalBus.emit_signal("spawn_ai")
 		total_pieces = num_pieces()
 	
 	# Ready to play
-	if total_pieces + 1 > 11:
+	if total_pieces > 10:
 		setup_done = true
 		SignalBus.emit_signal("setup_complete")
 		

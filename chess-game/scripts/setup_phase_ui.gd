@@ -10,14 +10,17 @@ const PIECE_LIMIT = 2
 
 func _ready() -> void:
 	SignalBus.refund_piece.connect(_on_board_refund_piece)
+	SignalBus.set_status.connect(_on_board_set_status)
 
 func valid_spawn(piece_type : Globals.PIECE_TYPES) -> bool:
 	var piece_base = piece_base_converter(piece_type)
 	if (status == Globals.COLORS.WHITE):
 		if white_base_dict[piece_base] + 1 > PIECE_LIMIT:
+			print("Piece FAILED because of limit on white")
 			return false
 	if (status == Globals.COLORS.BLACK):
 		if black_base_dict[piece_base] + 1 > PIECE_LIMIT:
+			print("Piece FAILED because of limit")
 			return false
 	
 	if (status == Globals.COLORS.WHITE and !white_dict.has(piece_type)) or (status == Globals.COLORS.BLACK and !black_dict.has(piece_type)):
@@ -28,6 +31,7 @@ func valid_spawn(piece_type : Globals.PIECE_TYPES) -> bool:
 			black_dict[piece_type] = true
 			black_base_dict[piece_base] += 1
 		return true
+	print("Piece FAILED because of duplicate")
 	return false
 	
 func piece_base_converter(piece_type : Globals.PIECE_TYPES):
@@ -74,6 +78,7 @@ func _on_board_refund_piece(piece_type: Variant) -> void:
 		else:
 			black_dict.erase(piece_type)
 			black_base_dict[piece_base] -= 1
+		print("Piece REFUNDED")
 	
 func _on_board_set_status(color: Variant) -> void:
 	status = color
