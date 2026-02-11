@@ -177,7 +177,10 @@ func drop_piece():
 				var jumped_pos = Vector2(int((old_pos.x + to_move.x) / 2), int((old_pos.y + to_move.y) / 2))
 				var jumped_piece = board.get_piece(jumped_pos)
 				if jumped_piece != null and jumped_piece.color != selected_piece.color:
-					board.delete_piece(jumped_piece)
+					if jumped_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
+						ExplodingBishop.explode_range(jumped_piece, selected_piece, board)
+					else:
+						board.delete_piece(jumped_piece)
 					checker_captured = true
 					dest_piece = null
 		#if selected_piece.piece_type == Globals.PIECE_TYPES.CHECKER:
@@ -191,13 +194,10 @@ func drop_piece():
 				#checker_captured = true
 		# Delete only if the target piece is of different color
 		if dest_piece != null and dest_piece.color != selected_piece.color:
-			if dest_piece.piece_type == Globals.PIECE_TYPES.TROJAN_HORSE:
-				dest_piece.trojan_spawn(dest_piece.color)
 			if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP or selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
 				ExplodingBishop.explode_range(dest_piece, selected_piece, board)
 			if dest_piece.piece_type == Globals.PIECE_TYPES.TROJAN_HORSE:
-				dest_piece.trojan_spawn(dest_piece.color)
-			
+				TrojanHorse.trojan_spawn(dest_piece, board)
 			if dest_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
 				piece_died = true
 			if not shield_king_killed:

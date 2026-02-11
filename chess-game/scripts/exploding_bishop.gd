@@ -19,9 +19,7 @@ func explode_range(dest_piece, selected_piece, board):
 			# When we have multiple shield kings on board, will need to fix this.
 	for position in dest_piece.bishop_explode_positions():
 		var piece_around = board.get_piece(position)
-		print(str(position))
 		if piece_around != null && (piece_around.piece_type != Globals.PIECE_TYPES.DUCK) && board.piece_is_protected(piece_around) == false:
-			print("Test")
 			spawn_explosion(position)
 			board.delete_piece(piece_around)
 		if selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER:

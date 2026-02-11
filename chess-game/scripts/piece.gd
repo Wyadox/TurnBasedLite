@@ -419,15 +419,8 @@ func get_trojan_spawn_positions():
 			positions.append(pos)
 	return positions
 	
-func trojan_spawn(color):
-	for position in get_trojan_spawn_positions():
-		board_handle.create_piece(
-			Globals.PIECE_TYPES.PAWN,
-			color,
-			position
-		)
 
-const BISHOP_EXPLODE_INCREMENT = [[1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1]]
+const BISHOP_EXPLODE_INCREMENT = [[0, 0], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1]]
 func bishop_explode_positions():
 	var positions = []
 	for inc in BISHOP_EXPLODE_INCREMENT:
