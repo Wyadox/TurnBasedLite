@@ -22,8 +22,8 @@ func _ready() -> void:
 	SignalBus.init_ai.connect(_on_game_init_ai)
 
 func draw_board():
-	for x in range(6):
-		for y in range(6):
+	for x in range(7):
+		for y in range(7):
 			draw_cell(x, y)
 
 func draw_cell(x, y):
@@ -73,7 +73,7 @@ func beam_search_threat(own_color, cur_x, cur_y, inc_x, inc_y):
 	
 	# Keep moving in increment direction to find either a blocked pieces
 	# or out of board
-	while cur_x >= 0 and cur_x < 6 and cur_y >= 0 and cur_y < 6:
+	while cur_x >= 0 and cur_x < 7 and cur_y >= 0 and cur_y < 7:
 		var cur_pos = Vector2(cur_x, cur_y)
 		var cur_piece = get_piece(cur_pos)
 		if cur_piece != null:
@@ -96,7 +96,7 @@ func spot_search_threat(
 	cur_x += inc_x
 	cur_y += inc_y
 	
-	if cur_x >= 6 or cur_x < 0 or cur_y >= 6 or cur_y < 0:
+	if cur_x >= 7 or cur_x < 0 or cur_y >= 7 or cur_y < 0:
 		return
 	
 	var cur_pos = Vector2(cur_x, cur_y)
@@ -120,7 +120,7 @@ func spot_search_explode(
 	cur_x += inc_x
 	cur_y += inc_y
 	
-	if cur_x >= 6 or cur_x < 0 or cur_y >= 6 or cur_y < 0:
+	if cur_x >= 7 or cur_x < 0 or cur_y >= 7 or cur_y < 0:
 		return
 	
 	var cur_pos = Vector2(cur_x, cur_y)
@@ -141,7 +141,7 @@ func spot_search_protect(
 	cur_x += inc_x
 	cur_y += inc_y
 	
-	if cur_x >= 6 or cur_x < 0 or cur_y >= 6 or cur_y < 0:
+	if cur_x >= 7 or cur_x < 0 or cur_y >= 7 or cur_y < 0:
 		return
 	
 	var cur_pos = Vector2(cur_x, cur_y)
@@ -161,7 +161,7 @@ func clone():
 	return board
 	
 func is_within_bounds(pos: Vector2):
-	return pos.x >= 0 and pos.x < 6 and pos.y >= 0 and pos.y < 6
+	return pos.x >= 0 and pos.x < 7 and pos.y >= 0 and pos.y < 7
 
 func create_piece(type: Globals.PIECE_TYPES, col: Globals.COLORS, board_pos: Vector2):
 	var piece = piece_scene.instantiate()

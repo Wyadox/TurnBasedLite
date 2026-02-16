@@ -193,7 +193,7 @@ func drop_piece():
 		# Delete only if the target piece is of different color
 		if dest_piece != null and dest_piece.color != selected_piece.color:
 			if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP or selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
-				ExplodingBishop.explode_range(dest_piece, selected_piece, board)
+				shield_king_killed = ExplodingBishop.explode_range(dest_piece, selected_piece, board)
 			if dest_piece.piece_type == Globals.PIECE_TYPES.TROJAN_HORSE:
 				TrojanHorse.trojan_spawn(dest_piece, board)
 			if dest_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
