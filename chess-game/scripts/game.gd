@@ -1,7 +1,6 @@
 extends Node2D
 
 signal selected_square(pos)
-signal init_ai
 
 #var explosionScene = preload("res://scenes/Explosion.tscn")
 
@@ -25,7 +24,7 @@ var failed_to_move : bool = false
 @onready var ui_control = $Control
 @onready var win_label = $"Control/Win Label"
 @onready var setup_ui = $SetupPhaseUI
-@onready var main_menu_ui = $MainMenu
+#@onready var main_menu_ui = $MainMenu
 
 @onready var turn_indicator : TextureRect = $TurnIndicator
 @onready var sprite = $IndicatorImage
@@ -40,19 +39,26 @@ var time_remaining := 15.0
 func _ready():
 	ui_control.hide()
 	win_label.hide()
-	setup_ui.hide()
 	timer_bar.hide()
 	turn_indicator.hide()
 	init_game()
-	allow_select = false
 	
-func _on_opponent_ui_setup_ready() -> void:
-	ui_control.hide()
-	win_label.hide()
 	setup_ui.show()
 	setup_complete = false
 	allow_select = true
 	
+	SignalBus.human_op.connect(_on_opponent_ui_human_op)
+	SignalBus.ai_op.connect(_on_opponent_ui_ai_op)
+	SignalBus.set_status.connect(_on_board_set_status)
+	SignalBus.spawn_ai.connect(_on_board_spawn_ai)
+	SignalBus.setup_complete.connect(_on_board_setup_complete)
+	SignalBus.test.connect(tests)
+	print("connections")
+	
+	print(player2_type)
+	
+func tests(data):
+	print(data)
 
 func _input(event):
 	if game_over:
@@ -100,16 +106,8 @@ func _input(event):
 				color = Color(1.0, 1.0, 0.0)
 				board.draw_border(it.x, it.y, color, false)
 				
-			
 	elif event is InputEventMouseMotion and is_dragging:
 		selected_piece.position = get_global_mouse_position()
-		if move_timer.time_left < 0.5:
-			selected_piece.position = previous_position
-			selected_piece.z_index = 0
-			selected_piece = null
-			is_dragging = false
-			board.clear_borders()
-			print("dropped piece INPUT")
 	elif Input.is_action_just_released("left_click") and is_dragging:
 		var is_valid_move = drop_piece()
 		if !is_valid_move:
@@ -426,7 +424,7 @@ func set_win(who: Globals.PLAYER):
 
 
 func _on_button_pressed():
-	get_tree().reload_current_scene()
+	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
 func end_turn():
 	for piece in board.pieces:
@@ -461,17 +459,17 @@ func _on_board_setup_complete() -> void:
 	setup_ui.hide()
 	timer_bar.show()
 	status = Globals.COLORS.WHITE
-	print("init_pieces call")
 	init_pieces()
 	reset_timer()
 	board.update_indicators()
 	turn_indicator.texture = get_turn_indicator_tex(status)
 	turn_indicator.show()
+	print("setup complete connected")
 
 
 func _on_board_set_status(color: Variant) -> void:
 	status = color
-	print(color)
+	print("status connected")
 
 
 func _on_opponent_ui_ai_op() -> void:
@@ -481,12 +479,14 @@ func _on_opponent_ui_ai_op() -> void:
 
 func _on_opponent_ui_human_op() -> void:
 	player2_type = Globals.PLAYER_2_TYPE.HUMAN
+	print("helloooooooooooooooooooooooooooooooooo")
 
 
 func _on_board_spawn_ai() -> void:
 	if player2_type == Globals.PLAYER_2_TYPE.AI:
 		print("emit init_ai")
-		emit_signal("init_ai")
+		SignalBus.emit_signal("init_ai")
+		print("spawn_ai connected")
 	else:
 		print("fail")
 
@@ -502,12 +502,18 @@ func init_pieces():
 func _on_move_timer_timeout() -> void:
 	print("ran out of time")
 	
-	var player
-	if status == Globals.COLORS.WHITE:
-		player = Globals.PLAYER.ONE
-	else:
-		player = Globals.PLAYER.TWO
-	move_from_timeout(player)
+	if selected_piece and setup_complete:
+		selected_piece.position = previous_position
+		selected_piece.z_index = 0
+		selected_piece = null
+		is_dragging = false
+		board.clear_borders()
+		print("dropped piece INPUT")
+		
+	#move_from_timeout(player)
+	
+	end_turn()
+	player2_move()
 
 func _process(delta):
 	if move_timer.is_stopped():

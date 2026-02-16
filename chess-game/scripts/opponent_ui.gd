@@ -1,26 +1,28 @@
 extends Control
 
-signal setup_ready
-signal ai_op
-signal human_op
-
-@onready var opponent_ui = $"."
-
-func _ready():
-	opponent_ui.hide()
+var option
 
 func _on_human_button_pressed() -> void:
-	emit_signal("human_op")
-	emit_signal("setup_ready")
-	opponent_ui.hide()
-
+	option = "human"
+	load_game_scene()
 
 func _on_ai_button_pressed() -> void:
-	print("ai_op emit")
-	emit_signal("ai_op")
-	emit_signal("setup_ready")
-	opponent_ui.hide()
+	option = "ai"
+	load_game_scene()
 
-
-func _on_main_menu_choose_op() -> void:
-	opponent_ui.show()
+func load_game_scene():
+	var player_type : Globals.PLAYER_2_TYPE
+	if option == "human":
+		player_type = Globals.PLAYER_2_TYPE.HUMAN
+	else:
+		player_type = Globals.PLAYER_2_TYPE.AI
+		
+	const GAME_SCENE = preload("res://scenes/game.tscn")
+	var game_scene = GAME_SCENE.instantiate()
+	
+	game_scene.player2_type = player_type
+	
+	var scene_tree = get_tree()
+	scene_tree.current_scene.queue_free()
+	scene_tree.root.add_child(game_scene)
+	scene_tree.current_scene = game_scene

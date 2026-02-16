@@ -1,0 +1,42 @@
+[gd_scene load_steps=2 format=3 uid="uid://bq42yjpnh31ak"]
+
+[ext_resource type="Script" uid="uid://dh2jkjv5144ew" path="res://scripts/opponent_ui.gd" id="1_8x5pu"]
+
+[node name="OpponentUI" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 173.0
+offset_top = 47.0
+offset_right = 433.0
+offset_bottom = 205.0
+script = ExtResource("1_8x5pu")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 186.0
+offset_right = 631.0
+offset_bottom = 320.0
+theme_override_font_sizes/font_size = 46
+text = "CHOOSE YOUR OPPONENT"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 188.0
+offset_top = 317.0
+offset_right = 507.0
+offset_bottom = 358.0
+theme_override_constants/separation = 100
+
+[node name="HumanButton" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "Human"
+
+[node name="AiButton" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "Computer"
+
+[connection signal="pressed" from="HBoxContainer/HumanButton" to="." method="_on_human_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/AiButton" to="." method="_on_ai_button_pressed"]

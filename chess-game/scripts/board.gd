@@ -1,10 +1,5 @@
 extends Node2D
 
-signal setup_complete
-signal set_status(color)
-signal refund_piece(piece_type)
-signal spawn_ai
-
 @export var pieces = [];
 @export var piece_scene = preload("res://scenes/Piece.tscn")
 @export var setup_script = preload("res://scripts/setup_phase_ui.gd")
@@ -19,9 +14,12 @@ var setup_done: bool = false
 const CELL_SIZE = 120
 
 # Called when the node enters the scene tree for the first time.
-func _on_opponent_ui_setup_ready() -> void:
+func _ready() -> void:
 	draw_board()
 	clear_borders()
+	
+	SignalBus.spawn_piece.connect(_on_setup_phase_ui_spawn_piece)
+	SignalBus.init_ai.connect(_on_game_init_ai)
 
 func draw_board():
 	for x in range(6):
@@ -175,10 +173,10 @@ func create_piece(type: Globals.PIECE_TYPES, col: Globals.COLORS, board_pos: Vec
 var border_panel
 var borders = []
 
-func _on_setup_phase_ui_spawn_piece(piece_type: Variant) -> void:
+func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 	if selected_pos == Vector2(-1, -1):
 		print("Select a valid position")
-		emit_signal("refund_piece", piece_type)
+		SignalBus.emit_signal("refund_piece", piece_type)
 		return
 	
 	if setup_done == true:
@@ -193,23 +191,24 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Variant) -> void:
 	else:
 		color = Globals.COLORS.BLACK
 	create_piece(piece_type, color, selected_pos)
+	print("Piece created")
 	
 	# Determine if color needs to swap
 	if total_pieces + 1 < 6:
 		color = Globals.COLORS.WHITE
 	else:
 		color = Globals.COLORS.BLACK
-	emit_signal("set_status", color)
+		print("Color is now black")
+	SignalBus.emit_signal("set_status", color)
 	
 	if total_pieces == 5:
-		print("emit spawn ai")
-		emit_signal("spawn_ai")
+		SignalBus.emit_signal("spawn_ai")
 		total_pieces = num_pieces()
 	
 	# Ready to play
-	if total_pieces + 1 > 11:
+	if total_pieces > 10:
 		setup_done = true
-		emit_signal("setup_complete")
+		SignalBus.emit_signal("setup_complete")
 		
 	# Reset border visual and selected pos
 	if border_panel and border_panel.is_inside_tree():

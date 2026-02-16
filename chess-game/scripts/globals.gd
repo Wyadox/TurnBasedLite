@@ -9,6 +9,15 @@ enum COLORS {
 	BLACK, WHITE
 }
 
+enum PIECE_BASE {
+	PAWN,
+	BISHOP,
+	ROOK,
+	KNIGHT,
+	KING,
+	QUEEN
+}
+
 enum PIECE_TYPES {
 	KNIGHT,
 	BISHOP,
