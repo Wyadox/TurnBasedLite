@@ -210,9 +210,9 @@ func pawn_move_pos():
 	
 	return positions
 	
-const WORM_SPOT_THREAT_INCREMENTS = [[-5,1], [5, 1]];
-const WORM_SPOT_THREAT_OPPOSITE_INCREMENTS = [[-5,-1], [5, -1]];
-const WORM_SPOT_MOVE_INCREMENTS = [[-5,0], [5, 0], [-1, 0], [1, 0]];
+const WORM_SPOT_THREAT_INCREMENTS = [[-6,1], [6, 1]];
+const WORM_SPOT_THREAT_OPPOSITE_INCREMENTS = [[-6,-1], [6, -1]];
+const WORM_SPOT_MOVE_INCREMENTS = [[-6,0], [6, 0], [-1, 0], [1, 0]];
 func worm_threat_pos():
 	var positions = []
 	var WORM_INCREMENTS = WORM_SPOT_THREAT_INCREMENTS

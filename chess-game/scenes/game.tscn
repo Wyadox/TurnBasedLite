@@ -74,10 +74,10 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="MoveTimerBar" type="TextureProgressBar" parent="."]
-offset_left = 786.0
-offset_top = 561.99994
-offset_right = 818.0
-offset_bottom = 593.99994
+offset_left = 911.0
+offset_top = 750.0
+offset_right = 943.0
+offset_bottom = 782.0
 scale = Vector2(4.440916, 4.440916)
 max_value = 15.0
 fill_mode = 4
@@ -85,16 +85,18 @@ texture_under = ExtResource("6_u5sy4")
 texture_progress = ExtResource("7_gee14")
 
 [node name="TurnIndicator" type="TextureRect" parent="."]
-offset_left = 779.0
-offset_top = 373.0
-offset_right = 944.0
-offset_bottom = 538.0
+offset_left = 899.0
+offset_top = 568.0
+offset_right = 1064.0
+offset_bottom = 733.0
 
 [node name="IndicatorImage" type="Sprite2D" parent="."]
 position = Vector2(-301, 57)
 texture = ExtResource("8_gee14")
 
 [node name="SetupPhaseUI" parent="." instance=ExtResource("6_p57ef")]
+offset_left = 115.0
+offset_right = 155.0
 
 [connection signal="selected_square" from="." to="Board" method="_on_game_selected_square"]
 [connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]
