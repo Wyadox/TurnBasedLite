@@ -35,6 +35,10 @@ var failed_to_move : bool = false
 var move_time := 15.0
 var time_remaining := 15.0
 
+const MAX_TURNS_WITHOUT_CAPTURE := 10
+var turns_since_last_capture := 0
+var previous_piece_total := 0
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	ui_control.hide()
@@ -72,10 +76,10 @@ func _input(event):
 			return
 		
 		if selected_piece == null and !setup_complete:
-			if pos.x < 6 and pos.x > -1 and pos.y < 6 and pos.y > -1:
-				if status == Globals.COLORS.WHITE and pos.y == 5:
+			if pos.x < board.BOARD_WIDTH and pos.x > -1 and pos.y < board.BOARD_HEIGHT and pos.y > -1:
+				if status == Globals.COLORS.WHITE and pos.y >= board.BOARD_HEIGHT - 2:
 					emit_signal("selected_square", pos)
-				if status == Globals.COLORS.BLACK and pos.y == 0:
+				if status == Globals.COLORS.BLACK and pos.y <= 1:
 					emit_signal("selected_square", pos)
 			else:
 				print("no square was selected")
@@ -404,15 +408,24 @@ func evaluate_end_game():
 		move_timer.stop()
 		set_win(Globals.PLAYER.TWO if status == player_color else Globals.PLAYER.ONE)
 		return true
+		
+	if turns_since_last_capture > MAX_TURNS_WITHOUT_CAPTURE:
+		game_over = true
+		move_timer.stop()
+		set_win(null)
+		return true
+		
 			
 	return false
 
-func set_win(who: Globals.PLAYER):
+func set_win(who):
 	game_over = true
 	if who == Globals.PLAYER.ONE:
 		win_label.text = "Player One Won"
-	else:
+	elif who == Globals.PLAYER.TWO:
 		win_label.text = "Player Two Won"
+	else:
+		win_label.text = "DRAW"
 	win_label.show()
 	ui_control.show()
 	
@@ -433,6 +446,12 @@ func end_turn():
 	status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
 	
 	turn_indicator.texture = get_turn_indicator_tex(status)
+	
+	if board.pieces.size() == previous_piece_total:
+		turns_since_last_capture += 1
+	else:
+		previous_piece_total = board.pieces.size()
+		print("previous = ", previous_piece_total)
 	
 	reset_timer()
 	board.update_indicators()

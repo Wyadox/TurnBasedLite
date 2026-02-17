@@ -16,6 +16,8 @@ const CELL_SIZE = 120
 const BOARD_HEIGHT = 7
 const BOARD_WIDTH = 7
 
+const PIECES_PER_SIDE = 7
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	draw_board()
@@ -189,7 +191,7 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 	# Determine color for current piece
 	var color
 	var total_pieces : int = num_pieces()
-	if total_pieces < 6:
+	if total_pieces < PIECES_PER_SIDE:
 		color = Globals.COLORS.WHITE
 	else:
 		color = Globals.COLORS.BLACK
@@ -197,19 +199,19 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 	print("Piece created")
 	
 	# Determine if color needs to swap
-	if total_pieces + 1 < 6:
+	if total_pieces + 1 < PIECES_PER_SIDE:
 		color = Globals.COLORS.WHITE
 	else:
 		color = Globals.COLORS.BLACK
 		print("Color is now black")
 	SignalBus.emit_signal("set_status", color)
 	
-	if total_pieces == 5:
+	if total_pieces == PIECES_PER_SIDE - 1:
 		SignalBus.emit_signal("spawn_ai")
 		total_pieces = num_pieces()
 	
 	# Ready to play
-	if total_pieces > 10:
+	if total_pieces > (PIECES_PER_SIDE - 1) * 2:
 		setup_done = true
 		SignalBus.emit_signal("setup_complete")
 		
