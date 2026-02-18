@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://dux8e4cssk5i1"]
+[gd_scene load_steps=4 format=3 uid="uid://dux8e4cssk5i1"]
 
-[ext_resource type="Script" uid="uid://b1ibgxoocd1ub" path="res://scenes/loadout_menu.gd" id="1_yna6v"]
+[ext_resource type="Script" uid="uid://b1ibgxoocd1ub" path="res://scripts/loadout_menu.gd" id="1_yna6v"]
+[ext_resource type="PackedScene" uid="uid://dlld2p1r0gxox" path="res://scenes/setup_phase_ui.tscn" id="2_3c7rr"]
+[ext_resource type="PackedScene" uid="uid://shbx8xrqrlr8" path="res://scenes/loadout_slots.tscn" id="3_gc7b0"]
 
 [node name="loadout_menu" type="Control"]
 layout_mode = 3
@@ -34,8 +36,29 @@ text = "SAVE"
 layout_mode = 2
 text = "LOAD"
 
+[node name="Button_Clear" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "CLEAR"
+
 [node name="Button_Exit" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 text = "EXIT"
 
+[node name="SetupPhaseUI" parent="." instance=ExtResource("2_3c7rr")]
+layout_mode = 0
+offset_left = 103.0
+offset_top = -5.0
+offset_right = 143.0
+offset_bottom = 35.0
+
+[node name="loadoutSlots" parent="." instance=ExtResource("3_gc7b0")]
+layout_mode = 1
+offset_left = 391.0
+offset_top = 305.0
+offset_right = 391.0
+offset_bottom = 305.0
+
+[connection signal="pressed" from="HBoxContainer/Button_Save" to="." method="_on_button_save_pressed"]
+[connection signal="pressed" from="HBoxContainer/Button_Load" to="." method="_on_button_load_pressed"]
+[connection signal="pressed" from="HBoxContainer/Button_Clear" to="." method="_on_button_clear_pressed"]
 [connection signal="pressed" from="HBoxContainer/Button_Exit" to="." method="_on_button_exit_pressed"]

@@ -1,7 +1,5 @@
 extends Node2D
 
-signal selected_square(pos)
-
 #var explosionScene = preload("res://scenes/Explosion.tscn")
 
 # Game States
@@ -69,21 +67,23 @@ func _input(event):
 		return
 	# Mouse left clicks/drags
 	if Input.is_action_just_pressed("left_click"):
+		print("left click")
 		var pos = get_pos_under_mouse()
 		selected_piece = board.get_piece(pos)
 		# Drag piece only if they are under the mouse or are of current player
 		if !allow_select:
 			return
-		
+			
 		if selected_piece == null and !setup_complete:
 			if pos.x < board.BOARD_WIDTH and pos.x > -1 and pos.y < board.BOARD_HEIGHT and pos.y > -1:
 				if status == Globals.COLORS.WHITE and pos.y >= board.BOARD_HEIGHT - 2:
-					emit_signal("selected_square", pos)
+					SignalBus.emit_signal("selected_square", pos)
 				if status == Globals.COLORS.BLACK and pos.y <= 1:
-					emit_signal("selected_square", pos)
+					SignalBus.emit_signal("selected_square", pos)
 			else:
 				print("no square was selected")
 			return
+		print("not in setup phase")
 			
 		if selected_piece == null:
 			return

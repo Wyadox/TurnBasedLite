@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://bxdepwhprt4pp"]
 
 [ext_resource type="Script" uid="uid://bj20fx8i5xny6" path="res://scripts/game.gd" id="1_yqjtg"]
-[ext_resource type="Script" uid="uid://dlwh8mqmkmuqo" path="res://scripts/board.gd" id="2_lnu2h"]
+[ext_resource type="PackedScene" uid="uid://dnbpf2aas655b" path="res://scenes/board.tscn" id="2_p57ef"]
 [ext_resource type="PackedScene" uid="uid://dlld2p1r0gxox" path="res://scenes/setup_phase_ui.tscn" id="6_p57ef"]
 [ext_resource type="Texture2D" uid="uid://d31qmqe0kjyid" path="res://EmptyBar.png" id="6_u5sy4"]
 [ext_resource type="Texture2D" uid="uid://3dyvehvtliv5" path="res://FullBar.png" id="7_gee14"]
@@ -10,8 +10,7 @@
 [node name="Game" type="Node2D"]
 script = ExtResource("1_yqjtg")
 
-[node name="Board" type="Node2D" parent="."]
-script = ExtResource("2_lnu2h")
+[node name="Board" parent="." instance=ExtResource("2_p57ef")]
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
@@ -99,6 +98,5 @@ texture = ExtResource("8_gee14")
 offset_left = 115.0
 offset_right = 155.0
 
-[connection signal="selected_square" from="." to="Board" method="_on_game_selected_square"]
 [connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]
 [connection signal="timeout" from="MoveTimer" to="." method="_on_move_timer_timeout"]
