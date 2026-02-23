@@ -74,11 +74,14 @@ func delete_piece(piece):
 			return
 			
 func wipe_pieces(if_white = true, if_black = true):
+	var pieces_to_remove = []
 	for piece in pieces:
 		if (if_white and piece.color == Globals.COLORS.WHITE) or (if_black and piece.color == Globals.COLORS.BLACK):
-			piece.queue_free()
-			piece.erase()
-			
+			pieces_to_remove.append(piece)
+	
+	for piece in pieces_to_remove:
+		piece.queue_free()
+		pieces.erase(piece)
 
 func beam_search_threat(own_color, cur_x, cur_y, inc_x, inc_y):
 	# Moves a pointer in a line in given inc_x/y direction

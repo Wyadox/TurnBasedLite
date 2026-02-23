@@ -22,7 +22,7 @@ var failed_to_move : bool = false
 @onready var ui_control = $Control
 @onready var win_label = $"Control/Win Label"
 @onready var setup_ui = $SetupPhaseUI
-#@onready var main_menu_ui = $MainMenu
+@onready var loadout_ui = $loadoutSlots
 
 @onready var turn_indicator : TextureRect = $TurnIndicator
 @onready var sprite = $IndicatorImage
@@ -59,18 +59,29 @@ func _ready():
 	print(player2_type)
 	
 func loadout_button_pressed(loadout):
+	var save_string : String
+	if status == Globals.COLORS.WHITE:
+		board.wipe_pieces(true, false)
+	else:
+		board.wipe_pieces(false, true)
 	if loadout == 1:
-		print(Globals.SAVE_STRING_1)
-		if status == Globals.COLORS.WHITE:
-			board.wipe_pieces(true, false)
-		parse_save_string(Globals.SAVE_STRING_1)
+		save_string = LoadoutSaves.loadouts_to_save.loadout1
+	elif loadout == 2:
+		save_string = LoadoutSaves.loadouts_to_save.loadout2
+	else:
+		save_string = LoadoutSaves.loadouts_to_save.loadout3
+	parse_save_string(save_string)
 
 func parse_save_string(save_string):
 	var spawn_array = save_string.split("_", false)
 	for spawn in spawn_array:
 		var spawn_split = spawn.split(":")
-		board.selected_pos = Vector2(spawn_split[1])
-		board._on_setup_phase_ui_spawn_piece(spawn_split[0])
+		var coord_split = spawn_split[1].split(",")
+		if status == Globals.COLORS.WHITE:
+			board.selected_pos = Vector2(int(coord_split[0]),int(coord_split[1]))
+		elif status == Globals.COLORS.BLACK:
+			board.selected_pos = Vector2(int(coord_split[0]),int(coord_split[1]) * -1 + 6)
+		board._on_setup_phase_ui_spawn_piece(int(spawn_split[0]))
 
 func _input(event):
 	if game_over:
@@ -457,10 +468,11 @@ func end_turn():
 	
 	turn_indicator.texture = get_turn_indicator_tex(status)
 	
-	if board.pieces.size() == previous_piece_total:
+	if board.num_pieces() == previous_piece_total:
 		turns_since_last_capture += 1
 	else:
-		previous_piece_total = board.pieces.size()
+		previous_piece_total = board.num_pieces()
+		turns_since_last_capture = 0
 		print("previous = ", previous_piece_total)
 	
 	reset_timer()
@@ -486,6 +498,7 @@ func get_turn_indicator_tex(color):
 func _on_board_setup_complete() -> void:
 	setup_complete = true
 	setup_ui.hide()
+	loadout_ui.hide()
 	timer_bar.show()
 	status = Globals.COLORS.WHITE
 	init_pieces()

@@ -1,9 +1,5 @@
 extends Node
 
-var SAVE_STRING_1 : String
-var SAVE_STRING_2 : String
-var SAVE_STRING_3 : String
-
 enum PLAYER { ONE, TWO }
 enum PLAYER_2_TYPE {
 	HUMAN, AI

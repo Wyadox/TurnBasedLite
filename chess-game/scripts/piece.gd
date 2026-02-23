@@ -73,7 +73,7 @@ func move_position(to_move: Vector2):
 	
 	# Promotion for pawns to KING BEHAVIOR
 	if (piece_type == Globals.PIECE_TYPES.PAWN or piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN or piece_type == Globals.PIECE_TYPES.WORM or piece_type == Globals.PIECE_TYPES.CHECKER) and (
-		(color == Globals.COLORS.BLACK and to_move[1] == 5) or 
+		(color == Globals.COLORS.BLACK and to_move[1] == board_handle.BOARD_HEIGHT - 1) or 
 		(color == Globals.COLORS.WHITE and to_move[1] == 0)
 	):
 		#piece_type = Globals.PIECE_TYPES.PROMOTED_PAWN

@@ -9,8 +9,6 @@ const Y_OFFSET = 3
 @onready var setup_scene = $SetupPhaseUI
 const SETUP_SCENE = preload("res://scenes/setup_phase_ui.tscn")
 
-@onready var loadout_slots_scene = $loadoutSlots
-
 const PIECE_LIMIT = 7
 
 var selected_loadout = 1
@@ -47,7 +45,7 @@ func get_pos_under_mouse():
 
 
 func _on_button_clear_pressed() -> void:
-	board_scene.wipe_pieces()
+	board_scene.wipe_pieces(true, true)
 	setup_scene.queue_free()
 	setup_scene = SETUP_SCENE.instantiate()
 	setup_scene.global_position = Vector2(103.0, -5)
@@ -60,25 +58,47 @@ func _on_button_exit_pressed() -> void:
 
 func _on_button_save_pressed() -> void:
 	var save_string = ""
+	
+	if board_scene.num_pieces() != 7:
+		print("YOU MUST PLACE 7 PIECS")
+		return
+		
 	for piece in board_scene.pieces:
 		save_string += str(piece.piece_type) + ":" + str(convert_position(piece.board_position)) + "_"
-		
+	
+	print("selected loadout: ", selected_loadout)
 	if selected_loadout == 1:
-		loadout_slots_scene.slot1.SAVE_STRING = save_string
-		Globals.SAVE_STRING_1 = save_string
-	print(save_string)
+		LoadoutSaves.loadouts_to_save.loadout1 = save_string
+	elif selected_loadout == 2:
+		LoadoutSaves.loadouts_to_save.loadout2 = save_string
+	else:
+		LoadoutSaves.loadouts_to_save.loadout3 = save_string
+	LoadoutSaves._save()
 
 func convert_position(pos : Vector2):
-	return Vector2(pos.x - 1, pos.y + 1)
+	var new_pos = Vector2(pos.x - 1, pos.y + 1)
+	return str(new_pos.x) + "," + str(new_pos.y)
 	
 func loadout_button_pressed(loadout):
 	selected_loadout = loadout
 	print(loadout)
 
-
 func _on_button_load_pressed() -> void:
+	_on_button_clear_pressed()
+	
+	var spawn_string : String
 	if selected_loadout == 1:
-		spawn_pieces(loadout_slots_scene.slot1.SAVE_STRING)
+		spawn_string = LoadoutSaves.loadouts_to_save.loadout1
+	elif selected_loadout == 2:
+		spawn_string = LoadoutSaves.loadouts_to_save.loadout2
+	else:
+		spawn_string = LoadoutSaves.loadouts_to_save.loadout3
+	spawn_pieces(spawn_string)
 	
 func spawn_pieces(pieces : String):
-	print(pieces)
+	var spawn_array = pieces.split("_", false)
+	for spawn in spawn_array:
+		var spawn_split = spawn.split(":")
+		var coord_split = spawn_split[1].split(",")
+		board_scene.selected_pos = Vector2(int(coord_split[0]) + 1,int(coord_split[1]) - 1)
+		board_scene._on_setup_phase_ui_spawn_piece(int(spawn_split[0]))
