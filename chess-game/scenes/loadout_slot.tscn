@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bhpcvx2c3573d" path="res://StunIndicator.png" id="1_76x2o"]
 [ext_resource type="Texture2D" uid="uid://d31qmqe0kjyid" path="res://EmptyBar.png" id="1_c2rx6"]
-[ext_resource type="Script" uid="uid://d3tyyh6ohaeg1" path="res://scenes/loadout_slot.gd" id="1_mqcpd"]
+[ext_resource type="Script" uid="uid://d3tyyh6ohaeg1" path="res://scripts/loadout_slot.gd" id="1_mqcpd"]
 
 [node name="loadout_slot" type="Control"]
 layout_mode = 3

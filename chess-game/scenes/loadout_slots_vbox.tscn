@@ -1,0 +1,45 @@
+[gd_scene load_steps=3 format=3 uid="uid://qrys574fx6lg"]
+
+[ext_resource type="Script" uid="uid://bd2gq1r4kns1y" path="res://scripts/loadout_slots.gd" id="1_ylo77"]
+[ext_resource type="PackedScene" uid="uid://bt1dnu27eu4td" path="res://scenes/loadout_slot.tscn" id="2_d4g58"]
+
+[node name="loadoutSlots" type="Control"]
+layout_mode = 3
+anchor_right = 0.324
+anchor_bottom = 0.15400001
+offset_right = 0.07998657
+offset_bottom = 0.31999207
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 4
+script = ExtResource("1_ylo77")
+
+[node name="HBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 300.0
+offset_bottom = 300.0
+theme_override_constants/separation = 150
+
+[node name="loadout_slot" parent="HBoxContainer" instance=ExtResource("2_d4g58")]
+layout_mode = 2
+SAVE_STRING = "hiuagfiub"
+SLOT_NUM = 1
+
+[node name="loadout_slot2" parent="HBoxContainer" instance=ExtResource("2_d4g58")]
+layout_mode = 2
+SLOT_NUM = 2
+
+[node name="Label" parent="HBoxContainer/loadout_slot2" index="2"]
+text = "LOADOUT 2
+"
+
+[node name="loadout_slot3" parent="HBoxContainer" instance=ExtResource("2_d4g58")]
+layout_mode = 2
+SLOT_NUM = 3
+
+[node name="Label" parent="HBoxContainer/loadout_slot3" index="2"]
+text = "LOADOUT 3"
+
+[editable path="HBoxContainer/loadout_slot"]
+[editable path="HBoxContainer/loadout_slot2"]
+[editable path="HBoxContainer/loadout_slot3"]

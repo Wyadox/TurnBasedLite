@@ -65,6 +65,7 @@ func _on_button_save_pressed() -> void:
 		
 	if selected_loadout == 1:
 		loadout_slots_scene.slot1.SAVE_STRING = save_string
+		Globals.SAVE_STRING_1 = save_string
 	print(save_string)
 
 func convert_position(pos : Vector2):

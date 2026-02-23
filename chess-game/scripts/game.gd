@@ -54,13 +54,23 @@ func _ready():
 	SignalBus.set_status.connect(_on_board_set_status)
 	SignalBus.spawn_ai.connect(_on_board_spawn_ai)
 	SignalBus.setup_complete.connect(_on_board_setup_complete)
-	SignalBus.test.connect(tests)
-	print("connections")
+	SignalBus.loadout_button.connect(loadout_button_pressed)
 	
 	print(player2_type)
 	
-func tests(data):
-	print(data)
+func loadout_button_pressed(loadout):
+	if loadout == 1:
+		print(Globals.SAVE_STRING_1)
+		if status == Globals.COLORS.WHITE:
+			board.wipe_pieces(true, false)
+		parse_save_string(Globals.SAVE_STRING_1)
+
+func parse_save_string(save_string):
+	var spawn_array = save_string.split("_", false)
+	for spawn in spawn_array:
+		var spawn_split = spawn.split(":")
+		board.selected_pos = Vector2(spawn_split[1])
+		board._on_setup_phase_ui_spawn_piece(spawn_split[0])
 
 func _input(event):
 	if game_over:

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://shbx8xrqrlr8"]
 
-[ext_resource type="Script" uid="uid://bd2gq1r4kns1y" path="res://scenes/loadout_slots.gd" id="1_03gao"]
-[ext_resource type="PackedScene" uid="uid://bt1dnu27eu4td" path="res://scenes/loadout_slot.tscn" id="1_vvp0m"]
+[ext_resource type="Script" uid="uid://bd2gq1r4kns1y" path="res://scripts/loadout_slots.gd" id="1_qm34f"]
+[ext_resource type="PackedScene" uid="uid://bt1dnu27eu4td" path="res://scenes/loadout_slot.tscn" id="2_mnxhk"]
 
 [node name="loadoutSlots" type="Control"]
 layout_mode = 3
@@ -12,7 +12,7 @@ offset_bottom = 0.31999207
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 4
-script = ExtResource("1_03gao")
+script = ExtResource("1_qm34f")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 0
@@ -20,12 +20,12 @@ offset_right = 40.0
 offset_bottom = 40.0
 theme_override_constants/separation = 150
 
-[node name="loadout_slot" parent="HBoxContainer" instance=ExtResource("1_vvp0m")]
+[node name="loadout_slot" parent="HBoxContainer" instance=ExtResource("2_mnxhk")]
 layout_mode = 2
 SAVE_STRING = "hiuagfiub"
 SLOT_NUM = 1
 
-[node name="loadout_slot2" parent="HBoxContainer" instance=ExtResource("1_vvp0m")]
+[node name="loadout_slot2" parent="HBoxContainer" instance=ExtResource("2_mnxhk")]
 layout_mode = 2
 SLOT_NUM = 2
 
@@ -33,7 +33,7 @@ SLOT_NUM = 2
 text = "LOADOUT 2
 "
 
-[node name="loadout_slot3" parent="HBoxContainer" instance=ExtResource("1_vvp0m")]
+[node name="loadout_slot3" parent="HBoxContainer" instance=ExtResource("2_mnxhk")]
 layout_mode = 2
 SLOT_NUM = 3
 
