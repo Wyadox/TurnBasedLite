@@ -1,0 +1,103 @@
+[gd_scene load_steps=7 format=3 uid="uid://bxdepwhprt4pp"]
+
+[ext_resource type="Script" uid="uid://bj20fx8i5xny6" path="res://scripts/game.gd" id="1_yqjtg"]
+[ext_resource type="Script" uid="uid://dlwh8mqmkmuqo" path="res://scripts/board.gd" id="2_lnu2h"]
+[ext_resource type="PackedScene" uid="uid://dlld2p1r0gxox" path="res://scenes/setup_phase_ui.tscn" id="6_p57ef"]
+[ext_resource type="Texture2D" uid="uid://d31qmqe0kjyid" path="res://EmptyBar.png" id="6_u5sy4"]
+[ext_resource type="Texture2D" uid="uid://3dyvehvtliv5" path="res://FullBar.png" id="7_gee14"]
+[ext_resource type="Texture2D" uid="uid://c2ffhrqxtv6do" path="res://customPiecesSpritesheet.png" id="8_gee14"]
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_yqjtg")
+
+[node name="Board" type="Node2D" parent="."]
+script = ExtResource("2_lnu2h")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="Control"]
+layout_mode = 0
+offset_top = -2.0
+offset_right = 984.0
+offset_bottom = 980.0
+color = Color(0.4862745, 0.4862745, 0.4862745, 0.5882353)
+
+[node name="Win Label" type="Label" parent="Control"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 185.0
+offset_top = 226.0
+offset_right = 798.0
+offset_bottom = 332.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 75
+text = "Player ONE WON"
+
+[node name="Button" type="Button" parent="Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 2.4220002
+anchor_top = 2.015
+anchor_right = 2.4220002
+anchor_bottom = 2.015
+offset_left = 392.0
+offset_top = 318.0
+offset_right = 564.0
+offset_bottom = 365.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Main Menu
+"
+
+[node name="MoveTimer" type="Timer" parent="."]
+wait_time = 15.0
+one_shot = true
+
+[node name="TimerLabel" type="Label" parent="."]
+offset_left = 780.0
+offset_top = 612.0
+offset_right = 949.0
+offset_bottom = 705.0
+theme_override_font_sizes/font_size = 50
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MoveTimerBar" type="TextureProgressBar" parent="."]
+offset_left = 911.0
+offset_top = 750.0
+offset_right = 943.0
+offset_bottom = 782.0
+scale = Vector2(4.440916, 4.440916)
+max_value = 15.0
+fill_mode = 4
+texture_under = ExtResource("6_u5sy4")
+texture_progress = ExtResource("7_gee14")
+
+[node name="TurnIndicator" type="TextureRect" parent="."]
+offset_left = 899.0
+offset_top = 568.0
+offset_right = 1064.0
+offset_bottom = 733.0
+
+[node name="IndicatorImage" type="Sprite2D" parent="."]
+position = Vector2(-301, 57)
+texture = ExtResource("8_gee14")
+
+[node name="SetupPhaseUI" parent="." instance=ExtResource("6_p57ef")]
+offset_left = 115.0
+offset_right = 155.0
+
+[connection signal="selected_square" from="." to="Board" method="_on_game_selected_square"]
+[connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]
+[connection signal="timeout" from="MoveTimer" to="." method="_on_move_timer_timeout"]

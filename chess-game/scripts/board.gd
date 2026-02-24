@@ -54,9 +54,18 @@ func get_piece(pos: Vector2):
 		if piece.board_position == pos:
 			return piece
 
+func on_capture(dest_piece, selected_piece, board):
+	if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
+		ExplodingBishop.explode_piece(dest_piece, selected_piece, board)
+		delete_piece(selected_piece)
+	elif dest_piece.piece_type == Globals.PIECE_TYPES.TROJAN_HORSE:
+		TrojanHorse.trojan_spawn(dest_piece, board)
+		delete_piece(dest_piece)
+	delete_piece(dest_piece)
+	
 func delete_piece(piece):
 	for i in range(len(pieces)):
-		if pieces[i] == piece:
+		if pieces[i] == piece && piece_is_protected(piece) == false:
 			var popped = pieces.pop_at(i)
 			popped.queue_free()
 			return
@@ -105,8 +114,8 @@ func spot_search_threat(
 	var cur_pos = Vector2(cur_x, cur_y)
 	var cur_piece = get_piece(cur_pos)
 	
-	if cur_piece != null and cur_piece.piece_type == Globals.PIECE_TYPES.DUCK:
-		return null
+	#if cur_piece != null and cur_piece.piece_type == Globals.PIECE_TYPES.DUCK:
+		#return null
 	
 	if cur_piece != null:
 		if free_only:
@@ -303,9 +312,14 @@ func piece_is_protected(piece):
 		return false
 
 	var shield_king = get_piece(king_pos)
+	
+	if piece.piece_type == Globals.PIECE_TYPES.DUCK:
+		return true
+		
 	if shield_king == null:
 		return false
-
+	
+	
 	return piece.board_position in shield_king.shield_king_protect_positions()
 
 
