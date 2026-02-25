@@ -9,3 +9,6 @@ signal spawn_ai()
 signal setup_complete
 signal init_ai
 signal test(data)
+signal selected_square(pos)
+
+signal loadout_button(loadout)
