@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d31qmqe0kjyid"
-path="res://.godot/imported/EmptyBar.png-0f0dbec01ffb1f741a995ea6e7c0eca8.ctex"
+uid="uid://c6ydvqtgmvobh"
+path="res://.godot/imported/START_Button.png-9b47752b69b0491ab89cb8c9fdb8d939.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://EmptyBar.png"
-dest_files=["res://.godot/imported/EmptyBar.png-0f0dbec01ffb1f741a995ea6e7c0eca8.ctex"]
+source_file="res://Assets/START_Button.png"
+dest_files=["res://.godot/imported/START_Button.png-9b47752b69b0491ab89cb8c9fdb8d939.ctex"]
 
 [params]
 

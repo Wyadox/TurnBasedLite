@@ -71,6 +71,7 @@ func loadout_button_pressed(loadout):
 	else:
 		save_string = LoadoutSaves.loadouts_to_save.loadout3
 	parse_save_string(save_string)
+	$loadoutSlots.clear_selected()
 
 func parse_save_string(save_string):
 	var spawn_array = save_string.split("_", false)
@@ -91,6 +92,7 @@ func _input(event):
 		print("left click")
 		var pos = get_pos_under_mouse()
 		selected_piece = board.get_piece(pos)
+		
 		# Drag piece only if they are under the mouse or are of current player
 		if !allow_select:
 			return
@@ -116,6 +118,7 @@ func _input(event):
 			return
 			
 		is_dragging = true
+		selected_piece.play_animation("sway")
 		previous_position = selected_piece.position
 		selected_piece.z_index = 100
 		
@@ -126,21 +129,29 @@ func _input(event):
 			var dest_piece = board.get_piece(Vector2(it.x, it.y))
 			if dest_piece != null and !board.piece_is_protected(dest_piece):
 				color = Color(1.0, 0.0, 0.0)
+				dest_piece.play_animation("cower")
+				print("cower played")
 				board.draw_border(it.x, it.y, color, false)
 			elif dest_piece == null:
 				color = Color(1.0, 1.0, 0.0)
 				board.draw_border(it.x, it.y, color, false)
 				
 	elif event is InputEventMouseMotion and is_dragging:
-		selected_piece.position = get_global_mouse_position()
+		var piece_mouse_pos = get_global_mouse_position()
+		#piece_mouse_pos.y += 40
+		selected_piece.position = piece_mouse_pos
 	elif Input.is_action_just_released("left_click") and is_dragging:
 		var is_valid_move = drop_piece()
 		if !is_valid_move:
 			selected_piece.position = previous_position
+		if selected_piece:
+			selected_piece.play_animation("idle")
+			print("idle played")
 		selected_piece.z_index = 0
 		selected_piece = null
 		is_dragging = false
 		board.clear_borders()
+		clear_piece_animations()
 		
 		# Check whether game is over after user's move
 		if evaluate_end_game():
@@ -150,6 +161,10 @@ func _input(event):
 		# If playerA has made valid move, then switch to other player's move
 		if is_valid_move:
 			player2_move()
+
+func clear_piece_animations():
+	for piece in board.pieces:
+		piece.play_animation("idle")
 
 func init_game():
 	game_over = false

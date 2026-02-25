@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://3dyvehvtliv5"
-path="res://.godot/imported/FullBar.png-b765346c99fe7cd9ffd0240dc5a6d4d9.ctex"
+uid="uid://ufinxyho3xxb"
+path="res://.godot/imported/LoadoutButton_Hover.png-061aec71002b9fafce51e3450c43873c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://FullBar.png"
-dest_files=["res://.godot/imported/FullBar.png-b765346c99fe7cd9ffd0240dc5a6d4d9.ctex"]
+source_file="res://Assets/LoadoutButton_Hover.png"
+dest_files=["res://.godot/imported/LoadoutButton_Hover.png-061aec71002b9fafce51e3450c43873c.ctex"]
 
 [params]
 

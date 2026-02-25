@@ -9,8 +9,6 @@ const Y_OFFSET = 3
 @onready var setup_scene = $SetupPhaseUI
 const SETUP_SCENE = preload("res://scenes/setup_phase_ui.tscn")
 
-const PIECE_LIMIT = 7
-
 var selected_loadout = 1
 
 func _ready() -> void:
@@ -28,7 +26,7 @@ func _input(_event):
 			
 		if selected_piece == null:
 			# REMEMBER THESE OFFSETS, it's very janky
-			if pos.x < board_scene.BOARD_WIDTH + 1 and pos.x > 0 and pos.y < board_scene.BOARD_HEIGHT - 1 and pos.y > 3 and board_scene.num_pieces() < PIECE_LIMIT:
+			if pos.x < board_scene.BOARD_WIDTH + 1 and pos.x > 0 and pos.y < board_scene.BOARD_HEIGHT - 1 and pos.y > 3 and board_scene.num_pieces() < Globals.PIECES_PER_SIDE:
 				SignalBus.emit_signal("selected_square", pos)
 			else:
 				print("no square was selected")
@@ -59,8 +57,8 @@ func _on_button_exit_pressed() -> void:
 func _on_button_save_pressed() -> void:
 	var save_string = ""
 	
-	if board_scene.num_pieces() != 7:
-		print("YOU MUST PLACE 7 PIECS")
+	if board_scene.num_pieces() != Globals.PIECES_PER_SIDE:
+		print("YOU MUST PLACE", Globals.PIECES_PER_SIDE, " PIECES")
 		return
 		
 	for piece in board_scene.pieces:

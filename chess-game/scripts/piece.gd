@@ -48,6 +48,10 @@ func update_sprite():
 			SPRITE_SIZE,
 			SPRITE_SIZE
 		)
+		
+func play_animation(title : String):
+	$AnimationPlayer.stop()
+	$AnimationPlayer.play(title)
 
 func move_position(to_move: Vector2):
 	var old_pos = board_position #For moving Mitosis Pawn

@@ -18,8 +18,6 @@ const BOARD_WIDTH = 7
 const LOADOUT_X_OFFSET = 1
 const LOADOUT_Y_OFFSET = 4
 
-const PIECES_PER_SIDE = 7
-
 var is_loadout_board : bool = false
 
 # Called when the node enters the scene tree for the first time.
@@ -220,7 +218,7 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 	# Determine color for current piece
 	var color
 	var total_pieces : int = num_pieces()
-	if total_pieces < PIECES_PER_SIDE:
+	if total_pieces < Globals.PIECES_PER_SIDE:
 		color = Globals.COLORS.WHITE
 	else:
 		color = Globals.COLORS.BLACK
@@ -228,19 +226,19 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 	print("Piece created")
 	
 	# Determine if color needs to swap
-	if total_pieces + 1 < PIECES_PER_SIDE:
+	if total_pieces + 1 < Globals.PIECES_PER_SIDE:
 		color = Globals.COLORS.WHITE
 	else:
 		color = Globals.COLORS.BLACK
 		print("Color is now black")
 	SignalBus.emit_signal("set_status", color)
 	
-	if total_pieces == PIECES_PER_SIDE - 1:
+	if total_pieces == Globals.PIECES_PER_SIDE - 1:
 		SignalBus.emit_signal("spawn_ai")
 		total_pieces = num_pieces()
 	
 	# Ready to play
-	if total_pieces > (PIECES_PER_SIDE - 1) * 2:
+	if total_pieces > (Globals.PIECES_PER_SIDE - 1) * 2:
 		setup_done = true
 		SignalBus.emit_signal("setup_complete")
 		
@@ -328,15 +326,15 @@ func piece_is_protected(piece):
 		king_pos = white_king_pos
 	else:
 		king_pos = black_king_pos
+		
+	if piece.piece_type == Globals.PIECE_TYPES.DUCK:
+		return true
 
 	# Check if the king actually exists
 	if king_pos == Vector2(-2, -2):
 		return false
 
 	var shield_king = get_piece(king_pos)
-	
-	if piece.piece_type == Globals.PIECE_TYPES.DUCK:
-		return true
 		
 	if shield_king == null:
 		return false
