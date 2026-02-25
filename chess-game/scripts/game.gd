@@ -172,19 +172,25 @@ func init_game():
 	player_color = Globals.COLORS.WHITE
 	status = Globals.COLORS.WHITE
 	# Check to see if either player has a shield king, and mark it alive if it does.
-	for piece in board.pieces:
-		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING && piece.color == Globals.COLORS.WHITE:
-			white_shield_king_alive = true
-		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING && piece.color == Globals.COLORS.BLACK:
-			black_shield_king_alive = true
-	#player2_type = Globals.PLAYER_2_TYPE.AI
+	check_for_shield_king()
+
+func check_for_shield_king():
+	var white_shield_king_found = false
+	var black_shield_king_found = false
 	
-	# Check to see if either player has a shield king, and mark it alive if it does.
 	for piece in board.pieces:
 		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING && piece.color == Globals.COLORS.WHITE:
-			white_shield_king_alive = true
+			white_shield_king_found = true
 		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING && piece.color == Globals.COLORS.BLACK:
-			black_shield_king_alive = true
+			black_shield_king_found = true
+	
+	white_shield_king_alive = white_shield_king_found
+	black_shield_king_alive = black_shield_king_found
+	
+	if !white_shield_king_found:
+		board.white_king_pos = Vector2(-2,-2)
+	if !black_shield_king_found:
+		board.black_king_pos = Vector2(-2,-2)
 
 func get_pos_under_mouse():
 	var pos = get_global_mouse_position()
@@ -494,6 +500,7 @@ func end_turn():
 		turns_since_last_capture = 0
 		print("previous = ", previous_piece_total)
 	
+	check_for_shield_king()
 	reset_timer()
 	board.update_indicators()
 
