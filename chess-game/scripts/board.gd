@@ -73,9 +73,9 @@ func on_capture(dest_piece, selected_piece, board):
 		delete_piece(dest_piece)
 	delete_piece(dest_piece)
 	
-func delete_piece(piece):
+func delete_piece(piece, force = false):
 	for i in range(len(pieces)):
-		if pieces[i] == piece && piece_is_protected(piece) == false:
+		if pieces[i] == piece && (piece_is_protected(piece) == false or force):
 			var popped = pieces.pop_at(i)
 			popped.queue_free()
 			return
@@ -220,7 +220,7 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 	var total_pieces : int = num_pieces()
 	if total_pieces < Globals.PIECES_PER_SIDE:
 		color = Globals.COLORS.WHITE
-	else:
+	elif !is_loadout_board:
 		color = Globals.COLORS.BLACK
 	create_piece(piece_type, color, selected_pos)
 	print("Piece created")
@@ -228,7 +228,7 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 	# Determine if color needs to swap
 	if total_pieces + 1 < Globals.PIECES_PER_SIDE:
 		color = Globals.COLORS.WHITE
-	else:
+	elif !is_loadout_board:
 		color = Globals.COLORS.BLACK
 		print("Color is now black")
 	SignalBus.emit_signal("set_status", color)
@@ -251,7 +251,10 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 func _on_game_selected_square(pos: Variant) -> void:
 	selected_pos = pos
 	print(pos)
-	draw_border(pos.x, pos.y, Color(0.0, 0.0, 1.0), true)
+	if is_loadout_board:
+		draw_border(pos.x, pos.y, Color(0.0, 1.0, 0.38, 1.0), true)
+	else:
+		draw_border(pos.x, pos.y, Color(0.0, 0.0, 1.0), true)
 	
 func draw_border(x, y, color, clear):
 	if clear and border_panel and border_panel.is_inside_tree():

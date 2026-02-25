@@ -500,6 +500,7 @@ func end_turn():
 		turns_since_last_capture = 0
 		print("previous = ", previous_piece_total)
 	
+	clear_piece_animations()
 	check_for_shield_king()
 	reset_timer()
 	board.update_indicators()

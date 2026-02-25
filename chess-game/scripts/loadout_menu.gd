@@ -33,7 +33,10 @@ func _input(_event):
 				print("failed position: ", pos)
 				print("board total: ", board_scene.num_pieces())
 			return
-		print("not in setup phase")
+		else:
+			print("refund called")
+			setup_scene._on_board_refund_piece(selected_piece.piece_type)
+			board_scene.delete_piece(selected_piece, true)
 
 func get_pos_under_mouse():
 	var pos = get_global_mouse_position()
@@ -99,4 +102,5 @@ func spawn_pieces(pieces : String):
 		var spawn_split = spawn.split(":")
 		var coord_split = spawn_split[1].split(",")
 		board_scene.selected_pos = Vector2(int(coord_split[0]) + 1,int(coord_split[1]) - 1)
+		setup_scene.valid_spawn(int(spawn_split[0]))
 		board_scene._on_setup_phase_ui_spawn_piece(int(spawn_split[0]))
