@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://dux8e4cssk5i1"]
+[gd_scene load_steps=5 format=3 uid="uid://dux8e4cssk5i1"]
 
 [ext_resource type="Script" uid="uid://b1ibgxoocd1ub" path="res://scripts/loadout_menu.gd" id="1_yna6v"]
 [ext_resource type="PackedScene" uid="uid://dlld2p1r0gxox" path="res://scenes/setup_phase_ui.tscn" id="2_3c7rr"]
 [ext_resource type="PackedScene" uid="uid://shbx8xrqrlr8" path="res://scenes/loadout_slots_hbox.tscn" id="3_gc7b0"]
+[ext_resource type="PackedScene" uid="uid://dqrdpth8xiafq" path="res://scenes/notification.tscn" id="4_p557w"]
 
 [node name="loadout_menu" type="Control"]
 layout_mode = 3
@@ -15,17 +16,17 @@ script = ExtResource("1_yna6v")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 1
-anchors_preset = 8
+anchors_preset = 7
 anchor_left = 0.5
-anchor_top = 0.5
+anchor_top = 1.0
 anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -74.0
-offset_top = -20.0
-offset_right = 74.0
-offset_bottom = 20.0
+anchor_bottom = 1.0
+offset_left = -110.0
+offset_top = -98.0
+offset_right = 111.0
+offset_bottom = -58.0
 grow_horizontal = 2
-grow_vertical = 2
+grow_vertical = 0
 theme_override_constants/separation = 8
 
 [node name="Button_Save" type="Button" parent="HBoxContainer"]
@@ -57,6 +58,8 @@ offset_left = 391.0
 offset_top = 305.0
 offset_right = 391.0
 offset_bottom = 305.0
+
+[node name="notification" parent="." instance=ExtResource("4_p557w")]
 
 [connection signal="pressed" from="HBoxContainer/Button_Save" to="." method="_on_button_save_pressed"]
 [connection signal="pressed" from="HBoxContainer/Button_Load" to="." method="_on_button_load_pressed"]

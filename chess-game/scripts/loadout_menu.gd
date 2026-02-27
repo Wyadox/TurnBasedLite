@@ -51,6 +51,7 @@ func _on_button_clear_pressed() -> void:
 	setup_scene = SETUP_SCENE.instantiate()
 	setup_scene.global_position = Vector2(103.0, -5)
 	add_child(setup_scene)
+	show_notification("Board Cleared")
 
 
 func _on_button_exit_pressed() -> void:
@@ -61,7 +62,7 @@ func _on_button_save_pressed() -> void:
 	var save_string = ""
 	
 	if board_scene.num_pieces() != Globals.PIECES_PER_SIDE:
-		print("YOU MUST PLACE", Globals.PIECES_PER_SIDE, " PIECES")
+		show_notification("YOU MUST PLACE " + str(Globals.PIECES_PER_SIDE) + " PIECES")
 		return
 		
 	for piece in board_scene.pieces:
@@ -75,6 +76,7 @@ func _on_button_save_pressed() -> void:
 	else:
 		LoadoutSaves.loadouts_to_save.loadout3 = save_string
 	LoadoutSaves._save()
+	show_notification("Loadout Saved")
 
 func convert_position(pos : Vector2):
 	var new_pos = Vector2(pos.x - 1, pos.y + 1)
@@ -95,6 +97,7 @@ func _on_button_load_pressed() -> void:
 	else:
 		spawn_string = LoadoutSaves.loadouts_to_save.loadout3
 	spawn_pieces(spawn_string)
+	show_notification("Loadout Loaded")
 	
 func spawn_pieces(pieces : String):
 	var spawn_array = pieces.split("_", false)
@@ -104,3 +107,6 @@ func spawn_pieces(pieces : String):
 		board_scene.selected_pos = Vector2(int(coord_split[0]) + 1,int(coord_split[1]) - 1)
 		setup_scene.valid_spawn(int(spawn_split[0]))
 		board_scene._on_setup_phase_ui_spawn_piece(int(spawn_split[0]))
+
+func show_notification(phrase : String):
+	$notification.set_text(phrase)
