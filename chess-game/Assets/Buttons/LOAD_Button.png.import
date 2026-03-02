@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c0qnuxy142pbt"
-path="res://.godot/imported/START_Button_Hover.png-db507d675618494a709c50146ae75465.ctex"
+uid="uid://cdg0qw8fibr2"
+path="res://.godot/imported/LOAD_Button.png-0e44ad314b0dd127f847ba406009d439.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/START_Button_Hover.png"
-dest_files=["res://.godot/imported/START_Button_Hover.png-db507d675618494a709c50146ae75465.ctex"]
+source_file="res://Assets/Buttons/LOAD_Button.png"
+dest_files=["res://.godot/imported/LOAD_Button.png-0e44ad314b0dd127f847ba406009d439.ctex"]
 
 [params]
 

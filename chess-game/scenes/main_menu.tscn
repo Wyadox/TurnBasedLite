@@ -1,9 +1,15 @@
-[gd_scene load_steps=6 format=3 uid="uid://cec8ttfqyv3h"]
+[gd_scene load_steps=12 format=3 uid="uid://cec8ttfqyv3h"]
 
 [ext_resource type="Script" uid="uid://ft8v0cp8vk1p" path="res://scripts/main_menu.gd" id="1_l6cm7"]
-[ext_resource type="Texture2D" uid="uid://c6ydvqtgmvobh" path="res://Assets/START_Button.png" id="2_bqqt6"]
-[ext_resource type="Texture2D" uid="uid://c0qnuxy142pbt" path="res://Assets/START_Button_Hover.png" id="3_bqqt6"]
+[ext_resource type="Texture2D" uid="uid://c6ydvqtgmvobh" path="res://Assets/Buttons/START_Button.png" id="2_bqqt6"]
+[ext_resource type="Texture2D" uid="uid://c0qnuxy142pbt" path="res://Assets/Buttons/START_Button_Hover.png" id="3_bqqt6"]
 [ext_resource type="Texture2D" uid="uid://uv7f2ydwkqrw" path="res://Assets/origbig.png" id="4_wu84c"]
+[ext_resource type="Texture2D" uid="uid://y4gexaeejyan" path="res://Assets/Buttons/PIECES_Button.png" id="5_oa1go"]
+[ext_resource type="Texture2D" uid="uid://bhk0acna1ruql" path="res://Assets/Buttons/PIECES_Button_Hover.png" id="6_5dd4i"]
+[ext_resource type="Texture2D" uid="uid://bw48hi8eqwd3m" path="res://Assets/Buttons/LOADOUT_Button.png" id="6_tbmy8"]
+[ext_resource type="Texture2D" uid="uid://dcm4bt626m6au" path="res://Assets/Buttons/QUIT_Button.png" id="7_jk1qb"]
+[ext_resource type="Texture2D" uid="uid://der5uomqhnasj" path="res://Assets/Buttons/LOADOUT_Button_Hover.png" id="8_lgwnu"]
+[ext_resource type="Texture2D" uid="uid://xdac7nxhu2e2" path="res://Assets/Buttons/QUIT_Button_Hover.png" id="10_flqon"]
 
 [sub_resource type="Theme" id="Theme_bqqt6"]
 
@@ -61,17 +67,23 @@ theme = SubResource("Theme_bqqt6")
 texture_normal = ExtResource("2_bqqt6")
 texture_hover = ExtResource("3_bqqt6")
 
-[node name="OptionsButton" type="Button" parent="VBoxContainer"]
+[node name="OptionsButton" type="TextureButton" parent="VBoxContainer"]
 layout_mode = 2
-text = "Pieces"
+texture_normal = ExtResource("5_oa1go")
+texture_pressed = ExtResource("6_5dd4i")
+texture_hover = ExtResource("6_5dd4i")
 
-[node name="LoadoutButton" type="Button" parent="VBoxContainer"]
+[node name="LoadoutButton" type="TextureButton" parent="VBoxContainer"]
 layout_mode = 2
-text = "Loadout"
+texture_normal = ExtResource("6_tbmy8")
+texture_pressed = ExtResource("8_lgwnu")
+texture_hover = ExtResource("8_lgwnu")
 
-[node name="QuitButton" type="Button" parent="VBoxContainer"]
+[node name="QuitButton" type="TextureButton" parent="VBoxContainer"]
 layout_mode = 2
-text = "Quit"
+texture_normal = ExtResource("7_jk1qb")
+texture_pressed = ExtResource("10_flqon")
+texture_hover = ExtResource("10_flqon")
 
 [connection signal="pressed" from="VBoxContainer/StartButton" to="." method="_on_start_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/OptionsButton" to="." method="_on_options_button_pressed"]

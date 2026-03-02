@@ -11,6 +11,7 @@ const PIECE_LIMIT = 2
 func _ready() -> void:
 	SignalBus.refund_piece.connect(_on_board_refund_piece)
 	SignalBus.set_status.connect(_on_board_set_status)
+	SignalBus.setup_piece_by_type.connect(spawn_piece_by_type)
 
 func valid_spawn(piece_type : Globals.PIECE_TYPES) -> bool:
 	var piece_base = piece_base_converter(piece_type)
@@ -68,6 +69,11 @@ func piece_base_converter(piece_type : Globals.PIECE_TYPES):
 			return Globals.PIECE_BASE.KNIGHT
 		Globals.PIECE_TYPES.TROJAN_HORSE:
 			return Globals.PIECE_BASE.KNIGHT
+			
+func spawn_piece_by_type(piece_type : Globals.PIECE_TYPES):
+	print("Spawing by type: ", piece_type)
+	if (valid_spawn(piece_type)):
+		emit_signal("spawn_piece", piece_type)
 	
 func _on_board_refund_piece(piece_type: Variant) -> void:
 	var piece_base = piece_base_converter(piece_type)

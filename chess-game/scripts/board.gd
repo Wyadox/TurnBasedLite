@@ -16,7 +16,7 @@ const CELL_SIZE = 120
 const BOARD_HEIGHT = 7
 const BOARD_WIDTH = 7
 const LOADOUT_X_OFFSET = 1
-const LOADOUT_Y_OFFSET = 4
+const LOADOUT_Y_OFFSET = 5
 
 var is_loadout_board : bool = false
 

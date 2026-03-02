@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://dux8e4cssk5i1"]
+[gd_scene load_steps=13 format=3 uid="uid://dux8e4cssk5i1"]
 
 [ext_resource type="Script" uid="uid://b1ibgxoocd1ub" path="res://scripts/loadout_menu.gd" id="1_yna6v"]
 [ext_resource type="PackedScene" uid="uid://dlld2p1r0gxox" path="res://scenes/setup_phase_ui.tscn" id="2_3c7rr"]
@@ -12,7 +12,6 @@
 [ext_resource type="Texture2D" uid="uid://cjv860i1foy7c" path="res://Assets/Buttons/CLEAR_Button_Hover.png" id="7_dn7wr"]
 [ext_resource type="Texture2D" uid="uid://cw1w0oajlkhhw" path="res://Assets/Buttons/EXIT_Button.png" id="8_wxj56"]
 [ext_resource type="Texture2D" uid="uid://bdj5co4n8e2aw" path="res://Assets/Buttons/EXIT_Button_Hover.png" id="9_bf8y0"]
-[ext_resource type="PackedScene" uid="uid://c6ulmyy15jdeu" path="res://scenes/descriptions.tscn" id="13_21il4"]
 
 [node name="loadout_menu" type="Control"]
 layout_mode = 3
@@ -30,10 +29,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -361.0
-offset_top = -477.0
-offset_right = 363.0
-offset_bottom = -413.0
+offset_left = -361.5
+offset_top = -103.0
+offset_right = 362.5
+offset_bottom = -39.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = 8
@@ -77,13 +76,6 @@ offset_right = 391.0
 offset_bottom = 305.0
 
 [node name="notification" parent="." instance=ExtResource("4_p557w")]
-
-[node name="descriptions" parent="." instance=ExtResource("13_21il4")]
-layout_mode = 0
-offset_left = -86.0
-offset_top = -17.0
-offset_right = -46.0
-offset_bottom = 23.0
 
 [connection signal="pressed" from="HBoxContainer/Button_Save" to="." method="_on_button_save_pressed"]
 [connection signal="pressed" from="HBoxContainer/Button_Load" to="." method="_on_button_load_pressed"]

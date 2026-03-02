@@ -2,8 +2,8 @@
 
 [ext_resource type="Texture2D" uid="uid://bhpcvx2c3573d" path="res://Assets/StunIndicator.png" id="1_76x2o"]
 [ext_resource type="Script" uid="uid://d3tyyh6ohaeg1" path="res://scripts/loadout_slot.gd" id="1_mqcpd"]
-[ext_resource type="Texture2D" uid="uid://dsxn1xc4dr5bu" path="res://Assets/LoadoutButton.png" id="2_mqcpd"]
-[ext_resource type="Texture2D" uid="uid://ufinxyho3xxb" path="res://Assets/LoadoutButton_Hover.png" id="3_hvdov"]
+[ext_resource type="Texture2D" uid="uid://dsxn1xc4dr5bu" path="res://Assets/Buttons/LoadoutButton.png" id="2_mqcpd"]
+[ext_resource type="Texture2D" uid="uid://ufinxyho3xxb" path="res://Assets/Buttons/LoadoutButton_Hover.png" id="3_hvdov"]
 
 [node name="loadout_slot" type="Control"]
 layout_mode = 3

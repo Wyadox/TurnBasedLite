@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ufinxyho3xxb"
-path="res://.godot/imported/LoadoutButton_Hover.png-061aec71002b9fafce51e3450c43873c.ctex"
+uid="uid://bdj5co4n8e2aw"
+path="res://.godot/imported/EXIT_Button_Hover.png-ae8be42f764a5c5f795d7ec4e594755f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/LoadoutButton_Hover.png"
-dest_files=["res://.godot/imported/LoadoutButton_Hover.png-061aec71002b9fafce51e3450c43873c.ctex"]
+source_file="res://Assets/Buttons/EXIT_Button_Hover.png"
+dest_files=["res://.godot/imported/EXIT_Button_Hover.png-ae8be42f764a5c5f795d7ec4e594755f.ctex"]
 
 [params]
 

@@ -9,7 +9,7 @@ const Y_OFFSET = 3
 @onready var setup_scene = $SetupPhaseUI
 const SETUP_SCENE = preload("res://scenes/setup_phase_ui.tscn")
 
-var selected_loadout = 1
+var selected_loadout = 0
 
 func _ready() -> void:
 	board_scene = BOARD.instantiate()
@@ -26,7 +26,7 @@ func _input(_event):
 			
 		if selected_piece == null:
 			# REMEMBER THESE OFFSETS, it's very janky
-			if pos.x < board_scene.BOARD_WIDTH + 1 and pos.x > 0 and pos.y < board_scene.BOARD_HEIGHT - 1 and pos.y > 3 and board_scene.num_pieces() < Globals.PIECES_PER_SIDE:
+			if pos.x < board_scene.BOARD_WIDTH + 1 and pos.x > 0 and pos.y < board_scene.BOARD_HEIGHT and pos.y > 4 and board_scene.num_pieces() < Globals.PIECES_PER_SIDE:
 				SignalBus.emit_signal("selected_square", pos)
 			else:
 				print("no square was selected")
@@ -79,7 +79,7 @@ func _on_button_save_pressed() -> void:
 	show_notification("Loadout Saved")
 
 func convert_position(pos : Vector2):
-	var new_pos = Vector2(pos.x - 1, pos.y + 1)
+	var new_pos = Vector2(pos.x - 1, pos.y)
 	return str(new_pos.x) + "," + str(new_pos.y)
 	
 func loadout_button_pressed(loadout):
@@ -88,6 +88,9 @@ func loadout_button_pressed(loadout):
 
 func _on_button_load_pressed() -> void:
 	_on_button_clear_pressed()
+	
+	if selected_loadout == 0:
+		return
 	
 	var spawn_string : String
 	if selected_loadout == 1:
@@ -104,7 +107,7 @@ func spawn_pieces(pieces : String):
 	for spawn in spawn_array:
 		var spawn_split = spawn.split(":")
 		var coord_split = spawn_split[1].split(",")
-		board_scene.selected_pos = Vector2(int(coord_split[0]) + 1,int(coord_split[1]) - 1)
+		board_scene.selected_pos = Vector2(int(coord_split[0]) + 1,int(coord_split[1]))
 		setup_scene.valid_spawn(int(spawn_split[0]))
 		board_scene._on_setup_phase_ui_spawn_piece(int(spawn_split[0]))
 

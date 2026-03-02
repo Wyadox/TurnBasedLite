@@ -5,8 +5,8 @@ extends Control
 
 @onready var LABEL = $Label
 
-var normal_tex = preload("res://Assets/LoadoutButton.png")
-var selected_tex = preload("res://Assets/LoadoutButton_Selected.png")
+var normal_tex = preload("res://Assets/Buttons/LoadoutButton.png")
+var selected_tex = preload("res://Assets/Buttons/LoadoutButton_Selected.png")
 
 func _ready() -> void:
 	SignalBus.loadout_button.connect(update_visuals)

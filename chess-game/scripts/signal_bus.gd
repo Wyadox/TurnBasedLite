@@ -12,3 +12,5 @@ signal test(data)
 signal selected_square(pos)
 
 signal loadout_button(loadout)
+
+signal setup_piece_by_type(piece_type)
