@@ -28,13 +28,8 @@ func _input(_event):
 			# REMEMBER THESE OFFSETS, it's very janky
 			if pos.x < board_scene.BOARD_WIDTH + 1 and pos.x > 0 and pos.y < board_scene.BOARD_HEIGHT and pos.y > 4 and board_scene.num_pieces() < Globals.PIECES_PER_SIDE:
 				SignalBus.emit_signal("selected_square", pos)
-			else:
-				print("no square was selected")
-				print("failed position: ", pos)
-				print("board total: ", board_scene.num_pieces())
 			return
 		else:
-			print("refund called")
 			setup_scene._on_board_refund_piece(selected_piece.piece_type)
 			board_scene.delete_piece(selected_piece, true)
 
@@ -68,7 +63,6 @@ func _on_button_save_pressed() -> void:
 	for piece in board_scene.pieces:
 		save_string += str(piece.piece_type) + ":" + str(convert_position(piece.board_position)) + "_"
 	
-	print("selected loadout: ", selected_loadout)
 	if selected_loadout == 1:
 		LoadoutSaves.loadouts_to_save.loadout1 = save_string
 	elif selected_loadout == 2:
@@ -80,11 +74,11 @@ func _on_button_save_pressed() -> void:
 
 func convert_position(pos : Vector2):
 	var new_pos = Vector2(pos.x - 1, pos.y)
-	return str(new_pos.x) + "," + str(new_pos.y)
+	return new_pos
+	#return str(new_pos.x) + "," + str(new_pos.y)
 	
 func loadout_button_pressed(loadout):
 	selected_loadout = loadout
-	print(loadout)
 
 func _on_button_load_pressed() -> void:
 	_on_button_clear_pressed()

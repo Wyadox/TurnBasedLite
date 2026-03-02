@@ -206,10 +206,22 @@ var border_panel
 var borders = []
 
 func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
+	print("hi from spawn_piece in board")
 	if selected_pos == Vector2(-1, -1):
 		print("Select a valid position")
 		SignalBus.emit_signal("refund_piece", piece_type)
 		return
+	
+	if is_loadout_board:
+		selected_pos = Vector2(selected_pos.x - 1, selected_pos.y)
+	
+	if !is_within_bounds(selected_pos):
+		print("Select an inbounds position")
+		SignalBus.emit_signal("refund_piece", piece_type)
+		return
+		
+	if is_loadout_board:
+		selected_pos = Vector2(selected_pos.x + 1, selected_pos.y)
 	
 	if setup_done == true:
 		print("Setup phase is over")
@@ -248,9 +260,9 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 	selected_pos = Vector2(-1, -1)
 
 
-func _on_game_selected_square(pos: Variant) -> void:
+func _on_game_selected_square(pos: Vector2) -> void:
 	selected_pos = pos
-	print(pos)
+	print("selected square = ", pos)
 	if is_loadout_board:
 		draw_border(pos.x, pos.y, Color(0.0, 1.0, 0.38, 1.0), true)
 	else:

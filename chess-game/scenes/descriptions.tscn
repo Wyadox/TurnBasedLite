@@ -50,6 +50,7 @@ vertical_alignment = 1
 autowrap_mode = 2
 
 [node name="Exit_Button" type="Button" parent="."]
+visible = false
 layout_mode = 0
 offset_left = 456.0
 offset_top = 393.0

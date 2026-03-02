@@ -32,11 +32,11 @@ var selected_pos
 func _ready():
 	update_display()
 	
-	SignalBus.selected_square.connect(set_selected_square)
+	#SignalBus.selected_square.connect(set_selected_square)
 	
 func set_selected_square(pos):
 	selected_pos = pos
-	print("descriptions set pos: ", pos)
+	print("descriptions set pos: ", selected_pos)
 	
 func grab_region(piece_type):
 	var region_pos = Globals.SPRITE_MAPPING[Globals.COLORS.WHITE][piece_type]
@@ -75,5 +75,6 @@ func _on_exit_button_pressed() -> void:
 
 
 func _on_spawn_button_pressed() -> void:
-	SignalBus.selected_square.emit(selected_pos)
+	#SignalBus.selected_square.emit(selected_pos)
 	SignalBus.setup_piece_by_type.emit(items[current_index]["piece_type"])
+	print("spawn button emitted: ", str(items[current_index]["piece_type"]))

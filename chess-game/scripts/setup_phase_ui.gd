@@ -70,10 +70,13 @@ func piece_base_converter(piece_type : Globals.PIECE_TYPES):
 		Globals.PIECE_TYPES.TROJAN_HORSE:
 			return Globals.PIECE_BASE.KNIGHT
 			
-func spawn_piece_by_type(piece_type : Globals.PIECE_TYPES):
+func spawn_piece_by_type(piece_type : Globals.PIECE_TYPES) -> void:
 	print("Spawing by type: ", piece_type)
 	if (valid_spawn(piece_type)):
 		emit_signal("spawn_piece", piece_type)
+		print("spawn_piece emitted say hi please")
+	else:
+		print("valid spawn FAILED")
 	
 func _on_board_refund_piece(piece_type: Variant) -> void:
 	var piece_base = piece_base_converter(piece_type)
