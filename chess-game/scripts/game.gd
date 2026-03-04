@@ -10,6 +10,8 @@ var player2_type; # Where AI or Human is playinh
 var white_shield_king_alive = false
 var black_shield_king_alive = false
 
+var current_map : int
+
 # To drag piece
 var is_dragging: bool;
 var selected_piece = null;
@@ -57,6 +59,7 @@ func _ready():
 	SignalBus.loadout_button.connect(loadout_button_pressed)
 	
 	print(player2_type)
+	print(current_map)
 	
 func loadout_button_pressed(loadout):
 	var save_string : String

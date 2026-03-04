@@ -31,9 +31,9 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -361.0
-offset_top = -477.0
+offset_top = -700.0
 offset_right = 363.0
-offset_bottom = -413.0
+offset_bottom = -636.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = 8
@@ -73,18 +73,18 @@ offset_bottom = 35.0
 [node name="loadoutSlots" parent="." instance=ExtResource("3_gc7b0")]
 layout_mode = 1
 offset_left = 391.0
-offset_top = 305.0
-offset_right = 391.0
-offset_bottom = 305.0
+offset_top = 82.0
+offset_right = 391.00003
+offset_bottom = 81.999985
 
 [node name="notification" parent="." instance=ExtResource("4_p557w")]
 
 [node name="descriptions" parent="." instance=ExtResource("13_21il4")]
 layout_mode = 0
 offset_left = -86.0
-offset_top = -17.0
+offset_top = 278.0
 offset_right = -46.0
-offset_bottom = 23.0
+offset_bottom = 318.0
 
 [connection signal="pressed" from="HBoxContainer/Button_Save" to="." method="_on_button_save_pressed"]
 [connection signal="pressed" from="HBoxContainer/Button_Load" to="." method="_on_button_load_pressed"]

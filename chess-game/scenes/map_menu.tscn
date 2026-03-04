@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://drhubaeh2koxj"]
+[gd_scene load_steps=3 format=3 uid="uid://drhubaeh2koxj"]
 
 [ext_resource type="Texture2D" uid="uid://dsxn1xc4dr5bu" path="res://Assets/Buttons/LoadoutButton.png" id="1_0u4ms"]
+[ext_resource type="Script" uid="uid://q8k0x308thp3" path="res://scripts/map_menu.gd" id="1_laxi0"]
 
 [node name="map_menu" type="Control"]
 layout_mode = 3
@@ -11,6 +12,7 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_laxi0")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -29,21 +31,58 @@ grow_vertical = 2
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 
-[node name="TextureButton" type="TextureButton" parent="VBoxContainer/HBoxContainer"]
+[node name="Map1_Button" type="TextureButton" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
 texture_normal = ExtResource("1_0u4ms")
 
-[node name="TextureButton2" type="TextureButton" parent="VBoxContainer/HBoxContainer"]
+[node name="Map2_Button" type="TextureButton" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
 texture_normal = ExtResource("1_0u4ms")
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 
-[node name="TextureButton3" type="TextureButton" parent="VBoxContainer/HBoxContainer2"]
+[node name="Map3_Button" type="TextureButton" parent="VBoxContainer/HBoxContainer2"]
 layout_mode = 2
 texture_normal = ExtResource("1_0u4ms")
 
-[node name="TextureButton4" type="TextureButton" parent="VBoxContainer/HBoxContainer2"]
+[node name="Map4_Button" type="TextureButton" parent="VBoxContainer/HBoxContainer2"]
 layout_mode = 2
 texture_normal = ExtResource("1_0u4ms")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -149.0
+offset_top = -187.0
+offset_right = 149.0
+offset_bottom = -132.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 40
+text = "CHOOSE A MAP"
+
+[node name="Continue_Button" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -45.5
+offset_top = 133.0
+offset_right = 45.5
+offset_bottom = 164.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "CONTINUE"
+
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/Map1_Button" to="." method="_on_map_1_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/Map2_Button" to="." method="_on_map_2_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer2/Map3_Button" to="." method="_on_map_3_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer2/Map4_Button" to="." method="_on_map_4_button_pressed"]
+[connection signal="pressed" from="Continue_Button" to="." method="_on_continue_button_pressed"]

@@ -17,6 +17,7 @@ func _ready() -> void:
 	add_child(board_scene)
 	
 	SignalBus.loadout_button.connect(loadout_button_pressed)
+	SignalBus.show_notification.connect(show_notification)
 	
 
 func _input(_event):
