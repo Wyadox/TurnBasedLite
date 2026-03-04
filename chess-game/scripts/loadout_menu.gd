@@ -45,6 +45,7 @@ func _on_button_clear_pressed() -> void:
 	setup_scene.queue_free()
 	setup_scene = SETUP_SCENE.instantiate()
 	setup_scene.global_position = Vector2(103.0, -5)
+	setup_scene.visible = false
 	add_child(setup_scene)
 	show_notification("Board Cleared")
 

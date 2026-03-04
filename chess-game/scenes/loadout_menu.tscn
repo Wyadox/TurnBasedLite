@@ -63,6 +63,7 @@ texture_pressed = ExtResource("9_bf8y0")
 texture_hover = ExtResource("9_bf8y0")
 
 [node name="SetupPhaseUI" parent="." instance=ExtResource("2_3c7rr")]
+visible = false
 layout_mode = 0
 offset_left = 103.0
 offset_top = -5.0

@@ -73,7 +73,7 @@ func piece_base_converter(piece_type : Globals.PIECE_TYPES):
 func spawn_piece_by_type(piece_type : Globals.PIECE_TYPES) -> void:
 	print("Spawing by type: ", piece_type)
 	if (valid_spawn(piece_type)):
-		emit_signal("spawn_piece", piece_type)
+		SignalBus.spawn_piece.emit(piece_type)
 		print("spawn_piece emitted say hi please")
 	else:
 		print("valid spawn FAILED")
