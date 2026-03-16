@@ -11,18 +11,22 @@ config_version=5
 [application]
 
 config/name="chess-game"
-run/main_scene="uid://bxdepwhprt4pp"
+run/main_scene="uid://cec8ttfqyv3h"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
 Globals="*res://scripts/globals.gd"
+ExplodingBishop="*res://scripts/exploding_bishop.gd"
+TrojanHorse="*res://scripts/trojan_horse.gd"
+SignalBus="*res://scripts/signal_bus.gd"
+LoadoutSaves="*res://scripts/loadout_save_script.gd"
 
 [display]
 
-window/size/viewport_width=960
-window/size/viewport_height=960
+window/size/viewport_width=1080
+window/size/viewport_height=920
 window/stretch/mode="canvas_items"
 
 [input]

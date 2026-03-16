@@ -10,4 +10,4 @@ script = ExtResource("1_tk1p6")
 scale = Vector2(3, 3)
 texture = ExtResource("2_tk1p6")
 region_enabled = true
-region_rect = Rect2(0, 0, 32, 32)
+region_rect = Rect2(0, 0, 16, 16)

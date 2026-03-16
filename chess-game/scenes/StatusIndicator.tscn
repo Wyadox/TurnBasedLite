@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://diqed3vx10e18"]
+
+[ext_resource type="Script" uid="uid://cqtisbr6x0ou2" path="res://scripts/status_indicator.gd" id="1_dgvtr"]
+
+[node name="StatusIndicator" type="Node2D"]
+script = ExtResource("1_dgvtr")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]

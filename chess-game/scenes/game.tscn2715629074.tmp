@@ -1,17 +1,17 @@
-[gd_scene load_steps=8 format=3 uid="uid://bxdepwhprt4pp"]
+[gd_scene load_steps=7 format=3 uid="uid://bxdepwhprt4pp"]
 
 [ext_resource type="Script" uid="uid://bj20fx8i5xny6" path="res://scripts/game.gd" id="1_yqjtg"]
-[ext_resource type="PackedScene" uid="uid://dnbpf2aas655b" path="res://scenes/board.tscn" id="2_p57ef"]
+[ext_resource type="Script" uid="uid://dlwh8mqmkmuqo" path="res://scripts/board.gd" id="2_lnu2h"]
 [ext_resource type="PackedScene" uid="uid://dlld2p1r0gxox" path="res://scenes/setup_phase_ui.tscn" id="6_p57ef"]
 [ext_resource type="Texture2D" uid="uid://d31qmqe0kjyid" path="res://EmptyBar.png" id="6_u5sy4"]
 [ext_resource type="Texture2D" uid="uid://3dyvehvtliv5" path="res://FullBar.png" id="7_gee14"]
-[ext_resource type="PackedScene" uid="uid://qrys574fx6lg" path="res://scenes/loadout_slots_vbox.tscn" id="7_u5sy4"]
 [ext_resource type="Texture2D" uid="uid://c2ffhrqxtv6do" path="res://customPiecesSpritesheet.png" id="8_gee14"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_yqjtg")
 
-[node name="Board" parent="." instance=ExtResource("2_p57ef")]
+[node name="Board" type="Node2D" parent="."]
+script = ExtResource("2_lnu2h")
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
@@ -23,8 +23,8 @@ grow_vertical = 2
 
 [node name="ColorRect" type="ColorRect" parent="Control"]
 layout_mode = 0
-offset_top = -27.0
-offset_right = 1107.0
+offset_top = -2.0
+offset_right = 984.0
 offset_bottom = 980.0
 color = Color(0.4862745, 0.4862745, 0.4862745, 0.5882353)
 
@@ -35,15 +35,14 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 261.0
-offset_top = 368.0
-offset_right = 874.0
-offset_bottom = 474.0
+offset_left = 185.0
+offset_top = 226.0
+offset_right = 798.0
+offset_bottom = 332.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 75
 text = "Player ONE WON"
-horizontal_alignment = 1
 
 [node name="Button" type="Button" parent="Control"]
 layout_mode = 1
@@ -52,10 +51,10 @@ anchor_left = 2.4220002
 anchor_top = 2.015
 anchor_right = 2.4220002
 anchor_bottom = 2.015
-offset_left = 468.0
-offset_top = 460.0
-offset_right = 640.0
-offset_bottom = 507.0
+offset_left = 392.0
+offset_top = 318.0
+offset_right = 564.0
+offset_bottom = 365.0
 grow_horizontal = 2
 grow_vertical = 2
 text = "Main Menu
@@ -99,11 +98,6 @@ texture = ExtResource("8_gee14")
 offset_left = 115.0
 offset_right = 155.0
 
-[node name="loadoutSlots" parent="." instance=ExtResource("7_u5sy4")]
-offset_left = 979.0
-offset_top = 511.0
-offset_right = 979.07996
-offset_bottom = 511.32
-
+[connection signal="selected_square" from="." to="Board" method="_on_game_selected_square"]
 [connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]
 [connection signal="timeout" from="MoveTimer" to="." method="_on_move_timer_timeout"]
