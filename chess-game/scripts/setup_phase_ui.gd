@@ -129,7 +129,7 @@ func _on_mitosis_button_pressed() -> void:
 	if (valid_spawn(Globals.PIECE_TYPES.MITOSIS_PAWN)):
 		SignalBus.emit_signal("spawn_piece", Globals.PIECE_TYPES.MITOSIS_PAWN)
 		
-static func determineAiPieces():
+static func determineAiPieces(color):
 	var piecesToSpawn = []
 	var pieces = [Globals.PIECE_TYPES.KNIGHT,
 	Globals.PIECE_TYPES.BISHOP,
@@ -148,10 +148,16 @@ static func determineAiPieces():
 	Globals.PIECE_TYPES.STUN_KNIGHT,
 	Globals.PIECE_TYPES.TROJAN_HORSE]
 	
+	var y
+	if color == Globals.COLORS.BLACK:
+		y = 0
+	else:
+		y = 6
+	
 	var pos
-	for i in 6:
+	for i in 7:
 		var roll = randi() % pieces.size()
-		pos = Vector2(i, 0)
+		pos = Vector2(i, y)
 		piecesToSpawn.push_back(pieces[roll])
 		piecesToSpawn.push_back(pos)
 		pieces.remove_at(roll)

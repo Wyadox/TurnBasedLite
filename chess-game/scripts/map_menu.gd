@@ -5,7 +5,7 @@ extends Control
 @onready var map_4_button: TextureButton = $VBoxContainer/HBoxContainer2/Map4_Button
 
 var current_map : int
-var player2_type
+var player2_type : Globals.PLAYER_2_TYPE
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

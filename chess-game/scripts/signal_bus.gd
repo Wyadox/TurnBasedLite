@@ -7,7 +7,7 @@ signal refund_piece(piece_type)
 signal set_status(color)
 signal spawn_ai()
 signal setup_complete
-signal init_ai
+signal init_ai(color)
 signal test(data)
 signal selected_square(pos)
 

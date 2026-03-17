@@ -20,6 +20,9 @@ const LOADOUT_Y_OFFSET = 5
 
 var is_loadout_board : bool = false
 
+var first_color : Globals.COLORS
+var second_color : Globals.COLORS
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	draw_board()
@@ -366,11 +369,20 @@ func num_pieces():
 	return count
 
 
-func _on_game_init_ai() -> void:
+func _on_game_init_ai(color) -> void:
 	var piecesToSpawn = []
-	piecesToSpawn = setup_script.determineAiPieces()
+	piecesToSpawn = setup_script.determineAiPieces(color)
 	
 	var i = 0
 	for it in piecesToSpawn.size() / 2:
-		create_piece(piecesToSpawn[i], Globals.COLORS.BLACK, piecesToSpawn[i + 1])
+		create_piece(piecesToSpawn[i], color, piecesToSpawn[i + 1])
 		i += 2
+		
+	var colorSet
+	var total_pieces : int = num_pieces()
+	if total_pieces + 1 < Globals.PIECES_PER_SIDE:
+		colorSet = Globals.COLORS.WHITE
+	elif !is_loadout_board:
+		colorSet = Globals.COLORS.BLACK
+		print("Color is now black")
+	SignalBus.emit_signal("set_status", colorSet)

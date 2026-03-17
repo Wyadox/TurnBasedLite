@@ -11,6 +11,8 @@ var white_shield_king_alive = false
 var black_shield_king_alive = false
 
 var current_map : int
+var difficulty
+var ai_color : Globals.COLORS = Globals.COLORS.BLACK
 
 # To drag piece
 var is_dragging: bool;
@@ -58,8 +60,14 @@ func _ready():
 	SignalBus.setup_complete.connect(_on_board_setup_complete)
 	SignalBus.loadout_button.connect(loadout_button_pressed)
 	
-	print(player2_type)
-	print(current_map)
+	print("Player2 Type: ", player2_type)
+	print("Current Map: ", current_map)
+	print("AI Color: ", ai_color)
+	
+	if ai_color == Globals.COLORS.WHITE:
+		SignalBus.init_ai.emit(Globals.COLORS.WHITE)
+		board.first_color = Globals.COLORS.WHITE
+		board.second_color = Globals.COLORS.WHITE
 	
 func loadout_button_pressed(loadout):
 	var save_string : String
@@ -531,6 +539,8 @@ func _on_board_setup_complete() -> void:
 	loadout_ui.hide()
 	timer_bar.show()
 	status = Globals.COLORS.WHITE
+	if ai_color == Globals.COLORS.WHITE:
+		player2_move()
 	init_pieces()
 	reset_timer()
 	board.update_indicators()
@@ -555,9 +565,9 @@ func _on_opponent_ui_human_op() -> void:
 
 
 func _on_board_spawn_ai() -> void:
-	if player2_type == Globals.PLAYER_2_TYPE.AI:
+	if player2_type == Globals.PLAYER_2_TYPE.AI and ai_color == Globals.COLORS.BLACK:
 		print("emit init_ai")
-		SignalBus.emit_signal("init_ai")
+		SignalBus.emit_signal("init_ai", Globals.COLORS.BLACK)
 		print("spawn_ai connected")
 	else:
 		print("fail")

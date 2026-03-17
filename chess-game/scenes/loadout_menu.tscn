@@ -78,6 +78,16 @@ offset_right = 391.00003
 offset_bottom = 81.999985
 
 [node name="notification" parent="." instance=ExtResource("4_p557w")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_top = 57.0
+offset_bottom = 57.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="descriptions" parent="." instance=ExtResource("13_21il4")]
 layout_mode = 0
