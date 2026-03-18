@@ -1,23 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://duwl4gby1wb7s"]
 
 [ext_resource type="Script" uid="uid://3fm4pgf3e52y" path="res://scripts/piece.gd" id="1_tk1p6"]
-[ext_resource type="Texture2D" uid="uid://c2ffhrqxtv6do" path="res://Assets/customPiecesSpritesheet.png" id="2_tk1p6"]
-
-[sub_resource type="Animation" id="Animation_tk1p6"]
-resource_name = "sway"
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:rotation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.25, 0.5, 0.75, 1),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 0,
-"values": [0.0, -0.3490658503988659, 0.0, 0.3490658503988659, 0.0]
-}
+[ext_resource type="Texture2D" uid="uid://bw2ccfiqhwrtb" path="res://customPiecesSpritesheetNew.png" id="2_tk1p6"]
 
 [sub_resource type="Animation" id="Animation_lxuho"]
 length = 0.001
@@ -34,9 +18,6 @@ tracks/0/keys = {
 "values": [0.0]
 }
 
-[sub_resource type="Animation" id="Animation_56o36"]
-resource_name = "idle"
-
 [sub_resource type="Animation" id="Animation_chx0o"]
 resource_name = "cower"
 length = 0.4
@@ -52,6 +33,25 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
 "values": [0.0, 0.08726646259971647, 0.0, -0.08726646259971647, 0.0]
+}
+
+[sub_resource type="Animation" id="Animation_56o36"]
+resource_name = "idle"
+
+[sub_resource type="Animation" id="Animation_tk1p6"]
+resource_name = "sway"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5, 0.75, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, -0.3490658503988659, 0.0, 0.3490658503988659, 0.0]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_56o36"]
