@@ -293,6 +293,7 @@ func drop_piece():
 		# - change currnet status of active color
 		if !checker_captured:
 			end_turn()
+			print("Eval: ", Ai.board_evaluation(board.pieces))
 		else:
 			reset_timer()
 			board.update_indicators()
