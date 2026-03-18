@@ -189,15 +189,16 @@ func init_game():
 	is_dragging = false
 	player_color = Globals.COLORS.WHITE
 	status = Globals.COLORS.WHITE
+	
+	# Initialize the board represntation array
+	board_repr.resize(board.BOARD_WIDTH * board.BOARD_HEIGHT)
+	
 	# Check to see if either player has a shield king, and mark it alive if it does.
 	check_for_shield_king()
 
 func check_for_shield_king():
 	var white_shield_king_found = false
 	var black_shield_king_found = false
-	
-	# Initialize the board represntation array
-	board_repr.resize(board.BOARD_WIDTH * board.BOARD_HEIGHT)
 	
 	for piece in board.pieces:
 		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING && piece.color == Globals.COLORS.WHITE:
