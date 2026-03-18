@@ -68,6 +68,26 @@ func piece_base_converter(piece_type : Globals.PIECE_TYPES):
 			return Globals.PIECE_BASE.KNIGHT
 		Globals.PIECE_TYPES.TROJAN_HORSE:
 			return Globals.PIECE_BASE.KNIGHT
+		Globals.PIECE_TYPES.GUARDIAN_ANGEL:
+			return Globals.PIECE_BASE.QUEEN
+		Globals.PIECE_TYPES.SUMO:
+			return Globals.PIECE_BASE.ROOK
+		Globals.PIECE_TYPES.MAGMA_KNIGHT:
+			return Globals.PIECE_BASE.KNIGHT
+		Globals.PIECE_TYPES.DUPLICATOR:
+			return Globals.PIECE_BASE.PAWN
+		Globals.PIECE_TYPES.WARHORSE:
+			return Globals.PIECE_BASE.KNIGHT
+		Globals.PIECE_TYPES.INFECTOR:
+			return Globals.PIECE_BASE.PAWN
+		Globals.PIECE_TYPES.JUGGERNAUT:
+			return Globals.PIECE_BASE.KING
+		Globals.PIECE_TYPES.JUGGERNAUT2:
+			return Globals.PIECE_BASE.KING
+		Globals.PIECE_TYPES.JUGGERNAUT1:
+			return Globals.PIECE_BASE.KING
+		Globals.PIECE_TYPES.WIZARD:
+			return Globals.PIECE_BASE.ROOK
 	
 func _on_board_refund_piece(piece_type: Variant) -> void:
 	var piece_base = piece_base_converter(piece_type)
@@ -135,7 +155,16 @@ static func determineAiPieces():
 	Globals.PIECE_TYPES.ACROBISHOP,
 	Globals.PIECE_TYPES.JOUST_BISHOP,
 	Globals.PIECE_TYPES.STUN_KNIGHT,
-	Globals.PIECE_TYPES.TROJAN_HORSE]
+	Globals.PIECE_TYPES.TROJAN_HORSE,
+	Globals.PIECE_TYPES.GUARDIAN_ANGEL,
+	Globals.PIECE_TYPES.SUMO,
+	Globals.PIECE_TYPES.TROJAN_HORSE,
+	Globals.PIECE_TYPES.MAGMA_KNIGHT,
+	Globals.PIECE_TYPES.DUPLICATOR,
+	Globals.PIECE_TYPES.WARHORSE,
+	Globals.PIECE_TYPES.INFECTOR,
+	Globals.PIECE_TYPES.JUGGERNAUT,
+	Globals.PIECE_TYPES.WIZARD]
 	
 	var pos
 	for i in 6:

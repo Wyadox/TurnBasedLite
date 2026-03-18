@@ -4,6 +4,9 @@ extends Node2D
 @export var piece_scene = preload("res://scenes/Piece.tscn")
 @export var setup_script = preload("res://scripts/setup_phase_ui.gd")
 @export var status_indicator = preload("res://scenes/StatusIndicator.tscn")
+const TILE_MAP = preload("res://tileMap.png")
+
+
 
 @export var white_king_pos: Vector2 = Vector2(-2, -2)
 @export var black_king_pos: Vector2 = Vector2(-2, -2)
@@ -11,6 +14,13 @@ extends Node2D
 var selected_pos: Vector2 = Vector2(-1, -1)
 var setup_done: bool = false
 
+enum BOARD_TYPE {
+	STANDARD,
+	RIVER,
+	FOREST,
+	WALL
+}
+var selected_board: BOARD_TYPE = BOARD_TYPE.STANDARD
 const CELL_SIZE = 120
 
 const BOARD_HEIGHT = 7
@@ -25,6 +35,12 @@ var is_loadout_board : bool = false
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	draw_board()
+	if selected_board == BOARD_TYPE.RIVER:
+		draw_river()
+	elif selected_board == BOARD_TYPE.FOREST:
+		draw_forest()
+	elif selected_board == BOARD_TYPE.WALL:
+		draw_wall()
 	clear_borders()
 	
 	SignalBus.spawn_piece.connect(_on_setup_phase_ui_spawn_piece)
@@ -40,6 +56,15 @@ func draw_board():
 		for x in range(BOARD_WIDTH):
 			for y in range(2):
 				draw_cell(x + LOADOUT_X_OFFSET, y + LOADOUT_Y_OFFSET)
+				
+func draw_river():
+	pass
+	
+func draw_forest():
+	pass
+
+func draw_wall():
+	pass
 
 func draw_cell(x, y):
 	var rect = ColorRect.new()
@@ -51,6 +76,11 @@ func draw_cell(x, y):
 	)
 	rect.z_index = -100
 	add_child(rect)
+
+func draw_water(x,y):
+	var rect = ColorRect.new()
+	rect.size = Vector2(CELL_SIZE, CELL_SIZE)
+	
 
 func register_king(pos, col):
 	match col:
