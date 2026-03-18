@@ -10,5 +10,8 @@ signal setup_complete
 signal init_ai
 signal test(data)
 signal selected_square(pos)
+signal piece_moved(old_pos, board_position)
+signal mitosis_spawned(position)
+signal trojan_spawned(position)
 
 signal loadout_button(loadout)
