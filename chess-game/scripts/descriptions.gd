@@ -27,8 +27,16 @@ var current_index = 0
 @onready var left_button = $Left_Button
 @onready var right_button = $Right_Button
 
+var selected_pos
+
 func _ready():
 	update_display()
+	
+	#SignalBus.selected_square.connect(set_selected_square)
+	
+func set_selected_square(pos):
+	selected_pos = pos
+	print("descriptions set pos: ", selected_pos)
 	
 func grab_region(piece_type):
 	var region_pos = Globals.SPRITE_MAPPING[Globals.COLORS.WHITE][piece_type]
@@ -64,3 +72,9 @@ func _on_right_button_pressed() -> void:
 
 func _on_exit_button_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+
+
+func _on_spawn_button_pressed() -> void:
+	#SignalBus.selected_square.emit(selected_pos)
+	SignalBus.setup_piece_by_type.emit(items[current_index]["piece_type"])
+	print("spawn button emitted: ", str(items[current_index]["piece_type"]))

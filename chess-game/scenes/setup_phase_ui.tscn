@@ -1,6 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://dlld2p1r0gxox"]
+[gd_scene load_steps=6 format=3 uid="uid://dlld2p1r0gxox"]
 
 [ext_resource type="Script" uid="uid://b3kuug82fetu7" path="res://scripts/setup_phase_ui.gd" id="1_4hrcu"]
+[ext_resource type="StyleBox" uid="uid://bicfnf4ef3s8m" path="res://Assets/Themes/Button.tres" id="2_2bpr7"]
+[ext_resource type="StyleBox" uid="uid://dkh6kdb0nuqcx" path="res://Assets/Themes/HoverButton.tres" id="3_bb6gx"]
+[ext_resource type="FontVariation" uid="uid://b8ly4ncbgra2j" path="res://Assets/Themes/Font.tres" id="4_2bpr7"]
+
+[sub_resource type="FontVariation" id="FontVariation_n4lro"]
+variation_embolden = 1.5
 
 [node name="SetupPhaseUI" type="Control"]
 layout_mode = 3
@@ -18,17 +24,30 @@ offset_bottom = 247.0
 
 [node name="Mitosis_Button" type="Button" parent="VBoxContainer"]
 layout_mode = 2
-text = "Mitosis
+theme_override_fonts/font = SubResource("FontVariation_n4lro")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = ExtResource("2_2bpr7")
+theme_override_styles/pressed = ExtResource("3_bb6gx")
+theme_override_styles/hover = ExtResource("3_bb6gx")
+text = "MITOSIS
 "
 
 [node name="Worm_Button" type="Button" parent="VBoxContainer"]
 layout_mode = 2
-text = "Worm
+theme_override_fonts/font = ExtResource("4_2bpr7")
+theme_override_styles/normal = ExtResource("2_2bpr7")
+theme_override_styles/pressed = ExtResource("3_bb6gx")
+theme_override_styles/hover = ExtResource("3_bb6gx")
+text = "WORM
 "
 
 [node name="Checker_Button" type="Button" parent="VBoxContainer"]
 layout_mode = 2
-text = "Checker
+theme_override_fonts/font = ExtResource("4_2bpr7")
+theme_override_styles/normal = ExtResource("2_2bpr7")
+theme_override_styles/pressed = ExtResource("3_bb6gx")
+theme_override_styles/hover = ExtResource("3_bb6gx")
+text = "CHECKER
 "
 
 [node name="Archbishop_Button" type="Button" parent="VBoxContainer"]

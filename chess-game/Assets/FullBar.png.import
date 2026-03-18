@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cxtob6llmuoik"
-path="res://.godot/imported/ShieldIndicator.png-69a4bc4ffeccc220c203d7a9da42202c.ctex"
+uid="uid://3dyvehvtliv5"
+path="res://.godot/imported/FullBar.png-f56b897a2afc29766f63352f546e9662.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ShieldIndicator.png"
-dest_files=["res://.godot/imported/ShieldIndicator.png-69a4bc4ffeccc220c203d7a9da42202c.ctex"]
+source_file="res://Assets/FullBar.png"
+dest_files=["res://.godot/imported/FullBar.png-f56b897a2afc29766f63352f546e9662.ctex"]
 
 [params]
 

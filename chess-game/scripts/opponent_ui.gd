@@ -17,7 +17,7 @@ func load_game_scene():
 	else:
 		player_type = Globals.PLAYER_2_TYPE.AI
 		
-	const GAME_SCENE = preload("res://scenes/game.tscn")
+	const GAME_SCENE = preload("res://scenes/map_menu.tscn")
 	var game_scene = GAME_SCENE.instantiate()
 	
 	game_scene.player2_type = player_type

@@ -9,9 +9,7 @@ const Y_OFFSET = 3
 @onready var setup_scene = $SetupPhaseUI
 const SETUP_SCENE = preload("res://scenes/setup_phase_ui.tscn")
 
-const PIECE_LIMIT = 7
-
-var selected_loadout = 1
+var selected_loadout = 0
 
 func _ready() -> void:
 	board_scene = BOARD.instantiate()
@@ -19,6 +17,7 @@ func _ready() -> void:
 	add_child(board_scene)
 	
 	SignalBus.loadout_button.connect(loadout_button_pressed)
+	SignalBus.show_notification.connect(show_notification)
 	
 
 func _input(_event):
@@ -28,14 +27,12 @@ func _input(_event):
 			
 		if selected_piece == null:
 			# REMEMBER THESE OFFSETS, it's very janky
-			if pos.x < board_scene.BOARD_WIDTH + 1 and pos.x > 0 and pos.y < board_scene.BOARD_HEIGHT - 1 and pos.y > 3 and board_scene.num_pieces() < PIECE_LIMIT:
+			if pos.x < board_scene.BOARD_WIDTH + 1 and pos.x > 0 and pos.y < board_scene.BOARD_HEIGHT and pos.y > 4 and board_scene.num_pieces() < Globals.PIECES_PER_SIDE:
 				SignalBus.emit_signal("selected_square", pos)
-			else:
-				print("no square was selected")
-				print("failed position: ", pos)
-				print("board total: ", board_scene.num_pieces())
 			return
-		print("not in setup phase")
+		else:
+			setup_scene._on_board_refund_piece(selected_piece.piece_type)
+			board_scene.delete_piece(selected_piece, true)
 
 func get_pos_under_mouse():
 	var pos = get_global_mouse_position()
@@ -49,7 +46,9 @@ func _on_button_clear_pressed() -> void:
 	setup_scene.queue_free()
 	setup_scene = SETUP_SCENE.instantiate()
 	setup_scene.global_position = Vector2(103.0, -5)
+	setup_scene.visible = false
 	add_child(setup_scene)
+	show_notification("Board Cleared")
 
 
 func _on_button_exit_pressed() -> void:
@@ -59,14 +58,13 @@ func _on_button_exit_pressed() -> void:
 func _on_button_save_pressed() -> void:
 	var save_string = ""
 	
-	if board_scene.num_pieces() != 7:
-		print("YOU MUST PLACE 7 PIECS")
+	if board_scene.num_pieces() != Globals.PIECES_PER_SIDE:
+		show_notification("YOU MUST PLACE " + str(Globals.PIECES_PER_SIDE) + " PIECES")
 		return
 		
 	for piece in board_scene.pieces:
 		save_string += str(piece.piece_type) + ":" + str(convert_position(piece.board_position)) + "_"
 	
-	print("selected loadout: ", selected_loadout)
 	if selected_loadout == 1:
 		LoadoutSaves.loadouts_to_save.loadout1 = save_string
 	elif selected_loadout == 2:
@@ -74,17 +72,21 @@ func _on_button_save_pressed() -> void:
 	else:
 		LoadoutSaves.loadouts_to_save.loadout3 = save_string
 	LoadoutSaves._save()
+	show_notification("Loadout Saved")
 
 func convert_position(pos : Vector2):
-	var new_pos = Vector2(pos.x - 1, pos.y + 1)
-	return str(new_pos.x) + "," + str(new_pos.y)
+	var new_pos = Vector2(pos.x - 1, pos.y)
+	return new_pos
+	#return str(new_pos.x) + "," + str(new_pos.y)
 	
 func loadout_button_pressed(loadout):
 	selected_loadout = loadout
-	print(loadout)
 
 func _on_button_load_pressed() -> void:
 	_on_button_clear_pressed()
+	
+	if selected_loadout == 0:
+		return
 	
 	var spawn_string : String
 	if selected_loadout == 1:
@@ -94,11 +96,16 @@ func _on_button_load_pressed() -> void:
 	else:
 		spawn_string = LoadoutSaves.loadouts_to_save.loadout3
 	spawn_pieces(spawn_string)
+	show_notification("Loadout Loaded")
 	
 func spawn_pieces(pieces : String):
 	var spawn_array = pieces.split("_", false)
 	for spawn in spawn_array:
 		var spawn_split = spawn.split(":")
 		var coord_split = spawn_split[1].split(",")
-		board_scene.selected_pos = Vector2(int(coord_split[0]) + 1,int(coord_split[1]) - 1)
+		board_scene.selected_pos = Vector2(int(coord_split[0]) + 1,int(coord_split[1]))
+		setup_scene.valid_spawn(int(spawn_split[0]))
 		board_scene._on_setup_phase_ui_spawn_piece(int(spawn_split[0]))
+
+func show_notification(phrase : String):
+	$notification.set_text(phrase)

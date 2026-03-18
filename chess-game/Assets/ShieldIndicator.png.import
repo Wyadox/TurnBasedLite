@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bhpcvx2c3573d"
-path="res://.godot/imported/StunIndicator.png-15cd8389ae2d3afef0452e0398fb058a.ctex"
+uid="uid://cxtob6llmuoik"
+path="res://.godot/imported/ShieldIndicator.png-bbc56a07c35ab68189cea6bb914dbb84.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://StunIndicator.png"
-dest_files=["res://.godot/imported/StunIndicator.png-15cd8389ae2d3afef0452e0398fb058a.ctex"]
+source_file="res://Assets/ShieldIndicator.png"
+dest_files=["res://.godot/imported/ShieldIndicator.png-bbc56a07c35ab68189cea6bb914dbb84.ctex"]
 
 [params]
 

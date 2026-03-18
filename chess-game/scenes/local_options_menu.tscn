@@ -1,0 +1,134 @@
+[gd_scene load_steps=4 format=3 uid="uid://cfc02oc4dv2pe"]
+
+[ext_resource type="Script" uid="uid://34f0adtywheq" path="res://scripts/options_menu.gd" id="1_34a7a"]
+[ext_resource type="Texture2D" uid="uid://dsxn1xc4dr5bu" path="res://Assets/Buttons/LoadoutButton.png" id="2_3falw"]
+[ext_resource type="PackedScene" uid="uid://dqrdpth8xiafq" path="res://scenes/notification.tscn" id="3_inqc7"]
+
+[node name="local_options_menu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_34a7a")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -161.0
+offset_top = -250.0
+offset_right = 161.0
+offset_bottom = 157.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="HSeparator3" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label-ChooseYourOpponent" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "CHOOSE YOUR OPPONENT"
+horizontal_alignment = 1
+
+[node name="Opponent_OptionButton" type="OptionButton" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 1
+item_count = 2
+popup/item_0/text = "HUMAN"
+popup/item_0/id = 0
+popup/item_1/text = "COMPUTER"
+popup/item_1/id = 1
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label-Difficulty" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "DIFFICUTLY LEVEL"
+horizontal_alignment = 1
+
+[node name="Difficulty_OptionButton" type="OptionButton" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 1
+item_count = 3
+popup/item_0/text = "EASY"
+popup/item_0/id = 0
+popup/item_1/text = "NORMAL"
+popup/item_1/id = 1
+popup/item_2/text = "HARD"
+popup/item_2/id = 2
+
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label-Difficulty2" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "MAP SELECTION"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Map1_Button" type="TextureButton" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("2_3falw")
+
+[node name="Map2_Button" type="TextureButton" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("2_3falw")
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Map3_Button" type="TextureButton" parent="VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+texture_normal = ExtResource("2_3falw")
+
+[node name="Map4_Button" type="TextureButton" parent="VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+texture_normal = ExtResource("2_3falw")
+
+[node name="HSeparator4" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label-Difficulty3" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "SETUP PHASE"
+horizontal_alignment = 1
+
+[node name="Continue_Button" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "CONTINUE"
+
+[node name="HSeparator5" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="notification" parent="." instance=ExtResource("3_inqc7")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_top = 260.0
+offset_bottom = 260.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/Map1_Button" to="." method="_on_map_1_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/Map2_Button" to="." method="_on_map_2_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer2/Map3_Button" to="." method="_on_map_3_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer2/Map4_Button" to="." method="_on_map_4_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Continue_Button" to="." method="_on_continue_button_pressed"]

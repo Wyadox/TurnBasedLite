@@ -10,6 +10,10 @@ var player2_type; # Where AI or Human is playinh
 var white_shield_king_alive = false
 var black_shield_king_alive = false
 
+var current_map : int
+var difficulty
+var ai_color : Globals.COLORS = Globals.COLORS.BLACK
+
 # To drag piece
 var is_dragging: bool;
 var selected_piece = null;
@@ -63,7 +67,14 @@ func _ready():
 	SignalBus.mitosis_spawned.connect(_on_mitosis_spawned)
 	
 	
-	print(player2_type)
+	print("Player2 Type: ", player2_type)
+	print("Current Map: ", current_map)
+	print("AI Color: ", ai_color)
+	
+	if ai_color == Globals.COLORS.WHITE:
+		SignalBus.init_ai.emit(Globals.COLORS.WHITE)
+		board.first_color = Globals.COLORS.WHITE
+		board.second_color = Globals.COLORS.WHITE
 	
 func loadout_button_pressed(loadout):
 	var save_string : String
@@ -78,6 +89,7 @@ func loadout_button_pressed(loadout):
 	else:
 		save_string = LoadoutSaves.loadouts_to_save.loadout3
 	parse_save_string(save_string)
+	$loadoutSlots.clear_selected()
 
 func parse_save_string(save_string):
 	var spawn_array = save_string.split("_", false)
@@ -98,6 +110,7 @@ func _input(event):
 		print("left click")
 		var pos = get_pos_under_mouse()
 		selected_piece = board.get_piece(pos)
+		
 		# Drag piece only if they are under the mouse or are of current player
 		if !allow_select:
 			return
@@ -123,6 +136,7 @@ func _input(event):
 			return
 			
 		is_dragging = true
+		selected_piece.play_animation("sway")
 		previous_position = selected_piece.position
 		selected_piece.z_index = 100
 		
@@ -133,21 +147,29 @@ func _input(event):
 			var dest_piece = board.get_piece(Vector2(it.x, it.y))
 			if dest_piece != null and !board.piece_is_protected(dest_piece):
 				color = Color(1.0, 0.0, 0.0)
+				dest_piece.play_animation("cower")
+				print("cower played")
 				board.draw_border(it.x, it.y, color, false)
 			elif dest_piece == null:
 				color = Color(1.0, 1.0, 0.0)
 				board.draw_border(it.x, it.y, color, false)
 				
 	elif event is InputEventMouseMotion and is_dragging:
-		selected_piece.position = get_global_mouse_position()
+		var piece_mouse_pos = get_global_mouse_position()
+		#piece_mouse_pos.y += 40
+		selected_piece.position = piece_mouse_pos
 	elif Input.is_action_just_released("left_click") and is_dragging:
 		var is_valid_move = drop_piece()
 		if !is_valid_move:
 			selected_piece.position = previous_position
+		if selected_piece:
+			selected_piece.play_animation("idle")
+			print("idle played")
 		selected_piece.z_index = 0
 		selected_piece = null
 		is_dragging = false
 		board.clear_borders()
+		clear_piece_animations()
 		
 		# Check whether game is over after user's move
 		if evaluate_end_game():
@@ -158,22 +180,39 @@ func _input(event):
 		if is_valid_move:
 			player2_move()
 
+func clear_piece_animations():
+	for piece in board.pieces:
+		piece.play_animation("idle")
+
 func init_game():
 	game_over = false
 	is_dragging = false
 	player_color = Globals.COLORS.WHITE
 	status = Globals.COLORS.WHITE
 	# Check to see if either player has a shield king, and mark it alive if it does.
-	for piece in board.pieces:
-		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING && piece.color == Globals.COLORS.WHITE:
-			white_shield_king_alive = true
-		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING && piece.color == Globals.COLORS.BLACK:
-			black_shield_king_alive = true
-	#player2_type = Globals.PLAYER_2_TYPE.AI
+	check_for_shield_king()
+
+func check_for_shield_king():
+	var white_shield_king_found = false
+	var black_shield_king_found = false
 	
 	# Initialize the board represntation array
 	board_repr.resize(board.BOARD_WIDTH * board.BOARD_HEIGHT)
 	
+	for piece in board.pieces:
+		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING && piece.color == Globals.COLORS.WHITE:
+			white_shield_king_found = true
+		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING && piece.color == Globals.COLORS.BLACK:
+			black_shield_king_found = true
+	
+	white_shield_king_alive = white_shield_king_found
+	black_shield_king_alive = black_shield_king_found
+	
+	if !white_shield_king_found:
+		board.white_king_pos = Vector2(-2,-2)
+	if !black_shield_king_found:
+		board.black_king_pos = Vector2(-2,-2)
+
 func get_pos_under_mouse():
 	var pos = get_global_mouse_position()
 	pos.x = int(pos.x / 120)
@@ -474,6 +513,8 @@ func end_turn():
 		turns_since_last_capture = 0
 		print("previous = ", previous_piece_total)
 	
+	clear_piece_animations()
+	check_for_shield_king()
 	reset_timer()
 	board.update_indicators()
 
@@ -500,6 +541,8 @@ func _on_board_setup_complete() -> void:
 	loadout_ui.hide()
 	timer_bar.show()
 	status = Globals.COLORS.WHITE
+	if ai_color == Globals.COLORS.WHITE:
+		player2_move()
 	init_pieces()
 	reset_timer()
 	board.update_indicators()
@@ -532,9 +575,9 @@ func _on_opponent_ui_human_op() -> void:
 
 
 func _on_board_spawn_ai() -> void:
-	if player2_type == Globals.PLAYER_2_TYPE.AI:
+	if player2_type == Globals.PLAYER_2_TYPE.AI and ai_color == Globals.COLORS.BLACK:
 		print("emit init_ai")
-		SignalBus.emit_signal("init_ai")
+		SignalBus.emit_signal("init_ai", Globals.COLORS.BLACK)
 		print("spawn_ai connected")
 	else:
 		print("fail")

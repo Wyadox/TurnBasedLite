@@ -11,16 +11,17 @@ const PIECE_LIMIT = 2
 func _ready() -> void:
 	SignalBus.refund_piece.connect(_on_board_refund_piece)
 	SignalBus.set_status.connect(_on_board_set_status)
+	SignalBus.setup_piece_by_type.connect(spawn_piece_by_type)
 
 func valid_spawn(piece_type : Globals.PIECE_TYPES) -> bool:
 	var piece_base = piece_base_converter(piece_type)
 	if (status == Globals.COLORS.WHITE):
 		if white_base_dict[piece_base] + 1 > PIECE_LIMIT:
-			print("Piece FAILED because of limit on white")
+			SignalBus.show_notification.emit("Piece FAILED because of limit on white")
 			return false
 	if (status == Globals.COLORS.BLACK):
 		if black_base_dict[piece_base] + 1 > PIECE_LIMIT:
-			print("Piece FAILED because of limit")
+			SignalBus.show_notification.emit("Piece FAILED because of limit")
 			return false
 	
 	if (status == Globals.COLORS.WHITE and !white_dict.has(piece_type)) or (status == Globals.COLORS.BLACK and !black_dict.has(piece_type)):
@@ -31,7 +32,7 @@ func valid_spawn(piece_type : Globals.PIECE_TYPES) -> bool:
 			black_dict[piece_type] = true
 			black_base_dict[piece_base] += 1
 		return true
-	print("Piece FAILED because of duplicate")
+	SignalBus.show_notification.emit("Piece FAILED because of duplicate")
 	return false
 	
 func piece_base_converter(piece_type : Globals.PIECE_TYPES):
@@ -68,6 +69,14 @@ func piece_base_converter(piece_type : Globals.PIECE_TYPES):
 			return Globals.PIECE_BASE.KNIGHT
 		Globals.PIECE_TYPES.TROJAN_HORSE:
 			return Globals.PIECE_BASE.KNIGHT
+			
+func spawn_piece_by_type(piece_type : Globals.PIECE_TYPES) -> void:
+	print("Spawing by type: ", piece_type)
+	if (valid_spawn(piece_type)):
+		SignalBus.spawn_piece.emit(piece_type)
+		print("spawn_piece emitted say hi please")
+	else:
+		print("valid spawn FAILED")
 	
 func _on_board_refund_piece(piece_type: Variant) -> void:
 	var piece_base = piece_base_converter(piece_type)
@@ -79,6 +88,8 @@ func _on_board_refund_piece(piece_type: Variant) -> void:
 			black_dict.erase(piece_type)
 			black_base_dict[piece_base] -= 1
 		print("Piece REFUNDED")
+	else:
+		print("Piece NOT refunded")
 	
 func _on_board_set_status(color: Variant) -> void:
 	status = color
@@ -118,7 +129,7 @@ func _on_mitosis_button_pressed() -> void:
 	if (valid_spawn(Globals.PIECE_TYPES.MITOSIS_PAWN)):
 		SignalBus.emit_signal("spawn_piece", Globals.PIECE_TYPES.MITOSIS_PAWN)
 		
-static func determineAiPieces():
+static func determineAiPieces(color):
 	var piecesToSpawn = []
 	var pieces = [Globals.PIECE_TYPES.KNIGHT,
 	Globals.PIECE_TYPES.BISHOP,
@@ -137,10 +148,16 @@ static func determineAiPieces():
 	Globals.PIECE_TYPES.STUN_KNIGHT,
 	Globals.PIECE_TYPES.TROJAN_HORSE]
 	
+	var y
+	if color == Globals.COLORS.BLACK:
+		y = 0
+	else:
+		y = 6
+	
 	var pos
-	for i in 6:
+	for i in 7:
 		var roll = randi() % pieces.size()
-		pos = Vector2(i, 0)
+		pos = Vector2(i, y)
 		piecesToSpawn.push_back(pieces[roll])
 		piecesToSpawn.push_back(pos)
 		pieces.remove_at(roll)

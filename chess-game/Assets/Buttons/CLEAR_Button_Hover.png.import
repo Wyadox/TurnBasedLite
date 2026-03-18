@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bk8buthqq17b"
-path="res://.godot/imported/PromotedIndicator.png-291659aaaa3ac19db7b95601415a3fae.ctex"
+uid="uid://cjv860i1foy7c"
+path="res://.godot/imported/CLEAR_Button_Hover.png-41e2d1eea0346ea2280ab3d5fa2e3e72.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://PromotedIndicator.png"
-dest_files=["res://.godot/imported/PromotedIndicator.png-291659aaaa3ac19db7b95601415a3fae.ctex"]
+source_file="res://Assets/Buttons/CLEAR_Button_Hover.png"
+dest_files=["res://.godot/imported/CLEAR_Button_Hover.png-41e2d1eea0346ea2280ab3d5fa2e3e72.ctex"]
 
 [params]
 
