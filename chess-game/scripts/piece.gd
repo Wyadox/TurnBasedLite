@@ -19,6 +19,10 @@ var board_handle;
 @export var promoted: bool;
 @export var stun_counter: int;
 
+# Juggernaut variables
+const MAX_HEALTH : int = 3
+var current_health : int
+
 func init_piece(
 	type: Globals.PIECE_TYPES,
 	col: Globals.COLORS,
@@ -32,6 +36,9 @@ func init_piece(
 	promoted = false;
 	moved = false
 	stun_counter = 0
+	
+	# Juggernaut
+	current_health = MAX_HEALTH
 	
 	update_sprite()
 	
