@@ -1,6 +1,7 @@
 extends Node2D
 
 @onready var sprite = $Sprite2D
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
 
 const SPRITE_SIZE = 32
 const CELL_SIZE = 120
