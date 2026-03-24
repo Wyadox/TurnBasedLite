@@ -200,23 +200,11 @@ func drop_piece():
 				var jumped_pos = Vector2(int((old_pos.x + to_move.x) / 2), int((old_pos.y + to_move.y) / 2))
 				var jumped_piece = board.get_piece(jumped_pos)
 				if jumped_piece != null and jumped_piece.color != selected_piece.color:
-					#if jumped_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
-						#ExplodingBishop.explode_range(jumped_piece, board)
-					#else:
 					board.on_capture(jumped_piece, selected_piece, board)
 					checker_captured = true
 					dest_piece = null
-		#if selected_piece.piece_type == Globals.PIECE_TYPES.CHECKER:
-			#jumped_piece_location = selected_piece.checker_threat_pos(true)
-			#if jumped_piece_location != []:
-				#print("the current capture value is: ")
-				#print(jumped_piece_location[0])
-				#jumped = board.get_piece(jumped_piece_location[0])
-				#dest_piece = jumped
-				##board.delete_piece(jumped)
-				#checker_captured = true
 		# Delete only if the target piece is of different color
-		if dest_piece != null and dest_piece.color != selected_piece.color:
+		if dest_piece != null and dest_piece.color != selected_piece.color: #and dest_piece.color != Globals.COLORS.TILE:
 			if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
 				shield_king_killed = ExplodingBishop.explode_king(dest_piece, selected_piece, board)
 				#board.delete_piece(selected_piece, board)
@@ -278,25 +266,13 @@ func valid_move(from_pos, to_pos):
 	):
 		return false
 	
-#	if status == Globals.COLORS.WHITE && black_shield_king_alive:
-#		shield_king_position = board.black_king_pos
-#		shield_king = board_copy.get_piece(shield_king_position)
-#	elif status == Globals.COLORS.BLACK && white_shield_king_alive:
-#		shield_king_position = board.white_king_pos
-#		shield_king = board_copy.get_piece(shield_king_position)
-#	if src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP && shield_king != null:
-#		for position in shield_king.shield_king_protect_positions():
-#			print(position)
-#			if board_copy.get_piece(position) != null && position == to_pos:
-#				return false
-	
 	var dest_piece = board.get_piece(to_pos)
-	if dest_piece != null and ((board.piece_is_protected(dest_piece) && src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP) or dest_piece.piece_type == Globals.PIECE_TYPES.DUCK):
+	if dest_piece != null and ((board.piece_is_protected(dest_piece) && src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP) or dest_piece.piece_type == Globals.PIECE_TYPES.DUCK): #and dest_piece != Globals.PIECE_TYPES.WATER and dest_piece != Globals.PIECE_TYPES.MAGMA_HIGH and dest_piece != Globals.PIECE_TYPES.MAGMA_MED and dest_piece != Globals.PIECE_TYPES.MAGMA_LOW and dest_piece != Globals.PIECE_TYPES.BRICKS and dest_piece != Globals.PIECE_TYPES.TREE:
 		return false
 			
 	
 	var dst_piece = board_copy.get_piece(to_pos)
-	if dst_piece != null:
+	if dst_piece != null: #and dst_piece != Globals.PIECE_TYPES.WATER and dst_piece != Globals.PIECE_TYPES.MAGMA_HIGH and dst_piece != Globals.PIECE_TYPES.MAGMA_MED and dst_piece != Globals.PIECE_TYPES.MAGMA_LOW and dst_piece != Globals.PIECE_TYPES.BRICKS and dst_piece != Globals.PIECE_TYPES.TREE:
 		board_copy.delete_piece(dst_piece)
 	src_piece.move_position(to_pos)
 	

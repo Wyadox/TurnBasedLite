@@ -19,7 +19,7 @@ enum BOARD_TYPE {
 	FOREST,
 	WALL
 }
-var selected_board: BOARD_TYPE = BOARD_TYPE.FOREST
+var selected_board: BOARD_TYPE = BOARD_TYPE.WALL
 const CELL_SIZE = 120
 
 const BOARD_HEIGHT = 7
@@ -439,7 +439,8 @@ func piece_is_protected(piece):
 func num_pieces():
 	var count : int = 0
 	for piece in pieces:
-		count += 1
+		if piece.piece_type != Globals.PIECE_TYPES.WATER and piece.piece_type != Globals.PIECE_TYPES.BRIDGE_LEFT and piece.piece_type != Globals.PIECE_TYPES.BRIDGE_RIGHT and piece.piece_type != Globals.PIECE_TYPES.BRIDGE_MID and piece.piece_type != Globals.PIECE_TYPES.BRIDGE_FULL and piece.piece_type != Globals.PIECE_TYPES.WEB and piece.piece_type != Globals.PIECE_TYPES.MAGMA_HIGH and piece.piece_type != Globals.PIECE_TYPES.MAGMA_MED and piece.piece_type != Globals.PIECE_TYPES.MAGMA_LOW and piece.piece_type != Globals.PIECE_TYPES.BRICKS and piece.piece_type != Globals.PIECE_TYPES.TREE:
+			count += 1
 	return count
 
 
