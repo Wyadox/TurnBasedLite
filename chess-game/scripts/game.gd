@@ -231,6 +231,7 @@ func drop_piece():
 	var jumped
 	var jumped_piece_location
 	var shield_king_killed = false
+	var juggernaut_hit = false
 	
 	if valid_move(old_pos, to_move):
 		# For valid move:
@@ -252,10 +253,14 @@ func drop_piece():
 					
 		# Delete only if the target piece is of different color
 		if dest_piece != null and dest_piece.color != selected_piece.color:
+			if dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT or dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT2:
+				juggernaut_hit = true
 			if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
 				shield_king_killed = ExplodingBishop.explode_king(dest_piece, selected_piece, board)
 			if dest_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
 				piece_died = true
+			if selected_piece.piece_type == Globals.PIECE_TYPES.WARHORSE:
+				Warhorse.WarhorseCapture(board, selected_piece)
 			if not shield_king_killed:
 				board.on_capture(dest_piece, selected_piece, board)
 			#selected_piece.move_position(selected_piece.board_position)
@@ -264,7 +269,7 @@ func drop_piece():
 			if selected_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
 				if dest_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP:
 					is_jousting = true
-		if is_shooting == false:
+		if is_shooting == false and juggernaut_hit == false:
 			#print(selected_piece.board_position - to_move)
 			selected_piece.move_position(to_move)
 			if selected_piece.piece_type == Globals.PIECE_TYPES.STUN_KNIGHT:
@@ -282,7 +287,7 @@ func drop_piece():
 				board.on_capture(dest_piece, selected_piece, board)
 				selected_piece.move_position(joust_pos)
 		if piece_died:
-			board.delete_piece(selected_piece)
+			board.on_capture(selected_piece, dest_piece, board)
 		print(board_repr)
 			
 		#for piece in board.pieces:

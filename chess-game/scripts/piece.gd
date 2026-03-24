@@ -131,6 +131,14 @@ func get_moveable_positions():
 			if promoted:
 				return promoted_checker_pos()
 			return pawn_move_pos()
+		Globals.PIECE_TYPES.JUGGERNAUT:
+			return king_threat_pos()
+		Globals.PIECE_TYPES.JUGGERNAUT2:
+			return king_threat_pos()
+		Globals.PIECE_TYPES.JUGGERNAUT1:
+			return king_threat_pos()
+		Globals.PIECE_TYPES.WARHORSE:
+			return knight_threat_pos()
 		_: return []
 
 func get_threatened_positions():
@@ -162,6 +170,14 @@ func get_threatened_positions():
 			return positions
 		Globals.PIECE_TYPES.DUCK: return []
 		Globals.PIECE_TYPES.CHECKER: return checker_threat_pos(false)
+		Globals.PIECE_TYPES.JUGGERNAUT:
+			return king_threat_pos()
+		Globals.PIECE_TYPES.JUGGERNAUT2:
+			return king_threat_pos()
+		Globals.PIECE_TYPES.JUGGERNAUT1:
+			return king_threat_pos()
+		Globals.PIECE_TYPES.WARHORSE:
+			return knight_threat_pos()
 		_: return []
 
 
@@ -526,6 +542,19 @@ func promoted_checker_pos():
 			board_position[0], board_position[1],
 			inc[0], inc[1],
 			false, true
+		)
+		if pos != null:
+			positions.append(pos)
+	return positions
+
+const WARHORSE_CAPTURE_INCREMENTS = [[0, 1], [1, 0], [0, -1], [-1, 0]]
+func warhorse_capture_pos():
+	var positions = []
+	for inc in WARHORSE_CAPTURE_INCREMENTS:
+		var pos = board_handle.spot_search_threat(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1]
 		)
 		if pos != null:
 			positions.append(pos)

@@ -104,6 +104,9 @@ func on_capture(dest_piece, selected_piece, board):
 	elif dest_piece.piece_type == Globals.PIECE_TYPES.TROJAN_HORSE:
 		TrojanHorse.trojan_spawn(dest_piece, board)
 		delete_piece(dest_piece)
+	elif dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT or dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT2:
+		Juggernaut.JuggernautUpdate(board, dest_piece)
+		return
 	delete_piece(dest_piece)
 	
 func delete_piece(piece, force = false):
