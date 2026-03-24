@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dbjmnp715fnbm" path="res://scripts/descriptions.gd" id="1_yr26l"]
 [ext_resource type="Texture2D" uid="uid://bhpcvx2c3573d" path="res://StunIndicator.png" id="2_5jbt0"]
-[ext_resource type="Texture2D" uid="uid://sk1h15tij822" path="res://customSpritesheetFull.png" id="3_n6byr"]
+[ext_resource type="Texture2D" uid="uid://bw2ccfiqhwrtb" path="res://customPiecesSpritesheetNew.png" id="3_n6byr"]
 
 [node name="descriptions" type="Control"]
 layout_mode = 3
