@@ -189,10 +189,13 @@ func drop_piece():
 	var jumped_piece_location
 	var shield_king_killed = false
 	
+	
 	if valid_move(old_pos, to_move):
 		# For valid move:
 		# - if target has piece, then replace it
 		var dest_piece = board.get_piece(to_move)
+		#if dest_piece:
+		#	print("color is " +dest_piece.color)
 		# If piece is checker, delete the jumped piece
 		if selected_piece.piece_type == Globals.PIECE_TYPES.CHECKER:
 			var delta = to_move - old_pos
@@ -264,15 +267,17 @@ func valid_move(from_pos, to_pos):
 		and
 		to_pos not in src_piece.get_threatened_positions()
 	):
+		
 		return false
 	
 	var dest_piece = board.get_piece(to_pos)
-	if dest_piece != null and ((board.piece_is_protected(dest_piece) && src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP) or dest_piece.piece_type == Globals.PIECE_TYPES.DUCK): #and dest_piece != Globals.PIECE_TYPES.WATER and dest_piece != Globals.PIECE_TYPES.MAGMA_HIGH and dest_piece != Globals.PIECE_TYPES.MAGMA_MED and dest_piece != Globals.PIECE_TYPES.MAGMA_LOW and dest_piece != Globals.PIECE_TYPES.BRICKS and dest_piece != Globals.PIECE_TYPES.TREE:
+#	print("dest piece is " +str(dest_piece.piece_type))
+	if dest_piece != null and ((board.piece_is_protected(dest_piece) && src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP) or dest_piece.piece_type == Globals.PIECE_TYPES.DUCK or (dest_piece.piece_type != Globals.PIECE_TYPES.WATER and src_piece.piece_type != Globals.PIECE_TYPES.DUCK) or dest_piece.piece_type != Globals.PIECE_TYPES.MAGMA_HIGH or dest_piece.piece_type != Globals.PIECE_TYPES.MAGMA_MED or dest_piece.piece_type != Globals.PIECE_TYPES.MAGMA_LOW or dest_piece.piece_type != Globals.PIECE_TYPES.BRICKS or dest_piece.piece_type != Globals.PIECE_TYPES.TREE): 
 		return false
 			
 	
 	var dst_piece = board_copy.get_piece(to_pos)
-	if dst_piece != null: #and dst_piece != Globals.PIECE_TYPES.WATER and dst_piece != Globals.PIECE_TYPES.MAGMA_HIGH and dst_piece != Globals.PIECE_TYPES.MAGMA_MED and dst_piece != Globals.PIECE_TYPES.MAGMA_LOW and dst_piece != Globals.PIECE_TYPES.BRICKS and dst_piece != Globals.PIECE_TYPES.TREE:
+	if dst_piece != null and dst_piece.piece_type != Globals.PIECE_TYPES.WATER and dst_piece.piece_type != Globals.PIECE_TYPES.MAGMA_HIGH and dst_piece.piece_type != Globals.PIECE_TYPES.MAGMA_MED and dst_piece.piece_type != Globals.PIECE_TYPES.MAGMA_LOW and dst_piece.piece_type != Globals.PIECE_TYPES.BRICKS and dst_piece.piece_type != Globals.PIECE_TYPES.TREE:
 		board_copy.delete_piece(dst_piece)
 	src_piece.move_position(to_pos)
 	

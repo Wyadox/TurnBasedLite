@@ -19,7 +19,7 @@ enum BOARD_TYPE {
 	FOREST,
 	WALL
 }
-var selected_board: BOARD_TYPE = BOARD_TYPE.WALL
+var selected_board: BOARD_TYPE = BOARD_TYPE.RIVER
 const CELL_SIZE = 120
 
 const BOARD_HEIGHT = 7
@@ -154,6 +154,7 @@ func get_piece(pos: Vector2):
 		return
 	for piece in pieces:
 		if piece and piece.board_position == pos:
+			#print("piece is " +str(piece.piece_type))
 			return piece
 
 func on_capture(dest_piece, selected_piece, board):
