@@ -1,0 +1,83 @@
+[gd_scene load_steps=13 format=3 uid="uid://dux8e4cssk5i1"]
+
+[ext_resource type="Script" uid="uid://b1ibgxoocd1ub" path="res://scripts/loadout_menu.gd" id="1_yna6v"]
+[ext_resource type="PackedScene" uid="uid://dlld2p1r0gxox" path="res://scenes/setup_phase_ui.tscn" id="2_3c7rr"]
+[ext_resource type="Texture2D" uid="uid://q4d3whmmvlgw" path="res://Assets/Buttons/SAVE_Button.png" id="2_bcx0e"]
+[ext_resource type="Texture2D" uid="uid://b4dgipsc3p7xs" path="res://Assets/Buttons/SAVE_Button_Hover.png" id="3_21il4"]
+[ext_resource type="PackedScene" uid="uid://shbx8xrqrlr8" path="res://scenes/loadout_slots_hbox.tscn" id="3_gc7b0"]
+[ext_resource type="Texture2D" uid="uid://cdg0qw8fibr2" path="res://Assets/Buttons/LOAD_Button.png" id="4_ki1oi"]
+[ext_resource type="PackedScene" uid="uid://dqrdpth8xiafq" path="res://scenes/notification.tscn" id="4_p557w"]
+[ext_resource type="Texture2D" uid="uid://b6otvotb56exd" path="res://Assets/Buttons/LOAD_Button_Hover.png" id="5_4vggf"]
+[ext_resource type="Texture2D" uid="uid://dm516k1j36dje" path="res://Assets/Buttons/CLEAR_Button.png" id="6_6ruvx"]
+[ext_resource type="Texture2D" uid="uid://cjv860i1foy7c" path="res://Assets/Buttons/CLEAR_Button_Hover.png" id="7_dn7wr"]
+[ext_resource type="Texture2D" uid="uid://cw1w0oajlkhhw" path="res://Assets/Buttons/EXIT_Button.png" id="8_wxj56"]
+[ext_resource type="Texture2D" uid="uid://bdj5co4n8e2aw" path="res://Assets/Buttons/EXIT_Button_Hover.png" id="9_bf8y0"]
+
+[node name="loadout_menu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_yna6v")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -361.5
+offset_top = -103.0
+offset_right = 362.5
+offset_bottom = -39.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 8
+
+[node name="Button_Save" type="TextureButton" parent="HBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("2_bcx0e")
+texture_pressed = ExtResource("3_21il4")
+texture_hover = ExtResource("3_21il4")
+
+[node name="Button_Load" type="TextureButton" parent="HBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("4_ki1oi")
+texture_pressed = ExtResource("5_4vggf")
+texture_hover = ExtResource("5_4vggf")
+
+[node name="Button_Clear" type="TextureButton" parent="HBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("6_6ruvx")
+texture_pressed = ExtResource("7_dn7wr")
+texture_hover = ExtResource("7_dn7wr")
+
+[node name="Button_Exit" type="TextureButton" parent="HBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("8_wxj56")
+texture_pressed = ExtResource("9_bf8y0")
+texture_hover = ExtResource("9_bf8y0")
+
+[node name="SetupPhaseUI" parent="." instance=ExtResource("2_3c7rr")]
+layout_mode = 0
+offset_left = 103.0
+offset_top = -5.0
+offset_right = 143.0
+offset_bottom = 35.0
+
+[node name="loadoutSlots" parent="." instance=ExtResource("3_gc7b0")]
+layout_mode = 1
+offset_left = 391.0
+offset_top = 305.0
+offset_right = 391.0
+offset_bottom = 305.0
+
+[node name="notification" parent="." instance=ExtResource("4_p557w")]
+
+[connection signal="pressed" from="HBoxContainer/Button_Save" to="." method="_on_button_save_pressed"]
+[connection signal="pressed" from="HBoxContainer/Button_Load" to="." method="_on_button_load_pressed"]
+[connection signal="pressed" from="HBoxContainer/Button_Clear" to="." method="_on_button_clear_pressed"]
+[connection signal="pressed" from="HBoxContainer/Button_Exit" to="." method="_on_button_exit_pressed"]

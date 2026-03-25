@@ -5,6 +5,9 @@ extends Control
 
 @onready var LABEL = $Label
 
+var normal_tex = preload("res://Assets/Buttons/LoadoutButton.png")
+var selected_tex = preload("res://Assets/Buttons/LoadoutButton_Selected.png")
+
 func _ready() -> void:
 	SignalBus.loadout_button.connect(update_visuals)
 	
@@ -20,6 +23,9 @@ func _on_texture_button_pressed() -> void:
 
 func update_visuals(loadout):
 	if loadout == SLOT_NUM:
-		print("yay")
+		$TextureButton.texture_normal = selected_tex
 	else:
-		print("booo")
+		$TextureButton.texture_normal = normal_tex
+
+func set_normal():
+	$TextureButton.texture_normal = normal_tex

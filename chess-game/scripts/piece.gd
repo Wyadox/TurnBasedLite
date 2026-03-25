@@ -48,6 +48,10 @@ func update_sprite():
 			SPRITE_SIZE,
 			SPRITE_SIZE
 		)
+		
+func play_animation(title : String):
+	$AnimationPlayer.stop()
+	$AnimationPlayer.play(title)
 
 func move_position(to_move: Vector2):
 	var old_pos = board_position #For moving Mitosis Pawn
@@ -58,6 +62,7 @@ func move_position(to_move: Vector2):
 		Y_OFFSET + board_position[1] * CELL_SIZE
 	)
 	
+	SignalBus.piece_moved.emit(old_pos, board_position)
 	# Handling Mitosis piece movement
 	if piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN:
 		var dx = int(to_move.x - old_pos.x)
@@ -365,6 +370,12 @@ func acrobishop_threat_pos():
 		)
 		if pos != null:
 			positions.append(pos)
+	for inc in BISHOP_BEAM_INCREMENTS:
+		positions += board_handle.beam_search_threat(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1]
+		)
 	return positions
 
 func get_mitosis_positions():
@@ -389,6 +400,7 @@ func perform_mitosis(new_pawn_pos: Vector2):
 		color,
 		new_pawn_pos
 	)
+	SignalBus.emit_signal("mitosis_spawned", new_pawn_pos)
 
 # Stun Knight Stun Search
 const STUN_KNIGHT_RANGE_INCREMENT = [[0, 1], [1, 0], [0, -1], [-1, 0]]

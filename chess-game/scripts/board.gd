@@ -25,11 +25,12 @@ const CELL_SIZE = 120
 const BOARD_HEIGHT = 7
 const BOARD_WIDTH = 7
 const LOADOUT_X_OFFSET = 1
-const LOADOUT_Y_OFFSET = 4
-
-const PIECES_PER_SIDE = 7
+const LOADOUT_Y_OFFSET = 5
 
 var is_loadout_board : bool = false
+
+var first_color : Globals.COLORS
+var second_color : Globals.COLORS
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -166,9 +167,9 @@ func on_capture(dest_piece, selected_piece, board):
 		delete_piece(dest_piece)
 	delete_piece(dest_piece)
 	
-func delete_piece(piece):
+func delete_piece(piece, force = false):
 	for i in range(len(pieces)):
-		if pieces[i] == piece && piece_is_protected(piece) == false:
+		if pieces[i] == piece && (piece_is_protected(piece) == false or force):
 			var popped = pieces.pop_at(i)
 			popped.queue_free()
 			return
@@ -299,10 +300,22 @@ var border_panel
 var borders = []
 
 func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
+	print("hi from spawn_piece in board")
 	if selected_pos == Vector2(-1, -1):
 		print("Select a valid position")
 		SignalBus.emit_signal("refund_piece", piece_type)
 		return
+	
+	if is_loadout_board:
+		selected_pos = Vector2(selected_pos.x - 1, selected_pos.y)
+	
+	if !is_within_bounds(selected_pos):
+		print("Select an inbounds position")
+		SignalBus.emit_signal("refund_piece", piece_type)
+		return
+		
+	if is_loadout_board:
+		selected_pos = Vector2(selected_pos.x + 1, selected_pos.y)
 	
 	if setup_done == true:
 		print("Setup phase is over")
@@ -311,27 +324,27 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 	# Determine color for current piece
 	var color
 	var total_pieces : int = num_pieces()
-	if total_pieces < PIECES_PER_SIDE:
+	if total_pieces < Globals.PIECES_PER_SIDE:
 		color = Globals.COLORS.WHITE
-	else:
+	elif !is_loadout_board:
 		color = Globals.COLORS.BLACK
 	create_piece(piece_type, color, selected_pos)
 	print("Piece created")
 	
 	# Determine if color needs to swap
-	if total_pieces + 1 < PIECES_PER_SIDE:
+	if total_pieces + 1 < Globals.PIECES_PER_SIDE:
 		color = Globals.COLORS.WHITE
-	else:
+	elif !is_loadout_board:
 		color = Globals.COLORS.BLACK
 		print("Color is now black")
 	SignalBus.emit_signal("set_status", color)
 	
-	if total_pieces == PIECES_PER_SIDE - 1:
+	if total_pieces == Globals.PIECES_PER_SIDE - 1:
 		SignalBus.emit_signal("spawn_ai")
 		total_pieces = num_pieces()
 	
 	# Ready to play
-	if total_pieces > (PIECES_PER_SIDE - 1) * 2:
+	if total_pieces > (Globals.PIECES_PER_SIDE - 1) * 2:
 		setup_done = true
 		SignalBus.emit_signal("setup_complete")
 		
@@ -341,10 +354,13 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 	selected_pos = Vector2(-1, -1)
 
 
-func _on_game_selected_square(pos: Variant) -> void:
+func _on_game_selected_square(pos: Vector2) -> void:
 	selected_pos = pos
-	print(pos)
-	draw_border(pos.x, pos.y, Color(0.0, 0.0, 1.0), true)
+	print("selected square = ", pos)
+	if is_loadout_board:
+		draw_border(pos.x, pos.y, Color(0.0, 1.0, 0.38, 1.0), true)
+	else:
+		draw_border(pos.x, pos.y, Color(0.0, 0.0, 1.0), true)
 	
 func draw_border(x, y, color, clear):
 	if clear and border_panel and border_panel.is_inside_tree():
@@ -419,15 +435,15 @@ func piece_is_protected(piece):
 		king_pos = white_king_pos
 	else:
 		king_pos = black_king_pos
+		
+	if piece.piece_type == Globals.PIECE_TYPES.DUCK:
+		return true
 
 	# Check if the king actually exists
 	if king_pos == Vector2(-2, -2):
 		return false
 
 	var shield_king = get_piece(king_pos)
-	
-	if piece.piece_type == Globals.PIECE_TYPES.DUCK:
-		return true
 		
 	if shield_king == null:
 		return false
@@ -445,11 +461,20 @@ func num_pieces():
 	return count
 
 
-func _on_game_init_ai() -> void:
+func _on_game_init_ai(color) -> void:
 	var piecesToSpawn = []
-	piecesToSpawn = setup_script.determineAiPieces()
+	piecesToSpawn = setup_script.determineAiPieces(color)
 	
 	var i = 0
 	for it in piecesToSpawn.size() / 2:
-		create_piece(piecesToSpawn[i], Globals.COLORS.BLACK, piecesToSpawn[i + 1])
+		create_piece(piecesToSpawn[i], color, piecesToSpawn[i + 1])
 		i += 2
+		
+	var colorSet
+	var total_pieces : int = num_pieces()
+	if total_pieces + 1 < Globals.PIECES_PER_SIDE:
+		colorSet = Globals.COLORS.WHITE
+	elif !is_loadout_board:
+		colorSet = Globals.COLORS.BLACK
+		print("Color is now black")
+	SignalBus.emit_signal("set_status", colorSet)

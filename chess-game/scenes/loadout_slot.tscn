@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://bt1dnu27eu4td"]
+[gd_scene load_steps=5 format=3 uid="uid://bt1dnu27eu4td"]
 
-[ext_resource type="Texture2D" uid="uid://bhpcvx2c3573d" path="res://StunIndicator.png" id="1_76x2o"]
-[ext_resource type="Texture2D" uid="uid://d31qmqe0kjyid" path="res://EmptyBar.png" id="1_c2rx6"]
+[ext_resource type="Texture2D" uid="uid://bhpcvx2c3573d" path="res://Assets/StunIndicator.png" id="1_76x2o"]
 [ext_resource type="Script" uid="uid://d3tyyh6ohaeg1" path="res://scripts/loadout_slot.gd" id="1_mqcpd"]
+[ext_resource type="Texture2D" uid="uid://dsxn1xc4dr5bu" path="res://Assets/Buttons/LoadoutButton.png" id="2_mqcpd"]
+[ext_resource type="Texture2D" uid="uid://ufinxyho3xxb" path="res://Assets/Buttons/LoadoutButton_Hover.png" id="3_hvdov"]
 
 [node name="loadout_slot" type="Control"]
 layout_mode = 3
@@ -21,10 +22,13 @@ offset_left = -64.0
 offset_top = -43.0
 offset_right = -24.0
 offset_bottom = -3.0
-scale = Vector2(4.0000005, 4.0000005)
-texture_normal = ExtResource("1_c2rx6")
+scale = Vector2(1.3905994, 1.3905994)
+texture_normal = ExtResource("2_mqcpd")
+texture_pressed = ExtResource("3_hvdov")
+texture_hover = ExtResource("3_hvdov")
 
 [node name="TextureRect" type="TextureRect" parent="."]
+visible = false
 layout_mode = 1
 offset_left = -20.0
 offset_top = -20.0
@@ -35,10 +39,12 @@ texture = ExtResource("1_76x2o")
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 0
-offset_left = -45.0
-offset_top = 29.0
-offset_right = 46.0
-offset_bottom = 52.0
-text = "LOADOUT 1"
+offset_left = -9.0
+offset_top = 48.0
+offset_right = 82.0
+offset_bottom = 135.0
+theme_override_font_sizes/font_size = 30
+text = "1
+"
 
 [connection signal="pressed" from="TextureButton" to="." method="_on_texture_button_pressed"]

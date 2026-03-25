@@ -1,0 +1,89 @@
+[gd_scene load_steps=3 format=3 uid="uid://dkmc2evyw53f"]
+
+[ext_resource type="Script" uid="uid://63d8xda6pi3n" path="res://scripts/color_menu.gd" id="1_itt6i"]
+[ext_resource type="Texture2D" uid="uid://3dyvehvtliv5" path="res://Assets/FullBar.png" id="1_rae14"]
+
+[node name="color_menu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_itt6i")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -70.0
+offset_top = -257.0
+offset_right = 70.0
+offset_bottom = -202.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 40
+text = "CALL IT"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -57.5
+offset_top = -20.0
+offset_right = 57.5
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Heads_Button" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "HEADS"
+
+[node name="Tails_Button" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "TAILS"
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -109.0
+offset_right = 20.0
+offset_bottom = -69.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="Control"]
+position = Vector2(26, 0)
+scale = Vector2(5.0400004, 5.0400004)
+texture = ExtResource("1_rae14")
+
+[node name="Continue_Button" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -45.5
+offset_top = 59.0
+offset_right = 45.5
+offset_bottom = 90.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "CONTINUE"
+
+[connection signal="pressed" from="HBoxContainer/Heads_Button" to="." method="_on_heads_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/Tails_Button" to="." method="_on_tails_button_pressed"]
+[connection signal="pressed" from="Continue_Button" to="." method="_on_continue_button_pressed"]

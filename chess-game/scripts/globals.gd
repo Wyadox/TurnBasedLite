@@ -1,5 +1,7 @@
 extends Node
 
+const PIECES_PER_SIDE = 7
+
 enum PLAYER { ONE, TWO }
 enum PLAYER_2_TYPE {
 	HUMAN, AI

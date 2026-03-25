@@ -30,7 +30,8 @@ layout_mode = 2
 SLOT_NUM = 2
 
 [node name="Label" parent="HBoxContainer/loadout_slot2" index="2"]
-text = "LOADOUT 2
+text = "2
+
 "
 
 [node name="loadout_slot3" parent="HBoxContainer" instance=ExtResource("2_mnxhk")]
@@ -38,7 +39,7 @@ layout_mode = 2
 SLOT_NUM = 3
 
 [node name="Label" parent="HBoxContainer/loadout_slot3" index="2"]
-text = "LOADOUT 3"
+text = "3 "
 
 [editable path="HBoxContainer/loadout_slot"]
 [editable path="HBoxContainer/loadout_slot2"]
