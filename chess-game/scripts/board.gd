@@ -19,7 +19,7 @@ enum BOARD_TYPE {
 	FOREST,
 	WALL
 }
-var selected_board: BOARD_TYPE = BOARD_TYPE.RIVER
+var selected_board: BOARD_TYPE = BOARD_TYPE.STANDARD
 const CELL_SIZE = 120
 
 const BOARD_HEIGHT = 7
@@ -34,18 +34,32 @@ var second_color : Globals.COLORS
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	
 	draw_board()
-	if selected_board == BOARD_TYPE.RIVER:
-		draw_river()
-	elif selected_board == BOARD_TYPE.FOREST:
-		draw_forest()
-	elif selected_board == BOARD_TYPE.WALL:
-		draw_wall()
+	
+	
+	SignalBus.change_map.connect(_on_set_board_type)
 	clear_borders()
 	
 	SignalBus.spawn_piece.connect(_on_setup_phase_ui_spawn_piece)
 	SignalBus.init_ai.connect(_on_game_init_ai)
 	SignalBus.selected_square.connect(_on_game_selected_square)
+	
+func _on_set_board_type(current_map):
+	if current_map == 1:
+		selected_board = BOARD_TYPE.STANDARD
+	elif current_map == 2:
+		selected_board = BOARD_TYPE.RIVER
+		if selected_board == BOARD_TYPE.RIVER:
+			draw_river()
+	elif current_map == 3:
+		selected_board = BOARD_TYPE.FOREST
+		if selected_board == BOARD_TYPE.FOREST:
+			draw_forest()
+	elif current_map == 4:
+		selected_board = BOARD_TYPE.WALL
+		if selected_board == BOARD_TYPE.WALL:
+			draw_wall()
 
 func draw_board():
 	if !is_loadout_board:

@@ -17,6 +17,7 @@ func _on_continue_button_pressed() -> void:
 	
 	game_scene.player2_type = player2_type
 	game_scene.current_map = current_map
+	SignalBus.emit_signal("change_map",current_map)
 	
 	var scene_tree = get_tree()
 	scene_tree.current_scene.queue_free()

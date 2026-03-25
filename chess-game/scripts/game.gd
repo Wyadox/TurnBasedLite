@@ -66,7 +66,6 @@ func _ready():
 	SignalBus.trojan_spawned.connect(_on_trojan_spawned)
 	SignalBus.mitosis_spawned.connect(_on_mitosis_spawned)
 	
-	
 	print("Player2 Type: ", player2_type)
 	print("Current Map: ", current_map)
 	print("AI Color: ", ai_color)
