@@ -1,3 +1,4 @@
+class_name Piece
 extends Node2D
 
 @onready var sprite = $Sprite2D
@@ -13,7 +14,7 @@ const Y_OFFSET = 60
 @export var color: Globals.COLORS
 @export var board_position: Vector2
 
-var board_handle;
+@export var board_handle : Board;
 
 @export var moved: bool;
 @export var promoted: bool;

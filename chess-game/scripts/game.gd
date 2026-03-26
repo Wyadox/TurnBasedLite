@@ -519,6 +519,8 @@ func end_turn():
 	check_for_shield_king()
 	reset_timer()
 	board.update_indicators()
+	
+	Ai.minimax(board.pieces, 2, -INF, INF, true)
 
 func get_turn_indicator_tex(color):
 	if sprite:

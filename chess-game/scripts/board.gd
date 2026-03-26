@@ -1,6 +1,7 @@
+class_name Board
 extends Node2D
 
-@export var pieces = [];
+@export var pieces = []
 @export var piece_scene = preload("res://scenes/Piece.tscn")
 @export var setup_script = preload("res://scripts/setup_phase_ui.gd")
 @export var status_indicator = preload("res://scenes/StatusIndicator.tscn")
@@ -298,6 +299,7 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 	# Ready to play
 	if total_pieces > (Globals.PIECES_PER_SIDE - 1) * 2:
 		setup_done = true
+		Ai.minimax(pieces, 2, -INF, INF, true)
 		SignalBus.emit_signal("setup_complete")
 		
 	# Reset border visual and selected pos
