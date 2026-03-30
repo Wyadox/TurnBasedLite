@@ -261,6 +261,7 @@ func drop_piece():
 			#selected_piece.move_position(selected_piece.board_position)
 			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER:
 				is_shooting = true
+				selected_piece.position = previous_position
 			if selected_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
 				if dest_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP:
 					is_jousting = true
@@ -520,7 +521,7 @@ func end_turn():
 	reset_timer()
 	board.update_indicators()
 	
-	Ai.minimax(board.pieces, 2, -INF, INF, true)
+	Ai.minimax(board.pieces, 1, -INF, INF, true)
 
 func get_turn_indicator_tex(color):
 	if sprite:

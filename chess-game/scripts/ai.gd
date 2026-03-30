@@ -171,7 +171,10 @@ func minimax(pieces, depth : int, alpha : int, beta : int, maximizingPlayer : bo
 	if maximizingPlayer:
 		maximum_eval = -INF
 		for piece in pieces:
-			for pos in piece.get_threatened_positions():
+			var moves = get_move_list(piece)
+			print("MAX MOVE SIZE: ", moves.size())
+			for move in moves:
+				var pos = move.pos
 				if !game_scene.valid_move(piece.board_position, pos):
 					print("NOT VALID BREAK")
 					break
@@ -210,12 +213,16 @@ func minimax(pieces, depth : int, alpha : int, beta : int, maximizingPlayer : bo
 				maximum_eval = max(maximum_eval, new_eval)
 				alpha = max(alpha, new_eval)
 				if beta <= alpha:
+					print("max BREAK")
 					break
 		return maximum_eval
 	else:
 		minimum_eval = INF
 		for piece in pieces:
-			for pos in piece.get_threatened_positions():
+			var moves = get_move_list(piece)
+			print("MIN MOVE SIZE: ", moves.size())
+			for move in moves:
+				var pos = move.pos
 				if !game_scene.valid_move(piece.board_position, pos):
 					print("NOT VALID BREAK")
 					break
@@ -253,5 +260,29 @@ func minimax(pieces, depth : int, alpha : int, beta : int, maximizingPlayer : bo
 				minimum_eval = min(minimum_eval, new_eval)
 				beta = max(beta, new_eval)
 				if beta <= alpha:
+					print("min BREAK")
 					break
 		return minimum_eval
+
+func get_move_list(piece : Piece):
+	var moves = []
+	
+	var positions = piece.get_moveable_positions() + piece.get_threatened_positions()
+	
+	for pos in positions:
+		var score : int = 0
+		
+		var dest_piece : Piece = piece.board_handle.get_piece(pos)
+		
+		if dest_piece != null:
+			score += piece_eval[dest_piece.piece_type] - piece_eval[piece.piece_type]
+		
+		moves.append({
+			"pos": pos,
+			"score": score
+		})
+		
+	moves.sort_custom(func(a, b): return a.score > b.score)
+	moves = moves.slice(0, 8)
+	
+	return moves
