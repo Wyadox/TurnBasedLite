@@ -106,6 +106,7 @@ func on_capture(dest_piece, selected_piece, board):
 		TrojanHorse.trojan_spawn(dest_piece, board)
 		delete_piece(dest_piece)
 	play_animation(dest_piece, "capture_normal")
+	SignalBus.captured_piece.emit(dest_piece.color, dest_piece.piece_type)
 	delete_piece(dest_piece)
 	
 func delete_piece(piece, force = false):
