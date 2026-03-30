@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://bxdepwhprt4pp"]
+[gd_scene load_steps=9 format=3 uid="uid://bxdepwhprt4pp"]
 
 [ext_resource type="Script" uid="uid://bj20fx8i5xny6" path="res://scripts/game.gd" id="1_yqjtg"]
 [ext_resource type="PackedScene" uid="uid://dnbpf2aas655b" path="res://scenes/board.tscn" id="2_p57ef"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://d31qmqe0kjyid" path="res://Assets/EmptyBar.png" id="6_u5sy4"]
 [ext_resource type="Texture2D" uid="uid://3dyvehvtliv5" path="res://Assets/FullBar.png" id="7_gee14"]
 [ext_resource type="PackedScene" uid="uid://qrys574fx6lg" path="res://scenes/loadout_slots_vbox.tscn" id="7_u5sy4"]
+[ext_resource type="PackedScene" uid="uid://dp03twcoim8s8" path="res://scenes/evaluation_bar.tscn" id="8_0tnpc"]
 [ext_resource type="Texture2D" uid="uid://c2ffhrqxtv6do" path="res://Assets/customPiecesSpritesheet.png" id="8_gee14"]
 
 [node name="Game" type="Node2D"]
@@ -104,6 +105,12 @@ offset_left = 979.0
 offset_top = 511.0
 offset_right = 979.07996
 offset_bottom = 511.32
+
+[node name="evaluation_bar" parent="." instance=ExtResource("8_0tnpc")]
+offset_left = 31.0
+offset_top = 74.0
+offset_right = 31.0
+offset_bottom = 74.0
 
 [connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]
 [connection signal="timeout" from="MoveTimer" to="." method="_on_move_timer_timeout"]

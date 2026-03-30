@@ -258,7 +258,7 @@ func minimax(pieces, depth : int, alpha : int, beta : int, maximizingPlayer : bo
 				new_board.pieces = new_pieces
 				new_eval = minimax(new_pieces, depth - 1, alpha, beta, true)
 				minimum_eval = min(minimum_eval, new_eval)
-				beta = max(beta, new_eval)
+				beta = min(beta, new_eval)
 				if beta <= alpha:
 					print("min BREAK")
 					break
@@ -283,6 +283,64 @@ func get_move_list(piece : Piece):
 		})
 		
 	moves.sort_custom(func(a, b): return a.score > b.score)
-	moves = moves.slice(0, 8)
+	moves = moves.slice(0, 6)
 	
 	return moves
+
+func snapshot_board(pieces : Array):
+	var snap = []
+	for piece in pieces:
+		snap.append({
+			"ref": piece,
+			"board_position": piece.board_position,
+			"promoted": piece.promoted,
+			"moved": piece.moved,
+			"stun_counter": piece.stun_counter,
+			"current_health": piece.current_health,
+			"alive": true
+		})
+	return snap
+	
+func restore_board(snapshot : Array, pieces : Array):
+	for it in snapshot:
+		var piece = it["ref"]
+		piece.board_position = it["board_position"]
+		piece.promoted = it["promoted"]
+		piece.moved = it["moved"]
+		piece.stun_counter = it["stun_counter"]
+		piece.current_health = it["current_health"]
+		if not piece in pieces:
+			pieces.append(piece)
+			
+	pieces = pieces.filter(func(p): return snapshot.any(func(s): return s["ref"] == p))
+	
+
+#func simulate_move(pieces, piece, pos):
+	#var old_pos = piece["board_position"] #For moving Mitosis Pawn
+	#moved = true
+	#board_position = to_move
+	#position = Vector2(
+		#X_OFFSET + board_position[0] * CELL_SIZE,
+		#Y_OFFSET + board_position[1] * CELL_SIZE
+	#)
+	#
+	#SignalBus.piece_moved.emit(old_pos, board_position)
+	## Handling Mitosis piece movement
+	#if piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN:
+		#var dx = int(to_move.x - old_pos.x)
+		#var dy = int(to_move.y - old_pos.y)
+		#if abs(dx) == 2 and dy == 0:
+			#var mid_pos = Vector2(old_pos.x, old_pos.y)
+			#perform_mitosis(mid_pos)
+			#return
+	#
+	## Update king position if they are moved
+	#if piece_type == Globals.PIECE_TYPES.SHIELD_KING:
+		#board_handle.register_king(board_position, color)
+	#
+	## Promotion for pawns to KING BEHAVIOR
+	#if (piece_type == Globals.PIECE_TYPES.PAWN or piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN or piece_type == Globals.PIECE_TYPES.WORM or piece_type == Globals.PIECE_TYPES.CHECKER) and (
+		#(color == Globals.COLORS.BLACK and to_move[1] == board_handle.BOARD_HEIGHT - 1) or 
+		#(color == Globals.COLORS.WHITE and to_move[1] == 0)
+	#):
+		#piece["promoted"] = true

@@ -521,6 +521,8 @@ func end_turn():
 	reset_timer()
 	board.update_indicators()
 	
+	$evaluation_bar.set_value((Ai.board_evaluation(board.pieces) + 20.0) / 40.0)
+	
 	Ai.minimax(board.pieces, 1, -INF, INF, true)
 
 func get_turn_indicator_tex(color):

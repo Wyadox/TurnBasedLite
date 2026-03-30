@@ -90,16 +90,7 @@ func move_position(to_move: Vector2):
 		(color == Globals.COLORS.BLACK and to_move[1] == board_handle.BOARD_HEIGHT - 1) or 
 		(color == Globals.COLORS.WHITE and to_move[1] == 0)
 	):
-		#piece_type = Globals.PIECE_TYPES.PROMOTED_PAWN
 		promoted = true
-		update_sprite()
-		
-	#if piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN and (
-		#(color == Globals.COLORS.BLACK and to_move[1] == 5) or 
-		#(color == Globals.COLORS.WHITE and to_move[1] == 0)
-	#):
-		#piece_type = Globals.PIECE_TYPES.KING
-		#update_sprite()
 
 func clone (_board):
 	var piece = self.duplicate()

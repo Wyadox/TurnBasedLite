@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://cntck3ed2vkxt"]
+
+[ext_resource type="Script" uid="uid://uau06kegqrmf" path="res://scenes/captured_display.gd" id="1_j63cn"]
+[ext_resource type="Texture2D" uid="uid://bw2ccfiqhwrtb" path="res://customPiecesSpritesheetNew.png" id="2_nsoky"]
+
+[node name="captured_display" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_j63cn")
+color = null
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_nsoky")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
