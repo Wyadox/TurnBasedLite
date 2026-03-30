@@ -260,11 +260,11 @@ func drop_piece():
 			if dest_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
 				piece_died = true
 			if selected_piece.piece_type == Globals.PIECE_TYPES.WARHORSE:
-				Warhorse.WarhorseCapture(board, selected_piece)
+				Warhorse.WarhorseCapture(board, selected_piece, dest_piece)
 			if not shield_king_killed:
 				board.on_capture(dest_piece, selected_piece, board)
 			#selected_piece.move_position(selected_piece.board_position)
-			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER:
+			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER or selected_piece.piece_type == Globals.PIECE_TYPES.INFECTOR:
 				is_shooting = true
 			if selected_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
 				if dest_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP:
@@ -508,6 +508,15 @@ func end_turn():
 	for piece in board.pieces:
 		if piece.stun_counter > 0:
 			piece.stun_counter -= 1
+			if piece.infect_counter > 0:
+				piece.infect_counter -= 1
+				if piece.infect_counter == 0:
+					if piece.color == Globals.COLORS.WHITE:
+						piece.color = Globals.COLORS.BLACK
+						piece.update_sprite()
+					elif piece.color == Globals.COLORS.BLACK:
+						piece.color = Globals.COLORS.WHITE
+						piece.update_sprite()
 	status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
 	
 	turn_indicator.texture = get_turn_indicator_tex(status)

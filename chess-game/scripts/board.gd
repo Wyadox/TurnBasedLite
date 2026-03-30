@@ -101,6 +101,9 @@ func on_capture(dest_piece, selected_piece, board):
 	if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
 		ExplodingBishop.explode_piece(dest_piece, selected_piece, board)
 		delete_piece(selected_piece)
+	elif selected_piece.piece_type == Globals.PIECE_TYPES.INFECTOR:
+		Infector.InfectPiece(dest_piece)
+		return
 	elif dest_piece.piece_type == Globals.PIECE_TYPES.TROJAN_HORSE:
 		TrojanHorse.trojan_spawn(dest_piece, board)
 		delete_piece(dest_piece)

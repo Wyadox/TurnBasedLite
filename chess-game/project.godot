@@ -24,6 +24,7 @@ SignalBus="*res://scripts/signal_bus.gd"
 LoadoutSaves="*res://scripts/loadout_save_script.gd"
 Juggernaut="*res://scripts/juggernaut.gd"
 Warhorse="*res://scripts/warhorse.gd"
+Infector="*res://scripts/infector.gd"
 
 [display]
 

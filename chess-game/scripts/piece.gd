@@ -17,6 +17,7 @@ var board_handle;
 @export var moved: bool;
 @export var promoted: bool;
 @export var stun_counter: int;
+@export var infect_counter: int;
 
 func init_piece(
 	type: Globals.PIECE_TYPES,
@@ -31,6 +32,7 @@ func init_piece(
 	promoted = false;
 	moved = false
 	stun_counter = 0
+	infect_counter = 0
 	
 	update_sprite()
 	
@@ -139,6 +141,8 @@ func get_moveable_positions():
 			return king_threat_pos()
 		Globals.PIECE_TYPES.WARHORSE:
 			return knight_threat_pos()
+		Globals.PIECE_TYPES.INFECTOR:
+			return pawn_move_pos()
 		_: return []
 
 func get_threatened_positions():
@@ -178,6 +182,8 @@ func get_threatened_positions():
 			return king_threat_pos()
 		Globals.PIECE_TYPES.WARHORSE:
 			return knight_threat_pos()
+		Globals.PIECE_TYPES.INFECTOR:
+			return pawn_threat_pos()
 		_: return []
 
 
@@ -542,19 +548,6 @@ func promoted_checker_pos():
 			board_position[0], board_position[1],
 			inc[0], inc[1],
 			false, true
-		)
-		if pos != null:
-			positions.append(pos)
-	return positions
-
-const WARHORSE_CAPTURE_INCREMENTS = [[0, 1], [1, 0], [0, -1], [-1, 0]]
-func warhorse_capture_pos():
-	var positions = []
-	for inc in WARHORSE_CAPTURE_INCREMENTS:
-		var pos = board_handle.spot_search_threat(
-			color,
-			board_position[0], board_position[1],
-			inc[0], inc[1]
 		)
 		if pos != null:
 			positions.append(pos)
