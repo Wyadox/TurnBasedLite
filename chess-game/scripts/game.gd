@@ -43,6 +43,7 @@ var previous_piece_total := 0
 
 var board_repr = []
 
+var real_game : bool = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -171,14 +172,14 @@ func _input(event):
 		board.clear_borders()
 		clear_piece_animations()
 		
-		# Check whether game is over after user's move
-		if evaluate_end_game():
-			return
-		
-		
-		# If playerA has made valid move, then switch to other player's move
-		if is_valid_move:
-			player2_move()
+		if real_game:
+			# Check whether game is over after user's move
+			if evaluate_end_game():
+				return
+			
+			# If playerA has made valid move, then switch to other player's move
+			if is_valid_move:
+				player2_move()
 
 func clear_piece_animations():
 	for piece in board.pieces:
@@ -220,11 +221,17 @@ func get_pos_under_mouse():
 	pos.y = int(pos.y / 120)
 	return pos
 
-func drop_piece():
+func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 	var is_shooting = false
 	var is_jousting = false
 	var piece_died = false
-	var to_move = get_pos_under_mouse()
+	
+	var to_move
+	if use_mouse:
+		to_move = get_pos_under_mouse()
+	else:
+		to_move = non_mouse_pos
+		
 	var old_pos = selected_piece.board_position
 	var piece_around
 	var checker_captured = false
@@ -275,7 +282,6 @@ func drop_piece():
 						piece.stun_counter = 2
 		if selected_piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
 			board.register_king(selected_piece.board_position, selected_piece.color)
-			print("drop_piece registered king")
 		if is_jousting:
 			var joust_pos = to_move + joust_direction(old_pos, to_move)
 			dest_piece = board.get_piece(joust_pos)
@@ -284,20 +290,14 @@ func drop_piece():
 				selected_piece.move_position(joust_pos)
 		if piece_died:
 			board.delete_piece(selected_piece)
-		print(board_repr)
-			
-		#for piece in board.pieces:
-			#if piece.color == Globals.COLORS.BLACK:
-				#print("Black " + str(piece.piece_type))
-			#else:
-				#print("White " + str(piece.piece_type))
-		# - change currnet status of active color
-		if !checker_captured:
-			end_turn()
-			print("Eval: ", Ai.board_evaluation(board.pieces))
-		else:
-			reset_timer()
-			board.update_indicators()
+		
+		if real_game:
+			if !checker_captured:
+				end_turn()
+				print("Eval: ", Ai.board_evaluation(board.pieces))
+			else:
+				reset_timer()
+				board.update_indicators()
 		return true
 	return false
 
@@ -507,7 +507,8 @@ func end_turn():
 			piece.stun_counter -= 1
 	status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
 	
-	turn_indicator.texture = get_turn_indicator_tex(status)
+	if real_game:
+		turn_indicator.texture = get_turn_indicator_tex(status)
 	
 	if board.num_pieces() == previous_piece_total:
 		turns_since_last_capture += 1
@@ -523,7 +524,8 @@ func end_turn():
 	
 	$evaluation_bar.set_value((Ai.board_evaluation(board.pieces) + 20.0) / 40.0)
 	
-	Ai.minimax(board.pieces, 1, -INF, INF, true)
+	if real_game:
+		Ai.start_minimax(board.pieces, true if status == Globals.COLORS.WHITE else false)
 
 func get_turn_indicator_tex(color):
 	if sprite:
@@ -625,8 +627,9 @@ func _process(delta):
 func reset_timer():
 	time_remaining = move_time
 	#timer_label.text = str(int(time_remaining))
-	timer_bar.value = move_time
-	move_timer.start(move_time)
+	if real_game:
+		timer_bar.value = move_time
+		move_timer.start(move_time)
 
 func _on_piece_moved(old_pos, new_pos):
 	board_repr[board.BOARD_WIDTH * new_pos[1] + new_pos[0]] = board_repr[board.BOARD_WIDTH * old_pos[1] + old_pos[0]]

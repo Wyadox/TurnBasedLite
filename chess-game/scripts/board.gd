@@ -15,6 +15,8 @@ const TILE_MAP = preload("res://tileMap.png")
 var selected_pos: Vector2 = Vector2(-1, -1)
 var setup_done: bool = false
 
+var real_board : bool = true
+
 enum BOARD_TYPE {
 	STANDARD,
 	RIVER,
@@ -105,8 +107,11 @@ func on_capture(dest_piece, selected_piece, board):
 	elif dest_piece.piece_type == Globals.PIECE_TYPES.TROJAN_HORSE:
 		TrojanHorse.trojan_spawn(dest_piece, board)
 		delete_piece(dest_piece)
-	play_animation(dest_piece, "capture_normal")
-	SignalBus.captured_piece.emit(dest_piece.color, dest_piece.piece_type)
+	
+	if real_board:
+		play_animation(dest_piece, "capture_normal")
+		SignalBus.captured_piece.emit(dest_piece.color, dest_piece.piece_type)
+	
 	delete_piece(dest_piece)
 	
 func delete_piece(piece, force = false):
@@ -120,13 +125,14 @@ func delete_piece(piece, force = false):
 # LOOK HERE if there are issues with piece evaluation inconsistencies 
 #
 func play_animation(piece, anim_name : String) -> void:
-	var animation_piece = piece_scene.instantiate()
-	add_child(animation_piece)
-	animation_piece.init_piece(piece.piece_type, piece.color, piece.board_position, self)
-	animation_piece.global_position = piece.global_position
-	animation_piece.play_animation(anim_name)
-	await animation_piece.animation_player.animation_finished
-	animation_piece.queue_free()
+	if real_board:
+		var animation_piece = piece_scene.instantiate()
+		add_child(animation_piece)
+		animation_piece.init_piece(piece.piece_type, piece.color, piece.board_position, self)
+		animation_piece.global_position = piece.global_position
+		animation_piece.play_animation(anim_name)
+		await animation_piece.animation_player.animation_finished
+		animation_piece.queue_free()
 			
 func wipe_pieces(if_white = true, if_black = true):
 	var pieces_to_remove = []
@@ -300,7 +306,6 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 	# Ready to play
 	if total_pieces > (Globals.PIECES_PER_SIDE - 1) * 2:
 		setup_done = true
-		Ai.minimax(pieces, 1, -INF, INF, true)
 		SignalBus.emit_signal("setup_complete")
 		
 	# Reset border visual and selected pos

@@ -1,7 +1,5 @@
 extends Node2D
 
-#@onready var board: Node2D = $Board
-
 const POSITION_EVAL_INCREMENT : float = 0.1
 const THREAT_EVAL_INCREMENT : float = 0.25
 
@@ -19,6 +17,13 @@ func board_evaluation(pieces : Array) -> float:
 	
 	var multiplier : float
 	
+	var threat_map = {}
+	for piece in pieces:
+		for pos in piece.get_threatened_positions():
+			if not threat_map.has(pos):
+				threat_map[pos] = []
+			threat_map[pos].append(piece)
+	
 	for piece in pieces:
 		if piece:
 			# Reset multiplier DUH
@@ -32,17 +37,13 @@ func board_evaluation(pieces : Array) -> float:
 			if piece.current_health != null:
 				multiplier *= 1.0 + (0.5 * (piece.current_health / piece.MAX_HEALTH as float))
 				
-			var eval_adjustment : float = eval_positionAdjustment(piece) + eval_assessThreat(pieces, piece)
+			var eval_adjustment : float = eval_positionAdjustment(piece) + eval_assessThreat(threat_map, piece)
 			
 			# Increment based on color of piece
 			if piece.color == Globals.COLORS.WHITE:
 				white_eval += (piece_eval[piece.piece_type] * multiplier) + eval_adjustment
 			else:
 				black_eval -= (piece_eval[piece.piece_type] * multiplier) + eval_adjustment
-			#evaluation += piece_eval[piece.piece_type] * 1 if piece.color == Globals.COLORS.WHITE else -1
-	
-	print("White Eval: ", white_eval)
-	print("Black Eval: ", black_eval)
 	return white_eval + black_eval
 
 # Other considerations
@@ -51,14 +52,16 @@ func board_evaluation(pieces : Array) -> float:
 	# Piece is low on health
 	# Piece threat level while avoiding threat itself
 	
-func eval_assessThreat(pieces, eval_piece) -> float:
+func eval_assessThreat(threat_map : Dictionary, eval_piece) -> float:
 	var danger_count : int = 0
-	for piece in pieces:
-		for pos in piece.get_threatened_positions():
-			if eval_piece.board_position == pos and piece != eval_piece and piece.color != eval_piece.color:
-				danger_count += 1
+	var threateners = threat_map.get(eval_piece.board_position, [])
+	for attacker in threateners:
+		if attacker.color != eval_piece.color:
+			danger_count += 1
+			
+	var threat_positions = threat_map.values().reduce(func(acc, attackers): return acc + attackers.filter(func(p): return p == eval_piece).size(), 0)
 	
-	return eval_threatLevel(eval_piece) - danger_count * THREAT_EVAL_INCREMENT
+	return threat_positions * THREAT_EVAL_INCREMENT - danger_count * THREAT_EVAL_INCREMENT
 
 # Threatening more pieces = better evaluation
 func eval_threatLevel(piece) -> float:
@@ -145,122 +148,71 @@ const PIECE_SCENE = preload("res://scenes/Piece.tscn")
 const PIECE_SCRIPT = preload("res://scripts/piece.gd")
 const BOARD_SCENE = preload("res://scenes/board.tscn")
 
-func minimax(pieces, depth : int, alpha : int, beta : int, maximizingPlayer : bool) -> float:
+var game_scene
+var board
+
+func start_minimax(pieces : Array, white_to_play : bool) -> float:
+	var start = Time.get_ticks_msec()
+	game_scene = GAME_SCENE.instantiate()
+	game_scene.real_game = false
+	
+	board = BOARD_SCENE.instantiate()
+	board.real_board = false
+	
+	var new_pieces = []
+	for piece in pieces:
+		var copy = piece.clone(board)
+		new_pieces.append(copy)
+		
+	board.pieces = new_pieces
+	game_scene.board = board
+	
+	var result = minimax(new_pieces, 2, -INF, INF, white_to_play)
+	print("Minimax took: ", Time.get_ticks_msec() - start, "ms")
+	return result
+
+func minimax(pieces : Array, depth : int, alpha : float, beta : float, maximizingPlayer : bool) -> float:
 	var maximum_eval : float
 	var minimum_eval : float
 	var new_eval
 	
-	#var game_scene = GAME_SCENE.instantiate()
-	#game_scene.board.pieces = pieces
-	var new_pieces = []
-	var new_piece : Piece
-	var new_board
-	
-	var game_scene = GAME_SCENE.instantiate()
-	var board = BOARD_SCENE.instantiate()
-	board.pieces = pieces
-	game_scene.board = board
-	
 	if depth == 0:
-		var result = board_evaluation(pieces)
-		print("minimax final result: ", result)
-		return result
+		return board_evaluation(pieces)
 		
-	#for pos in piece.get_moveable_positions() + piece.get_threatened_positions():
+	var snapshot = snapshot_board(pieces)
 		
 	if maximizingPlayer:
 		maximum_eval = -INF
 		for piece in pieces:
-			var moves = get_move_list(piece)
-			print("MAX MOVE SIZE: ", moves.size())
-			for move in moves:
-				var pos = move.pos
-				if !game_scene.valid_move(piece.board_position, pos):
-					print("NOT VALID BREAK")
-					break
+			if piece.color != Globals.COLORS.WHITE:
+				continue
+			for move in get_move_list(piece):
+				simulate_move(pieces, piece, move["pos"])
 				
-				new_pieces = []
-				
-				new_board = BOARD_SCENE.instantiate()
-				
-				new_piece = PIECE_SCENE.instantiate()
-				new_piece.init_piece(piece.piece_type, piece.color, piece.board_position, new_board)
-				new_piece.promoted = piece.promoted
-				new_piece.moved = piece.moved
-				new_piece.stun_counter = piece.stun_counter
-				
-				if new_piece == null:
-					push_error("Duplicate FAILED")
-					continue
-				
-				if not new_piece is Piece:
-					push_error("Not a Piece: ", str(new_piece))
-					continue
-				
-				print("BOARD HERE: ", new_board)
-				new_piece.move_position(pos)
-				new_pieces.append(new_piece)
-				for it in pieces:
-					if it != piece:
-						new_piece = PIECE_SCENE.instantiate()
-						new_piece.init_piece(it.piece_type, it.color, it.board_position, new_board)
-						new_piece.promoted = it.promoted
-						new_piece.moved = it.moved
-						new_piece.stun_counter = it.stun_counter
-						new_pieces.append(new_piece)
-				new_board.pieces = new_pieces
-				new_eval = minimax(new_pieces, depth - 1, alpha, beta, false)
+				new_eval = minimax(pieces, depth - 1, alpha, beta, false)
 				maximum_eval = max(maximum_eval, new_eval)
 				alpha = max(alpha, new_eval)
+				
+				restore_board(snapshot, pieces)
+				
 				if beta <= alpha:
-					print("max BREAK")
 					break
 		return maximum_eval
 	else:
 		minimum_eval = INF
 		for piece in pieces:
-			var moves = get_move_list(piece)
-			print("MIN MOVE SIZE: ", moves.size())
-			for move in moves:
-				var pos = move.pos
-				if !game_scene.valid_move(piece.board_position, pos):
-					print("NOT VALID BREAK")
-					break
+			if piece.color != Globals.COLORS.BLACK:
+				continue
+			for move in get_move_list(piece):
+				simulate_move(pieces, piece, move["pos"])
 				
-				new_pieces = []
-				
-				new_board = BOARD_SCENE.instantiate()
-				
-				new_piece = PIECE_SCENE.instantiate()
-				new_piece.init_piece(piece.piece_type, piece.color, piece.board_position, new_board)
-				new_piece.promoted = piece.promoted
-				new_piece.moved = piece.moved
-				new_piece.stun_counter = piece.stun_counter
-				
-				if new_piece == null:
-					push_error("Duplicate FAILED")
-					continue
-				
-				if not new_piece is Piece:
-					push_error("Not a Piece: ", str(new_piece))
-					continue
-				
-				new_piece.move_position(pos)
-				new_pieces.append(new_piece)
-				for it in pieces:
-					if it != piece:
-						new_piece = PIECE_SCENE.instantiate()
-						new_piece.init_piece(it.piece_type, it.color, it.board_position, new_board)
-						new_piece.promoted = it.promoted
-						new_piece.moved = it.moved
-						new_piece.stun_counter = it.stun_counter
-						new_pieces.append(new_piece)
-				new_board.pieces = new_pieces
-				new_eval = minimax(new_pieces, depth - 1, alpha, beta, true)
+				new_eval = minimax(pieces, depth - 1, alpha, beta, true)
 				minimum_eval = min(minimum_eval, new_eval)
 				beta = min(beta, new_eval)
+				
+				restore_board(snapshot, pieces)
+				
 				if beta <= alpha:
-					print("min BREAK")
 					break
 		return minimum_eval
 
@@ -283,7 +235,7 @@ func get_move_list(piece : Piece):
 		})
 		
 	moves.sort_custom(func(a, b): return a.score > b.score)
-	moves = moves.slice(0, 6)
+	moves = moves.slice(0, 3)
 	
 	return moves
 
@@ -312,35 +264,15 @@ func restore_board(snapshot : Array, pieces : Array):
 		if not piece in pieces:
 			pieces.append(piece)
 			
-	pieces = pieces.filter(func(p): return snapshot.any(func(s): return s["ref"] == p))
+	pieces.clear()
+	for it in snapshot:
+		pieces.append(it["ref"])
+		
+	board.pieces = pieces
 	
 
-#func simulate_move(pieces, piece, pos):
-	#var old_pos = piece["board_position"] #For moving Mitosis Pawn
-	#moved = true
-	#board_position = to_move
-	#position = Vector2(
-		#X_OFFSET + board_position[0] * CELL_SIZE,
-		#Y_OFFSET + board_position[1] * CELL_SIZE
-	#)
-	#
-	#SignalBus.piece_moved.emit(old_pos, board_position)
-	## Handling Mitosis piece movement
-	#if piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN:
-		#var dx = int(to_move.x - old_pos.x)
-		#var dy = int(to_move.y - old_pos.y)
-		#if abs(dx) == 2 and dy == 0:
-			#var mid_pos = Vector2(old_pos.x, old_pos.y)
-			#perform_mitosis(mid_pos)
-			#return
-	#
-	## Update king position if they are moved
-	#if piece_type == Globals.PIECE_TYPES.SHIELD_KING:
-		#board_handle.register_king(board_position, color)
-	#
-	## Promotion for pawns to KING BEHAVIOR
-	#if (piece_type == Globals.PIECE_TYPES.PAWN or piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN or piece_type == Globals.PIECE_TYPES.WORM or piece_type == Globals.PIECE_TYPES.CHECKER) and (
-		#(color == Globals.COLORS.BLACK and to_move[1] == board_handle.BOARD_HEIGHT - 1) or 
-		#(color == Globals.COLORS.WHITE and to_move[1] == 0)
-	#):
-		#piece["promoted"] = true
+func simulate_move(pieces, piece, pos):
+	game_scene.board.pieces = pieces
+	game_scene.selected_piece = piece
+	game_scene.previous_position = piece.board_position
+	game_scene.drop_piece(false, pos)
