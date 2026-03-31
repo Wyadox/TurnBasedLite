@@ -31,9 +31,9 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -361.0
-offset_top = -700.0
+offset_top = -831.0
 offset_right = 363.0
-offset_bottom = -636.0
+offset_bottom = -767.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = 8
@@ -61,10 +61,10 @@ offset_bottom = 35.0
 
 [node name="loadoutSlots" parent="." instance=ExtResource("3_gc7b0")]
 layout_mode = 1
-offset_left = 391.0
-offset_top = 82.0
-offset_right = 391.00003
-offset_bottom = 81.999985
+offset_left = 813.0
+offset_top = 137.0
+offset_right = 813.00006
+offset_bottom = 136.99998
 
 [node name="notification" parent="." instance=ExtResource("4_p557w")]
 layout_mode = 1
@@ -79,11 +79,18 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="descriptions" parent="." instance=ExtResource("13_21il4")]
-layout_mode = 0
-offset_left = -86.0
-offset_top = 278.0
-offset_right = -46.0
-offset_bottom = 318.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -215.0
+offset_top = -179.0
+offset_right = -175.0
+offset_bottom = -139.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Button_Clear" type="TextureButton" parent="."]
 layout_mode = 1
@@ -104,10 +111,10 @@ texture_hover = ExtResource("7_dn7wr")
 
 [node name="Button_Exit" type="TextureButton" parent="."]
 layout_mode = 0
-offset_left = 862.0
-offset_top = 37.0
-offset_right = 1037.0
-offset_bottom = 101.0
+offset_left = 1284.0
+offset_top = 92.0
+offset_right = 1459.0
+offset_bottom = 156.0
 texture_normal = ExtResource("8_wxj56")
 texture_pressed = ExtResource("9_bf8y0")
 texture_hover = ExtResource("9_bf8y0")

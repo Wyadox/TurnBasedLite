@@ -3,9 +3,6 @@ extends Control
 const BOARD = preload("res://scenes/board.tscn")
 var board_scene
 
-const X_OFFSET = 1
-const Y_OFFSET = 3
-
 @onready var setup_scene = $SetupPhaseUI
 const SETUP_SCENE = preload("res://scenes/setup_phase_ui.tscn")
 
@@ -13,6 +10,10 @@ var selected_loadout = 0
 
 func _ready() -> void:
 	board_scene = BOARD.instantiate()
+	
+	board_scene.global_position.x += 500
+	board_scene.global_position.y += 600
+	
 	board_scene.is_loadout_board = true
 	add_child(board_scene)
 	
@@ -26,16 +27,16 @@ func _input(_event):
 		var selected_piece = board_scene.get_piece(pos)
 			
 		if selected_piece == null:
-			# REMEMBER THESE OFFSETS, it's very janky
-			if pos.x < board_scene.BOARD_WIDTH + 1 and pos.x > 0 and pos.y < board_scene.BOARD_HEIGHT and pos.y > 4 and board_scene.num_pieces() < Globals.PIECES_PER_SIDE:
+			if pos.x < board_scene.BOARD_WIDTH and pos.x > -1 and pos.y > -1 and pos.y < 2 and board_scene.num_pieces() < Globals.PIECES_PER_SIDE:
 				SignalBus.emit_signal("selected_square", pos)
+				print("pos: ", pos)
 			return
 		else:
 			setup_scene._on_board_refund_piece(selected_piece.piece_type)
 			board_scene.delete_piece(selected_piece, true)
 
 func get_pos_under_mouse():
-	var pos = get_global_mouse_position()
+	var pos = get_global_mouse_position() - board_scene.global_position
 	pos.x = int(pos.x / 120)
 	pos.y = int(pos.y / 120)
 	return pos
@@ -75,7 +76,7 @@ func _on_button_save_pressed() -> void:
 	show_notification("Loadout Saved")
 
 func convert_position(pos : Vector2):
-	var new_pos = Vector2(pos.x - 1, pos.y)
+	var new_pos = Vector2(pos.x, pos.y + 5)
 	return new_pos
 	#return str(new_pos.x) + "," + str(new_pos.y)
 	

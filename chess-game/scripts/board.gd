@@ -28,8 +28,8 @@ const CELL_SIZE = 120
 
 const BOARD_HEIGHT = 7
 const BOARD_WIDTH = 7
-const LOADOUT_X_OFFSET = 1
-const LOADOUT_Y_OFFSET = 5
+const GAME_X_OFFSET = 1
+const GAME_Y_OFFSET = 1
 
 var is_loadout_board : bool = false
 
@@ -59,7 +59,7 @@ func draw_board():
 	else:
 		for x in range(BOARD_WIDTH):
 			for y in range(2):
-				draw_cell(x + LOADOUT_X_OFFSET, y + LOADOUT_Y_OFFSET)
+				draw_cell(x, y)
 				
 func draw_river():
 	pass
@@ -266,16 +266,16 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 		SignalBus.emit_signal("refund_piece", piece_type)
 		return
 	
-	if is_loadout_board:
-		selected_pos = Vector2(selected_pos.x - 1, selected_pos.y)
+	#if is_loadout_board:
+		#selected_pos = Vector2(selected_pos.x - 1, selected_pos.y)
 	
 	if !is_within_bounds(selected_pos):
 		print("Select an inbounds position")
 		SignalBus.emit_signal("refund_piece", piece_type)
 		return
 		
-	if is_loadout_board:
-		selected_pos = Vector2(selected_pos.x + 1, selected_pos.y)
+	#if is_loadout_board:
+		#selected_pos = Vector2(selected_pos.x + 1, selected_pos.y)
 	
 	if setup_done == true:
 		print("Setup phase is over")

@@ -1,7 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://bxdepwhprt4pp"]
+[gd_scene load_steps=12 format=3 uid="uid://bxdepwhprt4pp"]
 
 [ext_resource type="Script" uid="uid://bj20fx8i5xny6" path="res://scripts/game.gd" id="1_yqjtg"]
 [ext_resource type="PackedScene" uid="uid://dnbpf2aas655b" path="res://scenes/board.tscn" id="2_p57ef"]
+[ext_resource type="Texture2D" uid="uid://dsxn1xc4dr5bu" path="res://Assets/Buttons/LoadoutButton.png" id="3_vtaks"]
 [ext_resource type="PackedScene" uid="uid://dlld2p1r0gxox" path="res://scenes/setup_phase_ui.tscn" id="6_p57ef"]
 [ext_resource type="Texture2D" uid="uid://d31qmqe0kjyid" path="res://Assets/EmptyBar.png" id="6_u5sy4"]
 [ext_resource type="Texture2D" uid="uid://3dyvehvtliv5" path="res://Assets/FullBar.png" id="7_gee14"]
@@ -9,11 +10,19 @@
 [ext_resource type="PackedScene" uid="uid://dp03twcoim8s8" path="res://scenes/evaluation_bar.tscn" id="8_0tnpc"]
 [ext_resource type="Texture2D" uid="uid://c2ffhrqxtv6do" path="res://Assets/customPiecesSpritesheet.png" id="8_gee14"]
 [ext_resource type="PackedScene" uid="uid://cntck3ed2vkxt" path="res://scenes/captured_display.tscn" id="9_0tnpc"]
+[ext_resource type="Texture2D" uid="uid://uv7f2ydwkqrw" path="res://Assets/origbig.png" id="11_kvpfn"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_yqjtg")
 
+[node name="Board_Base" type="Sprite2D" parent="."]
+z_index = -101
+position = Vector2(951.88007, 516)
+scale = Vector2(9.560001, 9.560001)
+texture = ExtResource("3_vtaks")
+
 [node name="Board" parent="." instance=ExtResource("2_p57ef")]
+position = Vector2(534.88, 100)
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
@@ -68,18 +77,18 @@ wait_time = 15.0
 one_shot = true
 
 [node name="TimerLabel" type="Label" parent="."]
-offset_left = 780.0
+offset_left = 1405.0
 offset_top = 612.0
-offset_right = 949.0
+offset_right = 1574.0
 offset_bottom = 705.0
 theme_override_font_sizes/font_size = 50
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="MoveTimerBar" type="TextureProgressBar" parent="."]
-offset_left = 911.0
+offset_left = 1536.0
 offset_top = 750.0
-offset_right = 943.0
+offset_right = 1568.0
 offset_bottom = 782.0
 scale = Vector2(4.440916, 4.440916)
 max_value = 15.0
@@ -88,9 +97,9 @@ texture_under = ExtResource("6_u5sy4")
 texture_progress = ExtResource("7_gee14")
 
 [node name="TurnIndicator" type="TextureRect" parent="."]
-offset_left = 899.0
+offset_left = 1524.0
 offset_top = 568.0
-offset_right = 1064.0
+offset_right = 1689.0
 offset_bottom = 733.0
 
 [node name="IndicatorImage" type="Sprite2D" parent="."]
@@ -98,33 +107,55 @@ position = Vector2(-301, 57)
 texture = ExtResource("8_gee14")
 
 [node name="SetupPhaseUI" parent="." instance=ExtResource("6_p57ef")]
-offset_left = 115.0
-offset_right = 155.0
+offset_left = 801.0
+offset_right = 841.0
 
 [node name="loadoutSlots" parent="." instance=ExtResource("7_u5sy4")]
-offset_left = 979.0
+offset_left = 1665.0
 offset_top = 511.0
-offset_right = 979.07996
+offset_right = 1665.08
 offset_bottom = 511.32
 
 [node name="evaluation_bar" parent="." instance=ExtResource("8_0tnpc")]
-offset_left = 31.0
-offset_top = 74.0
-offset_right = 31.0
-offset_bottom = 74.0
+offset_left = 451.0
+offset_top = 130.0
+offset_right = 451.0
+offset_bottom = 130.0
 
 [node name="captured_display" parent="." instance=ExtResource("9_0tnpc")]
-offset_left = 807.0
-offset_top = 690.0
-offset_right = 807.0
-offset_bottom = 690.0
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = 1422.0
+offset_top = 927.0
+offset_right = 1422.0
+offset_bottom = 927.0
+grow_vertical = 0
+direction = 1
 
 [node name="captured_display2" parent="." instance=ExtResource("9_0tnpc")]
-offset_left = 807.0
-offset_top = 45.0
-offset_right = 807.0
-offset_bottom = 45.0
+offset_left = 1424.0
+offset_top = 97.0
+offset_right = 1424.0
+offset_bottom = 97.0
 color = 1
+
+[node name="Background_Rect" type="TextureRect" parent="."]
+z_index = -1000
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -103.0
+offset_top = -109.0
+offset_right = 2201.0
+offset_bottom = 1187.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("11_kvpfn")
 
 [connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]
 [connection signal="timeout" from="MoveTimer" to="." method="_on_move_timer_timeout"]

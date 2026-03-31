@@ -110,18 +110,19 @@ func _input(event):
 	if Input.is_action_just_pressed("left_click"):
 		print("left click")
 		var pos = get_pos_under_mouse()
-		selected_piece = board.get_piece(pos)
+		var square = get_square_under_mouse()
+		selected_piece = board.get_piece(square)
 		
 		# Drag piece only if they are under the mouse or are of current player
 		if !allow_select:
 			return
 			
 		if selected_piece == null and !setup_complete:
-			if pos.x < board.BOARD_WIDTH and pos.x > -1 and pos.y < board.BOARD_HEIGHT and pos.y > -1:
-				if status == Globals.COLORS.WHITE and pos.y >= board.BOARD_HEIGHT - 2:
-					SignalBus.emit_signal("selected_square", pos)
-				if status == Globals.COLORS.BLACK and pos.y <= 1:
-					SignalBus.emit_signal("selected_square", pos)
+			if square.x < board.BOARD_WIDTH and square.x > -1 and square.y < board.BOARD_HEIGHT and square.y > -1:
+				if status == Globals.COLORS.WHITE and square.y >= board.BOARD_HEIGHT - 2:
+					SignalBus.emit_signal("selected_square", square)
+				if status == Globals.COLORS.BLACK and square.y <= 1:
+					SignalBus.emit_signal("selected_square", square)
 			else:
 				print("no square was selected")
 			return
@@ -156,7 +157,7 @@ func _input(event):
 				board.draw_border(it.x, it.y, color, false)
 				
 	elif event is InputEventMouseMotion and is_dragging:
-		var piece_mouse_pos = get_global_mouse_position()
+		var piece_mouse_pos = get_global_mouse_position() - board.global_position
 		#piece_mouse_pos.y += 40
 		selected_piece.position = piece_mouse_pos
 	elif Input.is_action_just_released("left_click") and is_dragging:
@@ -215,10 +216,16 @@ func check_for_shield_king():
 	if !black_shield_king_found:
 		board.black_king_pos = Vector2(-2,-2)
 
+func get_square_under_mouse():
+	var pos = get_global_mouse_position() - board.global_position
+	pos.x = int(pos.x / board.CELL_SIZE)
+	pos.y = int(pos.y / board.CELL_SIZE)
+	return pos
+	
 func get_pos_under_mouse():
 	var pos = get_global_mouse_position()
-	pos.x = int(pos.x / 120)
-	pos.y = int(pos.y / 120)
+	pos.x = int(pos.x / board.CELL_SIZE)
+	pos.y = int(pos.y / board.CELL_SIZE)
 	return pos
 
 func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
@@ -228,7 +235,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 	
 	var to_move
 	if use_mouse:
-		to_move = get_pos_under_mouse()
+		to_move = get_square_under_mouse()
 	else:
 		to_move = non_mouse_pos
 		
