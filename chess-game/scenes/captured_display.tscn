@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cntck3ed2vkxt"]
 
-[ext_resource type="Script" uid="uid://uau06kegqrmf" path="res://scenes/captured_display.gd" id="1_j63cn"]
+[ext_resource type="Script" uid="uid://uau06kegqrmf" path="res://scripts/captured_display.gd" id="1_j63cn"]
 [ext_resource type="Texture2D" uid="uid://bw2ccfiqhwrtb" path="res://customPiecesSpritesheetNew.png" id="2_nsoky"]
 
 [node name="captured_display" type="Control"]

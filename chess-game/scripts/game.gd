@@ -109,7 +109,6 @@ func _input(event):
 	# Mouse left clicks/drags
 	if Input.is_action_just_pressed("left_click"):
 		print("left click")
-		var pos = get_pos_under_mouse()
 		var square = get_square_under_mouse()
 		selected_piece = board.get_piece(square)
 		

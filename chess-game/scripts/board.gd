@@ -265,6 +265,7 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 		print("Select a valid position")
 		SignalBus.emit_signal("refund_piece", piece_type)
 		return
+	print("Spawn Pos: ", selected_pos)
 	
 	#if is_loadout_board:
 		#selected_pos = Vector2(selected_pos.x - 1, selected_pos.y)

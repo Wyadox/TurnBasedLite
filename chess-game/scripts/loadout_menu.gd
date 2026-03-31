@@ -11,10 +11,10 @@ var selected_loadout = 0
 func _ready() -> void:
 	board_scene = BOARD.instantiate()
 	
-	board_scene.global_position.x += 500
+	board_scene.global_position.x += 550
 	board_scene.global_position.y += 600
-	
 	board_scene.is_loadout_board = true
+	
 	add_child(board_scene)
 	
 	SignalBus.loadout_button.connect(loadout_button_pressed)
@@ -23,23 +23,25 @@ func _ready() -> void:
 
 func _input(_event):
 	if Input.is_action_just_pressed("left_click"):
-		var pos = get_pos_under_mouse()
-		var selected_piece = board_scene.get_piece(pos)
+		var square = get_square_under_mouse()
+		var selected_piece = board_scene.get_piece(square)
 			
 		if selected_piece == null:
-			if pos.x < board_scene.BOARD_WIDTH and pos.x > -1 and pos.y > -1 and pos.y < 2 and board_scene.num_pieces() < Globals.PIECES_PER_SIDE:
-				SignalBus.emit_signal("selected_square", pos)
-				print("pos: ", pos)
+			if square.x < board_scene.BOARD_WIDTH and square.x > -1 and square.y > -1 and square.y < 2 and board_scene.num_pieces() < Globals.PIECES_PER_SIDE:
+				SignalBus.emit_signal("selected_square", square)
+				print("pos: ", square)
 			return
 		else:
 			setup_scene._on_board_refund_piece(selected_piece.piece_type)
 			board_scene.delete_piece(selected_piece, true)
 
-func get_pos_under_mouse():
-	var pos = get_global_mouse_position() - board_scene.global_position
-	pos.x = int(pos.x / 120)
-	pos.y = int(pos.y / 120)
-	return pos
+func get_square_under_mouse():
+	var square = get_global_mouse_position() - board_scene.global_position
+	square.x = int(square.x / 120)
+	print("X From: ", square.x / 120)
+	square.y = int(square.y / 120)
+	print("Y From: ", square.y / 120)
+	return square
 
 
 func _on_button_clear_pressed() -> void:
