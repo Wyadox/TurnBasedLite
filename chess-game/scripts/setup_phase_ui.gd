@@ -105,7 +105,7 @@ func _on_board_refund_piece(piece_type: Variant) -> void:
 		if (status == Globals.COLORS.WHITE):
 			white_dict.erase(piece_type)
 			white_base_dict[piece_base] -= 1
-		else:
+		elif (status == Globals.COLORS.BLACK):
 			black_dict.erase(piece_type)
 			black_base_dict[piece_base] -= 1
 		print("Piece REFUNDED")

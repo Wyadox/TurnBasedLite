@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://d31qmqe0kjyid" path="res://Assets/EmptyBar.png" id="6_u5sy4"]
 [ext_resource type="Texture2D" uid="uid://3dyvehvtliv5" path="res://Assets/FullBar.png" id="7_gee14"]
 [ext_resource type="PackedScene" uid="uid://qrys574fx6lg" path="res://scenes/loadout_slots_vbox.tscn" id="7_u5sy4"]
-[ext_resource type="Texture2D" uid="uid://c2ffhrqxtv6do" path="res://Assets/customPiecesSpritesheet.png" id="8_gee14"]
+[ext_resource type="Texture2D" uid="uid://bh2yxdj584mda" path="res://customSpritesheetFull.png" id="8_gee14"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_yqjtg")
@@ -92,7 +92,7 @@ offset_right = 1064.0
 offset_bottom = 733.0
 
 [node name="IndicatorImage" type="Sprite2D" parent="."]
-position = Vector2(-301, 57)
+position = Vector2(-433, 60)
 texture = ExtResource("8_gee14")
 
 [node name="SetupPhaseUI" parent="." instance=ExtResource("6_p57ef")]
