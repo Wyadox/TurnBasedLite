@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://c6ulmyy15jdeu"]
 
 [ext_resource type="Script" uid="uid://dbjmnp715fnbm" path="res://scripts/descriptions.gd" id="1_yr26l"]
-[ext_resource type="Texture2D" uid="uid://bhpcvx2c3573d" path="res://Assets/StunIndicator.png" id="2_5jbt0"]
-[ext_resource type="Texture2D" uid="uid://c2ffhrqxtv6do" path="res://Assets/customPiecesSpritesheet.png" id="3_n6byr"]
+[ext_resource type="Texture2D" uid="uid://bhpcvx2c3573d" path="res://StunIndicator.png" id="2_5jbt0"]
+[ext_resource type="Texture2D" uid="uid://sk1h15tij822" path="res://customSpritesheetFull.png" id="3_n6byr"]
 
 [node name="descriptions" type="Control"]
 layout_mode = 3
@@ -11,24 +11,21 @@ offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("1_yr26l")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="Left_Button" type="Button" parent="."]
 layout_mode = 0
-offset_left = 606.0
-offset_top = 159.0
-offset_right = 814.0
-offset_bottom = 199.0
-
-[node name="Left_Button" type="Button" parent="HBoxContainer"]
-layout_mode = 2
+offset_left = 375.0
+offset_top = 327.0
+offset_right = 461.0
+offset_bottom = 358.0
 text = "PREVIOUS"
 
-[node name="Right_Button" type="Button" parent="HBoxContainer"]
-layout_mode = 2
+[node name="Right_Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 495.0
+offset_top = 326.0
+offset_right = 544.0
+offset_bottom = 357.0
 text = "NEXT"
-
-[node name="Spawn_Button" type="Button" parent="HBoxContainer"]
-layout_mode = 2
-text = "SPAWN"
 
 [node name="image_preview" type="TextureRect" parent="."]
 layout_mode = 0
@@ -40,17 +37,16 @@ texture = ExtResource("2_5jbt0")
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 0
-offset_left = 572.0
-offset_top = 43.0
-offset_right = 928.0
-offset_bottom = 116.0
+offset_left = 304.0
+offset_top = 212.0
+offset_right = 660.0
+offset_bottom = 285.0
 text = "HELLO THERE "
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
 
 [node name="Exit_Button" type="Button" parent="."]
-visible = false
 layout_mode = 0
 offset_left = 456.0
 offset_top = 393.0
@@ -62,7 +58,6 @@ text = "EXIT"
 visible = false
 texture = ExtResource("3_n6byr")
 
-[connection signal="pressed" from="HBoxContainer/Left_Button" to="." method="_on_left_button_pressed"]
-[connection signal="pressed" from="HBoxContainer/Right_Button" to="." method="_on_right_button_pressed"]
-[connection signal="pressed" from="HBoxContainer/Spawn_Button" to="." method="_on_spawn_button_pressed"]
+[connection signal="pressed" from="Left_Button" to="." method="_on_left_button_pressed"]
+[connection signal="pressed" from="Right_Button" to="." method="_on_right_button_pressed"]
 [connection signal="pressed" from="Exit_Button" to="." method="_on_exit_button_pressed"]
