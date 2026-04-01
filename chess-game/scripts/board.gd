@@ -130,12 +130,18 @@ func draw_forest():
 func draw_wall():
 	create_piece(Globals.PIECE_TYPES.BRICKS, Globals.COLORS.TILE, Vector2(0,2))
 	create_piece(Globals.PIECE_TYPES.MAGMA_MED, Globals.COLORS.TILE, Vector2(0,3))
+	var magma = get_piece(Vector2(0, 3))
+	magma.cool_counter = 4
 	create_piece(Globals.PIECE_TYPES.BRICKS, Globals.COLORS.TILE, Vector2(1,3))
 	create_piece(Globals.PIECE_TYPES.BRICKS, Globals.COLORS.TILE, Vector2(2,3))
 	create_piece(Globals.PIECE_TYPES.MAGMA_LOW, Globals.COLORS.TILE, Vector2(3,3))
+	magma = get_piece(Vector2(3, 3))
+	magma.cool_counter = 2
 	create_piece(Globals.PIECE_TYPES.BRICKS, Globals.COLORS.TILE, Vector2(4,3))
 	create_piece(Globals.PIECE_TYPES.BRICKS, Globals.COLORS.TILE, Vector2(5,3))
 	create_piece(Globals.PIECE_TYPES.MAGMA_MED, Globals.COLORS.TILE, Vector2(6,3))
+	magma = get_piece(Vector2(6, 3))
+	magma.cool_counter = 4
 	create_piece(Globals.PIECE_TYPES.BRICKS, Globals.COLORS.TILE, Vector2(6,4))
 	
 	for i in range(7):
@@ -179,6 +185,8 @@ func get_piece(pos: Vector2):
 			return piece
 
 func on_capture(dest_piece, selected_piece, board):
+	if dest_piece.piece_type == Globals.PIECE_TYPES.WEB and selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER:
+		selected_piece.stun_counter = 3
 	if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
 		ExplodingBishop.explode_piece(dest_piece, selected_piece, board)
 		delete_piece(selected_piece)
@@ -224,6 +232,8 @@ func beam_search_threat(own_color, cur_x, cur_y, inc_x, inc_y):
 		var cur_piece = get_piece(cur_pos)
 		if cur_piece != null:
 			if cur_piece.color != own_color and cur_piece.piece_type != Globals.PIECE_TYPES.DUCK and !is_duck:
+				threat_pos.append(cur_pos)
+			elif is_duck and cur_piece.piece_type == Globals.PIECE_TYPES.WEB:
 				threat_pos.append(cur_pos)
 			break
 		threat_pos.append(cur_pos)

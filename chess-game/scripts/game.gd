@@ -149,7 +149,7 @@ func _input(event):
 				dest_piece.play_animation("cower")
 				print("cower played")
 				board.draw_border(it.x, it.y, color, false)
-			elif dest_piece == null:
+			elif dest_piece == null or dest_piece.piece_type == Globals.PIECE_TYPES.WEB:
 				color = Color(1.0, 1.0, 0.0)
 				board.draw_border(it.x, it.y, color, false)
 				
@@ -251,7 +251,7 @@ func drop_piece():
 					
 		# Delete only if the target piece is of different color
 		if dest_piece != null and dest_piece.color != selected_piece.color: #and dest_piece.color != Globals.COLORS.TILE:
-			if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
+			if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP and dest_piece.piece_type != Globals.PIECE_TYPES.WEB:
 				shield_king_killed = ExplodingBishop.explode_king(dest_piece, selected_piece, board)
 			if dest_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
 				piece_died = true
@@ -492,6 +492,16 @@ func end_turn():
 	for piece in board.pieces:
 		if piece.stun_counter > 0:
 			piece.stun_counter -= 1
+		if piece.cool_counter > 0:
+			piece.cool_counter -= 1
+			if piece.cool_counter == 4:
+				piece.piece_type = Globals.PIECE_TYPES.MAGMA_MED
+				piece.update_sprite()
+			elif piece.cool_counter == 2:
+				piece.piece_type = Globals.PIECE_TYPES.MAGMA_LOW
+				piece.update_sprite()
+			elif piece.cool_counter == 0:
+				board.delete_piece(piece)
 	status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
 	
 	turn_indicator.texture = get_turn_indicator_tex(status)

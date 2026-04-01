@@ -17,6 +17,7 @@ var board_handle;
 @export var moved: bool;
 @export var promoted: bool;
 @export var stun_counter: int;
+@export var cool_counter: int;
 
 func init_piece(
 	type: Globals.PIECE_TYPES,
@@ -187,15 +188,22 @@ func pawn_threat_pos():
 
 func pawn_move_pos():
 	var positions = []
-	
 	var increments = PAWN_SPOT_INCREMENTS_MOVE if moved else PAWN_SPOT_INCREMENTS_MOVE_FIRST
 	for inc in increments:
 		var pos = board_handle.spot_search_threat(
 			color,
 			board_position[0], board_position[1],
 			inc[0], inc[1] if color == Globals.COLORS.BLACK else -inc[1],
-			false, true
+			false, false
 		)
+		if pos != null:
+			var piece = board_handle.get_piece(pos)
+			if piece != null and piece.piece_type != Globals.PIECE_TYPES.WEB:
+				pos = board_handle.spot_search_threat(
+				color,
+				board_position[0], board_position[1],
+				inc[0], inc[1] if color == Globals.COLORS.BLACK else -inc[1],
+				false, true)
 		if pos != null:
 			positions.append(pos)
 		else:
