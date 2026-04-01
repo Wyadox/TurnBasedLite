@@ -530,8 +530,8 @@ func end_turn():
 	
 	$evaluation_bar.set_value((Ai.board_evaluation(board.pieces) + 20.0) / 40.0)
 	
-	if real_game:
-		Ai.start_minimax_handsOff(board.pieces, true if status == Globals.COLORS.WHITE else false)
+	if real_game and player2_type == Globals.PLAYER_2_TYPE.AI:
+		Ai.start_minimax(board.pieces, true if status == Globals.COLORS.WHITE else false)
 
 func get_turn_indicator_tex(color):
 	if sprite:

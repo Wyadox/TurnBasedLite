@@ -153,6 +153,18 @@ var board
 var thread : Thread
 
 func start_minimax_handsOff(pieces : Array, white_to_play : bool):
+	thread = Thread.new()
+	thread.start(threaded_minimax.bind(pieces, white_to_play))
+	
+func threaded_minimax(pieces : Array, white_to_play : bool):
+	var result = start_minimax(pieces, white_to_play)
+	call_deferred("on_minimax_complete", result)
+	
+func on_minimax_complete(result):
+	thread.wait_to_finish()
+	print(result)
+
+func start_minimax(pieces : Array, white_to_play : bool) -> float:
 	game_scene = GAME_SCENE.instantiate()
 	game_scene.real_game = false
 	
@@ -168,24 +180,11 @@ func start_minimax_handsOff(pieces : Array, white_to_play : bool):
 		copy.moved = piece.moved
 		copy.current_health = piece.current_health
 		new_pieces.append(copy)
-		
-	board.pieces = new_pieces
+	
 	game_scene.board = board
 	
-	thread = Thread.new()
-	thread.start(threaded_minimax.bind(new_pieces, white_to_play))
-	
-func threaded_minimax(pieces : Array, white_to_play : bool):
-	var result = start_minimax(pieces, white_to_play)
-	call_deferred("on_minimax_complete", result)
-	
-func on_minimax_complete(result):
-	thread.wait_to_finish()
-	print(result)
-
-func start_minimax(pieces : Array, white_to_play : bool) -> float:
 	var start = Time.get_ticks_msec()
-	var result = minimax(pieces, 2, -INF, INF, white_to_play)
+	var result = minimax(new_pieces, 2, -INF, INF, white_to_play)
 	print("Minimax took: ", Time.get_ticks_msec() - start, "ms")
 	return result
 
