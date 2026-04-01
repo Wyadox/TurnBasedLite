@@ -28,6 +28,7 @@ func board_evaluation(pieces : Array) -> float:
 		if piece:
 			# Reset multiplier DUH
 			multiplier = 1.0
+			print("hi")
 			
 			# Status Multipliers 
 			if piece.stun_counter > 0:
