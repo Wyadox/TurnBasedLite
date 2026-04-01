@@ -8,17 +8,15 @@ var current_map : int
 var player2_type : Globals.PLAYER_2_TYPE
 
 # Called when the node enters the scene tree for the first time.
-var game_scene
 func _ready() -> void:
-	const GAME_SCENE = preload("res://scenes/game.tscn")
-	game_scene = GAME_SCENE.instantiate()
+	pass # Replace with function body.
 	
 func _on_continue_button_pressed() -> void:
-	
+	const GAME_SCENE = preload("res://scenes/game.tscn")
+	var game_scene = GAME_SCENE.instantiate()
 	
 	game_scene.player2_type = player2_type
 	game_scene.current_map = current_map
-	SignalBus.emit_signal("change_map",current_map)
 	
 	var scene_tree = get_tree()
 	scene_tree.current_scene.queue_free()

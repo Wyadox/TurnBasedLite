@@ -4,7 +4,7 @@ extends Node2D
 @export var piece_scene = preload("res://scenes/Piece.tscn")
 @export var setup_script = preload("res://scripts/setup_phase_ui.gd")
 @export var status_indicator = preload("res://scenes/StatusIndicator.tscn")
-
+const TILE_MAP = preload("res://tileMap.png")
 
 
 
@@ -20,7 +20,7 @@ enum BOARD_TYPE {
 	FOREST,
 	WALL
 }
-var selected_board: BOARD_TYPE = BOARD_TYPE.RIVER
+var selected_board: BOARD_TYPE = BOARD_TYPE.STANDARD
 const CELL_SIZE = 120
 
 const BOARD_HEIGHT = 7
@@ -35,37 +35,18 @@ var second_color : Globals.COLORS
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	print("in board")
-	
-	
-	print("signal setup")
-	
+	draw_board()
+	if selected_board == BOARD_TYPE.RIVER:
+		draw_river()
+	elif selected_board == BOARD_TYPE.FOREST:
+		draw_forest()
+	elif selected_board == BOARD_TYPE.WALL:
+		draw_wall()
 	clear_borders()
-	SignalBus.change_map.connect(_on_set_board_type)
+	
 	SignalBus.spawn_piece.connect(_on_setup_phase_ui_spawn_piece)
 	SignalBus.init_ai.connect(_on_game_init_ai)
 	SignalBus.selected_square.connect(_on_game_selected_square)
-	
-func _on_set_board_type(current_map):
-	
-	if current_map == 1:
-		selected_board = BOARD_TYPE.STANDARD
-		draw_board()
-	elif current_map == 2:
-		selected_board = BOARD_TYPE.RIVER
-		draw_board()
-		if selected_board == BOARD_TYPE.RIVER:
-			draw_river()
-	elif current_map == 3:
-		selected_board = BOARD_TYPE.FOREST
-		draw_board()
-		if selected_board == BOARD_TYPE.FOREST:
-			draw_forest()
-	elif current_map == 4:
-		selected_board = BOARD_TYPE.WALL
-		draw_board()
-		if selected_board == BOARD_TYPE.WALL:
-			draw_wall()
 
 func draw_board():
 	if !is_loadout_board:
@@ -78,82 +59,17 @@ func draw_board():
 				draw_cell(x + LOADOUT_X_OFFSET, y + LOADOUT_Y_OFFSET)
 				
 func draw_river():
-	#create_piece(Globals.PIECE_TYPES.BRIDGE_RIGHT, Globals.COLORS.TILE, Vector2(0,2))
-	#create_piece(Globals.PIECE_TYPES.BRIDGE_RIGHT, Globals.COLORS.TILE, Vector2(0,3))
-	#create_piece(Globals.PIECE_TYPES.BRIDGE_RIGHT, Globals.COLORS.TILE, Vector2(0,4))
-	create_piece(Globals.PIECE_TYPES.WATER, Globals.COLORS.TILE, Vector2(1,2))
-	#create_piece(Globals.PIECE_TYPES.BRIDGE_MID, Globals.COLORS.TILE, Vector2(1,3))
-	create_piece(Globals.PIECE_TYPES.WATER, Globals.COLORS.TILE, Vector2(1,4))
-	create_piece(Globals.PIECE_TYPES.WATER, Globals.COLORS.TILE, Vector2(2,2))
-	create_piece(Globals.PIECE_TYPES.WATER, Globals.COLORS.TILE, Vector2(2,3))
-	create_piece(Globals.PIECE_TYPES.WATER, Globals.COLORS.TILE, Vector2(2,4))
-	#create_piece(Globals.PIECE_TYPES.BRIDGE_FULL, Globals.COLORS.TILE, Vector2(3,2))
-	#create_piece(Globals.PIECE_TYPES.BRIDGE_FULL, Globals.COLORS.TILE, Vector2(3,3))
-	#create_piece(Globals.PIECE_TYPES.BRIDGE_FULL, Globals.COLORS.TILE, Vector2(3,4))
-	create_piece(Globals.PIECE_TYPES.WATER, Globals.COLORS.TILE, Vector2(4,3))
-	create_piece(Globals.PIECE_TYPES.WATER, Globals.COLORS.TILE, Vector2(4,4))
-	create_piece(Globals.PIECE_TYPES.WATER, Globals.COLORS.TILE, Vector2(4,2))
-	create_piece(Globals.PIECE_TYPES.WATER, Globals.COLORS.TILE, Vector2(5,2))
-	#create_piece(Globals.PIECE_TYPES.BRIDGE_MID, Globals.COLORS.TILE, Vector2(5,3))
-	create_piece(Globals.PIECE_TYPES.WATER, Globals.COLORS.TILE, Vector2(5,4))
-	#create_piece(Globals.PIECE_TYPES.BRIDGE_LEFT, Globals.COLORS.TILE, Vector2(6,2))
-	#create_piece(Globals.PIECE_TYPES.BRIDGE_LEFT, Globals.COLORS.TILE, Vector2(6,3))
-	#create_piece(Globals.PIECE_TYPES.BRIDGE_LEFT, Globals.COLORS.TILE, Vector2(6,4))
-	
-	
-	for i in range(7):
-		for j in range(7):
-			var piece = get_piece(Vector2(i,j))
-			if piece != null and piece.color != Globals.COLORS.BLACK and piece.color != Globals.COLORS.WHITE:
-				piece.scale *= 1.25
-	
+	pass
 	
 func draw_forest():
-	create_piece(Globals.PIECE_TYPES.WEB, Globals.COLORS.TILE, Vector2(0,2))
-	create_piece(Globals.PIECE_TYPES.TREE, Globals.COLORS.TILE, Vector2(0,4))
-	create_piece(Globals.PIECE_TYPES.TREE, Globals.COLORS.TILE, Vector2(1,2))
-	create_piece(Globals.PIECE_TYPES.WEB, Globals.COLORS.TILE, Vector2(1,4))
-	create_piece(Globals.PIECE_TYPES.TREE, Globals.COLORS.TILE, Vector2(2,4))
-	create_piece(Globals.PIECE_TYPES.WEB, Globals.COLORS.TILE, Vector2(3,3))
-	create_piece(Globals.PIECE_TYPES.TREE, Globals.COLORS.TILE, Vector2(4,2))
-	create_piece(Globals.PIECE_TYPES.WEB, Globals.COLORS.TILE, Vector2(5,2))
-	create_piece(Globals.PIECE_TYPES.TREE, Globals.COLORS.TILE, Vector2(5,4))
-	create_piece(Globals.PIECE_TYPES.TREE, Globals.COLORS.TILE, Vector2(6,2))
-	create_piece(Globals.PIECE_TYPES.WEB, Globals.COLORS.TILE, Vector2(6,4))
-	
-	for i in range(7):
-		for j in range(7):
-			var piece = get_piece(Vector2(i,j))
-			if piece != null and piece.color != Globals.COLORS.BLACK and piece.color != Globals.COLORS.WHITE:
-				piece.scale *= 1.25
+	pass
 
 func draw_wall():
-	create_piece(Globals.PIECE_TYPES.BRICKS, Globals.COLORS.TILE, Vector2(0,2))
-	create_piece(Globals.PIECE_TYPES.MAGMA_MED, Globals.COLORS.TILE, Vector2(0,3))
-	create_piece(Globals.PIECE_TYPES.BRICKS, Globals.COLORS.TILE, Vector2(1,3))
-	create_piece(Globals.PIECE_TYPES.BRICKS, Globals.COLORS.TILE, Vector2(2,3))
-	create_piece(Globals.PIECE_TYPES.MAGMA_LOW, Globals.COLORS.TILE, Vector2(3,3))
-	create_piece(Globals.PIECE_TYPES.BRICKS, Globals.COLORS.TILE, Vector2(4,3))
-	create_piece(Globals.PIECE_TYPES.BRICKS, Globals.COLORS.TILE, Vector2(5,3))
-	create_piece(Globals.PIECE_TYPES.MAGMA_MED, Globals.COLORS.TILE, Vector2(6,3))
-	create_piece(Globals.PIECE_TYPES.BRICKS, Globals.COLORS.TILE, Vector2(6,4))
-	
-	for i in range(7):
-		for j in range(7):
-			var piece = get_piece(Vector2(i,j))
-			if piece != null and piece.color != Globals.COLORS.BLACK and piece.color != Globals.COLORS.WHITE:
-				piece.scale *= 1.25
+	pass
 
 func draw_cell(x, y):
 	var rect = ColorRect.new()
-	if selected_board == BOARD_TYPE.STANDARD:
-		rect.color = Color(0.8, 0.6, 0.4) if (x + y) % 2 == 0 else Color(0.4, 0.3, 0.2)
-	elif selected_board == BOARD_TYPE.RIVER:
-		rect.color = Color(0.378, 0.586, 1.0, 1.0) if (x + y) % 2 == 0 else Color(0.177, 0.306, 1.0, 1.0)
-	elif selected_board == BOARD_TYPE.FOREST:
-		rect.color = Color(0.546, 0.744, 0.499, 1.0) if (x + y) % 2 == 0 else Color(0.157, 0.346, 0.185, 1.0)
-	elif selected_board == BOARD_TYPE.WALL:
-		rect.color = Color(0.955, 0.761, 0.361, 1.0) if (x + y) % 2 == 0 else Color(0.295, 0.217, 0.139, 1.0)
+	rect.color = Color(0.8, 0.6, 0.4) if (x + y) % 2 == 0 else Color(0.4, 0.3, 0.2)
 	rect.size = Vector2(CELL_SIZE, CELL_SIZE)
 	rect.position = Vector2(
 		x * CELL_SIZE,
@@ -161,6 +77,10 @@ func draw_cell(x, y):
 	)
 	rect.z_index = -100
 	add_child(rect)
+
+func draw_water(x,y):
+	var rect = ColorRect.new()
+	rect.size = Vector2(CELL_SIZE, CELL_SIZE)
 	
 
 func register_king(pos, col):
@@ -175,7 +95,6 @@ func get_piece(pos: Vector2):
 		return
 	for piece in pieces:
 		if piece and piece.board_position == pos:
-			#print("piece is " +str(piece.piece_type))
 			return piece
 
 func on_capture(dest_piece, selected_piece, board):
@@ -482,8 +401,7 @@ func piece_is_protected(piece):
 func num_pieces():
 	var count : int = 0
 	for piece in pieces:
-		if piece.piece_type != Globals.PIECE_TYPES.WATER and piece.piece_type != Globals.PIECE_TYPES.WEB and piece.piece_type != Globals.PIECE_TYPES.MAGMA_HIGH and piece.piece_type != Globals.PIECE_TYPES.MAGMA_MED and piece.piece_type != Globals.PIECE_TYPES.MAGMA_LOW and piece.piece_type != Globals.PIECE_TYPES.BRICKS and piece.piece_type != Globals.PIECE_TYPES.TREE:
-			count += 1
+		count += 1
 	return count
 
 
