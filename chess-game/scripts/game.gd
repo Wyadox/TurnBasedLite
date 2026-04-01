@@ -66,7 +66,6 @@ func _ready():
 	SignalBus.trojan_spawned.connect(_on_trojan_spawned)
 	SignalBus.mitosis_spawned.connect(_on_mitosis_spawned)
 	
-	
 	print("Player2 Type: ", player2_type)
 	print("Current Map: ", current_map)
 	print("AI Color: ", ai_color)
@@ -233,20 +232,20 @@ func drop_piece():
 	var shield_king_killed = false
 	var juggernaut_hit = false
 	
+	
 	if valid_move(old_pos, to_move):
 		# For valid move:
 		# - if target has piece, then replace it
 		var dest_piece = board.get_piece(to_move)
+		#if dest_piece:
+		#	print("color is " +dest_piece.color)
 		# If piece is checker, delete the jumped piece
 		if selected_piece.piece_type == Globals.PIECE_TYPES.CHECKER:
 			var delta = to_move - old_pos
 			if abs(int(delta.x)) == 2 and abs(int(delta.y)) == 2:
 				var jumped_pos = Vector2(int((old_pos.x + to_move.x) / 2), int((old_pos.y + to_move.y) / 2))
 				var jumped_piece = board.get_piece(jumped_pos)
-				if jumped_piece != null and jumped_piece.color != selected_piece.color:
-					#if jumped_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
-						#ExplodingBishop.explode_range(jumped_piece, board)
-					#else:
+				if jumped_piece != null and jumped_piece.color != selected_piece.color and jumped_piece.color != Globals.COLORS.TILE:
 					board.on_capture(jumped_piece, selected_piece, board)
 					checker_captured = true
 					dest_piece = null
@@ -316,19 +315,8 @@ func valid_move(from_pos, to_pos):
 		and
 		to_pos not in src_piece.get_threatened_positions()
 	):
+		
 		return false
-	
-#	if status == Globals.COLORS.WHITE && black_shield_king_alive:
-#		shield_king_position = board.black_king_pos
-#		shield_king = board_copy.get_piece(shield_king_position)
-#	elif status == Globals.COLORS.BLACK && white_shield_king_alive:
-#		shield_king_position = board.white_king_pos
-#		shield_king = board_copy.get_piece(shield_king_position)
-#	if src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP && shield_king != null:
-#		for position in shield_king.shield_king_protect_positions():
-#			print(position)
-#			if board_copy.get_piece(position) != null && position == to_pos:
-#				return false
 	
 	var dest_piece = board.get_piece(to_pos)
 #	print("dest piece is " +str(dest_piece.piece_type))
@@ -337,7 +325,7 @@ func valid_move(from_pos, to_pos):
 			
 	
 	var dst_piece = board_copy.get_piece(to_pos)
-	if dst_piece != null:
+	if dst_piece != null and dst_piece.piece_type != Globals.PIECE_TYPES.WATER and dst_piece.piece_type != Globals.PIECE_TYPES.MAGMA_HIGH and dst_piece.piece_type != Globals.PIECE_TYPES.MAGMA_MED and dst_piece.piece_type != Globals.PIECE_TYPES.MAGMA_LOW and dst_piece.piece_type != Globals.PIECE_TYPES.BRICKS and dst_piece.piece_type != Globals.PIECE_TYPES.TREE:
 		board_copy.delete_piece(dst_piece)
 	#src_piece.move_position(to_pos)
 	
