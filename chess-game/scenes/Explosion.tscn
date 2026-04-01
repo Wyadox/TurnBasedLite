@@ -18,11 +18,11 @@ curve = SubResource("Curve_rux61")
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_jrpcv"]
 particle_flag_disable_z = true
 spread = 180.0
-initial_velocity_min = 40.0
-initial_velocity_max = 200.0
-gravity = Vector3(0, 0, 0)
-scale_min = 10.0
-scale_max = 25.0
+initial_velocity_min = 30.0
+initial_velocity_max = 75.0
+gravity = Vector3(0, 98, 0)
+scale_min = 4.0
+scale_max = 4.0
 scale_curve = SubResource("CurveTexture_iutap")
 color_ramp = SubResource("GradientTexture1D_i4n8h")
 
@@ -30,8 +30,6 @@ color_ramp = SubResource("GradientTexture1D_i4n8h")
 script = ExtResource("1_6o7x5")
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="."]
-scale = Vector2(0.63263464, 0.63263464)
-amount = 100
+amount = 50
 explosiveness = 1.0
-collision_base_size = 0.0
 process_material = SubResource("ParticleProcessMaterial_jrpcv")

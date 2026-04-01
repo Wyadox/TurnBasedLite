@@ -13,15 +13,10 @@ script = ExtResource("1_yr26l")
 
 [node name="Left_Button" type="Button" parent="."]
 layout_mode = 0
-offset_left = 209.0
-offset_top = 116.0
-offset_right = 417.0
-offset_bottom = 156.0
-size_flags_horizontal = 4
-size_flags_vertical = 4
-
-[node name="Left_Button" type="Button" parent="HBoxContainer"]
-layout_mode = 2
+offset_left = 375.0
+offset_top = 327.0
+offset_right = 461.0
+offset_bottom = 358.0
 text = "PREVIOUS"
 
 [node name="Right_Button" type="Button" parent="."]
@@ -34,22 +29,22 @@ text = "NEXT"
 
 [node name="image_preview" type="TextureRect" parent="."]
 layout_mode = 0
-offset_right = 158.0
-offset_bottom = 158.0
-size_flags_horizontal = 4
-size_flags_vertical = 4
+offset_left = 397.0
+offset_top = 43.0
+offset_right = 555.0
+offset_bottom = 201.0
 texture = ExtResource("2_5jbt0")
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 0
-offset_left = 175.0
-offset_right = 531.0
-offset_bottom = 73.0
-size_flags_horizontal = 4
+offset_left = 304.0
+offset_top = 212.0
+offset_right = 660.0
+offset_bottom = 285.0
 text = "HELLO THERE "
 horizontal_alignment = 1
 vertical_alignment = 1
-autowrap_mode = 3
+autowrap_mode = 2
 
 [node name="Exit_Button" type="Button" parent="."]
 layout_mode = 0
@@ -57,8 +52,6 @@ offset_left = 456.0
 offset_top = 393.0
 offset_right = 497.0
 offset_bottom = 424.0
-size_flags_horizontal = 4
-size_flags_vertical = 4
 text = "EXIT"
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

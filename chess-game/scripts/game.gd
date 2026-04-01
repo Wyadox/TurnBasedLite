@@ -43,7 +43,6 @@ var previous_piece_total := 0
 
 var board_repr = []
 
-var real_game : bool = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -108,19 +107,19 @@ func _input(event):
 	# Mouse left clicks/drags
 	if Input.is_action_just_pressed("left_click"):
 		print("left click")
-		var square = get_square_under_mouse()
-		selected_piece = board.get_piece(square)
+		var pos = get_pos_under_mouse()
+		selected_piece = board.get_piece(pos)
 		
 		# Drag piece only if they are under the mouse or are of current player
 		if !allow_select:
 			return
 			
 		if selected_piece == null and !setup_complete:
-			if square.x < board.BOARD_WIDTH and square.x > -1 and square.y < board.BOARD_HEIGHT and square.y > -1:
-				if status == Globals.COLORS.WHITE and square.y >= board.BOARD_HEIGHT - 2:
-					SignalBus.emit_signal("selected_square", square)
-				if status == Globals.COLORS.BLACK and square.y <= 1:
-					SignalBus.emit_signal("selected_square", square)
+			if pos.x < board.BOARD_WIDTH and pos.x > -1 and pos.y < board.BOARD_HEIGHT and pos.y > -1:
+				if status == Globals.COLORS.WHITE and pos.y >= board.BOARD_HEIGHT - 2:
+					SignalBus.emit_signal("selected_square", pos)
+				if status == Globals.COLORS.BLACK and pos.y <= 1:
+					SignalBus.emit_signal("selected_square", pos)
 			else:
 				print("no square was selected")
 			return
@@ -155,7 +154,7 @@ func _input(event):
 				board.draw_border(it.x, it.y, color, false)
 				
 	elif event is InputEventMouseMotion and is_dragging:
-		var piece_mouse_pos = get_global_mouse_position() - board.global_position
+		var piece_mouse_pos = get_global_mouse_position()
 		#piece_mouse_pos.y += 40
 		selected_piece.position = piece_mouse_pos
 	elif Input.is_action_just_released("left_click") and is_dragging:
@@ -171,14 +170,14 @@ func _input(event):
 		board.clear_borders()
 		clear_piece_animations()
 		
-		if real_game:
-			# Check whether game is over after user's move
-			if evaluate_end_game():
-				return
-			
-			# If playerA has made valid move, then switch to other player's move
-			if is_valid_move:
-				player2_move()
+		# Check whether game is over after user's move
+		if evaluate_end_game():
+			return
+		
+		
+		# If playerA has made valid move, then switch to other player's move
+		if is_valid_move:
+			player2_move()
 
 func clear_piece_animations():
 	for piece in board.pieces:
@@ -214,29 +213,17 @@ func check_for_shield_king():
 	if !black_shield_king_found:
 		board.black_king_pos = Vector2(-2,-2)
 
-func get_square_under_mouse():
-	var pos = get_global_mouse_position() - board.global_position
-	pos.x = int(pos.x / board.CELL_SIZE)
-	pos.y = int(pos.y / board.CELL_SIZE)
-	return pos
-	
 func get_pos_under_mouse():
 	var pos = get_global_mouse_position()
-	pos.x = int(pos.x / board.CELL_SIZE)
-	pos.y = int(pos.y / board.CELL_SIZE)
+	pos.x = int(pos.x / 120)
+	pos.y = int(pos.y / 120)
 	return pos
 
-func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
+func drop_piece():
 	var is_shooting = false
 	var is_jousting = false
 	var piece_died = false
-	
-	var to_move
-	if use_mouse:
-		to_move = get_square_under_mouse()
-	else:
-		to_move = non_mouse_pos
-		
+	var to_move = get_pos_under_mouse()
 	var old_pos = selected_piece.board_position
 	var piece_around
 	var checker_captured = false
@@ -278,7 +265,6 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 			#selected_piece.move_position(selected_piece.board_position)
 			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER or selected_piece.piece_type == Globals.PIECE_TYPES.INFECTOR:
 				is_shooting = true
-				selected_piece.position = previous_position
 			if selected_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
 				if dest_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP:
 					is_jousting = true
@@ -292,6 +278,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 						piece.stun_counter = 2
 		if selected_piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
 			board.register_king(selected_piece.board_position, selected_piece.color)
+			print("drop_piece registered king")
 		if is_jousting:
 			var joust_pos = to_move + joust_direction(old_pos, to_move)
 			dest_piece = board.get_piece(joust_pos)
@@ -313,14 +300,6 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 		else:
 			reset_timer()
 			board.update_indicators()
-		
-		if real_game:
-			if !checker_captured:
-				end_turn()
-				print("Eval: ", Ai.board_evaluation(board.pieces))
-			else:
-				reset_timer()
-				board.update_indicators()
 		return true
 	return false
 
@@ -529,8 +508,7 @@ func end_turn():
 						piece.update_sprite()
 	status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
 	
-	if real_game:
-		turn_indicator.texture = get_turn_indicator_tex(status)
+	turn_indicator.texture = get_turn_indicator_tex(status)
 	
 	if board.num_pieces() == previous_piece_total:
 		turns_since_last_capture += 1
@@ -543,11 +521,6 @@ func end_turn():
 	check_for_shield_king()
 	reset_timer()
 	board.update_indicators()
-	
-	$evaluation_bar.set_value((Ai.board_evaluation(board.pieces) + 20.0) / 40.0)
-	
-	if real_game and player2_type == Globals.PLAYER_2_TYPE.AI:
-		Ai.start_minimax(board.pieces, true if status == Globals.COLORS.WHITE else false)
 
 func get_turn_indicator_tex(color):
 	if sprite:
@@ -649,9 +622,8 @@ func _process(delta):
 func reset_timer():
 	time_remaining = move_time
 	#timer_label.text = str(int(time_remaining))
-	if real_game:
-		timer_bar.value = move_time
-		move_timer.start(move_time)
+	timer_bar.value = move_time
+	move_timer.start(move_time)
 
 func _on_piece_moved(old_pos, new_pos):
 	board_repr[board.BOARD_WIDTH * new_pos[1] + new_pos[0]] = board_repr[board.BOARD_WIDTH * old_pos[1] + old_pos[0]]

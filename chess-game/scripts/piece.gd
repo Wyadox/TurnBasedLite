@@ -1,8 +1,6 @@
-class_name Piece
 extends Node2D
 
 @onready var sprite = $Sprite2D
-@onready var animation_player: AnimationPlayer = $AnimationPlayer
 
 const SPRITE_SIZE = 32
 const CELL_SIZE = 120
@@ -14,16 +12,12 @@ const Y_OFFSET = 60
 @export var color: Globals.COLORS
 @export var board_position: Vector2
 
-@export var board_handle : Board;
+var board_handle;
 
 @export var moved: bool;
 @export var promoted: bool;
 @export var stun_counter: int;
 @export var infect_counter: int;
-
-# Juggernaut variables
-const MAX_HEALTH : int = 3
-var current_health : int
 
 func init_piece(
 	type: Globals.PIECE_TYPES,
@@ -39,9 +33,6 @@ func init_piece(
 	moved = false
 	stun_counter = 0
 	infect_counter = 0
-	
-	# Juggernaut
-	current_health = MAX_HEALTH
 	
 	update_sprite()
 	
@@ -92,21 +83,21 @@ func move_position(to_move: Vector2):
 		(color == Globals.COLORS.BLACK and to_move[1] == board_handle.BOARD_HEIGHT - 1) or 
 		(color == Globals.COLORS.WHITE and to_move[1] == 0)
 	):
+		#piece_type = Globals.PIECE_TYPES.PROMOTED_PAWN
 		promoted = true
+		update_sprite()
 		
-const PIECE_SCENE = preload("res://scenes/Piece.tscn")
+	#if piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN and (
+		#(color == Globals.COLORS.BLACK and to_move[1] == 5) or 
+		#(color == Globals.COLORS.WHITE and to_move[1] == 0)
+	#):
+		#piece_type = Globals.PIECE_TYPES.KING
+		#update_sprite()
 
 func clone (_board):
-	#var piece = self.duplicate()
-	
-	var copy : Piece = PIECE_SCENE.instantiate()
-	copy.init_piece(piece_type, color, board_position, board_handle)
-	copy.stun_counter = stun_counter
-	copy.promoted = promoted
-	copy.moved = moved
-	copy.current_health = current_health
-	
-	return copy
+	var piece = self.duplicate()
+	piece.board_handle = _board
+	return piece
 	
 func get_moveable_positions():
 	match piece_type:
