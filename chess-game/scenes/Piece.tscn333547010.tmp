@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://duwl4gby1wb7s"]
 
 [ext_resource type="Script" uid="uid://3fm4pgf3e52y" path="res://scripts/piece.gd" id="1_tk1p6"]
-[ext_resource type="Texture2D" uid="uid://bh2yxdj584mda" path="res://customSpritesheetFull.png" id="2_tk1p6"]
+[ext_resource type="Texture2D" uid="uid://bw2ccfiqhwrtb" path="res://customPiecesSpritesheetNew.png" id="2_tk1p6"]
 
 [sub_resource type="Animation" id="Animation_lxuho"]
 length = 0.001
@@ -133,6 +133,12 @@ _data = {
 
 [node name="Piece" type="Node2D"]
 script = ExtResource("1_tk1p6")
+piece_type = null
+color = null
+board_position = null
+moved = null
+promoted = null
+stun_counter = null
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(3, 3)

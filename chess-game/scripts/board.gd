@@ -1,6 +1,7 @@
+class_name Board
 extends Node2D
 
-@export var pieces = [];
+@export var pieces = []
 @export var piece_scene = preload("res://scenes/Piece.tscn")
 @export var setup_script = preload("res://scripts/setup_phase_ui.gd")
 @export var status_indicator = preload("res://scenes/StatusIndicator.tscn")
@@ -14,6 +15,8 @@ extends Node2D
 var selected_pos: Vector2 = Vector2(-1, -1)
 var setup_done: bool = false
 
+var real_board : bool = true
+
 enum BOARD_TYPE {
 	STANDARD,
 	RIVER,
@@ -25,8 +28,8 @@ const CELL_SIZE = 120
 
 const BOARD_HEIGHT = 7
 const BOARD_WIDTH = 7
-const LOADOUT_X_OFFSET = 1
-const LOADOUT_Y_OFFSET = 5
+const GAME_X_OFFSET = 1
+const GAME_Y_OFFSET = 1
 
 var is_loadout_board : bool = false
 
@@ -75,7 +78,7 @@ func draw_board():
 	else:
 		for x in range(BOARD_WIDTH):
 			for y in range(2):
-				draw_cell(x + LOADOUT_X_OFFSET, y + LOADOUT_Y_OFFSET)
+				draw_cell(x, y)
 				
 func draw_river():
 	#create_piece(Globals.PIECE_TYPES.BRIDGE_RIGHT, Globals.COLORS.TILE, Vector2(0,2))
@@ -191,6 +194,11 @@ func on_capture(dest_piece, selected_piece, board):
 	elif dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT or dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT2:
 		Juggernaut.JuggernautUpdate(board, dest_piece)
 		return
+	
+	if real_board:
+		play_animation(dest_piece, "capture_normal")
+		SignalBus.captured_piece.emit(dest_piece.color, dest_piece.piece_type)
+	
 	delete_piece(dest_piece)
 	
 func delete_piece(piece, force = false):
@@ -199,6 +207,19 @@ func delete_piece(piece, force = false):
 			var popped = pieces.pop_at(i)
 			popped.queue_free()
 			return
+
+#
+# LOOK HERE if there are issues with piece evaluation inconsistencies 
+#
+func play_animation(piece, anim_name : String) -> void:
+	if real_board:
+		var animation_piece = piece_scene.instantiate()
+		add_child(animation_piece)
+		animation_piece.init_piece(piece.piece_type, piece.color, piece.board_position, self)
+		animation_piece.global_position = piece.global_position
+		animation_piece.play_animation(anim_name)
+		await animation_piece.animation_player.animation_finished
+		animation_piece.queue_free()
 			
 func wipe_pieces(if_white = true, if_black = true):
 	var pieces_to_remove = []
@@ -331,17 +352,18 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 		print("Select a valid position")
 		SignalBus.emit_signal("refund_piece", piece_type)
 		return
+	print("Spawn Pos: ", selected_pos)
 	
-	if is_loadout_board:
-		selected_pos = Vector2(selected_pos.x - 1, selected_pos.y)
+	#if is_loadout_board:
+		#selected_pos = Vector2(selected_pos.x - 1, selected_pos.y)
 	
 	if !is_within_bounds(selected_pos):
 		print("Select an inbounds position")
 		SignalBus.emit_signal("refund_piece", piece_type)
 		return
 		
-	if is_loadout_board:
-		selected_pos = Vector2(selected_pos.x + 1, selected_pos.y)
+	#if is_loadout_board:
+		#selected_pos = Vector2(selected_pos.x + 1, selected_pos.y)
 	
 	if setup_done == true:
 		print("Setup phase is over")
