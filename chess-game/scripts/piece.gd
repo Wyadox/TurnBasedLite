@@ -91,11 +91,20 @@ func move_position(to_move: Vector2):
 		(color == Globals.COLORS.WHITE and to_move[1] == 0)
 	):
 		promoted = true
+		
+const PIECE_SCENE = preload("res://scenes/Piece.tscn")
 
 func clone (_board):
-	var piece = self.duplicate()
-	piece.board_handle = _board
-	return piece
+	#var piece = self.duplicate()
+	
+	var copy : Piece = PIECE_SCENE.instantiate()
+	copy.init_piece(piece_type, color, board_position, board_handle)
+	copy.stun_counter = stun_counter
+	copy.promoted = promoted
+	copy.moved = moved
+	copy.current_health = current_health
+	
+	return copy
 	
 func get_moveable_positions():
 	match piece_type:

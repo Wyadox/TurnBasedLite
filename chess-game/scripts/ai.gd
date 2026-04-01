@@ -150,9 +150,9 @@ const BOARD_SCENE = preload("res://scenes/board.tscn")
 
 var game_scene
 var board
+var thread : Thread
 
-func start_minimax(pieces : Array, white_to_play : bool) -> float:
-	var start = Time.get_ticks_msec()
+func start_minimax_handsOff(pieces : Array, white_to_play : bool):
 	game_scene = GAME_SCENE.instantiate()
 	game_scene.real_game = false
 	
@@ -161,13 +161,31 @@ func start_minimax(pieces : Array, white_to_play : bool) -> float:
 	
 	var new_pieces = []
 	for piece in pieces:
-		var copy = piece.clone(board)
+		var copy : Piece = PIECE_SCENE.instantiate()
+		copy.init_piece(piece.piece_type, piece.color, piece.board_position, board)
+		copy.stun_counter = piece.stun_counter
+		copy.promoted = piece.promoted
+		copy.moved = piece.moved
+		copy.current_health = piece.current_health
 		new_pieces.append(copy)
 		
 	board.pieces = new_pieces
 	game_scene.board = board
 	
-	var result = minimax(new_pieces, 2, -INF, INF, white_to_play)
+	thread = Thread.new()
+	thread.start(threaded_minimax.bind(new_pieces, white_to_play))
+	
+func threaded_minimax(pieces : Array, white_to_play : bool):
+	var result = start_minimax(pieces, white_to_play)
+	call_deferred("on_minimax_complete", result)
+	
+func on_minimax_complete(result):
+	thread.wait_to_finish()
+	print(result)
+
+func start_minimax(pieces : Array, white_to_play : bool) -> float:
+	var start = Time.get_ticks_msec()
+	var result = minimax(pieces, 2, -INF, INF, white_to_play)
 	print("Minimax took: ", Time.get_ticks_msec() - start, "ms")
 	return result
 
@@ -179,11 +197,13 @@ func minimax(pieces : Array, depth : int, alpha : float, beta : float, maximizin
 	if depth == 0:
 		return board_evaluation(pieces)
 		
+	board.pieces = pieces
+		
 	var snapshot = snapshot_board(pieces)
 		
 	if maximizingPlayer:
 		maximum_eval = -INF
-		for piece in pieces:
+		for piece in pieces.duplicate():
 			if piece.color != Globals.COLORS.WHITE:
 				continue
 			for move in get_move_list(piece):
@@ -200,7 +220,7 @@ func minimax(pieces : Array, depth : int, alpha : float, beta : float, maximizin
 		return maximum_eval
 	else:
 		minimum_eval = INF
-		for piece in pieces:
+		for piece in pieces.duplicate():
 			if piece.color != Globals.COLORS.BLACK:
 				continue
 			for move in get_move_list(piece):
@@ -272,7 +292,7 @@ func restore_board(snapshot : Array, pieces : Array):
 	
 
 func simulate_move(pieces, piece, pos):
-	game_scene.board.pieces = pieces
+	board.pieces = pieces
 	game_scene.selected_piece = piece
 	game_scene.previous_position = piece.board_position
 	game_scene.drop_piece(false, pos)
