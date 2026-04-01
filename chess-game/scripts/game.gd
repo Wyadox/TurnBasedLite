@@ -320,7 +320,7 @@ func valid_move(from_pos, to_pos):
 	
 	var dest_piece = board.get_piece(to_pos)
 #	print("dest piece is " +str(dest_piece.piece_type))
-	if dest_piece != null and ((board.piece_is_protected(dest_piece) && src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP) or dest_piece.piece_type == Globals.PIECE_TYPES.DUCK or (dest_piece.piece_type != Globals.PIECE_TYPES.WATER and src_piece.piece_type != Globals.PIECE_TYPES.DUCK) or dest_piece.piece_type != Globals.PIECE_TYPES.MAGMA_HIGH or dest_piece.piece_type != Globals.PIECE_TYPES.MAGMA_MED or dest_piece.piece_type != Globals.PIECE_TYPES.MAGMA_LOW or dest_piece.piece_type != Globals.PIECE_TYPES.BRICKS or dest_piece.piece_type != Globals.PIECE_TYPES.TREE): 
+	if dest_piece != null and ((board.piece_is_protected(dest_piece) && src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP) or dest_piece.piece_type == Globals.PIECE_TYPES.DUCK or (dest_piece.piece_type == Globals.PIECE_TYPES.WATER and src_piece.piece_type != Globals.PIECE_TYPES.DUCK) or dest_piece.piece_type == Globals.PIECE_TYPES.MAGMA_HIGH or dest_piece.piece_type == Globals.PIECE_TYPES.MAGMA_MED or dest_piece.piece_type == Globals.PIECE_TYPES.MAGMA_LOW or dest_piece.piece_type == Globals.PIECE_TYPES.BRICKS or dest_piece.piece_type == Globals.PIECE_TYPES.TREE): 
 		return false
 			
 	
