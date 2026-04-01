@@ -144,7 +144,7 @@ func _input(event):
 		for it in highlight_moves:
 			var color : Color
 			var dest_piece = board.get_piece(Vector2(it.x, it.y))
-			if dest_piece != null and !board.piece_is_protected(dest_piece):
+			if dest_piece != null and !board.piece_is_protected(dest_piece) and dest_piece.color != Globals.COLORS.TILE:
 				color = Color(1.0, 0.0, 0.0)
 				dest_piece.play_animation("cower")
 				print("cower played")
@@ -315,7 +315,7 @@ func valid_move(from_pos, to_pos):
 	
 	var dest_piece = board.get_piece(to_pos)
 #	print("dest piece is " +str(dest_piece.piece_type))
-	if dest_piece != null and ((board.piece_is_protected(dest_piece) && src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP) or dest_piece.piece_type == Globals.PIECE_TYPES.DUCK or (dest_piece.piece_type != Globals.PIECE_TYPES.WATER and src_piece.piece_type != Globals.PIECE_TYPES.DUCK) or dest_piece.piece_type != Globals.PIECE_TYPES.MAGMA_HIGH or dest_piece.piece_type != Globals.PIECE_TYPES.MAGMA_MED or dest_piece.piece_type != Globals.PIECE_TYPES.MAGMA_LOW or dest_piece.piece_type != Globals.PIECE_TYPES.BRICKS or dest_piece.piece_type != Globals.PIECE_TYPES.TREE): 
+	if dest_piece != null and ((board.piece_is_protected(dest_piece) && src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP) or dest_piece.piece_type == Globals.PIECE_TYPES.DUCK or dest_piece.piece_type == Globals.PIECE_TYPES.WATER or dest_piece.piece_type == Globals.PIECE_TYPES.MAGMA_HIGH or dest_piece.piece_type == Globals.PIECE_TYPES.MAGMA_MED or dest_piece.piece_type == Globals.PIECE_TYPES.MAGMA_LOW or dest_piece.piece_type == Globals.PIECE_TYPES.BRICKS or dest_piece.piece_type == Globals.PIECE_TYPES.TREE): 
 		return false
 			
 	
