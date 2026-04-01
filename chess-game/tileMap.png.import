@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bjr56sypwvrvp"
-path="res://.godot/imported/bridgeRight.png-03062ebbcbb51c487666cc22f72021a0.ctex"
+uid="uid://c6018krrrmf1x"
+path="res://.godot/imported/tileMap.png-6752fe8f9f11943b191a581bfa05d5be.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://bridgeRight.png"
-dest_files=["res://.godot/imported/bridgeRight.png-03062ebbcbb51c487666cc22f72021a0.ctex"]
+source_file="res://tileMap.png"
+dest_files=["res://.godot/imported/tileMap.png-6752fe8f9f11943b191a581bfa05d5be.ctex"]
 
 [params]
 
