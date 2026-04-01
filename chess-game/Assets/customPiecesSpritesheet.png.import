@@ -2,26 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-<<<<<<<< HEAD:chess-game/customSpritesheetFull.png.import
-uid="uid://sk1h15tij822"
-path="res://.godot/imported/customSpritesheetFull.png-f8cb646a9bf6034a100e4f1d7ec318b5.ctex"
-========
-uid="uid://c2ffhrqxtv6do"
+uid="uid://bvbnsd3slnx8s"
 path="res://.godot/imported/customPiecesSpritesheet.png-697641ffba43341bb3d701801b04f68d.ctex"
->>>>>>>> main:chess-game/Assets/customPiecesSpritesheet.png.import
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-<<<<<<<< HEAD:chess-game/customSpritesheetFull.png.import
-source_file="res://customSpritesheetFull.png"
-dest_files=["res://.godot/imported/customSpritesheetFull.png-f8cb646a9bf6034a100e4f1d7ec318b5.ctex"]
-========
 source_file="res://Assets/customPiecesSpritesheet.png"
 dest_files=["res://.godot/imported/customPiecesSpritesheet.png-697641ffba43341bb3d701801b04f68d.ctex"]
->>>>>>>> main:chess-game/Assets/customPiecesSpritesheet.png.import
 
 [params]
 
