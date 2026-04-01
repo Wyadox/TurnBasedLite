@@ -244,7 +244,7 @@ func drop_piece():
 			if abs(int(delta.x)) == 2 and abs(int(delta.y)) == 2:
 				var jumped_pos = Vector2(int((old_pos.x + to_move.x) / 2), int((old_pos.y + to_move.y) / 2))
 				var jumped_piece = board.get_piece(jumped_pos)
-				if jumped_piece != null and jumped_piece.color != selected_piece.color:
+				if jumped_piece != null and jumped_piece.color != selected_piece.color and jumped_piece.color != Globals.COLORS.TILE:
 					board.on_capture(jumped_piece, selected_piece, board)
 					checker_captured = true
 					dest_piece = null
