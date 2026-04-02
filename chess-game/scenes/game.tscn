@@ -1,25 +1,27 @@
-[gd_scene load_steps=12 format=3 uid="uid://bxdepwhprt4pp"]
+[gd_scene load_steps=14 format=3 uid="uid://bxdepwhprt4pp"]
 
 [ext_resource type="Script" uid="uid://bj20fx8i5xny6" path="res://scripts/game.gd" id="1_yqjtg"]
+[ext_resource type="Texture2D" uid="uid://bi27j240t7d1r" path="res://Assets/ChessBoard/ChessBoard.png" id="2_kvpfn"]
 [ext_resource type="PackedScene" uid="uid://dnbpf2aas655b" path="res://scenes/board.tscn" id="2_p57ef"]
-[ext_resource type="Texture2D" uid="uid://dsxn1xc4dr5bu" path="res://Assets/Buttons/LoadoutButton.png" id="3_vtaks"]
 [ext_resource type="PackedScene" uid="uid://dlld2p1r0gxox" path="res://scenes/setup_phase_ui.tscn" id="6_p57ef"]
 [ext_resource type="Texture2D" uid="uid://d31qmqe0kjyid" path="res://Assets/EmptyBar.png" id="6_u5sy4"]
 [ext_resource type="Texture2D" uid="uid://3dyvehvtliv5" path="res://Assets/FullBar.png" id="7_gee14"]
 [ext_resource type="PackedScene" uid="uid://qrys574fx6lg" path="res://scenes/loadout_slots_vbox.tscn" id="7_u5sy4"]
 [ext_resource type="PackedScene" uid="uid://dp03twcoim8s8" path="res://scenes/evaluation_bar.tscn" id="8_0tnpc"]
 [ext_resource type="Texture2D" uid="uid://c2ffhrqxtv6do" path="res://Assets/customPiecesSpritesheet.png" id="8_gee14"]
+[ext_resource type="PackedScene" uid="uid://dqrdpth8xiafq" path="res://scenes/notification.tscn" id="8_kvuet"]
 [ext_resource type="PackedScene" uid="uid://cntck3ed2vkxt" path="res://scenes/captured_display.tscn" id="9_0tnpc"]
-[ext_resource type="Texture2D" uid="uid://uv7f2ydwkqrw" path="res://Assets/origbig.png" id="11_kvpfn"]
+[ext_resource type="Texture2D" uid="uid://bcr4alx5suqho" path="res://Assets/Backgrounds/castle bg full.png" id="11_kvpfn"]
+[ext_resource type="PackedScene" uid="uid://c6ulmyy15jdeu" path="res://scenes/descriptions.tscn" id="12_dinhu"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_yqjtg")
 
 [node name="Board_Base" type="Sprite2D" parent="."]
 z_index = -101
-position = Vector2(951.88007, 516)
-scale = Vector2(9.560001, 9.560001)
-texture = ExtResource("3_vtaks")
+position = Vector2(952, 520.00006)
+scale = Vector2(3.6061954, 3.6061954)
+texture = ExtResource("2_kvpfn")
 
 [node name="Board" parent="." instance=ExtResource("2_p57ef")]
 position = Vector2(534.88, 100)
@@ -37,6 +39,7 @@ layout_mode = 0
 offset_top = -27.0
 offset_right = 1107.0
 offset_bottom = 980.0
+scale = Vector2(1.7687603, 1.7687603)
 color = Color(0.4862745, 0.4862745, 0.4862745, 0.5882353)
 
 [node name="Win Label" type="Label" parent="Control"]
@@ -46,10 +49,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 261.0
-offset_top = 368.0
-offset_right = 874.0
-offset_bottom = 474.0
+offset_left = 635.0
+offset_top = 371.0
+offset_right = 1248.0
+offset_bottom = 477.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 75
@@ -58,15 +61,15 @@ horizontal_alignment = 1
 
 [node name="Button" type="Button" parent="Control"]
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 2.4220002
-anchor_top = 2.015
-anchor_right = 2.4220002
-anchor_bottom = 2.015
-offset_left = 468.0
-offset_top = 460.0
-offset_right = 640.0
-offset_bottom = 507.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 856.0
+offset_top = 473.0
+offset_right = 1028.0
+offset_bottom = 520.0
 grow_horizontal = 2
 grow_vertical = 2
 text = "Main Menu
@@ -107,14 +110,36 @@ position = Vector2(-301, 57)
 texture = ExtResource("8_gee14")
 
 [node name="SetupPhaseUI" parent="." instance=ExtResource("6_p57ef")]
+visible = false
 offset_left = 801.0
 offset_right = 841.0
 
+[node name="notification" parent="." instance=ExtResource("8_kvuet")]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 961.0
+offset_top = 1021.0
+offset_right = 961.0
+offset_bottom = 1021.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Loadouts_Label" type="Label" parent="."]
+offset_left = 1523.0
+offset_top = 292.0
+offset_right = 1786.0
+offset_bottom = 334.0
+theme_override_font_sizes/font_size = 30
+text = "SAVED LOADOUTS"
+
 [node name="loadoutSlots" parent="." instance=ExtResource("7_u5sy4")]
-offset_left = 1665.0
-offset_top = 511.0
-offset_right = 1665.08
-offset_bottom = 511.32
+offset_left = 1632.0
+offset_top = 384.0
+offset_right = 1632.08
+offset_bottom = 384.32
 
 [node name="evaluation_bar" parent="." instance=ExtResource("8_0tnpc")]
 offset_left = 451.0
@@ -148,14 +173,21 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -103.0
-offset_top = -109.0
-offset_right = 2201.0
-offset_bottom = 1187.0
+offset_left = -1568.0
+offset_top = -14.999996
+offset_right = 1732.0
+offset_bottom = 2535.0
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(1.1051352, 1.1051352)
 mouse_filter = 2
 texture = ExtResource("11_kvpfn")
+
+[node name="descriptions" parent="." instance=ExtResource("12_dinhu")]
+offset_left = 663.0
+offset_top = 417.0
+offset_right = 1243.0
+offset_bottom = 617.0
 
 [connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]
 [connection signal="timeout" from="MoveTimer" to="." method="_on_move_timer_timeout"]

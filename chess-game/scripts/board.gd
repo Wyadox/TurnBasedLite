@@ -7,8 +7,6 @@ extends Node2D
 @export var status_indicator = preload("res://scenes/StatusIndicator.tscn")
 const TILE_MAP = preload("res://tileMap.png")
 
-
-
 @export var white_king_pos: Vector2 = Vector2(-2, -2)
 @export var black_king_pos: Vector2 = Vector2(-2, -2)
 
@@ -99,17 +97,38 @@ func get_piece(pos: Vector2):
 	for piece in pieces:
 		if piece and piece.board_position == pos:
 			return piece
+			
+func play_sound(title : String):
+	var audioPlayer = AudioStreamPlayer2D.new()
+	add_child(audioPlayer)
+	
+	match title:
+		"move" : audioPlayer.stream = preload("res://Assets/Sounds/move-self.mp3")
+		"capture" : audioPlayer.stream = preload("res://Assets/Sounds/capture.mp3")
+		"promote" : audioPlayer.stream = preload("res://Assets/Sounds/promote.mp3")
+		"check" : audioPlayer.stream = preload("res://Assets/Sounds/move-check.mp3")
+		"castle" : audioPlayer.stream = preload("res://Assets/Sounds/castle.mp3")
+		"explosion" : audioPlayer.stream = preload("res://Assets/Sounds/explosion.wav")
+	
+	audioPlayer.play()
+	audioPlayer.finished.connect(audioPlayer.queue_free)
 
-func on_capture(dest_piece, selected_piece, board):
+func on_capture(dest_piece, selected_piece, board, previous_position):
 	if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
 		ExplodingBishop.explode_piece(dest_piece, selected_piece, board)
 		delete_piece(selected_piece)
 	elif dest_piece.piece_type == Globals.PIECE_TYPES.TROJAN_HORSE:
 		TrojanHorse.trojan_spawn(dest_piece, board)
 		delete_piece(dest_piece)
+		
 	
 	if real_board:
-		play_animation(dest_piece, "capture_normal")
+		print("dest_piece: ", dest_piece.board_position.x, " --- previous_position: ", previous_position.x)
+		if dest_piece.board_position.x > previous_position.x:
+			play_animation(dest_piece, "capture_right")
+		else:
+			play_animation(dest_piece, "capture_left")
+		play_sound("capture")
 		SignalBus.captured_piece.emit(dest_piece.color, dest_piece.piece_type)
 	
 	delete_piece(dest_piece)
@@ -346,6 +365,30 @@ func draw_border(x, y, color, clear):
 	add_child(border_panel)
 	if !clear:
 		borders.push_back(border_panel)
+		
+var selection_panel
+
+func draw_selection_box(from : Vector2, to : Vector2, color):
+	selection_panel = Panel.new()
+	var x = abs(to.x - from.x)
+	var y = abs(to.y - from.y)
+	selection_panel.size = Vector2(CELL_SIZE * x, CELL_SIZE * y)
+	selection_panel.position = Vector2(
+		from.x * CELL_SIZE,
+		from.y * CELL_SIZE
+	)
+	selection_panel.z_index = 50
+	
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color.TRANSPARENT
+	style.border_color = color
+	style.border_width_left = 4
+	style.border_width_top = 4
+	style.border_width_right = 4
+	style.border_width_bottom = 4
+	selection_panel.add_theme_stylebox_override("panel", style)
+	
+	add_child(selection_panel)
 	
 func clear_borders():
 	for it in borders:

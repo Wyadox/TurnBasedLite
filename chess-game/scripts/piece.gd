@@ -92,6 +92,7 @@ func move_position(to_move: Vector2):
 	):
 		promoted = true
 		
+
 const PIECE_SCENE = preload("res://scenes/Piece.tscn")
 
 func clone (_board):

@@ -29,10 +29,10 @@ var items = [
 
 var current_index = 0
 
-@onready var image : TextureRect = $image_preview
-@onready var description_label = $Label
-@onready var left_button = $Left_Button
-@onready var right_button = $Right_Button
+@onready var image : TextureRect = $Panel/image_preview
+@onready var description_label = $Panel/Label
+@onready var left_button = $Panel/Left_Button
+@onready var right_button = $Panel/Right_Button
 
 var selected_pos
 

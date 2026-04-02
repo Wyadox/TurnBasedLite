@@ -27,6 +27,7 @@ var failed_to_move : bool = false
 @onready var win_label = $"Control/Win Label"
 @onready var setup_ui = $SetupPhaseUI
 @onready var loadout_ui = $loadoutSlots
+@onready var descriptions: Control = $descriptions
 
 @onready var turn_indicator : TextureRect = $TurnIndicator
 @onready var sprite = $IndicatorImage
@@ -53,7 +54,7 @@ func _ready():
 	turn_indicator.hide()
 	init_game()
 	
-	setup_ui.show()
+	descriptions.show()
 	setup_complete = false
 	allow_select = true
 	
@@ -66,16 +67,17 @@ func _ready():
 	SignalBus.piece_moved.connect(_on_piece_moved)
 	SignalBus.trojan_spawned.connect(_on_trojan_spawned)
 	SignalBus.mitosis_spawned.connect(_on_mitosis_spawned)
+	SignalBus.show_notification.connect(show_notification)
 	
 	
 	print("Player2 Type: ", player2_type)
 	print("Current Map: ", current_map)
 	print("AI Color: ", ai_color)
 	
-	if ai_color == Globals.COLORS.WHITE:
-		SignalBus.init_ai.emit(Globals.COLORS.WHITE)
-		board.first_color = Globals.COLORS.WHITE
-		board.second_color = Globals.COLORS.WHITE
+	board.draw_selection_box(Vector2(0.0, 5.0), Vector2(7.0, 7.0), Color(0.0, 0.723, 0.736, 1.0))
+		
+func show_notification(phrase : String):
+	$notification.set_text(phrase)
 	
 func loadout_button_pressed(loadout):
 	var save_string : String
@@ -98,9 +100,9 @@ func parse_save_string(save_string):
 		var spawn_split = spawn.split(":")
 		var coord_split = spawn_split[1].split(",")
 		if status == Globals.COLORS.WHITE:
-			board.selected_pos = Vector2(int(coord_split[0]),int(coord_split[1]))
+			board.selected_pos = Vector2(int(coord_split[0]) + 1,int(coord_split[1]))
 		elif status == Globals.COLORS.BLACK:
-			board.selected_pos = Vector2(int(coord_split[0]),int(coord_split[1]) * -1 + 6)
+			board.selected_pos = Vector2(int(coord_split[0]) + 1,int(coord_split[1]) * -1 + 6)
 		board._on_setup_phase_ui_spawn_piece(int(spawn_split[0]))
 
 func _input(event):
@@ -245,6 +247,8 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 	var jumped_piece_location
 	var shield_king_killed = false
 	
+	var piece_captured = false
+	
 	if valid_move(old_pos, to_move):
 		# For valid move:
 		# - if target has piece, then replace it
@@ -259,7 +263,8 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 					#if jumped_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
 						#ExplodingBishop.explode_range(jumped_piece, board)
 					#else:
-					board.on_capture(jumped_piece, selected_piece, board)
+					board.on_capture(jumped_piece, selected_piece, board, old_pos)
+					piece_captured = true
 					checker_captured = true
 					dest_piece = null
 					
@@ -270,7 +275,8 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 			if dest_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
 				piece_died = true
 			if not shield_king_killed:
-				board.on_capture(dest_piece, selected_piece, board)
+				board.on_capture(dest_piece, selected_piece, board, old_pos)
+				piece_captured = true
 			#selected_piece.move_position(selected_piece.board_position)
 			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER:
 				is_shooting = true
@@ -292,12 +298,16 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 			var joust_pos = to_move + joust_direction(old_pos, to_move)
 			dest_piece = board.get_piece(joust_pos)
 			if dest_piece != null and valid_move(to_move, joust_pos) and dest_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP:
-				board.on_capture(dest_piece, selected_piece, board)
+				board.on_capture(dest_piece, selected_piece, board, old_pos)
+				piece_captured = true
 				selected_piece.move_position(joust_pos)
 		if piece_died:
 			board.delete_piece(selected_piece)
 		
 		if real_game:
+			if !piece_captured:
+				board.play_sound("move")
+			
 			if !checker_captured:
 				end_turn()
 				print("Eval: ", Ai.board_evaluation(board.pieces))
@@ -541,7 +551,7 @@ func get_turn_indicator_tex(color):
 	
 func _on_board_setup_complete() -> void:
 	setup_complete = true
-	setup_ui.hide()
+	descriptions.hide()
 	loadout_ui.hide()
 	timer_bar.show()
 	status = Globals.COLORS.WHITE

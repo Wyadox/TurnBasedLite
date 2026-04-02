@@ -9,7 +9,7 @@ func explode_piece(dest_piece, selected_piece, board):
 	for position in dest_piece.bishop_explode_positions():
 		var piece_around = board.get_piece(position)
 		if piece_around != null && not board.piece_is_protected(piece_around):
-			board.on_capture(piece_around, selected_piece, board)
+			board.on_capture(piece_around, selected_piece, board, selected_piece.board_position)
 			#board.delete_piece(piece_around)
 	return
 
