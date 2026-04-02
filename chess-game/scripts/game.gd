@@ -401,28 +401,20 @@ func unique(arr: Array) -> Array:
 
 
 func player2_move():
-	var piece_died = false
-	
-	# Make a move when player2 is AI, else default controller is with user itself
-	if player2_type == Globals.PLAYER_2_TYPE.AI:
-		var valid_moves = get_valid_moves()
-		if len(valid_moves) == 0:
-			set_win(Globals.PLAYER.ONE)
+	if real_game and player2_type == Globals.PLAYER_2_TYPE.AI:
+		var minimax_result = Ai.start_minimax(board.pieces, true if status == Globals.COLORS.WHITE else false)
+		print("RESULT: ", minimax_result)
+		
+		var new_piece = minimax_result["ref"]
+		var real_piece = board.get_piece(new_piece.board_position)
+		
+		if real_piece == null:
+			push_error("Best Move Piece NOT found on real board")
 			return
-		var move = valid_moves.pick_random()
-		var piece = move[0]
-		var pos = move[1]
-		var dest_piece = board.get_piece(pos)
-		# Delete only if the target piece is found
-		if dest_piece != null:
-			if dest_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
-				piece_died = true
-			board.delete_piece(dest_piece)
-		piece.move_position(pos)
-		if piece_died:
-			board.delete_piece(piece)
-		end_turn()
-		evaluate_end_game()
+		
+		selected_piece = real_piece
+		previous_position = selected_piece.board_position
+		drop_piece(false, minimax_result["pos"])
 		
 func move_from_timeout(otherPlayer : Globals.PLAYER):
 	var piece_died = false
@@ -529,9 +521,6 @@ func end_turn():
 	board.update_indicators()
 	
 	$evaluation_bar.set_value((Ai.board_evaluation(board.pieces) + 20.0) / 40.0)
-	
-	if real_game and player2_type == Globals.PLAYER_2_TYPE.AI:
-		Ai.start_minimax(board.pieces, true if status == Globals.COLORS.WHITE else false)
 
 func get_turn_indicator_tex(color):
 	if sprite:

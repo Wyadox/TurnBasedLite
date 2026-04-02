@@ -28,7 +28,6 @@ func board_evaluation(pieces : Array) -> float:
 		if piece:
 			# Reset multiplier DUH
 			multiplier = 1.0
-			print("hi")
 			
 			# Status Multipliers 
 			if piece.stun_counter > 0:
@@ -165,7 +164,7 @@ func on_minimax_complete(result):
 	thread.wait_to_finish()
 	print(result)
 
-func start_minimax(pieces : Array, white_to_play : bool) -> float:
+func start_minimax(pieces : Array, white_to_play : bool) -> Dictionary:
 	game_scene = GAME_SCENE.instantiate()
 	game_scene.real_game = false
 	
@@ -189,13 +188,15 @@ func start_minimax(pieces : Array, white_to_play : bool) -> float:
 	print("Minimax took: ", Time.get_ticks_msec() - start, "ms")
 	return result
 
-func minimax(pieces : Array, depth : int, alpha : float, beta : float, maximizingPlayer : bool) -> float:
+func minimax(pieces : Array, depth : int, alpha : float, beta : float, maximizingPlayer : bool) -> Dictionary:
 	var maximum_eval : float
 	var minimum_eval : float
 	var new_eval
+	var best_move
+	var best_piece
 	
 	if depth == 0:
-		return board_evaluation(pieces)
+		return {"ref" : null, "pos" : null, "eval" : board_evaluation(pieces)}
 		
 	board.pieces = pieces
 		
@@ -210,14 +211,17 @@ func minimax(pieces : Array, depth : int, alpha : float, beta : float, maximizin
 				simulate_move(pieces, piece, move["pos"])
 				
 				new_eval = minimax(pieces, depth - 1, alpha, beta, false)
-				maximum_eval = max(maximum_eval, new_eval)
-				alpha = max(alpha, new_eval)
+				if new_eval["eval"] > maximum_eval:
+					maximum_eval = new_eval["eval"]
+					best_piece = piece
+					best_move = move["pos"]
+				alpha = max(alpha, new_eval["eval"])
 				
 				restore_board(snapshot, pieces)
 				
 				if beta <= alpha:
 					break
-		return maximum_eval
+		return {"ref" : best_piece, "pos" : best_move, "eval" : maximum_eval}
 	else:
 		minimum_eval = INF
 		for piece in pieces.duplicate():
@@ -227,14 +231,17 @@ func minimax(pieces : Array, depth : int, alpha : float, beta : float, maximizin
 				simulate_move(pieces, piece, move["pos"])
 				
 				new_eval = minimax(pieces, depth - 1, alpha, beta, true)
-				minimum_eval = min(minimum_eval, new_eval)
-				beta = min(beta, new_eval)
+				if new_eval["eval"] < minimum_eval:
+					minimum_eval = new_eval["eval"]
+					best_piece = piece
+					best_move = move["pos"]
+				beta = min(beta, new_eval["eval"])
 				
 				restore_board(snapshot, pieces)
 				
 				if beta <= alpha:
 					break
-		return minimum_eval
+		return {"ref" : best_piece, "pos" : best_move, "eval" : minimum_eval}
 
 func get_move_list(piece : Piece):
 	var moves = []

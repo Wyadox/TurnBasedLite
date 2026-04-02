@@ -8,6 +8,8 @@ const SETUP_SCENE = preload("res://scenes/setup_phase_ui.tscn")
 
 var selected_loadout = 0
 
+# ISSUE 4/1 2 AM, Loading loadout doesn't work since board reposition
+
 func _ready() -> void:
 	board_scene = BOARD.instantiate()
 	
