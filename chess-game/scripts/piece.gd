@@ -20,6 +20,8 @@ const Y_OFFSET = 60
 @export var promoted: bool;
 @export var stun_counter: int;
 
+@export var starting_rank : float
+
 # Juggernaut variables
 const MAX_HEALTH : int = 3
 var current_health : int
@@ -37,6 +39,7 @@ func init_piece(
 	promoted = false;
 	moved = false
 	stun_counter = 0
+	starting_rank = board_pos.y
 	
 	# Juggernaut
 	current_health = MAX_HEALTH
@@ -87,8 +90,8 @@ func move_position(to_move: Vector2):
 	
 	# Promotion for pawns to KING BEHAVIOR
 	if (piece_type == Globals.PIECE_TYPES.PAWN or piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN or piece_type == Globals.PIECE_TYPES.WORM or piece_type == Globals.PIECE_TYPES.CHECKER) and (
-		(color == Globals.COLORS.BLACK and to_move[1] == board_handle.BOARD_HEIGHT - 1) or 
-		(color == Globals.COLORS.WHITE and to_move[1] == 0)
+		(starting_rank < board_handle.BOARD_HEIGHT / 2.0 and to_move[1] == board_handle.BOARD_HEIGHT - 1) or 
+		(starting_rank > board_handle.BOARD_HEIGHT / 2.0 and to_move[1] == 0)
 	):
 		promoted = true
 		
@@ -104,6 +107,7 @@ func clone (_board):
 	copy.promoted = promoted
 	copy.moved = moved
 	copy.current_health = current_health
+	copy.starting_rank = starting_rank
 	
 	return copy
 	
@@ -187,7 +191,7 @@ func pawn_threat_pos():
 		var pos = board_handle.spot_search_threat(
 			color,
 			board_position[0], board_position[1],
-			inc[0], inc[1] if color == Globals.COLORS.BLACK else -inc[1],
+			inc[0], inc[1] if starting_rank < board_handle.BOARD_HEIGHT / 2.0 else -inc[1],
 			true, false
 		)
 		if pos != null:
@@ -203,7 +207,7 @@ func pawn_move_pos():
 		var pos = board_handle.spot_search_threat(
 			color,
 			board_position[0], board_position[1],
-			inc[0], inc[1] if color == Globals.COLORS.BLACK else -inc[1],
+			inc[0], inc[1] if starting_rank < board_handle.BOARD_HEIGHT / 2.0 else -inc[1],
 			false, true
 		)
 		if pos != null:
@@ -217,7 +221,7 @@ func pawn_move_pos():
 		var pos = board_handle.spot_search_threat(
 			color, 
 			board_position[0], board_position[1],
-			inc[0], inc[1] if color == Globals.COLORS.BLACK else -inc[1],
+			inc[0], inc[1] if starting_rank < board_handle.BOARD_HEIGHT / 2.0 else -inc[1],
 			true, false
 		)
 		if pos != null and piece_type != Globals.PIECE_TYPES.CHECKER:
@@ -237,7 +241,7 @@ func worm_threat_pos():
 		var pos = board_handle.spot_search_threat(
 			color, 
 			board_position[0], board_position[1],
-			inc[0], inc[1] if color == Globals.COLORS.BLACK and !promoted else -inc[1],
+			inc[0], inc[1] if starting_rank < board_handle.BOARD_HEIGHT / 2.0 and !promoted else -inc[1],
 			true, false
 		)
 		if pos != null:
@@ -250,7 +254,7 @@ func worm_move_pos():
 		var pos = board_handle.spot_search_threat(
 			color, 
 			board_position[0], board_position[1],
-			inc[0], inc[1] if color == Globals.COLORS.BLACK else -inc[1],
+			inc[0], inc[1] if starting_rank < board_handle.BOARD_HEIGHT / 2.0 else -inc[1],
 			false, true
 		)
 		if pos != null:
@@ -405,11 +409,17 @@ func perform_mitosis(new_pawn_pos: Vector2):
 	piece_type = Globals.PIECE_TYPES.PAWN
 	update_sprite()
 	
-	board_handle.create_piece(
+	var new_piece = board_handle.create_piece(
 		Globals.PIECE_TYPES.PAWN,
 		color,
 		new_pawn_pos
 	)
+	print("mitosis starting: ", new_piece.starting_rank)
+	new_piece.starting_rank = starting_rank
+	new_piece.moved = false
+	new_piece.promoted = promoted
+	moved = false
+	print("mitosis ending: ", new_piece.starting_rank)
 	SignalBus.emit_signal("mitosis_spawned", new_pawn_pos)
 
 # Stun Knight Stun Search

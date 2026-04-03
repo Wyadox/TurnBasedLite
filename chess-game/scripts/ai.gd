@@ -11,7 +11,7 @@ var piece_eval = {Globals.PIECE_TYPES.PAWN : 1, Globals.PIECE_TYPES.MITOSIS_PAWN
 				Globals.PIECE_TYPES.SUMO : 5.5, Globals.PIECE_TYPES.WIZARD : 5.5, Globals.PIECE_TYPES.SHIELD_KING : 5, 
 				Globals.PIECE_TYPES.JUGGERNAUT : 3, Globals.PIECE_TYPES.DUCK : 1, Globals.PIECE_TYPES.GUARDIAN_ANGEL : 3}
 
-func board_evaluation(pieces : Array) -> float:
+func board_evaluation(pieces : Array, noise : float) -> float:
 	var white_eval : float = 0
 	var black_eval : float = 0
 	
@@ -44,7 +44,8 @@ func board_evaluation(pieces : Array) -> float:
 				white_eval += (piece_eval[piece.piece_type] * multiplier) + eval_adjustment
 			else:
 				black_eval -= (piece_eval[piece.piece_type] * multiplier) + eval_adjustment
-	return white_eval + black_eval
+	var result = white_eval + black_eval
+	return result + randf_range(-noise, noise)
 
 # Other considerations
 	# Piece position on board
@@ -152,19 +153,19 @@ var game_scene
 var board
 var thread : Thread
 
-func start_minimax_handsOff(pieces : Array, white_to_play : bool):
-	thread = Thread.new()
-	thread.start(threaded_minimax.bind(pieces, white_to_play))
-	
-func threaded_minimax(pieces : Array, white_to_play : bool):
-	var result = start_minimax(pieces, white_to_play)
-	call_deferred("on_minimax_complete", result)
-	
-func on_minimax_complete(result):
-	thread.wait_to_finish()
-	print(result)
+#func start_minimax_handsOff(pieces : Array, white_to_play : bool):
+	#thread = Thread.new()
+	#thread.start(threaded_minimax.bind(pieces, white_to_play))
+	#
+#func threaded_minimax(pieces : Array, white_to_play : bool):
+	#var result = start_minimax(pieces, white_to_play)
+	#call_deferred("on_minimax_complete", result)
+	#
+#func on_minimax_complete(result):
+	#thread.wait_to_finish()
+	#print(result)
 
-func start_minimax(pieces : Array, white_to_play : bool) -> Dictionary:
+func start_minimax(pieces : Array, white_to_play : bool, difficulty_dict : Dictionary) -> Dictionary:
 	game_scene = GAME_SCENE.instantiate()
 	game_scene.real_game = false
 	
@@ -184,11 +185,11 @@ func start_minimax(pieces : Array, white_to_play : bool) -> Dictionary:
 	game_scene.board = board
 	
 	var start = Time.get_ticks_msec()
-	var result = minimax(new_pieces, 2, -INF, INF, white_to_play)
+	var result = minimax(new_pieces, difficulty_dict["depth"], -INF, INF, white_to_play, difficulty_dict["noise"], difficulty_dict["slice_num"])
 	print("Minimax took: ", Time.get_ticks_msec() - start, "ms")
 	return result
 
-func minimax(pieces : Array, depth : int, alpha : float, beta : float, maximizingPlayer : bool) -> Dictionary:
+func minimax(pieces : Array, depth : int, alpha : float, beta : float, maximizingPlayer : bool, noise : float, slice_num : int) -> Dictionary:
 	var maximum_eval : float
 	var minimum_eval : float
 	var new_eval
@@ -196,7 +197,7 @@ func minimax(pieces : Array, depth : int, alpha : float, beta : float, maximizin
 	var best_piece
 	
 	if depth == 0:
-		return {"ref" : null, "pos" : null, "eval" : board_evaluation(pieces)}
+		return {"ref" : null, "pos" : null, "eval" : board_evaluation(pieces, noise)}
 		
 	board.pieces = pieces
 		
@@ -207,10 +208,10 @@ func minimax(pieces : Array, depth : int, alpha : float, beta : float, maximizin
 		for piece in pieces.duplicate():
 			if piece.color != Globals.COLORS.WHITE:
 				continue
-			for move in get_move_list(piece):
+			for move in get_move_list(piece, slice_num):
 				simulate_move(pieces, piece, move["pos"])
 				
-				new_eval = minimax(pieces, depth - 1, alpha, beta, false)
+				new_eval = minimax(pieces, depth - 1, alpha, beta, false, noise, slice_num)
 				if new_eval["eval"] > maximum_eval:
 					maximum_eval = new_eval["eval"]
 					best_piece = piece
@@ -227,10 +228,10 @@ func minimax(pieces : Array, depth : int, alpha : float, beta : float, maximizin
 		for piece in pieces.duplicate():
 			if piece.color != Globals.COLORS.BLACK:
 				continue
-			for move in get_move_list(piece):
+			for move in get_move_list(piece, slice_num):
 				simulate_move(pieces, piece, move["pos"])
 				
-				new_eval = minimax(pieces, depth - 1, alpha, beta, true)
+				new_eval = minimax(pieces, depth - 1, alpha, beta, true, noise, slice_num)
 				if new_eval["eval"] < minimum_eval:
 					minimum_eval = new_eval["eval"]
 					best_piece = piece
@@ -243,7 +244,7 @@ func minimax(pieces : Array, depth : int, alpha : float, beta : float, maximizin
 					break
 		return {"ref" : best_piece, "pos" : best_move, "eval" : minimum_eval}
 
-func get_move_list(piece : Piece):
+func get_move_list(piece : Piece, slice_num : int):
 	var moves = []
 	
 	var positions = piece.get_moveable_positions() + piece.get_threatened_positions()
@@ -262,7 +263,7 @@ func get_move_list(piece : Piece):
 		})
 		
 	moves.sort_custom(func(a, b): return a.score > b.score)
-	moves = moves.slice(0, 3)
+	moves = moves.slice(0, slice_num)
 	
 	return moves
 

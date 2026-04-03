@@ -49,6 +49,12 @@ enum PIECE_TYPES {
 	WIZARD
 }
 
+enum DIFFICULTY {
+	EASY,
+	NORMAL,
+	HARD
+}
+
 
 const SPRITE_MAPPING = {
 	COLORS.BLACK : {

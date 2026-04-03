@@ -1,7 +1,7 @@
 extends Control
 
-@onready var opponent_option_button: OptionButton = $VBoxContainer/Opponent_OptionButton
-@onready var difficulty_option_button: OptionButton = $VBoxContainer/Difficulty_OptionButton
+@onready var opponent_option_button: OptionButton = $Panel/VBoxContainer/Opponent_OptionButton
+@onready var difficulty_option_button: OptionButton = $Panel/VBoxContainer/Difficulty_OptionButton
 @onready var notification_node: Control = $notification
 
 var current_map : int = -1
@@ -20,7 +20,7 @@ func _on_continue_button_pressed() -> void:
 	var game_scene = GAME_SCENE.instantiate()
 	
 	game_scene.player2_type = convert_opponent_option(opponent_option_button.get_item_text(opponent_option_button.get_selected_id()))
-	game_scene.difficulty = difficulty_option_button.get_item_text(difficulty_option_button.get_selected_id())
+	game_scene.difficulty = Globals.DIFFICULTY[difficulty_option_button.get_item_text(difficulty_option_button.get_selected_id())]
 	game_scene.current_map = current_map
 	
 	var scene_tree = get_tree()

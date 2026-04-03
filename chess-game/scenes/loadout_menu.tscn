@@ -91,6 +91,7 @@ offset_right = 284.0
 offset_bottom = 10.0
 grow_horizontal = 2
 grow_vertical = 2
+color = 1
 
 [node name="Button_Clear" type="TextureButton" parent="."]
 layout_mode = 1

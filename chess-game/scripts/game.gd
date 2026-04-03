@@ -11,8 +11,10 @@ var white_shield_king_alive = false
 var black_shield_king_alive = false
 
 var current_map : int
-var difficulty
+var difficulty : Globals.DIFFICULTY
 var ai_color : Globals.COLORS = Globals.COLORS.BLACK
+
+var difficulty_dict : Dictionary
 
 # To drag piece
 var is_dragging: bool;
@@ -28,6 +30,7 @@ var failed_to_move : bool = false
 @onready var setup_ui = $SetupPhaseUI
 @onready var loadout_ui = $loadoutSlots
 @onready var descriptions: Control = $descriptions
+@onready var loadouts_label: Label = $Loadouts_Label
 
 @onready var turn_indicator : TextureRect = $TurnIndicator
 @onready var sprite = $IndicatorImage
@@ -35,16 +38,27 @@ var failed_to_move : bool = false
 @onready var move_timer : Timer = $MoveTimer
 @onready var timer_label : Label = $TimerLabel
 @onready var timer_bar : TextureProgressBar = $MoveTimerBar
-var move_time := 15.0
-var time_remaining := 15.0
+var move_time : float
+var time_remaining : float
+
+const EASY_TIME : float = 21.0
+const NORMAL_TIME : float = 14.0
+const HARD_TIME : float = 7.0
 
 const MAX_TURNS_WITHOUT_CAPTURE := 10
 var turns_since_last_capture := 0
 var previous_piece_total := 0
 
+const SELECTION_BOX_COLOR = Color(0.0, 0.723, 0.736, 1.0)
+
 var board_repr = []
 
 var real_game : bool = true
+
+var LOWER_COLOR : Globals.COLORS = Globals.COLORS.WHITE
+var UPPER_COLOR : Globals.COLORS = Globals.COLORS.BLACK
+
+const EVAL_DIVISOR : float = 10.0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -58,8 +72,6 @@ func _ready():
 	setup_complete = false
 	allow_select = true
 	
-	SignalBus.human_op.connect(_on_opponent_ui_human_op)
-	SignalBus.ai_op.connect(_on_opponent_ui_ai_op)
 	SignalBus.set_status.connect(_on_board_set_status)
 	SignalBus.spawn_ai.connect(_on_board_spawn_ai)
 	SignalBus.setup_complete.connect(_on_board_setup_complete)
@@ -73,9 +85,44 @@ func _ready():
 	print("Player2 Type: ", player2_type)
 	print("Current Map: ", current_map)
 	print("AI Color: ", ai_color)
+	print("Difficulty: ", difficulty)
 	
-	board.draw_selection_box(Vector2(0.0, 5.0), Vector2(7.0, 7.0), Color(0.0, 0.723, 0.736, 1.0))
+	difficulty_dict = difficulty_settings()
+	
+	board.draw_selection_box(Vector2(0.0, 5.0), Vector2(7.0, 7.0), SELECTION_BOX_COLOR)
+	
+	$evaluation_bar.set_value(5.0)
+	if player_color == Globals.COLORS.BLACK:
+		$evaluation_bar.fill_mode_TTB()
+	
+	if ai_color == Globals.COLORS.WHITE:
+		LOWER_COLOR = Globals.COLORS.BLACK
+		UPPER_COLOR = Globals.COLORS.WHITE
 		
+		board._on_game_init_ai(Globals.COLORS.WHITE)
+
+func difficulty_settings() -> Dictionary:
+	match difficulty:
+		Globals.DIFFICULTY.EASY:
+			move_time = 21.0
+			time_remaining = 21.0
+			timer_bar.max_value = move_time
+			move_timer.wait_time = move_time
+			return {"depth" : 1, "noise" : 2.0, "slice_num" : 8}
+		Globals.DIFFICULTY.NORMAL:
+			move_time = 14.0
+			time_remaining = 14.0
+			timer_bar.max_value = move_time
+			move_timer.wait_time = move_time
+			return {"depth" : 2, "noise" : 1.0, "slice_num" : 4}
+		Globals.DIFFICULTY.HARD:
+			move_time = 7.0
+			time_remaining = 7.0
+			timer_bar.max_value = move_time
+			move_timer.wait_time = move_time
+			return {"depth" : 2, "noise" : 0.0, "slice_num" : 2}
+	return {"depth" : 3, "noise" : 0.0, "slice_num" : 3}
+
 func show_notification(phrase : String):
 	$notification.set_text(phrase)
 	
@@ -99,9 +146,9 @@ func parse_save_string(save_string):
 	for spawn in spawn_array:
 		var spawn_split = spawn.split(":")
 		var coord_split = spawn_split[1].split(",")
-		if status == Globals.COLORS.WHITE:
+		if status == LOWER_COLOR:
 			board.selected_pos = Vector2(int(coord_split[0]) + 1,int(coord_split[1]))
-		elif status == Globals.COLORS.BLACK:
+		elif status == UPPER_COLOR:
 			board.selected_pos = Vector2(int(coord_split[0]) + 1,int(coord_split[1]) * -1 + 6)
 		board._on_setup_phase_ui_spawn_piece(int(spawn_split[0]))
 
@@ -120,9 +167,9 @@ func _input(event):
 			
 		if selected_piece == null and !setup_complete:
 			if square.x < board.BOARD_WIDTH and square.x > -1 and square.y < board.BOARD_HEIGHT and square.y > -1:
-				if status == Globals.COLORS.WHITE and square.y >= board.BOARD_HEIGHT - 2:
+				if status == LOWER_COLOR and square.y >= board.BOARD_HEIGHT - 2:
 					SignalBus.emit_signal("selected_square", square)
-				if status == Globals.COLORS.BLACK and square.y <= 1:
+				if status == UPPER_COLOR and square.y <= 1:
 					SignalBus.emit_signal("selected_square", square)
 			else:
 				print("no square was selected")
@@ -190,7 +237,10 @@ func clear_piece_animations():
 func init_game():
 	game_over = false
 	is_dragging = false
-	player_color = Globals.COLORS.WHITE
+	if ai_color == Globals.COLORS.BLACK:
+		player_color = Globals.COLORS.WHITE
+	else:
+		player_color = Globals.COLORS.BLACK
 	status = Globals.COLORS.WHITE
 	
 	# Initialize the board represntation array
@@ -241,10 +291,10 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 		to_move = non_mouse_pos
 		
 	var old_pos = selected_piece.board_position
-	var piece_around
+	#var piece_around
 	var checker_captured = false
-	var jumped
-	var jumped_piece_location
+	#var jumped
+	#var jumped_piece_location
 	var shield_king_killed = false
 	
 	var piece_captured = false
@@ -310,7 +360,6 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 			
 			if !checker_captured:
 				end_turn()
-				print("Eval: ", Ai.board_evaluation(board.pieces))
 			else:
 				reset_timer()
 				board.update_indicators()
@@ -320,8 +369,8 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 func valid_move(from_pos, to_pos):
 	var board_copy = board.clone()
 	var src_piece = board_copy.get_piece(from_pos)
-	var shield_king_position
-	var shield_king
+	#var shield_king_position
+	#var shield_king
 	
 	# If we cannot move to threatend or moveable position
 	if(
@@ -412,7 +461,7 @@ func unique(arr: Array) -> Array:
 
 func player2_move():
 	if real_game and player2_type == Globals.PLAYER_2_TYPE.AI:
-		var minimax_result = Ai.start_minimax(board.pieces, true if status == Globals.COLORS.WHITE else false)
+		var minimax_result = Ai.start_minimax(board.pieces, true if status == Globals.COLORS.WHITE else false, difficulty_dict)
 		print("RESULT: ", minimax_result)
 		
 		var new_piece = minimax_result["ref"]
@@ -529,8 +578,14 @@ func end_turn():
 	check_for_shield_king()
 	reset_timer()
 	board.update_indicators()
+	update_eval()
 	
-	$evaluation_bar.set_value((Ai.board_evaluation(board.pieces) + 20.0) / 40.0)
+func update_eval():
+	var eval = Ai.board_evaluation(board.pieces, 0.0)
+	print("Eval: ", eval)
+	var eval_normalized = 1.0 / (1.0 + exp(-eval / EVAL_DIVISOR))
+	print("Normalized: ", eval_normalized)
+	$evaluation_bar.set_target(eval_normalized)
 
 func get_turn_indicator_tex(color):
 	if sprite:
@@ -551,7 +606,9 @@ func get_turn_indicator_tex(color):
 	
 func _on_board_setup_complete() -> void:
 	setup_complete = true
+	board.clear_selection_box()
 	descriptions.hide()
+	loadouts_label.hide()
 	loadout_ui.hide()
 	timer_bar.show()
 	status = Globals.COLORS.WHITE
@@ -563,6 +620,7 @@ func _on_board_setup_complete() -> void:
 	turn_indicator.texture = get_turn_indicator_tex(status)
 	turn_indicator.show()
 	print("setup complete connected")
+	update_eval()
 	
 	
 	for piece in board.pieces:
@@ -575,24 +633,18 @@ func _on_board_setup_complete() -> void:
 
 func _on_board_set_status(color: Variant) -> void:
 	status = color
+	descriptions.set_color(color)
+	board.clear_selection_box()
+	if status == LOWER_COLOR:
+		board.draw_selection_box(Vector2(0.0, 5.0), Vector2(7.0, 7.0), SELECTION_BOX_COLOR)
+	else:
+		board.draw_selection_box(Vector2(0.0, 0.0), Vector2(7.0, 2.0), SELECTION_BOX_COLOR)
+		
 	print("status connected")
 
-
-func _on_opponent_ui_ai_op() -> void:
-	player2_type = Globals.PLAYER_2_TYPE.AI
-	print("ai set")
-
-
-func _on_opponent_ui_human_op() -> void:
-	player2_type = Globals.PLAYER_2_TYPE.HUMAN
-	print("helloooooooooooooooooooooooooooooooooo")
-
-
 func _on_board_spawn_ai() -> void:
-	if player2_type == Globals.PLAYER_2_TYPE.AI and ai_color == Globals.COLORS.BLACK:
-		print("emit init_ai")
-		SignalBus.emit_signal("init_ai", Globals.COLORS.BLACK)
-		print("spawn_ai connected")
+	if player2_type == Globals.PLAYER_2_TYPE.AI:
+		SignalBus.init_ai.emit(ai_color)
 	else:
 		print("fail")
 
@@ -640,11 +692,11 @@ func _on_piece_moved(old_pos, new_pos):
 	board_repr[board.BOARD_WIDTH * new_pos[1] + new_pos[0]] = board_repr[board.BOARD_WIDTH * old_pos[1] + old_pos[0]]
 	board_repr[board.BOARD_WIDTH * old_pos[1] + old_pos[0]] = null
 
-func _on_trojan_spawned(position):
-	board_repr[board.BOARD_WIDTH * position[1] + position[0]] = board.get_piece(position)
+func _on_trojan_spawned(pos):
+	board_repr[board.BOARD_WIDTH * position[1] + position[0]] = board.get_piece(pos)
 	
-func _on_mitosis_spawned(position):
-	board_repr[board.BOARD_WIDTH * position[1] + position[0]] = board.get_piece(position)
+func _on_mitosis_spawned(pos):
+	board_repr[board.BOARD_WIDTH * position[1] + position[0]] = board.get_piece(pos)
 
 #func explode_range(dest_piece, selected_piece):
 	#spawn_explosion(dest_piece.position)

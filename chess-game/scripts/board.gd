@@ -286,16 +286,10 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 		return
 	print("Spawn Pos: ", selected_pos)
 	
-	#if is_loadout_board:
-		#selected_pos = Vector2(selected_pos.x - 1, selected_pos.y)
-	
 	if !is_within_bounds(selected_pos):
 		print("Select an inbounds position")
 		SignalBus.emit_signal("refund_piece", piece_type)
 		return
-		
-	#if is_loadout_board:
-		#selected_pos = Vector2(selected_pos.x + 1, selected_pos.y)
 	
 	if setup_done == true:
 		print("Setup phase is over")
@@ -365,7 +359,12 @@ func draw_border(x, y, color, clear):
 	add_child(border_panel)
 	if !clear:
 		borders.push_back(border_panel)
-		
+
+func clear_borders():
+	for it in borders:
+		it.queue_free()
+	borders.clear()
+
 var selection_panel
 
 func draw_selection_box(from : Vector2, to : Vector2, color):
@@ -390,10 +389,9 @@ func draw_selection_box(from : Vector2, to : Vector2, color):
 	
 	add_child(selection_panel)
 	
-func clear_borders():
-	for it in borders:
-		it.queue_free()
-	borders.clear()
+func clear_selection_box():
+	if selection_panel:
+		selection_panel.queue_free()
 	
 var indicators = []
 	
@@ -465,12 +463,13 @@ func num_pieces():
 
 
 func _on_game_init_ai(color) -> void:
+	print("reached init_ai")
 	var piecesToSpawn = []
 	piecesToSpawn = setup_script.determineAiPieces(color)
 	
 	var i = 0
 	for it in piecesToSpawn.size() / 2:
-		create_piece(piecesToSpawn[i], color, piecesToSpawn[i + 1])
+		create_piece(piecesToSpawn[i], color, piecesToSpawn[i + 1] + Vector2(0, 0 if color == Globals.COLORS.BLACK else -5))
 		i += 2
 		
 	var colorSet
