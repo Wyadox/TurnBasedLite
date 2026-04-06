@@ -19,7 +19,7 @@ enum PIECE_BASE {
 	KING,
 	QUEEN
 }
-#pieces
+
 enum PIECE_TYPES {
 	KNIGHT,
 	BISHOP,
