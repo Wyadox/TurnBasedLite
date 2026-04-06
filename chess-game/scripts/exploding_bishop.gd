@@ -7,9 +7,8 @@ func explode_piece(dest_piece, selected_piece, board):
 	explosion_radius(dest_piece, board)
 	for position in dest_piece.bishop_explode_positions():
 		var piece_around = board.get_piece(position)
-		if piece_around != null && not board.piece_is_protected(piece_around):
-			if piece_around != selected_piece:
-				board.on_capture(piece_around, selected_piece, board)
+		if piece_around != null && not board.piece_is_protected(piece_around) && not (piece_around.piece_type == Globals.PIECE_TYPES.WATER or piece_around.piece_type == Globals.PIECE_TYPES.MAGMA_HIGH or piece_around.piece_type == Globals.PIECE_TYPES.MAGMA_MED or piece_around.piece_type == Globals.PIECE_TYPES.MAGMA_LOW):
+			board.on_capture(piece_around, selected_piece, board)
 			#board.delete_piece(piece_around)
 	return
 

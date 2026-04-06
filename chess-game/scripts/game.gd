@@ -149,7 +149,7 @@ func _input(event):
 				dest_piece.play_animation("cower")
 				print("cower played")
 				board.draw_border(it.x, it.y, color, false)
-			elif dest_piece == null:
+			elif dest_piece == null or dest_piece.piece_type == Globals.PIECE_TYPES.WEB:
 				color = Color(1.0, 1.0, 0.0)
 				board.draw_border(it.x, it.y, color, false)
 				
@@ -254,7 +254,9 @@ func drop_piece():
 		if dest_piece != null and dest_piece.color != selected_piece.color:
 			if dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT or dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT2:
 				juggernaut_hit = true
-			if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
+		if dest_piece != null and dest_piece.color != selected_piece.color:
+			if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP and dest_piece.piece_type != Globals.PIECE_TYPES.WEB:
+
 				shield_king_killed = ExplodingBishop.explode_king(dest_piece, selected_piece, board)
 			if dest_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
 				piece_died = true
@@ -506,6 +508,16 @@ func end_turn():
 					elif piece.color == Globals.COLORS.BLACK:
 						piece.color = Globals.COLORS.WHITE
 						piece.update_sprite()
+		if piece.cool_counter > 0:
+			piece.cool_counter -= 1
+			if piece.cool_counter == 4:
+				piece.piece_type = Globals.PIECE_TYPES.MAGMA_MED
+				piece.update_sprite()
+			elif piece.cool_counter == 2:
+				piece.piece_type = Globals.PIECE_TYPES.MAGMA_LOW
+				piece.update_sprite()
+			elif piece.cool_counter == 0:
+				board.delete_piece(piece)
 	status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
 	
 	turn_indicator.texture = get_turn_indicator_tex(status)
