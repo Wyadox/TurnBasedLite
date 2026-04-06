@@ -20,6 +20,12 @@ var board_handle;
 @export var infect_counter: int;
 @export var cool_counter: int;
 
+@export var starting_rank : float
+
+# Juggernaut variables
+const MAX_HEALTH : int = 3
+var current_health : int
+
 func init_piece(
 	type: Globals.PIECE_TYPES,
 	col: Globals.COLORS,
@@ -34,6 +40,10 @@ func init_piece(
 	moved = false
 	stun_counter = 0
 	infect_counter = 0
+	starting_rank = board_pos.y
+	
+	# Juggernaut
+	current_health = MAX_HEALTH
 	
 	update_sprite()
 	
@@ -81,24 +91,28 @@ func move_position(to_move: Vector2):
 	
 	# Promotion for pawns to KING BEHAVIOR
 	if (piece_type == Globals.PIECE_TYPES.PAWN or piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN or piece_type == Globals.PIECE_TYPES.WORM or piece_type == Globals.PIECE_TYPES.CHECKER) and (
-		(color == Globals.COLORS.BLACK and to_move[1] == board_handle.BOARD_HEIGHT - 1) or 
-		(color == Globals.COLORS.WHITE and to_move[1] == 0)
+		(starting_rank < board_handle.BOARD_HEIGHT / 2.0 and to_move[1] == board_handle.BOARD_HEIGHT - 1) or 
+		(starting_rank > board_handle.BOARD_HEIGHT / 2.0 and to_move[1] == 0)
 	):
 		#piece_type = Globals.PIECE_TYPES.PROMOTED_PAWN
 		promoted = true
 		update_sprite()
 		
-	#if piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN and (
-		#(color == Globals.COLORS.BLACK and to_move[1] == 5) or 
-		#(color == Globals.COLORS.WHITE and to_move[1] == 0)
-	#):
-		#piece_type = Globals.PIECE_TYPES.KING
-		#update_sprite()
+
+const PIECE_SCENE = preload("res://scenes/Piece.tscn")
 
 func clone (_board):
-	var piece = self.duplicate()
-	piece.board_handle = _board
-	return piece
+	#var piece = self.duplicate()
+	
+	var copy : Piece = PIECE_SCENE.instantiate()
+	copy.init_piece(piece_type, color, board_position, board_handle)
+	copy.stun_counter = stun_counter
+	copy.promoted = promoted
+	copy.moved = moved
+	copy.current_health = current_health
+	copy.starting_rank = starting_rank
+	
+	return copy
 	
 func get_moveable_positions():
 	match piece_type:
@@ -200,7 +214,7 @@ func pawn_threat_pos():
 		var pos = board_handle.spot_search_threat(
 			color,
 			board_position[0], board_position[1],
-			inc[0], inc[1] if color == Globals.COLORS.BLACK else -inc[1],
+			inc[0], inc[1] if starting_rank < board_handle.BOARD_HEIGHT / 2.0 else -inc[1],
 			true, false
 		)
 		if pos != null:
@@ -215,7 +229,7 @@ func pawn_move_pos():
 		var pos = board_handle.spot_search_threat(
 			color,
 			board_position[0], board_position[1],
-			inc[0], inc[1] if color == Globals.COLORS.BLACK else -inc[1],
+			inc[0], inc[1] if starting_rank < board_handle.BOARD_HEIGHT / 2.0 else -inc[1],
 			false, false
 		)
 		if pos != null:
@@ -237,7 +251,7 @@ func pawn_move_pos():
 		var pos = board_handle.spot_search_threat(
 			color, 
 			board_position[0], board_position[1],
-			inc[0], inc[1] if color == Globals.COLORS.BLACK else -inc[1],
+			inc[0], inc[1] if starting_rank < board_handle.BOARD_HEIGHT / 2.0 else -inc[1],
 			true, false
 		)
 		if pos != null and piece_type != Globals.PIECE_TYPES.CHECKER:
@@ -257,7 +271,7 @@ func worm_threat_pos():
 		var pos = board_handle.spot_search_threat(
 			color, 
 			board_position[0], board_position[1],
-			inc[0], inc[1] if color == Globals.COLORS.BLACK and !promoted else -inc[1],
+			inc[0], inc[1] if starting_rank < board_handle.BOARD_HEIGHT / 2.0 and !promoted else -inc[1],
 			true, false
 		)
 		if pos != null:
@@ -270,7 +284,7 @@ func worm_move_pos():
 		var pos = board_handle.spot_search_threat(
 			color, 
 			board_position[0], board_position[1],
-			inc[0], inc[1] if color == Globals.COLORS.BLACK else -inc[1],
+			inc[0], inc[1] if starting_rank < board_handle.BOARD_HEIGHT / 2.0 else -inc[1],
 			false, true
 		)
 		if pos != null:
@@ -428,11 +442,17 @@ func perform_mitosis(new_pawn_pos: Vector2):
 	piece_type = Globals.PIECE_TYPES.PAWN
 	update_sprite()
 	
-	board_handle.create_piece(
+	var new_piece = board_handle.create_piece(
 		Globals.PIECE_TYPES.PAWN,
 		color,
 		new_pawn_pos
 	)
+	print("mitosis starting: ", new_piece.starting_rank)
+	new_piece.starting_rank = starting_rank
+	new_piece.moved = false
+	new_piece.promoted = promoted
+	moved = false
+	print("mitosis ending: ", new_piece.starting_rank)
 	SignalBus.emit_signal("mitosis_spawned", new_pawn_pos)
 
 # Stun Knight Stun Search

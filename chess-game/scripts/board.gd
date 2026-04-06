@@ -6,8 +6,6 @@ extends Node2D
 @export var status_indicator = preload("res://scenes/StatusIndicator.tscn")
 
 
-
-
 @export var white_king_pos: Vector2 = Vector2(-2, -2)
 @export var black_king_pos: Vector2 = Vector2(-2, -2)
 
@@ -183,10 +181,26 @@ func get_piece(pos: Vector2):
 		if piece and piece.board_position == pos:
 			#print("piece is " +str(piece.piece_type))
 			return piece
+			
+func play_sound(title : String):
+	var audioPlayer = AudioStreamPlayer2D.new()
+	add_child(audioPlayer)
+	
+	match title:
+		"move" : audioPlayer.stream = preload("res://Assets/Sounds/move-self.mp3")
+		"capture" : audioPlayer.stream = preload("res://Assets/Sounds/capture.mp3")
+		"promote" : audioPlayer.stream = preload("res://Assets/Sounds/promote.mp3")
+		"check" : audioPlayer.stream = preload("res://Assets/Sounds/move-check.mp3")
+		"castle" : audioPlayer.stream = preload("res://Assets/Sounds/castle.mp3")
+		"explosion" : audioPlayer.stream = preload("res://Assets/Sounds/explosion.wav")
+	
+	audioPlayer.play()
+	audioPlayer.finished.connect(audioPlayer.queue_free)
 
 func on_capture(dest_piece, selected_piece, board):
 	if dest_piece.piece_type == Globals.PIECE_TYPES.WEB and selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER:
 		selected_piece.stun_counter = 3
+func on_capture(dest_piece, selected_piece, board, previous_position):
 	if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
 		ExplodingBishop.explode_piece(dest_piece, selected_piece, board)
 		delete_piece(selected_piece)
@@ -199,6 +213,17 @@ func on_capture(dest_piece, selected_piece, board):
 	elif dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT or dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT2:
 		Juggernaut.JuggernautUpdate(board, dest_piece)
 		return
+		
+	
+	if real_board:
+		print("dest_piece: ", dest_piece.board_position.x, " --- previous_position: ", previous_position.x)
+		if dest_piece.board_position.x > previous_position.x:
+			play_animation(dest_piece, "capture_right")
+		else:
+			play_animation(dest_piece, "capture_left")
+		play_sound("capture")
+		SignalBus.captured_piece.emit(dest_piece.color, dest_piece.piece_type)
+	
 	delete_piece(dest_piece)
 	
 func delete_piece(piece, force = false):
@@ -342,16 +367,10 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 		SignalBus.emit_signal("refund_piece", piece_type)
 		return
 	
-	if is_loadout_board:
-		selected_pos = Vector2(selected_pos.x - 1, selected_pos.y)
-	
 	if !is_within_bounds(selected_pos):
 		print("Select an inbounds position")
 		SignalBus.emit_signal("refund_piece", piece_type)
 		return
-		
-	if is_loadout_board:
-		selected_pos = Vector2(selected_pos.x + 1, selected_pos.y)
 	
 	if setup_done == true:
 		print("Setup phase is over")
@@ -421,11 +440,39 @@ func draw_border(x, y, color, clear):
 	add_child(border_panel)
 	if !clear:
 		borders.push_back(border_panel)
-	
+
 func clear_borders():
 	for it in borders:
 		it.queue_free()
 	borders.clear()
+
+var selection_panel
+
+func draw_selection_box(from : Vector2, to : Vector2, color):
+	selection_panel = Panel.new()
+	var x = abs(to.x - from.x)
+	var y = abs(to.y - from.y)
+	selection_panel.size = Vector2(CELL_SIZE * x, CELL_SIZE * y)
+	selection_panel.position = Vector2(
+		from.x * CELL_SIZE,
+		from.y * CELL_SIZE
+	)
+	selection_panel.z_index = 50
+	
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color.TRANSPARENT
+	style.border_color = color
+	style.border_width_left = 4
+	style.border_width_top = 4
+	style.border_width_right = 4
+	style.border_width_bottom = 4
+	selection_panel.add_theme_stylebox_override("panel", style)
+	
+	add_child(selection_panel)
+	
+func clear_selection_box():
+	if selection_panel:
+		selection_panel.queue_free()
 	
 var indicators = []
 	
@@ -498,12 +545,13 @@ func num_pieces():
 
 
 func _on_game_init_ai(color) -> void:
+	print("reached init_ai")
 	var piecesToSpawn = []
 	piecesToSpawn = setup_script.determineAiPieces(color)
 	
 	var i = 0
 	for it in piecesToSpawn.size() / 2:
-		create_piece(piecesToSpawn[i], color, piecesToSpawn[i + 1])
+		create_piece(piecesToSpawn[i], color, piecesToSpawn[i + 1] + Vector2(0, 0 if color == Globals.COLORS.BLACK else -5))
 		i += 2
 		
 	var colorSet

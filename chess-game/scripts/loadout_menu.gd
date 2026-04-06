@@ -11,6 +11,8 @@ const SETUP_SCENE = preload("res://scenes/setup_phase_ui.tscn")
 
 var selected_loadout = 0
 
+# ISSUE 4/1 2 AM, Loading loadout doesn't work since board reposition
+
 func _ready() -> void:
 	board_scene = BOARD.instantiate()
 	board_scene.is_loadout_board = true
@@ -26,19 +28,22 @@ func _input(_event):
 		var selected_piece = board_scene.get_piece(pos)
 			
 		if selected_piece == null:
-			# REMEMBER THESE OFFSETS, it's very janky
-			if pos.x < board_scene.BOARD_WIDTH + 1 and pos.x > 0 and pos.y < board_scene.BOARD_HEIGHT and pos.y > 4 and board_scene.num_pieces() < Globals.PIECES_PER_SIDE:
-				SignalBus.emit_signal("selected_square", pos)
+			if square.x < board_scene.BOARD_WIDTH and square.x > -1 and square.y > -1 and square.y < 2 and board_scene.num_pieces() < Globals.PIECES_PER_SIDE:
+				SignalBus.emit_signal("selected_square", square)
 			return
 		else:
 			setup_scene._on_board_refund_piece(selected_piece.piece_type)
 			board_scene.delete_piece(selected_piece, true)
 
-func get_pos_under_mouse():
-	var pos = get_global_mouse_position()
-	pos.x = int(pos.x / 120)
-	pos.y = int(pos.y / 120)
-	return pos
+func get_square_under_mouse():
+	var square = get_global_mouse_position() - board_scene.global_position
+	
+	if square.x < 0 or square.y < 0:
+		return Vector2(-1, -1)
+	
+	square.x = int(square.x / 120)
+	square.y = int(square.y / 120)
+	return square
 
 
 func _on_button_clear_pressed() -> void:
@@ -75,9 +80,8 @@ func _on_button_save_pressed() -> void:
 	show_notification("Loadout Saved")
 
 func convert_position(pos : Vector2):
-	var new_pos = Vector2(pos.x - 1, pos.y)
+	var new_pos = Vector2(pos.x - 1, pos.y + 5)
 	return new_pos
-	#return str(new_pos.x) + "," + str(new_pos.y)
 	
 func loadout_button_pressed(loadout):
 	selected_loadout = loadout
@@ -95,15 +99,31 @@ func _on_button_load_pressed() -> void:
 		spawn_string = LoadoutSaves.loadouts_to_save.loadout2
 	else:
 		spawn_string = LoadoutSaves.loadouts_to_save.loadout3
+	print("Spawn String: ", spawn_string)
 	spawn_pieces(spawn_string)
 	show_notification("Loadout Loaded")
+	
+# AI LOADOUTS
+
+# EASY
+# 
+
+# NORMAL
+# Pawns - 7:(2.0, 6.0)_9:(1.0, 6.0)_13:(2.0, 5.0)_21:(3.0, 6.0)_11:(-1.0, 5.0)_14:(5.0, 5.0)_17:(-1.0, 6.0)_
+
+
+# HARD
+# Bubble - 7:(2.0, 6.0)_8:(2.0, 5.0)_11:(-1.0, 6.0)_20:(1.0, 5.0)_25:(3.0, 6.0)_4:(3.0, 5.0)_22:(1.0, 6.0)_
+# Infector Trap - 21:(2.0, 6.0)_16:(3.0, 5.0)_7:(3.0, 6.0)_22:(2.0, 5.0)_13:(-1.0, 6.0)_6:(-1.0, 5.0)_14:(1.0, 5.0)_
+# Wizard - 25:(2.0, 6.0)_4:(-1.0, 5.0)_14:(5.0, 5.0)_16:(2.0, 5.0)_13:(0.0, 5.0)_5:(4.0, 5.0)_22:(1.0, 5.0)_
+
 	
 func spawn_pieces(pieces : String):
 	var spawn_array = pieces.split("_", false)
 	for spawn in spawn_array:
 		var spawn_split = spawn.split(":")
 		var coord_split = spawn_split[1].split(",")
-		board_scene.selected_pos = Vector2(int(coord_split[0]) + 1,int(coord_split[1]))
+		board_scene.selected_pos = Vector2(int(coord_split[0]) + 1,int(coord_split[1]) - 5)
 		setup_scene.valid_spawn(int(spawn_split[0]))
 		board_scene._on_setup_phase_ui_spawn_piece(int(spawn_split[0]))
 

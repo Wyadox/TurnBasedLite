@@ -60,6 +60,12 @@ enum PIECE_TYPES {
 	TREE
 }
 
+enum DIFFICULTY {
+	EASY,
+	NORMAL,
+	HARD
+}
+
 
 const SPRITE_MAPPING = {
 	COLORS.BLACK : {

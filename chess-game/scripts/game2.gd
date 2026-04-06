@@ -53,6 +53,7 @@ const SELECTION_BOX_COLOR = Color(0.0, 0.723, 0.736, 1.0)
 
 var board_repr = []
 
+var real_game : bool = true
 
 var LOWER_COLOR : Globals.COLORS = Globals.COLORS.WHITE
 var UPPER_COLOR : Globals.COLORS = Globals.COLORS.BLACK
@@ -79,6 +80,7 @@ func _ready():
 	SignalBus.trojan_spawned.connect(_on_trojan_spawned)
 	SignalBus.mitosis_spawned.connect(_on_mitosis_spawned)
 	SignalBus.show_notification.connect(show_notification)
+	
 	
 	print("Player2 Type: ", player2_type)
 	print("Current Map: ", current_map)
@@ -156,8 +158,8 @@ func _input(event):
 	# Mouse left clicks/drags
 	if Input.is_action_just_pressed("left_click"):
 		print("left click")
-		var pos = get_pos_under_mouse()
-		selected_piece = board.get_piece(pos)
+		var square = get_square_under_mouse()
+		selected_piece = board.get_piece(square)
 		
 		# Drag piece only if they are under the mouse or are of current player
 		if !allow_select:
@@ -198,12 +200,12 @@ func _input(event):
 				dest_piece.play_animation("cower")
 				print("cower played")
 				board.draw_border(it.x, it.y, color, false)
-			elif dest_piece == null or dest_piece.piece_type == Globals.PIECE_TYPES.WEB:
+			elif dest_piece == null:
 				color = Color(1.0, 1.0, 0.0)
 				board.draw_border(it.x, it.y, color, false)
 				
 	elif event is InputEventMouseMotion and is_dragging:
-		var piece_mouse_pos = get_global_mouse_position()
+		var piece_mouse_pos = get_global_mouse_position() - board.global_position
 		#piece_mouse_pos.y += 40
 		selected_piece.position = piece_mouse_pos
 	elif Input.is_action_just_released("left_click") and is_dragging:
@@ -219,14 +221,14 @@ func _input(event):
 		board.clear_borders()
 		clear_piece_animations()
 		
-		# Check whether game is over after user's move
-		if evaluate_end_game():
-			return
-		
-		
-		# If playerA has made valid move, then switch to other player's move
-		if is_valid_move:
-			player2_move()
+		if real_game:
+			# Check whether game is over after user's move
+			if evaluate_end_game():
+				return
+			
+			# If playerA has made valid move, then switch to other player's move
+			if is_valid_move:
+				player2_move()
 
 func clear_piece_animations():
 	for piece in board.pieces:
@@ -265,25 +267,35 @@ func check_for_shield_king():
 	if !black_shield_king_found:
 		board.black_king_pos = Vector2(-2,-2)
 
+func get_square_under_mouse():
+	var pos = get_global_mouse_position() - board.global_position
+	pos.x = int(pos.x / board.CELL_SIZE)
+	pos.y = int(pos.y / board.CELL_SIZE)
+	return pos
+	
 func get_pos_under_mouse():
 	var pos = get_global_mouse_position()
-	pos.x = int(pos.x / 120)
-	pos.y = int(pos.y / 120)
+	pos.x = int(pos.x / board.CELL_SIZE)
+	pos.y = int(pos.y / board.CELL_SIZE)
 	return pos
 
-func drop_piece():
+func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 	var is_shooting = false
 	var is_jousting = false
 	var piece_died = false
-	var to_move = get_pos_under_mouse()
+	
+	var to_move
+	if use_mouse:
+		to_move = get_square_under_mouse()
+	else:
+		to_move = non_mouse_pos
+		
 	var old_pos = selected_piece.board_position
 	#var piece_around
 	var checker_captured = false
 	#var jumped
 	#var jumped_piece_location
 	var shield_king_killed = false
-	var juggernaut_hit = false
-	
 	
 	var piece_captured = false
 	
@@ -291,15 +303,13 @@ func drop_piece():
 		# For valid move:
 		# - if target has piece, then replace it
 		var dest_piece = board.get_piece(to_move)
-		#if dest_piece:
-		#	print("color is " +dest_piece.color)
 		# If piece is checker, delete the jumped piece
 		if selected_piece.piece_type == Globals.PIECE_TYPES.CHECKER:
 			var delta = to_move - old_pos
 			if abs(int(delta.x)) == 2 and abs(int(delta.y)) == 2:
 				var jumped_pos = Vector2(int((old_pos.x + to_move.x) / 2), int((old_pos.y + to_move.y) / 2))
 				var jumped_piece = board.get_piece(jumped_pos)
-				if jumped_piece != null and jumped_piece.color != selected_piece.color and jumped_piece.color != Globals.COLORS.TILE:
+				if jumped_piece != null and jumped_piece.color != selected_piece.color:
 					#if jumped_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
 						#ExplodingBishop.explode_range(jumped_piece, board)
 					#else:
@@ -310,26 +320,21 @@ func drop_piece():
 					
 		# Delete only if the target piece is of different color
 		if dest_piece != null and dest_piece.color != selected_piece.color:
-			if dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT or dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT2:
-				juggernaut_hit = true
-		if dest_piece != null and dest_piece.color != selected_piece.color:
-			if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP and dest_piece.piece_type != Globals.PIECE_TYPES.WEB:
-
+			if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
 				shield_king_killed = ExplodingBishop.explode_king(dest_piece, selected_piece, board)
 			if dest_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
 				piece_died = true
-			if selected_piece.piece_type == Globals.PIECE_TYPES.WARHORSE:
-				Warhorse.WarhorseCapture(board, selected_piece, dest_piece)
 			if not shield_king_killed:
 				board.on_capture(dest_piece, selected_piece, board, old_pos)
 				piece_captured = true
 			#selected_piece.move_position(selected_piece.board_position)
-			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER or selected_piece.piece_type == Globals.PIECE_TYPES.INFECTOR:
+			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER:
 				is_shooting = true
+				selected_piece.position = previous_position
 			if selected_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
 				if dest_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP:
 					is_jousting = true
-		if is_shooting == false and juggernaut_hit == false:
+		if is_shooting == false:
 			#print(selected_piece.board_position - to_move)
 			selected_piece.move_position(to_move)
 			if selected_piece.piece_type == Globals.PIECE_TYPES.STUN_KNIGHT:
@@ -339,7 +344,6 @@ func drop_piece():
 						piece.stun_counter = 2
 		if selected_piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
 			board.register_king(selected_piece.board_position, selected_piece.color)
-			print("drop_piece registered king")
 		if is_jousting:
 			var joust_pos = to_move + joust_direction(old_pos, to_move)
 			dest_piece = board.get_piece(joust_pos)
@@ -348,7 +352,7 @@ func drop_piece():
 				piece_captured = true
 				selected_piece.move_position(joust_pos)
 		if piece_died:
-			board.on_capture(selected_piece, dest_piece, board)
+			board.delete_piece(selected_piece)
 		
 		if real_game:
 			if !piece_captured:
@@ -374,17 +378,27 @@ func valid_move(from_pos, to_pos):
 		and
 		to_pos not in src_piece.get_threatened_positions()
 	):
-		
 		return false
 	
+#	if status == Globals.COLORS.WHITE && black_shield_king_alive:
+#		shield_king_position = board.black_king_pos
+#		shield_king = board_copy.get_piece(shield_king_position)
+#	elif status == Globals.COLORS.BLACK && white_shield_king_alive:
+#		shield_king_position = board.white_king_pos
+#		shield_king = board_copy.get_piece(shield_king_position)
+#	if src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP && shield_king != null:
+#		for position in shield_king.shield_king_protect_positions():
+#			print(position)
+#			if board_copy.get_piece(position) != null && position == to_pos:
+#				return false
+	
 	var dest_piece = board.get_piece(to_pos)
-#	print("dest piece is " +str(dest_piece.piece_type))
-	if dest_piece != null and ((board.piece_is_protected(dest_piece) && src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP) or dest_piece.piece_type == Globals.PIECE_TYPES.DUCK or (dest_piece.piece_type == Globals.PIECE_TYPES.WATER and src_piece.piece_type != Globals.PIECE_TYPES.DUCK) or dest_piece.piece_type == Globals.PIECE_TYPES.MAGMA_HIGH or dest_piece.piece_type == Globals.PIECE_TYPES.MAGMA_MED or dest_piece.piece_type == Globals.PIECE_TYPES.MAGMA_LOW or dest_piece.piece_type == Globals.PIECE_TYPES.BRICKS or dest_piece.piece_type == Globals.PIECE_TYPES.TREE): 
+	if dest_piece != null and ((board.piece_is_protected(dest_piece) && src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP) or dest_piece.piece_type == Globals.PIECE_TYPES.DUCK):
 		return false
 			
 	
 	var dst_piece = board_copy.get_piece(to_pos)
-	if dst_piece != null and dst_piece.piece_type != Globals.PIECE_TYPES.WATER and dst_piece.piece_type != Globals.PIECE_TYPES.MAGMA_HIGH and dst_piece.piece_type != Globals.PIECE_TYPES.MAGMA_MED and dst_piece.piece_type != Globals.PIECE_TYPES.MAGMA_LOW and dst_piece.piece_type != Globals.PIECE_TYPES.BRICKS and dst_piece.piece_type != Globals.PIECE_TYPES.TREE:
+	if dst_piece != null:
 		board_copy.delete_piece(dst_piece)
 	#src_piece.move_position(to_pos)
 	
@@ -548,28 +562,10 @@ func end_turn():
 	for piece in board.pieces:
 		if piece.stun_counter > 0:
 			piece.stun_counter -= 1
-			if piece.infect_counter > 0:
-				piece.infect_counter -= 1
-				if piece.infect_counter == 0:
-					if piece.color == Globals.COLORS.WHITE:
-						piece.color = Globals.COLORS.BLACK
-						piece.update_sprite()
-					elif piece.color == Globals.COLORS.BLACK:
-						piece.color = Globals.COLORS.WHITE
-						piece.update_sprite()
-		if piece.cool_counter > 0:
-			piece.cool_counter -= 1
-			if piece.cool_counter == 4:
-				piece.piece_type = Globals.PIECE_TYPES.MAGMA_MED
-				piece.update_sprite()
-			elif piece.cool_counter == 2:
-				piece.piece_type = Globals.PIECE_TYPES.MAGMA_LOW
-				piece.update_sprite()
-			elif piece.cool_counter == 0:
-				board.delete_piece(piece)
 	status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
 	
-	turn_indicator.texture = get_turn_indicator_tex(status)
+	if real_game:
+		turn_indicator.texture = get_turn_indicator_tex(status)
 	
 	if board.num_pieces() == previous_piece_total:
 		turns_since_last_capture += 1
@@ -688,8 +684,9 @@ func _process(delta):
 func reset_timer():
 	time_remaining = move_time
 	#timer_label.text = str(int(time_remaining))
-	timer_bar.value = move_time
-	move_timer.start(move_time)
+	if real_game:
+		timer_bar.value = move_time
+		move_timer.start(move_time)
 
 func _on_piece_moved(old_pos, new_pos):
 	board_repr[board.BOARD_WIDTH * new_pos[1] + new_pos[0]] = board_repr[board.BOARD_WIDTH * old_pos[1] + old_pos[0]]
