@@ -255,7 +255,7 @@ func get_move_list(piece : Piece, slice_num : int):
 		
 		var dest_piece : Piece = piece.board_handle.get_piece(pos)
 		
-		if dest_piece != null:
+		if dest_piece != null and dest_piece.color != Globals.COLORS.TILE:
 			score += piece_eval[dest_piece.piece_type] - piece_eval[piece.piece_type]
 		
 		moves.append({

@@ -43,3 +43,4 @@ func _on_continue_button_pressed() -> void:
 	get_tree().current_scene.queue_free()
 	get_tree().root.add_child(load_scene)
 	get_tree().current_scene = load_scene
+	SignalBus.emit_signal("change_map", load_scene.current_map)
