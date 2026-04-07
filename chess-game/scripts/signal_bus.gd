@@ -22,3 +22,6 @@ signal show_notification(phrase)
 
 # Used for Captured Pieces Display
 signal captured_piece(color, piece_type)
+
+# Used to set the map in the options/coin menu
+signal change_map(current_map)

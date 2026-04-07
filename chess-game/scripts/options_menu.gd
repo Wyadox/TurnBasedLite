@@ -28,6 +28,7 @@ func _on_continue_button_pressed() -> void:
 	if game_scene.player2_type == Globals.PLAYER_2_TYPE.HUMAN:
 		scene_tree.root.add_child(game_scene)
 		scene_tree.current_scene = game_scene
+		SignalBus.emit_signal("change_map",current_map)
 	else:
 		const COLOR_SCENE = preload("res://scenes/color_menu.tscn")
 		var color_scene = COLOR_SCENE.instantiate()

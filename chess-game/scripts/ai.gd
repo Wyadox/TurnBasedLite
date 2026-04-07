@@ -9,11 +9,12 @@ var piece_eval = {Globals.PIECE_TYPES.PAWN : 1, Globals.PIECE_TYPES.MITOSIS_PAWN
 				Globals.PIECE_TYPES.MAGMA_KNIGHT : 3.75, Globals.PIECE_TYPES.WARHORSE : 4, Globals.PIECE_TYPES.EXPLODING_BISHOP : 4, 
 				Globals.PIECE_TYPES.ACROBISHOP : 3.5, Globals.PIECE_TYPES.ARCHBISHOP : 4, Globals.PIECE_TYPES.JOUST_BISHOP : 3.5, 
 				Globals.PIECE_TYPES.SUMO : 5.5, Globals.PIECE_TYPES.WIZARD : 5.5, Globals.PIECE_TYPES.SHIELD_KING : 5, 
-				Globals.PIECE_TYPES.JUGGERNAUT : 3, Globals.PIECE_TYPES.DUCK : 1, Globals.PIECE_TYPES.GUARDIAN_ANGEL : 3}
+				Globals.PIECE_TYPES.JUGGERNAUT : 3, Globals.PIECE_TYPES.DUCK : 1, Globals.PIECE_TYPES.GUARDIAN_ANGEL : 3,
+				Globals.PIECE_TYPES.JUGGERNAUT1 : 3, Globals.PIECE_TYPES.JUGGERNAUT2 : 3}
 
 func board_evaluation(pieces : Array, noise : float) -> float:
-	var white_eval : float = 0
-	var black_eval : float = 0
+	var white_eval : float = 0.0
+	var black_eval : float = 0.0
 	
 	var multiplier : float
 	
@@ -42,7 +43,7 @@ func board_evaluation(pieces : Array, noise : float) -> float:
 			# Increment based on color of piece
 			if piece.color == Globals.COLORS.WHITE:
 				white_eval += (piece_eval[piece.piece_type] * multiplier) + eval_adjustment
-			else:
+			elif piece.color == Globals.COLORS.BLACK:
 				black_eval -= (piece_eval[piece.piece_type] * multiplier) + eval_adjustment
 	var result = white_eval + black_eval
 	return result + randf_range(-noise, noise)

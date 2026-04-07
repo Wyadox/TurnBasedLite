@@ -195,12 +195,12 @@ func _input(event):
 		for it in highlight_moves:
 			var color : Color
 			var dest_piece = board.get_piece(Vector2(it.x, it.y))
-			if dest_piece != null and !board.piece_is_protected(dest_piece):
+			if dest_piece != null and !board.piece_is_protected(dest_piece) and (dest_piece.color != Globals.COLORS.TILE or dest_piece.piece_type == Globals.PIECE_TYPES.WEB):
 				color = Color(1.0, 0.0, 0.0)
 				dest_piece.play_animation("cower")
 				print("cower played")
 				board.draw_border(it.x, it.y, color, false)
-			elif dest_piece == null or dest_piece.piece_type == Globals.PIECE_TYPES.WEB:
+			elif dest_piece == null:
 				color = Color(1.0, 1.0, 0.0)
 				board.draw_border(it.x, it.y, color, false)
 				
@@ -323,7 +323,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 		if dest_piece != null and dest_piece.color != selected_piece.color:
 			if dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT or dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT2:
 				juggernaut_hit = true
-			if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
+			#if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
 		if dest_piece != null and dest_piece.color != selected_piece.color: #and dest_piece.color != Globals.COLORS.TILE:
 			if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP and dest_piece.piece_type != Globals.PIECE_TYPES.WEB:
 				shield_king_killed = ExplodingBishop.explode_king(dest_piece, selected_piece, board)
@@ -347,7 +347,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 			if selected_piece.piece_type == Globals.PIECE_TYPES.STUN_KNIGHT:
 				for space in selected_piece.get_stun_positions():
 					var piece = board.get_piece(space)
-					if piece != null:
+					if piece != null and piece.color != Globals.COLORS.TILE:
 						piece.stun_counter = 2
 		if selected_piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
 			board.register_king(selected_piece.board_position, selected_piece.color)
@@ -359,7 +359,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 				piece_captured = true
 				selected_piece.move_position(joust_pos)
 		if piece_died:
-			board.on_capture(selected_piece, dest_piece, board)
+			board.on_capture(selected_piece, dest_piece, board, old_pos)
 		
 		if real_game:
 			if !piece_captured:
@@ -400,12 +400,12 @@ func valid_move(from_pos, to_pos):
 #				return false
 	
 	var dest_piece = board.get_piece(to_pos)
-	if dest_piece != null and ((board.piece_is_protected(dest_piece) && src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP) or dest_piece.piece_type == Globals.PIECE_TYPES.DUCK):
+	if dest_piece != null and ((board.piece_is_protected(dest_piece) && src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP) or dest_piece.piece_type == Globals.PIECE_TYPES.DUCK or (dest_piece.color == Globals.COLORS.TILE and dest_piece.piece_type != Globals.PIECE_TYPES.WEB)):
 		return false
 			
 	
 	var dst_piece = board_copy.get_piece(to_pos)
-	if dst_piece != null:
+	if dst_piece != null and (dst_piece.color != Globals.COLORS.TILE or dst_piece.piece_type == Globals.PIECE_TYPES.WEB):
 		board_copy.delete_piece(dst_piece)
 	#src_piece.move_position(to_pos)
 	
