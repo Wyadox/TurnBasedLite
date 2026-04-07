@@ -200,7 +200,7 @@ func _input(event):
 				dest_piece.play_animation("cower")
 				print("cower played")
 				board.draw_border(it.x, it.y, color, false)
-			elif dest_piece == null:
+			elif dest_piece == null or dest_piece.piece_type == Globals.PIECE_TYPES.WEB:
 				color = Color(1.0, 1.0, 0.0)
 				board.draw_border(it.x, it.y, color, false)
 				
@@ -296,6 +296,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 	#var jumped
 	#var jumped_piece_location
 	var shield_king_killed = false
+	var juggernaut_hit = false
 	
 	var piece_captured = false
 	
@@ -320,21 +321,27 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 					
 		# Delete only if the target piece is of different color
 		if dest_piece != null and dest_piece.color != selected_piece.color:
+			if dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT or dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT2:
+				juggernaut_hit = true
 			if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
+		if dest_piece != null and dest_piece.color != selected_piece.color: #and dest_piece.color != Globals.COLORS.TILE:
+			if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP and dest_piece.piece_type != Globals.PIECE_TYPES.WEB:
 				shield_king_killed = ExplodingBishop.explode_king(dest_piece, selected_piece, board)
 			if dest_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
 				piece_died = true
+			if selected_piece.piece_type == Globals.PIECE_TYPES.WARHORSE:
+				Warhorse.WarhorseCapture(board, selected_piece, dest_piece)
 			if not shield_king_killed:
 				board.on_capture(dest_piece, selected_piece, board, old_pos)
 				piece_captured = true
 			#selected_piece.move_position(selected_piece.board_position)
-			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER:
+			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER or selected_piece.piece_type == Globals.PIECE_TYPES.INFECTOR:
 				is_shooting = true
 				selected_piece.position = previous_position
 			if selected_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
 				if dest_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP:
 					is_jousting = true
-		if is_shooting == false:
+		if is_shooting == false and juggernaut_hit == false:
 			#print(selected_piece.board_position - to_move)
 			selected_piece.move_position(to_move)
 			if selected_piece.piece_type == Globals.PIECE_TYPES.STUN_KNIGHT:
@@ -352,7 +359,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 				piece_captured = true
 				selected_piece.move_position(joust_pos)
 		if piece_died:
-			board.delete_piece(selected_piece)
+			board.on_capture(selected_piece, dest_piece, board)
 		
 		if real_game:
 			if !piece_captured:
@@ -562,6 +569,25 @@ func end_turn():
 	for piece in board.pieces:
 		if piece.stun_counter > 0:
 			piece.stun_counter -= 1
+			if piece.infect_counter > 0:
+				piece.infect_counter -= 1
+				if piece.infect_counter == 0:
+					if piece.color == Globals.COLORS.WHITE:
+						piece.color = Globals.COLORS.BLACK
+						piece.update_sprite()
+					elif piece.color == Globals.COLORS.BLACK:
+						piece.color = Globals.COLORS.WHITE
+						piece.update_sprite()
+		if piece.cool_counter > 0:
+			piece.cool_counter -= 1
+			if piece.cool_counter == 4:
+				piece.piece_type = Globals.PIECE_TYPES.MAGMA_MED
+				piece.update_sprite()
+			elif piece.cool_counter == 2:
+				piece.piece_type = Globals.PIECE_TYPES.MAGMA_LOW
+				piece.update_sprite()
+			elif piece.cool_counter == 0:
+				board.delete_piece(piece)
 	status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
 	
 	if real_game:

@@ -19,6 +19,8 @@ const Y_OFFSET = 60
 @export var moved: bool;
 @export var promoted: bool;
 @export var stun_counter: int;
+@export var infect_counter: int;
+@export var cool_counter: int;
 
 @export var starting_rank : float
 
@@ -39,6 +41,7 @@ func init_piece(
 	promoted = false;
 	moved = false
 	stun_counter = 0
+	infect_counter = 0
 	starting_rank = board_pos.y
 	
 	# Juggernaut
@@ -145,6 +148,16 @@ func get_moveable_positions():
 			if promoted:
 				return promoted_checker_pos()
 			return pawn_move_pos()
+		Globals.PIECE_TYPES.JUGGERNAUT:
+			return king_threat_pos()
+		Globals.PIECE_TYPES.JUGGERNAUT2:
+			return king_threat_pos()
+		Globals.PIECE_TYPES.JUGGERNAUT1:
+			return king_threat_pos()
+		Globals.PIECE_TYPES.WARHORSE:
+			return knight_threat_pos()
+		Globals.PIECE_TYPES.INFECTOR:
+			return pawn_move_pos()
 		_: return []
 
 func get_threatened_positions():
@@ -176,6 +189,16 @@ func get_threatened_positions():
 			return positions
 		Globals.PIECE_TYPES.DUCK: return []
 		Globals.PIECE_TYPES.CHECKER: return checker_threat_pos(false)
+		Globals.PIECE_TYPES.JUGGERNAUT:
+			return king_threat_pos()
+		Globals.PIECE_TYPES.JUGGERNAUT2:
+			return king_threat_pos()
+		Globals.PIECE_TYPES.JUGGERNAUT1:
+			return king_threat_pos()
+		Globals.PIECE_TYPES.WARHORSE:
+			return knight_threat_pos()
+		Globals.PIECE_TYPES.INFECTOR:
+			return pawn_threat_pos()
 		_: return []
 
 
@@ -201,15 +224,22 @@ func pawn_threat_pos():
 
 func pawn_move_pos():
 	var positions = []
-	
 	var increments = PAWN_SPOT_INCREMENTS_MOVE if moved else PAWN_SPOT_INCREMENTS_MOVE_FIRST
 	for inc in increments:
 		var pos = board_handle.spot_search_threat(
 			color,
 			board_position[0], board_position[1],
 			inc[0], inc[1] if starting_rank < board_handle.BOARD_HEIGHT / 2.0 else -inc[1],
-			false, true
+			false, false
 		)
+		if pos != null:
+			var piece = board_handle.get_piece(pos)
+			if piece != null and piece.piece_type != Globals.PIECE_TYPES.WEB:
+				pos = board_handle.spot_search_threat(
+				color,
+				board_position[0], board_position[1],
+				inc[0], inc[1] if color == Globals.COLORS.BLACK else -inc[1],
+				false, true)
 		if pos != null:
 			positions.append(pos)
 		else:
@@ -311,15 +341,18 @@ func queen_threat_pos():
 			inc[0], inc[1]
 		)
 	return positions
-	
+
+const DUCK_MOVE_INCREMENTS = [[-6,0], [-5,0], [-4,0], [-3,0], [-2,0], [-1,0] ,[1,0], [2,0], [3,0], [4,0], [5,0], [6,0], [0,-6], [0,-5], [0,-4], [0,-3], [0,-2], [0,-1], [0,1], [0,2], [0,3], [0,4], [0,5], [0,6], [-6,-6], [-5,-5], [-4,-4], [-3,-3], [-2,-2], [-1,-1], [1,1], [2,2], [3,3], [4,4], [5,5], [6,6], [6,-6], [5,-5], [4,-4], [3,-3], [2,-2], [1,-1], [-1,1], [-2,2], [-3,3], [-4,4], [-5,5], [-6,6]];
 func duck_move_pos():
 	var positions = []
-	for inc in QUEEN_BEAM_INCREMENTS:
-		positions += board_handle.beam_search_threat(
+	for inc in DUCK_MOVE_INCREMENTS:
+		var pos = board_handle.spot_search_threat(
 			color,
 			board_position[0], board_position[1],
-			inc[0], inc[1]
+			inc[0], inc[1], false, true
 		)
+		if pos != null:
+			positions.append(pos)
 	return positions
 
 # King Moves
