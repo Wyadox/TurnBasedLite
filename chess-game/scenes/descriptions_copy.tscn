@@ -1,8 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://c6ulmyy15jdeu"]
+[gd_scene load_steps=4 format=3 uid="uid://bv1nq1ec8x4j0"]
 
-[ext_resource type="Script" uid="uid://bmuqsaqjhttix" path="res://scripts/descriptions2.gd" id="1_n6byr"]
-[ext_resource type="Texture2D" uid="uid://bhpcvx2c3573d" path="res://Assets/StunIndicator.png" id="2_5jbt0"]
-[ext_resource type="Texture2D" uid="uid://bw2ccfiqhwrtb" path="res://customPiecesSpritesheetNew.png" id="3_n6byr"]
+[ext_resource type="Script" uid="uid://bmuqsaqjhttix" path="res://scripts/descriptions2.gd" id="1_4u5n8"]
+[ext_resource type="Texture2D" uid="uid://bhpcvx2c3573d" path="res://Assets/StunIndicator.png" id="2_skqgb"]
+[ext_resource type="Texture2D" uid="uid://bw2ccfiqhwrtb" path="res://customPiecesSpritesheetNew.png" id="3_4bps3"]
 
 [node name="descriptions" type="Control"]
 custom_minimum_size = Vector2(580, 200)
@@ -10,7 +10,7 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 581.0
 offset_bottom = 200.0
-script = ExtResource("1_n6byr")
+script = ExtResource("1_4u5n8")
 
 [node name="Panel" type="Panel" parent="."]
 layout_mode = 1
@@ -53,7 +53,7 @@ offset_bottom = 79.0
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-texture = ExtResource("2_5jbt0")
+texture = ExtResource("2_skqgb")
 
 [node name="Label" type="Label" parent="Panel"]
 layout_mode = 0
@@ -80,7 +80,7 @@ text = "EXIT"
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 visible = false
-texture = ExtResource("3_n6byr")
+texture = ExtResource("3_4bps3")
 
 [connection signal="pressed" from="Panel/HBoxContainer/Left_Button" to="." method="_on_left_button_pressed"]
 [connection signal="pressed" from="Panel/HBoxContainer/Right_Button" to="." method="_on_right_button_pressed"]

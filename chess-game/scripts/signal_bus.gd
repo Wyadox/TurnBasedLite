@@ -19,3 +19,6 @@ signal loadout_button(loadout)
 signal setup_piece_by_type(piece_type)
 
 signal show_notification(phrase)
+
+# Used for Captured Pieces Display
+signal captured_piece(color, piece_type)

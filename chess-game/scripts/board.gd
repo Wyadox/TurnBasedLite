@@ -1,18 +1,19 @@
+class_name Board
 extends Node2D
 
-@export var pieces = [];
+@export var pieces = []
 @export var piece_scene = preload("res://scenes/Piece.tscn")
 @export var setup_script = preload("res://scripts/setup_phase_ui.gd")
 @export var status_indicator = preload("res://scenes/StatusIndicator.tscn")
 const TILE_MAP = preload("res://tileMap.png")
-
-
 
 @export var white_king_pos: Vector2 = Vector2(-2, -2)
 @export var black_king_pos: Vector2 = Vector2(-2, -2)
 
 var selected_pos: Vector2 = Vector2(-1, -1)
 var setup_done: bool = false
+
+var real_board : bool = true
 
 enum BOARD_TYPE {
 	STANDARD,
@@ -25,8 +26,8 @@ const CELL_SIZE = 120
 
 const BOARD_HEIGHT = 7
 const BOARD_WIDTH = 7
-const LOADOUT_X_OFFSET = 1
-const LOADOUT_Y_OFFSET = 5
+const GAME_X_OFFSET = 1
+const GAME_Y_OFFSET = 1
 
 var is_loadout_board : bool = false
 
@@ -56,7 +57,7 @@ func draw_board():
 	else:
 		for x in range(BOARD_WIDTH):
 			for y in range(2):
-				draw_cell(x + LOADOUT_X_OFFSET, y + LOADOUT_Y_OFFSET)
+				draw_cell(x, y)
 				
 func draw_river():
 	pass
@@ -116,8 +117,23 @@ func get_piece(pos: Vector2):
 	for piece in pieces:
 		if piece and piece.board_position == pos:
 			return piece
+			
+func play_sound(title : String):
+	var audioPlayer = AudioStreamPlayer2D.new()
+	add_child(audioPlayer)
+	
+	match title:
+		"move" : audioPlayer.stream = preload("res://Assets/Sounds/move-self.mp3")
+		"capture" : audioPlayer.stream = preload("res://Assets/Sounds/capture.mp3")
+		"promote" : audioPlayer.stream = preload("res://Assets/Sounds/promote.mp3")
+		"check" : audioPlayer.stream = preload("res://Assets/Sounds/move-check.mp3")
+		"castle" : audioPlayer.stream = preload("res://Assets/Sounds/castle.mp3")
+		"explosion" : audioPlayer.stream = preload("res://Assets/Sounds/explosion.wav")
+	
+	audioPlayer.play()
+	audioPlayer.finished.connect(audioPlayer.queue_free)
 
-func on_capture(dest_piece, selected_piece, board):
+func on_capture(dest_piece, selected_piece, board, previous_position):
 	if dest_piece.piece_type == Globals.PIECE_TYPES.WEB and selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER:
 		selected_piece.stun_counter = 3
 	if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
@@ -132,6 +148,17 @@ func on_capture(dest_piece, selected_piece, board):
 	elif dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT or dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT2:
 		Juggernaut.JuggernautUpdate(board, dest_piece)
 		return
+		
+	
+	if real_board:
+		print("dest_piece: ", dest_piece.board_position.x, " --- previous_position: ", previous_position.x)
+		if dest_piece.board_position.x > previous_position.x:
+			play_animation(dest_piece, "capture_right")
+		else:
+			play_animation(dest_piece, "capture_left")
+		play_sound("capture")
+		SignalBus.captured_piece.emit(dest_piece.color, dest_piece.piece_type)
+	
 	delete_piece(dest_piece)
 	
 func delete_piece(piece, force = false):
@@ -140,6 +167,19 @@ func delete_piece(piece, force = false):
 			var popped = pieces.pop_at(i)
 			popped.queue_free()
 			return
+
+#
+# LOOK HERE if there are issues with piece evaluation inconsistencies 
+#
+func play_animation(piece, anim_name : String) -> void:
+	if real_board:
+		var animation_piece = piece_scene.instantiate()
+		add_child(animation_piece)
+		animation_piece.init_piece(piece.piece_type, piece.color, piece.board_position, self)
+		animation_piece.global_position = piece.global_position
+		animation_piece.play_animation(anim_name)
+		await animation_piece.animation_player.animation_finished
+		animation_piece.queue_free()
 			
 func wipe_pieces(if_white = true, if_black = true):
 	var pieces_to_remove = []
@@ -274,17 +314,12 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 		print("Select a valid position")
 		SignalBus.emit_signal("refund_piece", piece_type)
 		return
-	
-	if is_loadout_board:
-		selected_pos = Vector2(selected_pos.x - 1, selected_pos.y)
+	print("Spawn Pos: ", selected_pos)
 	
 	if !is_within_bounds(selected_pos):
 		print("Select an inbounds position")
 		SignalBus.emit_signal("refund_piece", piece_type)
 		return
-		
-	if is_loadout_board:
-		selected_pos = Vector2(selected_pos.x + 1, selected_pos.y)
 	
 	if setup_done == true:
 		print("Setup phase is over")
@@ -354,11 +389,39 @@ func draw_border(x, y, color, clear):
 	add_child(border_panel)
 	if !clear:
 		borders.push_back(border_panel)
-	
+
 func clear_borders():
 	for it in borders:
 		it.queue_free()
 	borders.clear()
+
+var selection_panel
+
+func draw_selection_box(from : Vector2, to : Vector2, color):
+	selection_panel = Panel.new()
+	var x = abs(to.x - from.x)
+	var y = abs(to.y - from.y)
+	selection_panel.size = Vector2(CELL_SIZE * x, CELL_SIZE * y)
+	selection_panel.position = Vector2(
+		from.x * CELL_SIZE,
+		from.y * CELL_SIZE
+	)
+	selection_panel.z_index = 50
+	
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color.TRANSPARENT
+	style.border_color = color
+	style.border_width_left = 4
+	style.border_width_top = 4
+	style.border_width_right = 4
+	style.border_width_bottom = 4
+	selection_panel.add_theme_stylebox_override("panel", style)
+	
+	add_child(selection_panel)
+	
+func clear_selection_box():
+	if selection_panel:
+		selection_panel.queue_free()
 	
 var indicators = []
 	
@@ -430,12 +493,13 @@ func num_pieces():
 
 
 func _on_game_init_ai(color) -> void:
+	print("reached init_ai")
 	var piecesToSpawn = []
 	piecesToSpawn = setup_script.determineAiPieces(color)
 	
 	var i = 0
 	for it in piecesToSpawn.size() / 2:
-		create_piece(piecesToSpawn[i], color, piecesToSpawn[i + 1])
+		create_piece(piecesToSpawn[i], color, piecesToSpawn[i + 1] + Vector2(0, 0 if color == Globals.COLORS.BLACK else -5))
 		i += 2
 		
 	var colorSet
