@@ -7,6 +7,12 @@ extends Node2D
 @export var status_indicator = preload("res://scenes/StatusIndicator.tscn")
 const TILE_MAP = preload("res://tileMap.png")
 
+var bridge_left: Texture2D = preload("res://Assets/bridgeLeft.png")
+var bridge_mid: Texture2D = preload("res://Assets/bridgeMid.png")
+var bridge_right: Texture2D = preload("res://Assets/bridgeRight.png")
+var bridge_full: Texture2D = preload("res://Assets/bridgeFull.png")
+
+
 @export var white_king_pos: Vector2 = Vector2(-2, -2)
 @export var black_king_pos: Vector2 = Vector2(-2, -2)
 
@@ -83,15 +89,22 @@ func _on_set_board_type(current_map):
 			draw_wall()
 				
 func draw_river():
+	draw_bridge(bridge_right, 0, 2)
+	draw_bridge(bridge_right, 0, 3)
+	draw_bridge(bridge_right, 0, 4)
 	#create_piece(Globals.PIECE_TYPES.BRIDGE_RIGHT, Globals.COLORS.TILE, Vector2(0,2))
 	#create_piece(Globals.PIECE_TYPES.BRIDGE_RIGHT, Globals.COLORS.TILE, Vector2(0,3))
 	#create_piece(Globals.PIECE_TYPES.BRIDGE_RIGHT, Globals.COLORS.TILE, Vector2(0,4))
 	create_piece(Globals.PIECE_TYPES.WATER, Globals.COLORS.TILE, Vector2(1,2))
+	draw_bridge(bridge_mid, 1, 3)
 	#create_piece(Globals.PIECE_TYPES.BRIDGE_MID, Globals.COLORS.TILE, Vector2(1,3))
 	create_piece(Globals.PIECE_TYPES.WATER, Globals.COLORS.TILE, Vector2(1,4))
 	create_piece(Globals.PIECE_TYPES.WATER, Globals.COLORS.TILE, Vector2(2,2))
 	create_piece(Globals.PIECE_TYPES.WATER, Globals.COLORS.TILE, Vector2(2,3))
 	create_piece(Globals.PIECE_TYPES.WATER, Globals.COLORS.TILE, Vector2(2,4))
+	draw_bridge(bridge_full, 3, 2)
+	draw_bridge(bridge_full, 3, 3)
+	draw_bridge(bridge_full, 3, 4)
 	#create_piece(Globals.PIECE_TYPES.BRIDGE_FULL, Globals.COLORS.TILE, Vector2(3,2))
 	#create_piece(Globals.PIECE_TYPES.BRIDGE_FULL, Globals.COLORS.TILE, Vector2(3,3))
 	#create_piece(Globals.PIECE_TYPES.BRIDGE_FULL, Globals.COLORS.TILE, Vector2(3,4))
@@ -99,8 +112,12 @@ func draw_river():
 	create_piece(Globals.PIECE_TYPES.WATER, Globals.COLORS.TILE, Vector2(4,4))
 	create_piece(Globals.PIECE_TYPES.WATER, Globals.COLORS.TILE, Vector2(4,2))
 	create_piece(Globals.PIECE_TYPES.WATER, Globals.COLORS.TILE, Vector2(5,2))
+	draw_bridge(bridge_mid, 5, 3)
 	#create_piece(Globals.PIECE_TYPES.BRIDGE_MID, Globals.COLORS.TILE, Vector2(5,3))
 	create_piece(Globals.PIECE_TYPES.WATER, Globals.COLORS.TILE, Vector2(5,4))
+	draw_bridge(bridge_left, 6, 2)
+	draw_bridge(bridge_left, 6, 3)
+	draw_bridge(bridge_left, 6, 4)
 	#create_piece(Globals.PIECE_TYPES.BRIDGE_LEFT, Globals.COLORS.TILE, Vector2(6,2))
 	#create_piece(Globals.PIECE_TYPES.BRIDGE_LEFT, Globals.COLORS.TILE, Vector2(6,3))
 	#create_piece(Globals.PIECE_TYPES.BRIDGE_LEFT, Globals.COLORS.TILE, Vector2(6,4))
@@ -173,6 +190,17 @@ func draw_cell(x, y):
 	rect.z_index = -100
 	add_child(rect)
 
+func draw_bridge(texture, x, y):
+	var rect = TextureRect.new()
+	rect.texture = texture
+	rect.size = Vector2(CELL_SIZE, CELL_SIZE)
+	rect.position = Vector2(
+		x * CELL_SIZE,
+		y * CELL_SIZE
+	)
+	rect.z_index = -100
+	add_child(rect)
+	
 func draw_water(x,y):
 	var rect = ColorRect.new()
 	rect.size = Vector2(CELL_SIZE, CELL_SIZE)
@@ -208,6 +236,8 @@ func play_sound(title : String):
 	audioPlayer.finished.connect(audioPlayer.queue_free)
 
 func on_capture(dest_piece, selected_piece, board, previous_position):
+	if selected_piece == null:
+		return
 	if dest_piece.piece_type == Globals.PIECE_TYPES.WEB and selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER:
 		selected_piece.stun_counter = 3
 	if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:

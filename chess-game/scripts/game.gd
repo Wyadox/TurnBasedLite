@@ -310,7 +310,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 			if abs(int(delta.x)) == 2 and abs(int(delta.y)) == 2:
 				var jumped_pos = Vector2(int((old_pos.x + to_move.x) / 2), int((old_pos.y + to_move.y) / 2))
 				var jumped_piece = board.get_piece(jumped_pos)
-				if jumped_piece != null and jumped_piece.color != selected_piece.color:
+				if jumped_piece != null and jumped_piece.color != selected_piece.color and jumped_piece.color != Globals.COLORS.TILE and jumped_piece.piece_type != Globals.PIECE_TYPES.DUCK:
 					#if jumped_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
 						#ExplodingBishop.explode_range(jumped_piece, board)
 					#else:
@@ -323,11 +323,12 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 		if dest_piece != null and dest_piece.color != selected_piece.color:
 			if dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT or dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT2:
 				juggernaut_hit = true
+				selected_piece.position = previous_position
 			#if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
 		if dest_piece != null and dest_piece.color != selected_piece.color: #and dest_piece.color != Globals.COLORS.TILE:
 			if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP and dest_piece.piece_type != Globals.PIECE_TYPES.WEB:
 				shield_king_killed = ExplodingBishop.explode_king(dest_piece, selected_piece, board)
-			if dest_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
+			if dest_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP and selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER:
 				piece_died = true
 			if selected_piece.piece_type == Globals.PIECE_TYPES.WARHORSE:
 				Warhorse.WarhorseCapture(board, selected_piece, dest_piece)
@@ -339,7 +340,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 				is_shooting = true
 				selected_piece.position = previous_position
 			if selected_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
-				if dest_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP:
+				if dest_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP and dest_piece.piece_type != Globals.PIECE_TYPES.JOUST_BISHOP:
 					is_jousting = true
 		if is_shooting == false and juggernaut_hit == false:
 			#print(selected_piece.board_position - to_move)
@@ -351,6 +352,8 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 						piece.stun_counter = 2
 		if selected_piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
 			board.register_king(selected_piece.board_position, selected_piece.color)
+		if piece_died:
+			board.on_capture(selected_piece, dest_piece, board, old_pos)
 		if is_jousting:
 			var joust_pos = to_move + joust_direction(old_pos, to_move)
 			dest_piece = board.get_piece(joust_pos)
@@ -358,8 +361,6 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 				board.on_capture(dest_piece, selected_piece, board, old_pos)
 				piece_captured = true
 				selected_piece.move_position(joust_pos)
-		if piece_died:
-			board.on_capture(selected_piece, dest_piece, board, old_pos)
 		
 		if real_game:
 			if !piece_captured:
@@ -479,6 +480,7 @@ func player2_move():
 			return
 		
 		selected_piece = real_piece
+		print("selected piece is :" +str(selected_piece.piece_type))
 		previous_position = selected_piece.board_position
 		drop_piece(false, minimax_result["pos"])
 		
