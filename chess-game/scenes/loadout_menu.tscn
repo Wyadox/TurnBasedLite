@@ -64,7 +64,7 @@ layout_mode = 1
 offset_left = 813.0
 offset_top = 137.0
 offset_right = 813.00006
-offset_bottom = 136.99998
+offset_bottom = 65.67998
 
 [node name="notification" parent="." instance=ExtResource("4_p557w")]
 layout_mode = 1
