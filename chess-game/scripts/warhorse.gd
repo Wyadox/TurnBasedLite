@@ -8,5 +8,5 @@ func WarhorseCapture(board, warhorse, dest_piece):
 		print(pos)
 		var piece = board.get_piece(pos)
 		if piece != null:
-			board.on_capture(piece, warhorse, board)
+			board.on_capture(piece, warhorse, board, warhorse.board_position)
 	warhorse.stun_counter = 3
