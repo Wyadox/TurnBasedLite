@@ -25,6 +25,13 @@ enum PIECE_BASE {
 	KING,
 	QUEEN
 }
+
+enum BORDER_STYLE {
+	BOX,
+	CIRCLE,
+	TARGET
+}
+
 #pieces
 enum PIECE_TYPES {
 	KNIGHT,

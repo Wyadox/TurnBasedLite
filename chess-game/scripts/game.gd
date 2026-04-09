@@ -186,12 +186,12 @@ func _input(event):
 			var color : Color
 			var dest_piece = board.get_piece(Vector2(it.x, it.y))
 			if dest_piece != null and !board.piece_is_protected(dest_piece) and (dest_piece.color != Globals.COLORS.TILE or dest_piece.piece_type == Globals.PIECE_TYPES.WEB):
-				color = Color(1.0, 0.0, 0.0)
+				color = Color(1.0, 0.0, 0.0, 0.3)
 				dest_piece.play_animation("cower")
-				board.draw_border(it.x, it.y, color, false)
+				board.draw_border(it.x, it.y, color, false, Globals.BORDER_STYLE.TARGET)
 			elif dest_piece == null:
-				color = Color(1.0, 1.0, 0.0)
-				board.draw_border(it.x, it.y, color, false)
+				color = Color(1.0, 1.0, 0.0, 0.3)
+				board.draw_border(it.x, it.y, color, false, Globals.BORDER_STYLE.CIRCLE)
 				
 	elif event is InputEventMouseMotion and is_dragging:
 		var piece_mouse_pos = get_global_mouse_position() - board.global_position
