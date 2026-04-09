@@ -92,7 +92,7 @@ func move_position(to_move: Vector2):
 		board_handle.register_king(board_position, color)
 	
 	# Promotion for pawns to KING BEHAVIOR
-	if (piece_type == Globals.PIECE_TYPES.PAWN or piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN or piece_type == Globals.PIECE_TYPES.WORM or piece_type == Globals.PIECE_TYPES.CHECKER) and (
+	if (piece_type == Globals.PIECE_TYPES.PAWN or piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN or piece_type == Globals.PIECE_TYPES.WORM or piece_type == Globals.PIECE_TYPES.CHECKER or piece_type == Globals.PIECE_TYPES.INFECTOR) and (
 		(starting_rank < board_handle.BOARD_HEIGHT / 2.0 and to_move[1] == board_handle.BOARD_HEIGHT - 1) or 
 		(starting_rank > board_handle.BOARD_HEIGHT / 2.0 and to_move[1] == 0)
 	):
@@ -157,6 +157,8 @@ func get_moveable_positions():
 		Globals.PIECE_TYPES.WARHORSE:
 			return knight_threat_pos()
 		Globals.PIECE_TYPES.INFECTOR:
+			if promoted:
+				return king_threat_pos()
 			return pawn_move_pos()
 		_: return []
 
@@ -198,6 +200,8 @@ func get_threatened_positions():
 		Globals.PIECE_TYPES.WARHORSE:
 			return knight_threat_pos()
 		Globals.PIECE_TYPES.INFECTOR:
+			if promoted == true:
+				return king_threat_pos()
 			return pawn_threat_pos()
 		_: return []
 

@@ -450,6 +450,7 @@ func player2_move():
 			push_error("Minimax failed to find a move")
 			evaluate_end_game()
 			return
+		print("PIECE TYPE: ", Globals.PIECE_TYPES.keys()[new_piece.piece_type])
 		
 		var real_piece = board.get_piece(new_piece.board_position)
 		if real_piece == null:

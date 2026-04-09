@@ -135,102 +135,48 @@ func minimax(pieces : Array, depth : int, alpha : float, beta : float, maximizin
 		
 	var snapshot = snapshot_board(pieces)
 		
-	#if maximizingPlayer:
-		#maximum_eval = -INF
-		#for piece in pieces.duplicate():
-			#if piece and piece.color != Globals.COLORS.WHITE:
-				#continue
-			#for move in get_move_list(piece, slice_num):
-				#simulate_move(pieces, piece, move["pos"])
-				#
-				#new_eval = minimax(pieces, depth - 1, alpha, beta, false, noise, slice_num)
-				#if new_eval["eval"] > maximum_eval:
-					#maximum_eval = new_eval["eval"]
-					#best_piece = piece
-					#best_move = move["pos"]
-				#alpha = max(alpha, new_eval["eval"])
-				#
-				#restore_board(snapshot, pieces)
-				#
-				#if beta <= alpha:
-					#break
-		#return {"ref" : best_piece, "pos" : best_move, "eval" : maximum_eval}
 	if maximizingPlayer:
 		maximum_eval = -INF
-		var all_moves = []
 		for piece in pieces.duplicate():
 			if piece and piece.color != Globals.COLORS.WHITE:
 				continue
 			for move in get_move_list(piece, slice_num):
-				all_moves.append({"piece": piece, "move": move})
-		
-		# Set a default from the first available move so best_piece is never null
-		if all_moves.size() > 0:
-			best_piece = all_moves[0]["piece"]
-			best_move = all_moves[0]["move"]["pos"]
-			
-		for entry in all_moves:
-			var piece = entry["piece"]
-			var move = entry["move"]
-			simulate_move(pieces, piece, move["pos"])
-			new_eval = minimax(pieces, depth - 1, alpha, beta, false, noise, slice_num)
-			if new_eval["eval"] > maximum_eval:
-				maximum_eval = new_eval["eval"]
-				best_piece = piece
-				best_move = move["pos"]
-			alpha = max(alpha, new_eval["eval"])
-			restore_board(snapshot, pieces)
-			if beta <= alpha:
-				break
-		return {"ref": best_piece, "pos": best_move, "eval": maximum_eval}
-	#else:
-		#minimum_eval = INF
-		#for piece in pieces.duplicate():
-			#if piece and piece.color != Globals.COLORS.BLACK:
-				#continue
-			#for move in get_move_list(piece, slice_num):
-				#simulate_move(pieces, piece, move["pos"])
-				#
-				#new_eval = minimax(pieces, depth - 1, alpha, beta, true, noise, slice_num)
-				#if new_eval["eval"] < minimum_eval:
-					#minimum_eval = new_eval["eval"]
-					#best_piece = piece
-					#best_move = move["pos"]
-				#beta = min(beta, new_eval["eval"])
-				#
-				#restore_board(snapshot, pieces)
-				#
-				#if beta <= alpha:
-					#break
-		#return {"ref" : best_piece, "pos" : best_move, "eval" : minimum_eval}
+				if !simulate_move(pieces, piece, move["pos"]):
+					continue
+				
+				new_eval = minimax(pieces, depth - 1, alpha, beta, false, noise, slice_num)
+				if new_eval["eval"] > maximum_eval:
+					maximum_eval = new_eval["eval"]
+					best_piece = piece
+					best_move = move["pos"]
+				alpha = max(alpha, new_eval["eval"])
+				
+				restore_board(snapshot, pieces)
+				
+				if beta <= alpha:
+					break
+		return {"ref" : best_piece, "pos" : best_move, "eval" : maximum_eval}
 	else:
 		minimum_eval = INF
-		var all_moves = []
 		for piece in pieces.duplicate():
 			if piece and piece.color != Globals.COLORS.BLACK:
 				continue
 			for move in get_move_list(piece, slice_num):
-				all_moves.append({"piece": piece, "move": move})
-		
-		# Set a default from the first available move so best_piece is never null
-		if all_moves.size() > 0:
-			best_piece = all_moves[0]["piece"]
-			best_move = all_moves[0]["move"]["pos"]
-			
-		for entry in all_moves:
-			var piece = entry["piece"]
-			var move = entry["move"]
-			simulate_move(pieces, piece, move["pos"])
-			new_eval = minimax(pieces, depth - 1, alpha, beta, true, noise, slice_num)
-			if new_eval["eval"] < minimum_eval:
-				minimum_eval = new_eval["eval"]
-				best_piece = piece
-				best_move = move["pos"]
-			alpha = max(alpha, new_eval["eval"])
-			restore_board(snapshot, pieces)
-			if beta <= alpha:
-				break
-		return {"ref": best_piece, "pos": best_move, "eval": minimum_eval}
+				if !simulate_move(pieces, piece, move["pos"]):
+					continue
+				
+				new_eval = minimax(pieces, depth - 1, alpha, beta, true, noise, slice_num)
+				if new_eval["eval"] < minimum_eval:
+					minimum_eval = new_eval["eval"]
+					best_piece = piece
+					best_move = move["pos"]
+				beta = min(beta, new_eval["eval"])
+				
+				restore_board(snapshot, pieces)
+				
+				if beta <= alpha:
+					break
+		return {"ref" : best_piece, "pos" : best_move, "eval" : minimum_eval}
 
 func get_move_list(piece : Piece, slice_num : int):
 	var moves = []
@@ -294,14 +240,14 @@ func restore_board(snapshot : Array, pieces : Array):
 		
 	board.pieces = pieces
 
-func simulate_move(pieces, piece, pos):
+func simulate_move(pieces, piece, pos) -> bool:
 	board.pieces = pieces
 	game_scene.board = board
 	game_scene.board.pieces = pieces
 	
 	game_scene.selected_piece = piece
 	game_scene.previous_position = piece.board_position
-	game_scene.drop_piece(false, pos)
+	return game_scene.drop_piece(false, pos)
 
 func eval_positionAdjustment(piece) -> float:
 	match piece.piece_type:
