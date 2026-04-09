@@ -97,7 +97,8 @@ func move_position(to_move: Vector2):
 		(starting_rank > board_handle.BOARD_HEIGHT / 2.0 and to_move[1] == 0)
 	):
 		promoted = true
-		
+	
+	SignalBus.previous_move.emit(piece_type, color, old_pos, board_position)
 
 const PIECE_SCENE = preload("res://scenes/Piece.tscn")
 
