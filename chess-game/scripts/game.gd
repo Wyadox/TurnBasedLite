@@ -345,6 +345,10 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 				board.on_capture(dest_piece, selected_piece, board, old_pos)
 				piece_captured = true
 				selected_piece.move_position(joust_pos)
+				
+		if real_game and selected_piece:
+			SignalBus.previous_move.emit(selected_piece.piece_type, selected_piece.color, old_pos, to_move)
+				
 		if piece_died:
 			board.on_capture(selected_piece, dest_piece, board, old_pos)
 		
