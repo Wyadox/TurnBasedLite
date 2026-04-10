@@ -1,0 +1,5 @@
+[gd_resource type="StyleBoxFlat" format=3 uid="uid://bwf14tptgoaln"]
+
+[resource]
+bg_color = Color(0.050399993, 0.24, 0.15783997, 0.7294118)
+border_color = Color(0.22, 0.22, 0.22, 1)

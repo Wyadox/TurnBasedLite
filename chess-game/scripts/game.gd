@@ -38,6 +38,13 @@ var failed_to_move : bool = false
 @onready var move_timer : Timer = $MoveTimer
 @onready var timer_label : Label = $TimerLabel
 @onready var timer_bar : TextureProgressBar = $MoveTimerBar
+
+@onready var move_clock: Control = $move_clock
+@onready var move_clock_2: Control = $move_clock2
+
+const MOVE_CLOCK_OFFSET : float = 300.0
+
+
 var move_time : float
 var time_remaining : float
 
@@ -80,6 +87,7 @@ func _ready():
 	SignalBus.trojan_spawned.connect(_on_trojan_spawned)
 	SignalBus.mitosis_spawned.connect(_on_mitosis_spawned)
 	SignalBus.show_notification.connect(show_notification)
+	SignalBus.move_clock_expired.connect(process_expired_clock)
 	
 	difficulty_dict = difficulty_settings()
 	
@@ -93,27 +101,46 @@ func _ready():
 		LOWER_COLOR = Globals.COLORS.BLACK
 		UPPER_COLOR = Globals.COLORS.WHITE
 		
+		move_clock.global_position.y -= MOVE_CLOCK_OFFSET
+		move_clock_2.global_position.y += MOVE_CLOCK_OFFSET
+		
 		board._on_game_init_ai(Globals.COLORS.WHITE)
+	else:
+		move_clock.global_position.y += MOVE_CLOCK_OFFSET
+		move_clock_2.global_position.y -= MOVE_CLOCK_OFFSET
 
+#func difficulty_settings() -> Dictionary:
+	#match difficulty:
+		#Globals.DIFFICULTY.EASY:
+			#move_time = 21.0
+			#time_remaining = 21.0
+			#timer_bar.max_value = move_time
+			#move_timer.wait_time = move_time
+			#return {"depth" : 1, "noise" : 2.0, "slice_num" : 8}
+		#Globals.DIFFICULTY.NORMAL:
+			#move_time = 14.0
+			#time_remaining = 14.0
+			#timer_bar.max_value = move_time
+			#move_timer.wait_time = move_time
+			#return {"depth" : 2, "noise" : 1.0, "slice_num" : 4}
+		#Globals.DIFFICULTY.HARD:
+			#move_time = 7.0
+			#time_remaining = 7.0
+			#timer_bar.max_value = move_time
+			#move_timer.wait_time = move_time
+			#return {"depth" : 2, "noise" : 0.0, "slice_num" : 2}
+	#return {"depth" : 3, "noise" : 0.0, "slice_num" : 3}
+	
 func difficulty_settings() -> Dictionary:
 	match difficulty:
 		Globals.DIFFICULTY.EASY:
-			move_time = 21.0
-			time_remaining = 21.0
-			timer_bar.max_value = move_time
-			move_timer.wait_time = move_time
+			set_clock_durations(5.0)
 			return {"depth" : 1, "noise" : 2.0, "slice_num" : 8}
 		Globals.DIFFICULTY.NORMAL:
-			move_time = 14.0
-			time_remaining = 14.0
-			timer_bar.max_value = move_time
-			move_timer.wait_time = move_time
+			set_clock_durations(3.5)
 			return {"depth" : 2, "noise" : 1.0, "slice_num" : 4}
 		Globals.DIFFICULTY.HARD:
-			move_time = 7.0
-			time_remaining = 7.0
-			timer_bar.max_value = move_time
-			move_timer.wait_time = move_time
+			set_clock_durations(2.0)
 			return {"depth" : 2, "noise" : 0.0, "slice_num" : 2}
 	return {"depth" : 3, "noise" : 0.0, "slice_num" : 3}
 
@@ -359,7 +386,6 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 			if !checker_captured:
 				end_turn()
 			else:
-				reset_timer()
 				board.update_indicators()
 		return true
 	return false
@@ -493,7 +519,7 @@ func evaluate_end_game():
 	var moves = get_valid_moves()
 	if len(moves) == 0:
 		game_over = true
-		move_timer.stop()
+		stop_clocks()
 		set_win(Globals.PLAYER.TWO if status == player_color else Globals.PLAYER.ONE)
 		return true
 		
@@ -514,13 +540,13 @@ func evaluate_end_game():
 				
 	if white_piece_count == 1 and white_duck or black_piece_count == 1 and black_duck:
 		game_over = true
-		move_timer.stop()
+		stop_clocks()
 		set_win(Globals.PLAYER.TWO if status == player_color else Globals.PLAYER.ONE)
 		return true
 		
 	if turns_since_last_capture > MAX_TURNS_WITHOUT_CAPTURE:
 		game_over = true
-		move_timer.stop()
+		stop_clocks()
 		set_win(null)
 		return true
 		
@@ -573,6 +599,15 @@ func end_turn():
 				board.delete_piece(piece)
 	status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
 	
+	if status == Globals.COLORS.WHITE:
+		move_clock.start_turn()
+		move_clock_2.end_turn()
+		print("FLIP")
+	else:
+		move_clock.end_turn()
+		move_clock_2.start_turn()
+		print("FLIP2")
+	
 	if real_game:
 		turn_indicator.texture = get_turn_indicator_tex(status)
 	
@@ -584,7 +619,6 @@ func end_turn():
 	
 	clear_piece_animations()
 	check_for_shield_king()
-	reset_timer()
 	board.update_indicators()
 	update_eval()
 	
@@ -620,15 +654,16 @@ func _on_board_setup_complete() -> void:
 	loadout_ui.hide()
 	timer_bar.show()
 	status = Globals.COLORS.WHITE
-	if ai_color == Globals.COLORS.WHITE:
-		player2_move()
 	init_pieces()
-	reset_timer()
 	board.update_indicators()
 	turn_indicator.texture = get_turn_indicator_tex(status)
 	turn_indicator.show()
 	update_eval()
 	
+	move_clock.start_turn()
+	
+	if ai_color == Globals.COLORS.WHITE:
+		player2_move()
 	
 	for piece in board.pieces:
 		board_repr[board.BOARD_WIDTH * piece.board_position[1] + piece.board_position[0]] = piece
@@ -655,41 +690,6 @@ func init_pieces():
 		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
 			board.register_king(piece.board_position, piece.color)
 
-
-
-# Timer code
-
-func _on_move_timer_timeout() -> void:
-	print("ran out of time")
-	
-	if selected_piece and setup_complete:
-		selected_piece.position = previous_position
-		selected_piece.z_index = 0
-		selected_piece = null
-		is_dragging = false
-		board.clear_borders()
-		print("dropped piece INPUT")
-		
-	#move_from_timeout(player)
-	
-	end_turn()
-	player2_move()
-
-func _process(delta):
-	if move_timer.is_stopped():
-		return
-	
-	time_remaining -= delta
-	#timer_label.text = str(max(0, int(time_remaining)))
-	timer_bar.value = time_remaining
-	
-func reset_timer():
-	time_remaining = move_time
-	#timer_label.text = str(int(time_remaining))
-	if real_game:
-		timer_bar.value = move_time
-		move_timer.start(move_time)
-
 func _on_piece_moved(old_pos, new_pos):
 	board_repr[board.BOARD_WIDTH * new_pos[1] + new_pos[0]] = board_repr[board.BOARD_WIDTH * old_pos[1] + old_pos[0]]
 	board_repr[board.BOARD_WIDTH * old_pos[1] + old_pos[0]] = null
@@ -700,19 +700,18 @@ func _on_trojan_spawned(pos):
 func _on_mitosis_spawned(pos):
 	board_repr[board.BOARD_WIDTH * position[1] + position[0]] = board.get_piece(pos)
 
-#func explode_range(dest_piece, selected_piece):
-	#spawn_explosion(dest_piece.position)
-	#for position in dest_piece.bishop_explode_positions():
-		#var piece_around = board.get_piece(position)
-		#if piece_around != null && piece_around.piece_type == Globals.PIECE_TYPES.SHIELD_KING && selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
-			#spawn_explosion(piece_around.position)
-			#board.delete_piece(piece_around)
-			#board.delete_piece(selected_piece)
-			#return
-	#for position in dest_piece.bishop_explode_positions():
-		#var piece_around = board.get_piece(position)
-		#if piece_around != null && piece_around.piece_type != Globals.PIECE_TYPES.DUCK:
-			#spawn_explosion(position)
-			#board.delete_piece(piece_around)
-		#if selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER:
-				#board.delete_piece(selected_piece)
+# Timer code
+
+func set_clock_durations(minutes : float) -> void:
+	move_clock.set_duration(minutes)
+	move_clock_2.set_duration(minutes)
+
+func stop_clocks():
+	move_clock.end_turn()
+	move_clock_2.end_turn()
+
+func process_expired_clock():
+	game_over = true
+	stop_clocks()
+	set_win(Globals.PLAYER.TWO if status == player_color else Globals.PLAYER.ONE)
+	return true

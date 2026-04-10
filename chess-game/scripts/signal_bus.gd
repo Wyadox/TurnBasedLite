@@ -57,3 +57,7 @@ signal previous_move(piece_type, color, old_pos, new_pos)
 # Used for Move History display
 @warning_ignore("unused_signal")
 signal archive_move(piece_type, color, old_pos, new_pos)
+
+# Used for when Move Clock runs out 
+@warning_ignore("unused_signal")
+signal move_clock_expired()
