@@ -398,6 +398,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 				end_turn()
 			else:
 				board.update_indicators()
+				player2_move()
 		return true
 	return false
 

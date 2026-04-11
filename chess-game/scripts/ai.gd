@@ -2,6 +2,13 @@ extends Node2D
 
 const POSITION_EVAL_INCREMENT : float = 0.05
 const THREAT_EVAL_INCREMENT : float = 0.25
+const HEALTH_EVAL_INCREMENT : float = 0.2
+
+const STUN_MULTIPLIER : float = 0.9
+const PROMOTED_MULTIPLIER : float = 1.05
+const INFECT_MULTIPLIER : float = 0.5
+const DANGER_MULTIPLIER : float = 2.0
+const THREATEN_MULTIPLIER : float = 1.5
 
 var piece_eval = {Globals.PIECE_TYPES.PAWN : 1, Globals.PIECE_TYPES.MITOSIS_PAWN : 1.25, Globals.PIECE_TYPES.WORM : 1.5, 
 				Globals.PIECE_TYPES.CHECKER : 1.5, Globals.PIECE_TYPES.INFECTOR : 2, Globals.PIECE_TYPES.DUPLICATOR : 2, 
@@ -32,11 +39,13 @@ func board_evaluation(pieces : Array, noise : float) -> float:
 			
 			# Status Multipliers 
 			if piece.stun_counter > 0:
-					multiplier *= 0.9
+				multiplier *= STUN_MULTIPLIER
+			if piece.infect_counter > 0:
+				multiplier *= INFECT_MULTIPLIER
 			if piece.promoted:
-					multiplier *= 1.05
+				multiplier *= PROMOTED_MULTIPLIER
 			if piece.current_health != null:
-				multiplier *= 1.0 + (0.2 * (piece.current_health / piece.MAX_HEALTH as float))
+				multiplier *= 1.0 + (HEALTH_EVAL_INCREMENT * (piece.current_health / piece.MAX_HEALTH as float))
 				
 			var eval_adjustment : float = eval_positionAdjustment(piece) + eval_assessThreat(threat_map, piece)
 			
@@ -63,7 +72,7 @@ func eval_assessThreat(threat_map : Dictionary, eval_piece) -> float:
 			
 	var threat_positions = threat_map.values().reduce(func(acc, attackers): return acc + attackers.filter(func(p): return p == eval_piece).size(), 0)
 	
-	return threat_positions * THREAT_EVAL_INCREMENT - danger_count * THREAT_EVAL_INCREMENT * 2.0
+	return threat_positions * THREAT_EVAL_INCREMENT * THREATEN_MULTIPLIER - danger_count * THREAT_EVAL_INCREMENT * DANGER_MULTIPLIER
 
 # Threatening more pieces = better evaluation
 func eval_threatLevel(piece) -> float:
