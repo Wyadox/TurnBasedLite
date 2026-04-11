@@ -117,6 +117,10 @@ func start_minimax(pieces : Array, white_to_play : bool, difficulty_dict : Dicti
 	
 	game_scene.board = board
 	
+	for piece in new_pieces:
+		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
+			board.register_king(piece.board_position, piece.color)
+	
 	var start = Time.get_ticks_msec()
 	var result = minimax(new_pieces, difficulty_dict["depth"], -INF, INF, white_to_play, difficulty_dict["noise"], difficulty_dict["slice_num"])
 	print("Minimax took: ", Time.get_ticks_msec() - start, "ms")
@@ -228,18 +232,25 @@ func snapshot_board(pieces : Array):
 			"piece_type" : piece.piece_type,
 			"alive": true
 		})
+	snap.append({
+		"white_king_pos": board.white_king_pos,
+		"black_king_pos": board.black_king_pos
+	})
 	return snap
 
 func restore_board(snapshot : Array, pieces : Array):
+	var board_state = snapshot[-1]
+	var piece_snap = snapshot.slice(0, snapshot.size() -1)
+	
 	var snap_refs = []
-	for it in snapshot:
+	for it in piece_snap:
 		snap_refs.append(it["ref"])
 	
 	for piece in pieces:
 		if piece not in snap_refs:
 			piece.queue_free()
 	
-	for it in snapshot:
+	for it in piece_snap:
 		var piece = it["ref"]
 		piece.board_position = it["board_position"]
 		piece.promoted = it["promoted"]
@@ -253,10 +264,12 @@ func restore_board(snapshot : Array, pieces : Array):
 			pieces.append(piece)
 			
 	pieces.clear()
-	for it in snapshot:
+	for it in piece_snap:
 		pieces.append(it["ref"])
 		
 	board.pieces = pieces
+	board.white_king_pos = board_state["white_king_pos"]
+	board.black_king_pos = board_state["black_king_pos"]
 
 func simulate_move(pieces, piece, pos) -> bool:
 	board.pieces = pieces

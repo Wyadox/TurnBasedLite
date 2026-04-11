@@ -452,6 +452,8 @@ func get_valid_moves():
 #	var shield_king
 	
 	for piece in board.pieces:
+		if piece.stun_counter > 0:
+			continue
 		if piece.color == status:
 			var candi_pos = piece.get_moveable_positions()
 			if piece.piece_type == Globals.PIECE_TYPES.PAWN:

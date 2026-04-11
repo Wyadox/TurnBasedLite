@@ -93,8 +93,8 @@ func move_position(to_move: Vector2):
 	
 	# Promotion for pawns to KING BEHAVIOR
 	if (piece_type == Globals.PIECE_TYPES.PAWN or piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN or piece_type == Globals.PIECE_TYPES.WORM or piece_type == Globals.PIECE_TYPES.CHECKER or piece_type == Globals.PIECE_TYPES.INFECTOR) and (
-		(starting_rank < board_handle.BOARD_HEIGHT / 2.0 and to_move[1] == board_handle.BOARD_HEIGHT - 1) or 
-		(starting_rank > board_handle.BOARD_HEIGHT / 2.0 and to_move[1] == 0)
+		(starting_rank < DIRECTION_THRESHOLD and to_move[1] == board_handle.BOARD_HEIGHT - 1) or 
+		(starting_rank > DIRECTION_THRESHOLD and to_move[1] == 0)
 	):
 		promoted = true
 
@@ -218,7 +218,7 @@ func pawn_threat_pos():
 		var pos = board_handle.spot_search_threat(
 			color,
 			board_position[0], board_position[1],
-			inc[0], inc[1] if starting_rank < board_handle.BOARD_HEIGHT / 2.0 else -inc[1],
+			inc[0], inc[1] if starting_rank < DIRECTION_THRESHOLD else -inc[1],
 			true, false
 		)
 		if pos != null:
@@ -233,7 +233,7 @@ func pawn_move_pos():
 		var pos = board_handle.spot_search_threat(
 			color,
 			board_position[0], board_position[1],
-			inc[0], inc[1] if starting_rank < board_handle.BOARD_HEIGHT / 2.0 else -inc[1],
+			inc[0], inc[1] if starting_rank < DIRECTION_THRESHOLD else -inc[1],
 			false, false
 		)
 		if pos != null:
@@ -242,7 +242,7 @@ func pawn_move_pos():
 				pos = board_handle.spot_search_threat(
 				color,
 				board_position[0], board_position[1],
-				inc[0], inc[1] if starting_rank < board_handle.BOARD_HEIGHT / 2.0 else -inc[1],
+				inc[0], inc[1] if starting_rank < DIRECTION_THRESHOLD else -inc[1],
 				false, true)
 		if pos != null:
 			positions.append(pos)
@@ -255,7 +255,7 @@ func pawn_move_pos():
 		var pos = board_handle.spot_search_threat(
 			color, 
 			board_position[0], board_position[1],
-			inc[0], inc[1] if starting_rank < board_handle.BOARD_HEIGHT / 2.0 else -inc[1],
+			inc[0], inc[1] if starting_rank < DIRECTION_THRESHOLD else -inc[1],
 			true, false
 		)
 		if pos != null and piece_type != Globals.PIECE_TYPES.CHECKER:
@@ -275,7 +275,7 @@ func worm_threat_pos():
 		var pos = board_handle.spot_search_threat(
 			color, 
 			board_position[0], board_position[1],
-			inc[0], inc[1] if starting_rank < board_handle.BOARD_HEIGHT / 2.0 else -inc[1],
+			inc[0], inc[1] if starting_rank < DIRECTION_THRESHOLD else -inc[1],
 			true, false
 		)
 		if pos != null:
@@ -288,7 +288,7 @@ func worm_move_pos():
 		var pos = board_handle.spot_search_threat(
 			color, 
 			board_position[0], board_position[1],
-			inc[0], inc[1] if starting_rank < board_handle.BOARD_HEIGHT / 2.0 else -inc[1],
+			inc[0], inc[1] if starting_rank < DIRECTION_THRESHOLD else -inc[1],
 			false, true
 		)
 		if pos != null:
@@ -563,7 +563,7 @@ func checker_threat_pos(capture_pos : bool):
 func get_checker_increments():
 	var increments = []
 	
-	var direction = 1 if color == Globals.COLORS.BLACK else -1
+	var direction = 1 if starting_rank < DIRECTION_THRESHOLD else -1
 	
 	increments.append({"take": Vector2(-1, direction), "jump": Vector2(-2, direction * 2)})
 	increments.append({"take": Vector2(1, direction), "jump": Vector2(2, direction * 2)})
