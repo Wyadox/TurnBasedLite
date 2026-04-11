@@ -112,6 +112,7 @@ func start_minimax(pieces : Array, white_to_play : bool, difficulty_dict : Dicti
 		copy.promoted = piece.promoted
 		copy.moved = piece.moved
 		copy.current_health = piece.current_health
+		copy.starting_rank = piece.starting_rank
 		new_pieces.append(copy)
 	
 	game_scene.board = board
@@ -138,11 +139,10 @@ func minimax(pieces : Array, depth : int, alpha : float, beta : float, maximizin
 	if maximizingPlayer:
 		maximum_eval = -INF
 		for piece in pieces.duplicate():
-			if piece and piece.color != Globals.COLORS.WHITE:
+			if piece and piece.color != Globals.COLORS.WHITE or piece.stun_counter > 0:
 				continue
 			for move in get_move_list(piece, slice_num):
-				if !simulate_move(pieces, piece, move["pos"]):
-					continue
+				simulate_move(pieces, piece, move["pos"])
 				
 				new_eval = minimax(pieces, depth - 1, alpha, beta, false, noise, slice_num)
 				if new_eval["eval"] > maximum_eval:
@@ -159,11 +159,10 @@ func minimax(pieces : Array, depth : int, alpha : float, beta : float, maximizin
 	else:
 		minimum_eval = INF
 		for piece in pieces.duplicate():
-			if piece and piece.color != Globals.COLORS.BLACK:
+			if piece and piece.color != Globals.COLORS.BLACK or piece.stun_counter > 0:
 				continue
 			for move in get_move_list(piece, slice_num):
-				if !simulate_move(pieces, piece, move["pos"]):
-					continue
+				simulate_move(pieces, piece, move["pos"])
 				
 				new_eval = minimax(pieces, depth - 1, alpha, beta, true, noise, slice_num)
 				if new_eval["eval"] < minimum_eval:
@@ -193,7 +192,9 @@ func get_move_list(piece : Piece, slice_num : int):
 		
 		# REVISIT FOR GUARDIAN ANGEL and SUMO ROOK
 		if dest_piece != null and ((dest_piece.color == Globals.COLORS.TILE and dest_piece.piece_type != Globals.PIECE_TYPES.WEB) or (dest_piece.color == piece.color)):
-			print("move disregarded")
+			continue
+		
+		if !game_scene.valid_move(piece.board_position, pos):
 			continue
 		
 		if dest_piece != null and dest_piece.color != Globals.COLORS.TILE and dest_piece.color != piece.color:
@@ -209,21 +210,35 @@ func get_move_list(piece : Piece, slice_num : int):
 	
 	return moves
 
+#
+# HERE if you add piece attributes
+#
 func snapshot_board(pieces : Array):
 	var snap = []
 	for piece in pieces:
 		snap.append({
-			"ref": piece,
-			"board_position": piece.board_position,
-			"promoted": piece.promoted,
-			"moved": piece.moved,
-			"stun_counter": piece.stun_counter,
-			"current_health": piece.current_health,
+			"ref" : piece,
+			"board_position" : piece.board_position,
+			"promoted" : piece.promoted,
+			"moved" : piece.moved,
+			"stun_counter" : piece.stun_counter,
+			"current_health" : piece.current_health,
+			"starting_rank" : piece.starting_rank,
+			"color" : piece.color,
+			"piece_type" : piece.piece_type,
 			"alive": true
 		})
 	return snap
 
 func restore_board(snapshot : Array, pieces : Array):
+	var snap_refs = []
+	for it in snapshot:
+		snap_refs.append(it["ref"])
+	
+	for piece in pieces:
+		if piece not in snap_refs:
+			piece.queue_free()
+	
 	for it in snapshot:
 		var piece = it["ref"]
 		piece.board_position = it["board_position"]
@@ -231,6 +246,9 @@ func restore_board(snapshot : Array, pieces : Array):
 		piece.moved = it["moved"]
 		piece.stun_counter = it["stun_counter"]
 		piece.current_health = it["current_health"]
+		piece.starting_rank = it["starting_rank"]
+		piece.color = it["color"]
+		piece.piece_type = it["piece_type"]
 		if not piece in pieces:
 			pieces.append(piece)
 			

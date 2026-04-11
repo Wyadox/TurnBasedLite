@@ -209,6 +209,7 @@ func get_threatened_positions():
 const PAWN_SPOT_INCREMENTS_MOVE = [[0, 1]] # Pawn move only one
 const PAWN_SPOT_INCREMENTS_MOVE_FIRST = [[0, 1], [0, 2]] # Pawn can move one and two times initially
 const PAWN_SPOT_INCREMENTS_TAKE = [[-1, 1], [1, 1]] # Pawn taking other piece at side 
+const DIRECTION_THRESHOLD = board_handle.BOARD_HEIGHT / 2.0
 
 func pawn_threat_pos():
 	var positions = []
@@ -241,7 +242,7 @@ func pawn_move_pos():
 				pos = board_handle.spot_search_threat(
 				color,
 				board_position[0], board_position[1],
-				inc[0], inc[1] if color == Globals.COLORS.BLACK else -inc[1],
+				inc[0], inc[1] if starting_rank < board_handle.BOARD_HEIGHT / 2.0 else -inc[1],
 				false, true)
 		if pos != null:
 			positions.append(pos)
@@ -274,7 +275,7 @@ func worm_threat_pos():
 		var pos = board_handle.spot_search_threat(
 			color, 
 			board_position[0], board_position[1],
-			inc[0], inc[1] if starting_rank < board_handle.BOARD_HEIGHT / 2.0 and !promoted else -inc[1],
+			inc[0], inc[1] if starting_rank < board_handle.BOARD_HEIGHT / 2.0 else -inc[1],
 			true, false
 		)
 		if pos != null:

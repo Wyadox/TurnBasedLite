@@ -29,7 +29,8 @@ enum PIECE_BASE {
 enum BORDER_STYLE {
 	BOX,
 	CIRCLE,
-	TARGET
+	TARGET,
+	HIGHLIGHT
 }
 
 #pieces

@@ -57,6 +57,7 @@ var turns_since_last_capture := 0
 var previous_piece_total := 0
 
 const SELECTION_BOX_COLOR = Color(0.0, 0.723, 0.736, 1.0)
+const PREVIOUS_MOVE_COLOR = Color(0.25, 1.0, 0.0, 0.1)
 
 var board_repr = []
 
@@ -173,12 +174,17 @@ func parse_save_string(save_string):
 			board.selected_pos = Vector2(int(coord_split[0]) + 1,int(coord_split[1]) * -1 + 6)
 		board._on_setup_phase_ui_spawn_piece(int(spawn_split[0]))
 
+var previous_square
+var current_square
+var color_to_be_moved : Globals.COLORS
+
 func _input(event):
 	if game_over:
 		return
 	# Mouse left clicks/drags
 	if Input.is_action_just_pressed("left_click"):
 		var square = get_square_under_mouse()
+		previous_square = square
 		selected_piece = board.get_piece(square)
 		
 		# Drag piece only if they are under the mouse or are of current player
@@ -226,14 +232,17 @@ func _input(event):
 		selected_piece.position = piece_mouse_pos
 	elif Input.is_action_just_released("left_click") and is_dragging:
 		var is_valid_move = drop_piece()
+		board.clear_borders()
+		
 		if !is_valid_move:
 			selected_piece.position = previous_position
+		
 		if selected_piece:
 			selected_piece.play_animation("idle")
+		
 		selected_piece.z_index = 0
 		selected_piece = null
 		is_dragging = false
-		board.clear_borders()
 		clear_piece_animations()
 		
 		if real_game:
@@ -358,6 +367,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 					is_jousting = true
 		if is_shooting == false and juggernaut_hit == false:
 			selected_piece.move_position(to_move)
+			current_square = selected_piece.board_position
 			if selected_piece.piece_type == Globals.PIECE_TYPES.STUN_KNIGHT:
 				for space in selected_piece.get_stun_positions():
 					var piece = board.get_piece(space)
@@ -372,6 +382,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 				board.on_capture(dest_piece, selected_piece, board, old_pos)
 				piece_captured = true
 				selected_piece.move_position(joust_pos)
+				current_square = selected_piece.board_position
 				
 		if real_game and selected_piece:
 			SignalBus.previous_move.emit(selected_piece.piece_type, selected_piece.color, old_pos, to_move)
@@ -484,11 +495,16 @@ func player2_move():
 		
 		var real_piece = board.get_piece(new_piece.board_position)
 		if real_piece == null:
-			push_error("Best Move Piece NOT found on real board")
+			push_error("Could not find piece at position")
+			return
+		if real_piece.piece_type != new_piece.piece_type or real_piece.color != new_piece.color:
+			push_error("Found wrong piece - expected: ", Globals.PIECE_TYPES.keys()[new_piece.piece_type], 
+					   " got: ", Globals.PIECE_TYPES.keys()[real_piece.piece_type])
 			return
 		
 		selected_piece = real_piece
 		previous_position = selected_piece.position
+		previous_square = selected_piece.board_position
 		print ("drop_piece result: ", drop_piece(false, minimax_result["pos"]))
 		
 func move_from_timeout(otherPlayer : Globals.PLAYER):
@@ -602,14 +618,16 @@ func end_turn():
 	if status == Globals.COLORS.WHITE:
 		move_clock.start_turn()
 		move_clock_2.end_turn()
-		print("FLIP")
 	else:
 		move_clock.end_turn()
 		move_clock_2.start_turn()
-		print("FLIP2")
 	
 	if real_game:
 		turn_indicator.texture = get_turn_indicator_tex(status)
+		
+		board.clear_highlights()
+		board.draw_highlight(previous_square.x, previous_square.y, PREVIOUS_MOVE_COLOR, false)
+		board.draw_highlight(current_square.x, current_square.y, PREVIOUS_MOVE_COLOR, false)
 	
 	if board.num_pieces() == previous_piece_total:
 		turns_since_last_capture += 1
@@ -621,8 +639,6 @@ func end_turn():
 	check_for_shield_king()
 	board.update_indicators()
 	update_eval()
-	
-	print("END TURN CALLED")
 	
 func update_eval():
 	var eval = Ai.board_evaluation(board.pieces, 0.0)
@@ -667,9 +683,9 @@ func _on_board_setup_complete() -> void:
 	
 	for piece in board.pieces:
 		board_repr[board.BOARD_WIDTH * piece.board_position[1] + piece.board_position[0]] = piece
-	for space in board_repr.size():
-		if board_repr[space] != null:
-			print(board_repr[space])
+	#for space in board_repr.size():
+		#if board_repr[space] != null:
+			#print(board_repr[space])
 
 
 func _on_board_set_status(color: Variant) -> void:
