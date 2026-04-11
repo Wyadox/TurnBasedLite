@@ -133,6 +133,12 @@ func start_minimax(pieces : Array, white_to_play : bool, difficulty_dict : Dicti
 	var start = Time.get_ticks_msec()
 	var result = minimax(new_pieces, difficulty_dict["depth"], -INF, INF, white_to_play, difficulty_dict["noise"], difficulty_dict["slice_num"])
 	print("Minimax took: ", Time.get_ticks_msec() - start, "ms")
+	
+	for piece in new_pieces:
+		piece.queue_free()
+	board.queue_free()
+	game_scene.queue_free()
+	
 	return result
 
 func minimax(pieces : Array, depth : int, alpha : float, beta : float, maximizingPlayer : bool, noise : float, slice_num : int) -> Dictionary:
@@ -199,7 +205,7 @@ func get_move_list(piece : Piece, slice_num : int):
 	var positions = piece.get_moveable_positions() + piece.get_threatened_positions()
 	
 	for pos in positions:
-		var score : int = 0
+		var score : float = 0
 		
 		var dest_piece : Piece = piece.board_handle.get_piece(pos)
 		
@@ -212,6 +218,8 @@ func get_move_list(piece : Piece, slice_num : int):
 		
 		if dest_piece != null and dest_piece.color != Globals.COLORS.TILE and dest_piece.color != piece.color:
 			score += piece_eval[dest_piece.piece_type] - piece_eval[piece.piece_type]
+		
+		score += eval_positionAdjustment(piece)
 		
 		moves.append({
 			"pos": pos,

@@ -35,10 +35,6 @@ var failed_to_move : bool = false
 @onready var turn_indicator : TextureRect = $TurnIndicator
 @onready var sprite = $IndicatorImage
 
-@onready var move_timer : Timer = $MoveTimer
-@onready var timer_label : Label = $TimerLabel
-@onready var timer_bar : TextureProgressBar = $MoveTimerBar
-
 @onready var move_clock: Control = $move_clock
 @onready var move_clock_2: Control = $move_clock2
 
@@ -72,7 +68,6 @@ const EVAL_DIVISOR : float = 10.0
 func _ready():
 	ui_control.hide()
 	win_label.hide()
-	timer_bar.hide()
 	turn_indicator.hide()
 	init_game()
 	
@@ -486,6 +481,12 @@ func unique(arr: Array) -> Array:
 
 func player2_move():
 	if real_game and player2_type == Globals.PLAYER_2_TYPE.AI:
+		#board.clear_borders()
+		#clear_piece_animations()
+		#
+		#await get_tree().process_frame
+		#await get_tree().process_frame
+		
 		var minimax_result = Ai.start_minimax(board.pieces, true if status == Globals.COLORS.WHITE else false, difficulty_dict)
 		print("RESULT: ", minimax_result)
 		
@@ -671,7 +672,6 @@ func _on_board_setup_complete() -> void:
 	descriptions.hide()
 	loadouts_label.hide()
 	loadout_ui.hide()
-	timer_bar.show()
 	status = Globals.COLORS.WHITE
 	init_pieces()
 	board.update_indicators()
