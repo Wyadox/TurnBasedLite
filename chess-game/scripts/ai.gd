@@ -1,14 +1,16 @@
 extends Node2D
 
 const POSITION_EVAL_INCREMENT : float = 0.05
-const THREAT_EVAL_INCREMENT : float = 0.25
-const HEALTH_EVAL_INCREMENT : float = 0.2
+const THREAT_EVAL_INCREMENT : float = 0.15
+const HEALTH_EVAL_INCREMENT : float = 0.25
+const MOBILITY_EVAL_INCREMENT : float = 0.02
 
-const STUN_MULTIPLIER : float = 0.9
-const PROMOTED_MULTIPLIER : float = 1.05
-const INFECT_MULTIPLIER : float = 0.5
-const DANGER_MULTIPLIER : float = 2.0
+const STUN_MULTIPLIER : float = 0.5
+const PROMOTED_MULTIPLIER : float = 1.25
+const INFECT_MULTIPLIER : float = 0.3
+const DANGER_MULTIPLIER : float = 2.5
 const THREATEN_MULTIPLIER : float = 1.5
+const CAPTURING_PIECE_MULTIPLIER : float = 0.1
 
 var piece_eval = {Globals.PIECE_TYPES.PAWN : 1, Globals.PIECE_TYPES.MITOSIS_PAWN : 1.25, Globals.PIECE_TYPES.WORM : 1.5, 
 				Globals.PIECE_TYPES.CHECKER : 1.5, Globals.PIECE_TYPES.INFECTOR : 2, Globals.PIECE_TYPES.DUPLICATOR : 2, 
@@ -47,13 +49,17 @@ func board_evaluation(pieces : Array, noise : float) -> float:
 			if piece.current_health != null:
 				multiplier *= 1.0 + (HEALTH_EVAL_INCREMENT * (piece.current_health / piece.MAX_HEALTH as float))
 				
-			var eval_adjustment : float = eval_positionAdjustment(piece) + eval_assessThreat(threat_map, piece)
+			var positional : float = eval_positionAdjustment(piece) 
+			var threat : float = eval_assessThreat(threat_map, piece, pieces)
+			var mobility : float = eval_mobility(piece)
+			
+			var eval_sum : float = positional + threat + mobility
 			
 			# Increment based on color of piece
 			if piece.color == Globals.COLORS.WHITE:
-				white_eval += (piece_eval[piece.piece_type] * multiplier) + eval_adjustment
+				white_eval += (piece_eval[piece.piece_type] * multiplier) + eval_sum
 			elif piece.color == Globals.COLORS.BLACK:
-				black_eval -= (piece_eval[piece.piece_type] * multiplier) + eval_adjustment
+				black_eval -= (piece_eval[piece.piece_type] * multiplier) + eval_sum
 	var result = white_eval + black_eval
 	return result + randf_range(-noise, noise)
 
@@ -63,20 +69,30 @@ func board_evaluation(pieces : Array, noise : float) -> float:
 	# Piece is low on health
 	# Piece threat level while avoiding threat itself
 	
-func eval_assessThreat(threat_map : Dictionary, eval_piece) -> float:
+func eval_assessThreat(threat_map : Dictionary, eval_piece, pieces) -> float:
 	var danger_count : int = 0
 	var threateners = threat_map.get(eval_piece.board_position, [])
 	for attacker in threateners:
 		if attacker.color != eval_piece.color:
 			danger_count += 1
-			
-	var threat_positions = threat_map.values().reduce(func(acc, attackers): return acc + attackers.filter(func(p): return p == eval_piece).size(), 0)
 	
-	return threat_positions * THREAT_EVAL_INCREMENT * THREATEN_MULTIPLIER - danger_count * THREAT_EVAL_INCREMENT * DANGER_MULTIPLIER
-
-# Threatening more pieces = better evaluation
-func eval_threatLevel(piece) -> float:
-	return piece.get_threatened_positions().size() * THREAT_EVAL_INCREMENT
+	var threat_count : int = 0
+	for pos in eval_piece.get_threatened_positions():
+		var dest_piece
+		for piece in pieces:
+			if piece.board_position == pos:
+				dest_piece = piece
+				break
+		if dest_piece != null and dest_piece.color != eval_piece.color and dest_piece.color != Globals.COLORS.TILE:
+			threat_count += piece_eval.get(dest_piece.piece_type, 1)
+		else:
+			threat_count += 1
+	
+	var score = threat_count * THREAT_EVAL_INCREMENT * THREATEN_MULTIPLIER - danger_count * THREAT_EVAL_INCREMENT * DANGER_MULTIPLIER
+	
+	if eval_piece.color == Globals.COLORS.BLACK:
+		return -score
+	return score
 
 #
 # If "corner" is true, then don't flip the values
@@ -98,10 +114,16 @@ func eval_cornerOrCenterPref(piece, corner : bool = true) -> float:
 	
 	return overall_multiplier * POSITION_EVAL_INCREMENT * flip
 
+func eval_mobility(piece) -> float:
+	return piece.get_moveable_positions().size() * MOBILITY_EVAL_INCREMENT
+
 const GAME_SCENE = preload("res://scenes/game.tscn")
 const PIECE_SCENE = preload("res://scenes/Piece.tscn")
 const PIECE_SCRIPT = preload("res://scripts/piece.gd")
 const BOARD_SCENE = preload("res://scenes/board.tscn")
+
+const MOVE_INDEX_CUTOFF : int = 3
+const DEPTH_CUTOFF : int = 2
 
 var game_scene
 var board
@@ -130,18 +152,38 @@ func start_minimax(pieces : Array, white_to_play : bool, difficulty_dict : Dicti
 		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
 			board.register_king(piece.board_position, piece.color)
 	
+	var best_result = {}
+	var time_limit = difficulty_dict.get("time_limit", 2000)
 	var start = Time.get_ticks_msec()
-	var result = minimax(new_pieces, difficulty_dict["depth"], -INF, INF, white_to_play, difficulty_dict["noise"], difficulty_dict["slice_num"])
-	print("Minimax took: ", Time.get_ticks_msec() - start, "ms")
+	var previous_best = null
+	var previous_score = 0.0
+	var prune_window = 2.0
+	
+	for level in range(1, difficulty_dict["depth"] + 1):
+		var alpha = previous_score - prune_window
+		var beta = previous_score + prune_window
+		
+		var result = minimax(new_pieces, level, alpha, beta, white_to_play, difficulty_dict["noise"], difficulty_dict["slice_num"], previous_best)
+		
+		if result["eval"] <= alpha or result["eval"] >= beta:
+			result = minimax(new_pieces, level, -INF, INF, white_to_play, difficulty_dict["noise"], difficulty_dict["slice_num"], previous_best)
+			
+		previous_score = result["eval"]
+		previous_best = {"ref": result["ref"], "pos": result["pos"]}
+		
+		if Time.get_ticks_msec() - start > time_limit:
+			break
+		best_result = result
+		previous_best = {"ref" : result["ref"], "pos" : result["pos"]}
 	
 	for piece in new_pieces:
 		piece.queue_free()
 	board.queue_free()
 	game_scene.queue_free()
 	
-	return result
+	return best_result
 
-func minimax(pieces : Array, depth : int, alpha : float, beta : float, maximizingPlayer : bool, noise : float, slice_num : int) -> Dictionary:
+func minimax(pieces : Array, depth : int, alpha : float, beta : float, maximizingPlayer : bool, noise : float, slice_num : int, previous_best) -> Dictionary:
 	var maximum_eval : float
 	var minimum_eval : float
 	var new_eval
@@ -157,38 +199,56 @@ func minimax(pieces : Array, depth : int, alpha : float, beta : float, maximizin
 		
 	if maximizingPlayer:
 		maximum_eval = -INF
+		var move_index = 0
 		for piece in pieces.duplicate():
 			if piece and piece.color != Globals.COLORS.WHITE or piece.stun_counter > 0:
 				continue
-			for move in get_move_list(piece, slice_num):
+			for move in get_move_list(piece, slice_num, previous_best):
 				simulate_move(pieces, piece, move["pos"])
 				
-				new_eval = minimax(pieces, depth - 1, alpha, beta, false, noise, slice_num)
+				var search_depth = depth - 1
+				if move_index >= MOVE_INDEX_CUTOFF and depth >= DEPTH_CUTOFF and not is_capture(move):
+					search_depth = max(0, depth - 2)
+				
+				new_eval = minimax(pieces, search_depth, alpha, beta, false, noise, slice_num, previous_best)
 				if new_eval["eval"] > maximum_eval:
 					maximum_eval = new_eval["eval"]
 					best_piece = piece
 					best_move = move["pos"]
 				alpha = max(alpha, new_eval["eval"])
 				
+				if search_depth < depth - 1 and new_eval["eval"] > alpha:
+					new_eval = minimax(pieces, depth - 1, alpha, beta, false, noise, slice_num, previous_best)
+				
 				restore_board(snapshot, pieces)
+				
+				move_index += 1
 				
 				if beta <= alpha:
 					break
 		return {"ref" : best_piece, "pos" : best_move, "eval" : maximum_eval}
 	else:
 		minimum_eval = INF
+		var move_index = 0
 		for piece in pieces.duplicate():
 			if piece and piece.color != Globals.COLORS.BLACK or piece.stun_counter > 0:
 				continue
-			for move in get_move_list(piece, slice_num):
+			for move in get_move_list(piece, slice_num, previous_best):
 				simulate_move(pieces, piece, move["pos"])
 				
-				new_eval = minimax(pieces, depth - 1, alpha, beta, true, noise, slice_num)
+				var search_depth = depth - 1
+				if move_index >= MOVE_INDEX_CUTOFF and depth >= DEPTH_CUTOFF and not is_capture(move):
+					search_depth = max(0, depth - 2)
+				
+				new_eval = minimax(pieces, search_depth, alpha, beta, true, noise, slice_num, previous_best)
 				if new_eval["eval"] < minimum_eval:
 					minimum_eval = new_eval["eval"]
 					best_piece = piece
 					best_move = move["pos"]
 				beta = min(beta, new_eval["eval"])
+				
+				if search_depth < depth - 1 and new_eval["eval"] > alpha:
+					new_eval = minimax(pieces, depth - 1, alpha, beta, false, noise, slice_num, previous_best)
 				
 				restore_board(snapshot, pieces)
 				
@@ -196,7 +256,11 @@ func minimax(pieces : Array, depth : int, alpha : float, beta : float, maximizin
 					break
 		return {"ref" : best_piece, "pos" : best_move, "eval" : minimum_eval}
 
-func get_move_list(piece : Piece, slice_num : int):
+func is_capture(move : Dictionary) -> bool:
+	var dest_piece = board.get_piece(move["pos"])
+	return dest_piece != null and dest_piece.color != Globals.COLORS.TILE
+
+func get_move_list(piece : Piece, slice_num : int, previous_best):
 	var moves = []
 	
 	if piece.color == Globals.COLORS.TILE:
@@ -205,7 +269,7 @@ func get_move_list(piece : Piece, slice_num : int):
 	var positions = piece.get_moveable_positions() + piece.get_threatened_positions()
 	
 	for pos in positions:
-		var score : float = 0
+		var score : float = 0.0
 		
 		var dest_piece : Piece = piece.board_handle.get_piece(pos)
 		
@@ -217,9 +281,24 @@ func get_move_list(piece : Piece, slice_num : int):
 			continue
 		
 		if dest_piece != null and dest_piece.color != Globals.COLORS.TILE and dest_piece.color != piece.color:
-			score += piece_eval[dest_piece.piece_type] - piece_eval[piece.piece_type]
+			score += piece_eval[dest_piece.piece_type] - (piece_eval[piece.piece_type] * CAPTURING_PIECE_MULTIPLIER)
 		
+		var old_pos = piece.board_position
+		piece.board_position = pos
 		score += eval_positionAdjustment(piece)
+		piece.board_position = old_pos
+		
+		var threat_map = {}
+		for threat_piece in board.pieces:
+			if threat_piece == piece or threat_piece.color == piece.color:
+				continue
+			for threat_pos in threat_piece.get_threatened_positions():
+				if not threat_map.has(threat_pos):
+					threat_map[threat_pos] = []
+				threat_map[threat_pos].append(threat_piece)
+		
+		var danger_count = threat_map.get(pos, []).size()
+		score -= danger_count * THREAT_EVAL_INCREMENT * DANGER_MULTIPLIER
 		
 		moves.append({
 			"pos": pos,
@@ -227,6 +306,15 @@ func get_move_list(piece : Piece, slice_num : int):
 		})
 		
 	moves.sort_custom(func(a, b): return a.score > b.score)
+	
+	if previous_best != null and previous_best["ref"] == piece:
+		for it in range(moves.size()):
+			if moves[it]["pos"] == previous_best["pos"]:
+					var best = moves[it]
+					moves.remove_at(it)
+					moves.push_front(best)
+					break
+	
 	moves = moves.slice(0, slice_num)
 	
 	return moves

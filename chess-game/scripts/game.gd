@@ -104,40 +104,18 @@ func _ready():
 	else:
 		move_clock.global_position.y += MOVE_CLOCK_OFFSET
 		move_clock_2.global_position.y -= MOVE_CLOCK_OFFSET
-
-#func difficulty_settings() -> Dictionary:
-	#match difficulty:
-		#Globals.DIFFICULTY.EASY:
-			#move_time = 21.0
-			#time_remaining = 21.0
-			#timer_bar.max_value = move_time
-			#move_timer.wait_time = move_time
-			#return {"depth" : 1, "noise" : 2.0, "slice_num" : 8}
-		#Globals.DIFFICULTY.NORMAL:
-			#move_time = 14.0
-			#time_remaining = 14.0
-			#timer_bar.max_value = move_time
-			#move_timer.wait_time = move_time
-			#return {"depth" : 2, "noise" : 1.0, "slice_num" : 4}
-		#Globals.DIFFICULTY.HARD:
-			#move_time = 7.0
-			#time_remaining = 7.0
-			#timer_bar.max_value = move_time
-			#move_timer.wait_time = move_time
-			#return {"depth" : 2, "noise" : 0.0, "slice_num" : 2}
-	#return {"depth" : 3, "noise" : 0.0, "slice_num" : 3}
 	
 func difficulty_settings() -> Dictionary:
 	match difficulty:
 		Globals.DIFFICULTY.EASY:
-			set_clock_durations(5.0)
-			return {"depth" : 1, "noise" : 2.0, "slice_num" : 8}
+			set_clock_durations(3.0)
+			return {"depth" : 1, "noise" : 2.0, "slice_num" : 9}
 		Globals.DIFFICULTY.NORMAL:
-			set_clock_durations(3.5)
-			return {"depth" : 2, "noise" : 1.0, "slice_num" : 4}
-		Globals.DIFFICULTY.HARD:
 			set_clock_durations(2.0)
-			return {"depth" : 2, "noise" : 0.0, "slice_num" : 2}
+			return {"depth" : 2, "noise" : 1.0, "slice_num" : 3}
+		Globals.DIFFICULTY.HARD:
+			set_clock_durations(1.0)
+			return {"depth" : 2, "noise" : 0.0, "slice_num" : 3}
 	return {"depth" : 3, "noise" : 0.0, "slice_num" : 3}
 
 func show_notification(phrase : String):
@@ -510,29 +488,6 @@ func player2_move():
 		previous_position = selected_piece.position
 		previous_square = selected_piece.board_position
 		print ("drop_piece result: ", drop_piece(false, minimax_result["pos"]))
-		
-func move_from_timeout(otherPlayer : Globals.PLAYER):
-	var piece_died = false
-	
-	var valid_moves = get_valid_moves()
-	if len(valid_moves) == 0:
-		set_win(otherPlayer)
-		return
-	var move = valid_moves.pick_random()
-	var piece = move[0]
-	var pos = move[1]
-	var dest_piece = board.get_piece(pos)
-	
-	if dest_piece != null:
-		if dest_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
-			piece_died = true
-		board.delete_piece(dest_piece)
-	piece.move_position(pos)
-	if piece_died:
-		board.delete_piece(piece)
-	end_turn()
-	evaluate_end_game()
-			
 
 func evaluate_end_game():
 	# Check whether the current user can make any legal move
