@@ -74,7 +74,6 @@ texture_normal = ExtResource("2_bqqt6")
 texture_hover = ExtResource("3_bqqt6")
 
 [node name="OptionsButton" type="TextureButton" parent="VBoxContainer"]
-visible = false
 layout_mode = 2
 texture_normal = ExtResource("5_oa1go")
 texture_pressed = ExtResource("6_5dd4i")

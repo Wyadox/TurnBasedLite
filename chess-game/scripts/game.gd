@@ -105,6 +105,10 @@ func _ready():
 		move_clock.global_position.y += MOVE_CLOCK_OFFSET
 		move_clock_2.global_position.y -= MOVE_CLOCK_OFFSET
 	
+	if multiplayer.multiplayer_peer != null:
+		player_color = Network.my_color
+		player2_type = Globals.PLAYER_2_TYPE.NETWORK
+	
 func difficulty_settings() -> Dictionary:
 	match difficulty:
 		Globals.DIFFICULTY.EASY:
@@ -175,7 +179,7 @@ func _input(event):
 		if selected_piece == null:
 			return
 			
-		if selected_piece.color != status or selected_piece.stun_counter != 0:
+		if selected_piece.color != status or selected_piece.stun_counter != 0 or (player2_type == Globals.PLAYER_2_TYPE.NETWORK and status != Network.my_color):
 			return
 			
 		if !setup_complete:
@@ -204,28 +208,33 @@ func _input(event):
 		#piece_mouse_pos.y += 40
 		selected_piece.position = piece_mouse_pos
 	elif Input.is_action_just_released("left_click") and is_dragging:
-		var is_valid_move = drop_piece()
 		board.clear_borders()
-		
-		if !is_valid_move:
-			selected_piece.position = previous_position
+		clear_piece_animations()
 		
 		if selected_piece:
 			selected_piece.play_animation("idle")
 		
 		selected_piece.z_index = 0
-		selected_piece = null
 		is_dragging = false
-		clear_piece_animations()
 		
-		if real_game:
-			# Check whether game is over after user's move
-			if evaluate_end_game():
-				return
-			
-			# If playerA has made valid move, then switch to other player's move
-			if is_valid_move:
-				player2_move()
+		if status == player_color:
+			var to_move = get_square_under_mouse()
+			if multiplayer.multiplayer_peer != null:
+				request_move(previous_square, to_move)
+			else:
+				var is_valid_move = drop_piece()
+				if !is_valid_move:
+					selected_piece.position = previous_position
+				if real_game:
+					# Check whether game is over after user's move
+					if evaluate_end_game():
+						return
+					
+					# If playerA has made valid move, then switch to other player's move
+					if is_valid_move:
+						player2_move()
+		
+		selected_piece = null
 
 func clear_piece_animations():
 	for piece in board.pieces:
@@ -692,3 +701,30 @@ func process_expired_clock():
 	stop_clocks()
 	set_win(Globals.PLAYER.TWO if status == player_color else Globals.PLAYER.ONE)
 	return true
+
+# Network code
+
+func request_move(from_pos : Vector2, to_pos : Vector2):
+	if !multiplayer.is_server():
+		server_validate_move.rpc_id(1, from_pos, to_pos)
+	else:
+		if valid_move(from_pos, to_pos):
+			apply_network_move.rpc(from_pos, to_pos)
+
+@rpc("any_peer", "reliable")
+func server_validate_move(from_pos : Vector2, to_pos : Vector2):
+	if !multiplayer.is_server():
+		return
+	if valid_move(from_pos, to_pos):
+		apply_network_move.rpc(from_pos, to_pos)
+
+@rpc("authority", "call_local", "reliable")
+func apply_network_move(from_pos : Vector2, to_pos : Vector2):
+	var piece = board.get_piece(from_pos)
+	if piece == null:
+		return
+	
+	selected_piece = piece
+	previous_position = piece.position
+	previous_square = from_pos
+	print("Drop piece from network : ", drop_piece(false, to_pos))
