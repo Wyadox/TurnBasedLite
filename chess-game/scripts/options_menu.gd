@@ -56,3 +56,7 @@ func _on_map_3_button_pressed() -> void:
 
 func _on_map_4_button_pressed() -> void:
 	current_map = 4
+
+
+func _on_button_exit_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")

@@ -1,9 +1,11 @@
-[gd_scene load_steps=15 format=3 uid="uid://bxdepwhprt4pp"]
+[gd_scene load_steps=16 format=3 uid="uid://bxdepwhprt4pp"]
 
 [ext_resource type="Script" uid="uid://bj20fx8i5xny6" path="res://scripts/game.gd" id="1_yqjtg"]
 [ext_resource type="Texture2D" uid="uid://bi27j240t7d1r" path="res://Assets/ChessBoard/ChessBoard.png" id="2_kvpfn"]
 [ext_resource type="PackedScene" uid="uid://dnbpf2aas655b" path="res://scenes/board.tscn" id="2_p57ef"]
 [ext_resource type="PackedScene" uid="uid://dlld2p1r0gxox" path="res://scenes/setup_phase_ui.tscn" id="6_p57ef"]
+[ext_resource type="Texture2D" uid="uid://d31qmqe0kjyid" path="res://Assets/EmptyBar.png" id="6_u5sy4"]
+[ext_resource type="Texture2D" uid="uid://3dyvehvtliv5" path="res://Assets/FullBar.png" id="7_gee14"]
 [ext_resource type="PackedScene" uid="uid://qrys574fx6lg" path="res://scenes/loadout_slots_vbox.tscn" id="7_u5sy4"]
 [ext_resource type="PackedScene" uid="uid://dp03twcoim8s8" path="res://scenes/evaluation_bar.tscn" id="8_0tnpc"]
 [ext_resource type="Texture2D" uid="uid://c2ffhrqxtv6do" path="res://Assets/customPiecesSpritesheet.png" id="8_gee14"]
@@ -13,7 +15,6 @@
 [ext_resource type="PackedScene" uid="uid://c6ulmyy15jdeu" path="res://scenes/descriptions.tscn" id="12_dinhu"]
 [ext_resource type="PackedScene" uid="uid://bv1nq1ec8x4j0" path="res://scenes/previous_move.tscn" id="14_trtic"]
 [ext_resource type="PackedScene" uid="uid://c8ghnkg4lmoc" path="res://scenes/move_history.tscn" id="15_ir15t"]
-[ext_resource type="PackedScene" uid="uid://b40kfc55gm8m3" path="res://scenes/move_clock.tscn" id="16_ca42v"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_yqjtg")
@@ -27,18 +28,35 @@ texture = ExtResource("2_kvpfn")
 [node name="Board" parent="." instance=ExtResource("2_p57ef")]
 position = Vector2(534.88, 100)
 
+[node name="MoveTimer" type="Timer" parent="."]
+wait_time = 15.0
+one_shot = true
+
+[node name="TimerLabel" type="Label" parent="."]
+offset_left = 1405.0
+offset_top = 612.0
+offset_right = 1574.0
+offset_bottom = 705.0
+theme_override_font_sizes/font_size = 50
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MoveTimerBar" type="TextureProgressBar" parent="."]
+offset_left = 1536.0
+offset_top = 750.0
+offset_right = 1568.0
+offset_bottom = 782.0
+scale = Vector2(4.440916, 4.440916)
+max_value = 15.0
+fill_mode = 4
+texture_under = ExtResource("6_u5sy4")
+texture_progress = ExtResource("7_gee14")
+
 [node name="TurnIndicator" type="TextureRect" parent="."]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 1545.0
-offset_top = 426.0
-offset_right = 1710.0
-offset_bottom = 591.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_left = 1524.0
+offset_top = 568.0
+offset_right = 1689.0
+offset_bottom = 733.0
 
 [node name="IndicatorImage" type="Sprite2D" parent="."]
 position = Vector2(-301, 57)
@@ -141,33 +159,7 @@ offset_top = 532.0
 offset_right = 358.0
 offset_bottom = 772.0
 
-[node name="move_clock" parent="." instance=ExtResource("16_ca42v")]
-anchors_preset = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_left = 1500.0
-offset_top = 450.0
-offset_right = 1500.0
-offset_bottom = 450.0
-grow_horizontal = 1
-grow_vertical = 1
-duration = 1.0
-color = 1
-
-[node name="move_clock2" parent="." instance=ExtResource("16_ca42v")]
-anchors_preset = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_left = 1500.0
-offset_top = 450.0
-offset_right = 1500.0
-offset_bottom = 450.0
-grow_horizontal = 1
-grow_vertical = 1
-duration = 1.0
-
 [node name="Control" type="Control" parent="."]
-z_index = 200
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -216,4 +208,5 @@ grow_vertical = 2
 text = "Main Menu
 "
 
+[connection signal="timeout" from="MoveTimer" to="." method="_on_move_timer_timeout"]
 [connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]

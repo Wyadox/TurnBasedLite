@@ -255,7 +255,6 @@ func on_capture(dest_piece, selected_piece, board, previous_position):
 		
 	
 	if real_board:
-		print("dest_piece: ", dest_piece.board_position.x, " --- previous_position: ", previous_position.x)
 		if dest_piece.board_position.x > previous_position.x:
 			play_animation(dest_piece, "capture_right")
 		else:
@@ -409,24 +408,19 @@ func create_piece(type: Globals.PIECE_TYPES, col: Globals.COLORS, board_pos: Vec
 	pieces.append(piece)
 	return piece
 
-var border_panel
+var border_shape
 var borders = []
 
 func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
-	print("hi from spawn_piece in board")
 	if selected_pos == Vector2(-1, -1):
-		print("Select a valid position")
 		SignalBus.emit_signal("refund_piece", piece_type)
 		return
-	print("Spawn Pos: ", selected_pos)
 	
 	if !is_within_bounds(selected_pos):
-		print("Select an inbounds position")
 		SignalBus.emit_signal("refund_piece", piece_type)
 		return
 	
 	if setup_done == true:
-		print("Setup phase is over")
 		return
 		
 	# Determine color for current piece
@@ -437,14 +431,12 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 	elif !is_loadout_board:
 		color = Globals.COLORS.BLACK
 	create_piece(piece_type, color, selected_pos)
-	print("Piece created")
 	
 	# Determine if color needs to swap
 	if total_pieces + 1 < Globals.PIECES_PER_SIDE:
 		color = Globals.COLORS.WHITE
 	elif !is_loadout_board:
 		color = Globals.COLORS.BLACK
-		print("Color is now black")
 	SignalBus.emit_signal("set_status", color)
 	
 	if total_pieces == Globals.PIECES_PER_SIDE - 1:
@@ -457,47 +449,124 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 		SignalBus.emit_signal("setup_complete")
 		
 	# Reset border visual and selected pos
-	if border_panel and border_panel.is_inside_tree():
-		border_panel.queue_free()
+	if border_shape and border_shape.is_inside_tree():
+		border_shape.queue_free()
 	selected_pos = Vector2(-1, -1)
 
 
 func _on_game_selected_square(pos: Vector2) -> void:
 	selected_pos = pos
-	print("selected square = ", pos)
 	if is_loadout_board:
-		draw_border(pos.x, pos.y, Color(0.0, 1.0, 0.38, 1.0), true)
+		draw_border(pos.x, pos.y, Color(0.0, 1.0, 0.38, 1.0), true, Globals.BORDER_STYLE.BOX)
 	else:
-		draw_border(pos.x, pos.y, Color(0.0, 0.0, 1.0), true)
+		draw_border(pos.x, pos.y, Color(0.0, 0.0, 1.0, 1.0), true, Globals.BORDER_STYLE.BOX)
 	
-func draw_border(x, y, color, clear):
-	if clear and border_panel and border_panel.is_inside_tree():
-		border_panel.queue_free()
-	border_panel = Panel.new()
-	border_panel.size = Vector2(CELL_SIZE, CELL_SIZE)
-	border_panel.position = Vector2(
+func draw_border(x, y, color, clear, border_style : Globals.BORDER_STYLE):
+	if clear and border_shape and border_shape.is_inside_tree():
+		border_shape.queue_free()
+	
+	var pos = Vector2(
 		x * CELL_SIZE,
 		y * CELL_SIZE
 	)
-	border_panel.z_index = 50
+		
+	match border_style:
+		Globals.BORDER_STYLE.BOX:
+			border_shape = Panel.new()
+			border_shape.size = Vector2(CELL_SIZE, CELL_SIZE)
+			border_shape.position = pos
+			border_shape.z_index = 50
+			
+			var style := StyleBoxFlat.new()
+			style.bg_color = Color.TRANSPARENT
+			style.border_color = color
+			style.border_width_left = 4
+			style.border_width_top = 4
+			style.border_width_right = 4
+			style.border_width_bottom = 4
+			border_shape.add_theme_stylebox_override("panel", style)
+			
+			add_child(border_shape)
+		Globals.BORDER_STYLE.CIRCLE:
+			var circle = Circle.new()
+			circle.size = Vector2(CELL_SIZE, CELL_SIZE)
+			circle.position = pos
+			circle.color = color
+			circle.radius = CELL_SIZE as float / 2 - 40
+			circle.z_index = 50
+			
+			border_shape = circle
+			add_child(circle)
+		Globals.BORDER_STYLE.TARGET:
+			var target = Target.new()
+			target.size = Vector2(CELL_SIZE, CELL_SIZE)
+			target.position = pos
+			target.color = color
+			target.radius = CELL_SIZE as float / 2 - 4
+			target.z_index = 50
+			
+			border_shape = target
+			add_child(target)
+		Globals.BORDER_STYLE.HIGHLIGHT:
+			border_shape = Panel.new()
+			border_shape.size = Vector2(CELL_SIZE, CELL_SIZE)
+			border_shape.position = pos
+			border_shape.z_index = 20
+			
+			var style := StyleBoxFlat.new()
+			style.bg_color = color
+			style.border_color = color
+			style.border_width_left = 4
+			style.border_width_top = 4
+			style.border_width_right = 4
+			style.border_width_bottom = 4
+			border_shape.add_theme_stylebox_override("panel", style)
+			
+			add_child(border_shape)
 	
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color.TRANSPARENT
-	style.border_color = color
-	style.border_width_left = 4
-	style.border_width_top = 4
-	style.border_width_right = 4
-	style.border_width_bottom = 4
-	border_panel.add_theme_stylebox_override("panel", style)
-	
-	add_child(border_panel)
 	if !clear:
-		borders.push_back(border_panel)
+		borders.push_back(border_shape)
 
 func clear_borders():
 	for it in borders:
 		it.queue_free()
 	borders.clear()
+	
+var highlight_shape
+var highlights = []
+
+func draw_highlight(x, y, color, clear):
+	if clear and highlight_shape and highlight_shape.is_inside_tree():
+		highlight_shape.queue_free()
+	
+	var pos = Vector2(
+		x * CELL_SIZE,
+		y * CELL_SIZE
+	)
+	
+	highlight_shape = Panel.new()
+	highlight_shape.size = Vector2(CELL_SIZE, CELL_SIZE)
+	highlight_shape.position = pos
+	highlight_shape.z_index = 20
+	
+	var style := StyleBoxFlat.new()
+	style.bg_color = color
+	style.border_color = color
+	style.border_width_left = 4
+	style.border_width_top = 4
+	style.border_width_right = 4
+	style.border_width_bottom = 4
+	highlight_shape.add_theme_stylebox_override("panel", style)
+	
+	add_child(highlight_shape)
+	
+	if !clear:
+		highlights.push_back(highlight_shape)
+
+func clear_highlights():
+	for it in highlights:
+		it.queue_free()
+	highlights.clear()
 
 var selection_panel
 
@@ -598,7 +667,6 @@ func num_pieces():
 
 
 func _on_game_init_ai(color) -> void:
-	print("reached init_ai")
 	var piecesToSpawn = []
 	piecesToSpawn = setup_script.determineAiPieces(color)
 	
@@ -613,5 +681,4 @@ func _on_game_init_ai(color) -> void:
 		colorSet = Globals.COLORS.WHITE
 	elif !is_loadout_board:
 		colorSet = Globals.COLORS.BLACK
-		print("Color is now black")
 	SignalBus.emit_signal("set_status", colorSet)

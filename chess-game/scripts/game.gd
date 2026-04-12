@@ -35,9 +35,12 @@ var failed_to_move : bool = false
 @onready var turn_indicator : TextureRect = $TurnIndicator
 @onready var sprite = $IndicatorImage
 
-@onready var move_timer : Timer = $MoveTimer
-@onready var timer_label : Label = $TimerLabel
-@onready var timer_bar : TextureProgressBar = $MoveTimerBar
+@onready var move_clock: Control = $move_clock
+@onready var move_clock_2: Control = $move_clock2
+
+const MOVE_CLOCK_OFFSET : float = 300.0
+
+
 var move_time : float
 var time_remaining : float
 
@@ -45,11 +48,12 @@ const EASY_TIME : float = 21.0
 const NORMAL_TIME : float = 14.0
 const HARD_TIME : float = 7.0
 
-const MAX_TURNS_WITHOUT_CAPTURE := 10
+const MAX_TURNS_WITHOUT_CAPTURE := 100
 var turns_since_last_capture := 0
 var previous_piece_total := 0
 
 const SELECTION_BOX_COLOR = Color(0.0, 0.723, 0.736, 1.0)
+const PREVIOUS_MOVE_COLOR = Color(0.25, 1.0, 0.0, 0.1)
 
 var board_repr = []
 
@@ -64,7 +68,6 @@ const EVAL_DIVISOR : float = 10.0
 func _ready():
 	ui_control.hide()
 	win_label.hide()
-	timer_bar.hide()
 	turn_indicator.hide()
 	init_game()
 	
@@ -80,12 +83,7 @@ func _ready():
 	SignalBus.trojan_spawned.connect(_on_trojan_spawned)
 	SignalBus.mitosis_spawned.connect(_on_mitosis_spawned)
 	SignalBus.show_notification.connect(show_notification)
-	
-	
-	print("Player2 Type: ", player2_type)
-	print("Current Map: ", current_map)
-	print("AI Color: ", ai_color)
-	print("Difficulty: ", difficulty)
+	SignalBus.move_clock_expired.connect(process_expired_clock)
 	
 	difficulty_dict = difficulty_settings()
 	
@@ -99,28 +97,25 @@ func _ready():
 		LOWER_COLOR = Globals.COLORS.BLACK
 		UPPER_COLOR = Globals.COLORS.WHITE
 		
+		move_clock.global_position.y -= MOVE_CLOCK_OFFSET
+		move_clock_2.global_position.y += MOVE_CLOCK_OFFSET
+		
 		board._on_game_init_ai(Globals.COLORS.WHITE)
-
+	else:
+		move_clock.global_position.y += MOVE_CLOCK_OFFSET
+		move_clock_2.global_position.y -= MOVE_CLOCK_OFFSET
+	
 func difficulty_settings() -> Dictionary:
 	match difficulty:
 		Globals.DIFFICULTY.EASY:
-			move_time = 21.0
-			time_remaining = 21.0
-			timer_bar.max_value = move_time
-			move_timer.wait_time = move_time
-			return {"depth" : 1, "noise" : 2.0, "slice_num" : 8}
+			set_clock_durations(3.0)
+			return {"depth" : 1, "noise" : 2.0, "slice_num" : 9}
 		Globals.DIFFICULTY.NORMAL:
-			move_time = 14.0
-			time_remaining = 14.0
-			timer_bar.max_value = move_time
-			move_timer.wait_time = move_time
-			return {"depth" : 2, "noise" : 1.0, "slice_num" : 4}
+			set_clock_durations(2.0)
+			return {"depth" : 2, "noise" : 1.0, "slice_num" : 3}
 		Globals.DIFFICULTY.HARD:
-			move_time = 7.0
-			time_remaining = 7.0
-			timer_bar.max_value = move_time
-			move_timer.wait_time = move_time
-			return {"depth" : 2, "noise" : 0.0, "slice_num" : 2}
+			set_clock_durations(1.0)
+			return {"depth" : 2, "noise" : 0.0, "slice_num" : 3}
 	return {"depth" : 3, "noise" : 0.0, "slice_num" : 3}
 
 func show_notification(phrase : String):
@@ -152,13 +147,17 @@ func parse_save_string(save_string):
 			board.selected_pos = Vector2(int(coord_split[0]) + 1,int(coord_split[1]) * -1 + 6)
 		board._on_setup_phase_ui_spawn_piece(int(spawn_split[0]))
 
+var previous_square
+var current_square
+var color_to_be_moved : Globals.COLORS
+
 func _input(event):
 	if game_over:
 		return
 	# Mouse left clicks/drags
 	if Input.is_action_just_pressed("left_click"):
-		print("left click")
 		var square = get_square_under_mouse()
+		previous_square = square
 		selected_piece = board.get_piece(square)
 		
 		# Drag piece only if they are under the mouse or are of current player
@@ -171,10 +170,7 @@ func _input(event):
 					SignalBus.emit_signal("selected_square", square)
 				if status == UPPER_COLOR and square.y <= 1:
 					SignalBus.emit_signal("selected_square", square)
-			else:
-				print("no square was selected")
 			return
-		print("not in setup phase")
 			
 		if selected_piece == null:
 			return
@@ -196,13 +192,12 @@ func _input(event):
 			var color : Color
 			var dest_piece = board.get_piece(Vector2(it.x, it.y))
 			if dest_piece != null and !board.piece_is_protected(dest_piece) and (dest_piece.color != Globals.COLORS.TILE or dest_piece.piece_type == Globals.PIECE_TYPES.WEB):
-				color = Color(1.0, 0.0, 0.0)
+				color = Color(1.0, 0.0, 0.0, 0.3)
 				dest_piece.play_animation("cower")
-				print("cower played")
-				board.draw_border(it.x, it.y, color, false)
+				board.draw_border(it.x, it.y, color, false, Globals.BORDER_STYLE.TARGET)
 			elif dest_piece == null:
-				color = Color(1.0, 1.0, 0.0)
-				board.draw_border(it.x, it.y, color, false)
+				color = Color(1.0, 1.0, 0.0, 0.3)
+				board.draw_border(it.x, it.y, color, false, Globals.BORDER_STYLE.CIRCLE)
 				
 	elif event is InputEventMouseMotion and is_dragging:
 		var piece_mouse_pos = get_global_mouse_position() - board.global_position
@@ -210,15 +205,17 @@ func _input(event):
 		selected_piece.position = piece_mouse_pos
 	elif Input.is_action_just_released("left_click") and is_dragging:
 		var is_valid_move = drop_piece()
+		board.clear_borders()
+		
 		if !is_valid_move:
 			selected_piece.position = previous_position
+		
 		if selected_piece:
 			selected_piece.play_animation("idle")
-			print("idle played")
+		
 		selected_piece.z_index = 0
 		selected_piece = null
 		is_dragging = false
-		board.clear_borders()
 		clear_piece_animations()
 		
 		if real_game:
@@ -343,8 +340,8 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 				if dest_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP and dest_piece.piece_type != Globals.PIECE_TYPES.JOUST_BISHOP:
 					is_jousting = true
 		if is_shooting == false and juggernaut_hit == false:
-			#print(selected_piece.board_position - to_move)
 			selected_piece.move_position(to_move)
+			current_square = selected_piece.board_position
 			if selected_piece.piece_type == Globals.PIECE_TYPES.STUN_KNIGHT:
 				for space in selected_piece.get_stun_positions():
 					var piece = board.get_piece(space)
@@ -361,6 +358,13 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 				board.on_capture(dest_piece, selected_piece, board, old_pos)
 				piece_captured = true
 				selected_piece.move_position(joust_pos)
+				current_square = selected_piece.board_position
+				
+		if real_game and selected_piece:
+			SignalBus.previous_move.emit(selected_piece.piece_type, selected_piece.color, old_pos, to_move)
+				
+		if piece_died:
+			board.on_capture(selected_piece, dest_piece, board, old_pos)
 		
 		if real_game:
 			if !piece_captured:
@@ -369,8 +373,8 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 			if !checker_captured:
 				end_turn()
 			else:
-				reset_timer()
 				board.update_indicators()
+				player2_move()
 		return true
 	return false
 
@@ -387,18 +391,6 @@ func valid_move(from_pos, to_pos):
 		to_pos not in src_piece.get_threatened_positions()
 	):
 		return false
-	
-#	if status == Globals.COLORS.WHITE && black_shield_king_alive:
-#		shield_king_position = board.black_king_pos
-#		shield_king = board_copy.get_piece(shield_king_position)
-#	elif status == Globals.COLORS.BLACK && white_shield_king_alive:
-#		shield_king_position = board.white_king_pos
-#		shield_king = board_copy.get_piece(shield_king_position)
-#	if src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP && shield_king != null:
-#		for position in shield_king.shield_king_protect_positions():
-#			print(position)
-#			if board_copy.get_piece(position) != null && position == to_pos:
-#				return false
 	
 	var dest_piece = board.get_piece(to_pos)
 	if dest_piece != null and ((board.piece_is_protected(dest_piece) && src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP) or dest_piece.piece_type == Globals.PIECE_TYPES.DUCK or (dest_piece.color == Globals.COLORS.TILE and dest_piece.piece_type != Globals.PIECE_TYPES.WEB)):
@@ -428,7 +420,6 @@ func joust_direction(old_pos, to_move):
 	else:
 		pos.y = 1
 	
-	print(pos)
 	return pos
 
 func get_valid_moves():
@@ -438,6 +429,8 @@ func get_valid_moves():
 #	var shield_king
 	
 	for piece in board.pieces:
+		if piece.stun_counter > 0:
+			continue
 		if piece.color == status:
 			var candi_pos = piece.get_moveable_positions()
 			if piece.piece_type == Globals.PIECE_TYPES.PAWN:
@@ -469,50 +462,42 @@ func unique(arr: Array) -> Array:
 
 func player2_move():
 	if real_game and player2_type == Globals.PLAYER_2_TYPE.AI:
+		#board.clear_borders()
+		#clear_piece_animations()
+		#
+		#await get_tree().process_frame
+		#await get_tree().process_frame
+		
 		var minimax_result = Ai.start_minimax(board.pieces, true if status == Globals.COLORS.WHITE else false, difficulty_dict)
 		print("RESULT: ", minimax_result)
 		
 		var new_piece = minimax_result["ref"]
-		var real_piece = board.get_piece(new_piece.board_position)
+		if !new_piece:
+			push_error("Minimax failed to find a move")
+			evaluate_end_game()
+			return
+		print("PIECE TYPE: ", Globals.PIECE_TYPES.keys()[new_piece.piece_type])
 		
+		var real_piece = board.get_piece(new_piece.board_position)
 		if real_piece == null:
-			push_error("Best Move Piece NOT found on real board")
+			push_error("Could not find piece at position")
+			return
+		if real_piece.piece_type != new_piece.piece_type or real_piece.color != new_piece.color:
+			push_error("Found wrong piece - expected: ", Globals.PIECE_TYPES.keys()[new_piece.piece_type], 
+					   " got: ", Globals.PIECE_TYPES.keys()[real_piece.piece_type])
 			return
 		
 		selected_piece = real_piece
-		print("selected piece is :" +str(selected_piece.piece_type))
-		previous_position = selected_piece.board_position
-		drop_piece(false, minimax_result["pos"])
-		
-func move_from_timeout(otherPlayer : Globals.PLAYER):
-	var piece_died = false
-	
-	var valid_moves = get_valid_moves()
-	if len(valid_moves) == 0:
-		set_win(otherPlayer)
-		return
-	var move = valid_moves.pick_random()
-	var piece = move[0]
-	var pos = move[1]
-	var dest_piece = board.get_piece(pos)
-	
-	if dest_piece != null:
-		if dest_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
-			piece_died = true
-		board.delete_piece(dest_piece)
-	piece.move_position(pos)
-	if piece_died:
-		board.delete_piece(piece)
-	end_turn()
-	evaluate_end_game()
-			
+		previous_position = selected_piece.position
+		previous_square = selected_piece.board_position
+		print ("drop_piece result: ", drop_piece(false, minimax_result["pos"]))
 
 func evaluate_end_game():
 	# Check whether the current user can make any legal move
 	var moves = get_valid_moves()
 	if len(moves) == 0:
 		game_over = true
-		move_timer.stop()
+		stop_clocks()
 		set_win(Globals.PLAYER.TWO if status == player_color else Globals.PLAYER.ONE)
 		return true
 		
@@ -533,13 +518,13 @@ func evaluate_end_game():
 				
 	if white_piece_count == 1 and white_duck or black_piece_count == 1 and black_duck:
 		game_over = true
-		move_timer.stop()
+		stop_clocks()
 		set_win(Globals.PLAYER.TWO if status == player_color else Globals.PLAYER.ONE)
 		return true
 		
 	if turns_since_last_capture > MAX_TURNS_WITHOUT_CAPTURE:
 		game_over = true
-		move_timer.stop()
+		stop_clocks()
 		set_win(null)
 		return true
 		
@@ -592,27 +577,34 @@ func end_turn():
 				board.delete_piece(piece)
 	status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
 	
+	if status == Globals.COLORS.WHITE:
+		move_clock.start_turn()
+		move_clock_2.end_turn()
+	else:
+		move_clock.end_turn()
+		move_clock_2.start_turn()
+	
 	if real_game:
 		turn_indicator.texture = get_turn_indicator_tex(status)
+		
+		board.clear_highlights()
+		board.draw_highlight(previous_square.x, previous_square.y, PREVIOUS_MOVE_COLOR, false)
+		board.draw_highlight(current_square.x, current_square.y, PREVIOUS_MOVE_COLOR, false)
 	
 	if board.num_pieces() == previous_piece_total:
 		turns_since_last_capture += 1
 	else:
 		previous_piece_total = board.num_pieces()
 		turns_since_last_capture = 0
-		print("previous = ", previous_piece_total)
 	
 	clear_piece_animations()
 	check_for_shield_king()
-	reset_timer()
 	board.update_indicators()
 	update_eval()
 	
 func update_eval():
 	var eval = Ai.board_evaluation(board.pieces, 0.0)
-	print("Eval: ", eval)
 	var eval_normalized = 1.0 / (1.0 + exp(-eval / EVAL_DIVISOR))
-	print("Normalized: ", eval_normalized)
 	$evaluation_bar.set_target(eval_normalized)
 
 func get_turn_indicator_tex(color):
@@ -638,25 +630,23 @@ func _on_board_setup_complete() -> void:
 	descriptions.hide()
 	loadouts_label.hide()
 	loadout_ui.hide()
-	timer_bar.show()
 	status = Globals.COLORS.WHITE
-	if ai_color == Globals.COLORS.WHITE:
-		player2_move()
 	init_pieces()
-	reset_timer()
 	board.update_indicators()
 	turn_indicator.texture = get_turn_indicator_tex(status)
 	turn_indicator.show()
-	print("setup complete connected")
 	update_eval()
 	
+	move_clock.start_turn()
+	
+	if ai_color == Globals.COLORS.WHITE:
+		player2_move()
 	
 	for piece in board.pieces:
 		board_repr[board.BOARD_WIDTH * piece.board_position[1] + piece.board_position[0]] = piece
-	print(board_repr)
-	for space in board_repr.size():
-		if board_repr[space] != null:
-			print(board_repr[space])
+	#for space in board_repr.size():
+		#if board_repr[space] != null:
+			#print(board_repr[space])
 
 
 func _on_board_set_status(color: Variant) -> void:
@@ -667,54 +657,15 @@ func _on_board_set_status(color: Variant) -> void:
 		board.draw_selection_box(Vector2(0.0, 5.0), Vector2(7.0, 7.0), SELECTION_BOX_COLOR)
 	else:
 		board.draw_selection_box(Vector2(0.0, 0.0), Vector2(7.0, 2.0), SELECTION_BOX_COLOR)
-		
-	print("status connected")
 
 func _on_board_spawn_ai() -> void:
 	if player2_type == Globals.PLAYER_2_TYPE.AI:
 		SignalBus.init_ai.emit(ai_color)
-	else:
-		print("fail")
 
 func init_pieces():
 	for piece in board.pieces:
 		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
 			board.register_king(piece.board_position, piece.color)
-
-
-
-# Timer code
-
-func _on_move_timer_timeout() -> void:
-	print("ran out of time")
-	
-	if selected_piece and setup_complete:
-		selected_piece.position = previous_position
-		selected_piece.z_index = 0
-		selected_piece = null
-		is_dragging = false
-		board.clear_borders()
-		print("dropped piece INPUT")
-		
-	#move_from_timeout(player)
-	
-	end_turn()
-	player2_move()
-
-func _process(delta):
-	if move_timer.is_stopped():
-		return
-	
-	time_remaining -= delta
-	#timer_label.text = str(max(0, int(time_remaining)))
-	timer_bar.value = time_remaining
-	
-func reset_timer():
-	time_remaining = move_time
-	#timer_label.text = str(int(time_remaining))
-	if real_game:
-		timer_bar.value = move_time
-		move_timer.start(move_time)
 
 func _on_piece_moved(old_pos, new_pos):
 	board_repr[board.BOARD_WIDTH * new_pos[1] + new_pos[0]] = board_repr[board.BOARD_WIDTH * old_pos[1] + old_pos[0]]
@@ -726,19 +677,18 @@ func _on_trojan_spawned(pos):
 func _on_mitosis_spawned(pos):
 	board_repr[board.BOARD_WIDTH * position[1] + position[0]] = board.get_piece(pos)
 
-#func explode_range(dest_piece, selected_piece):
-	#spawn_explosion(dest_piece.position)
-	#for position in dest_piece.bishop_explode_positions():
-		#var piece_around = board.get_piece(position)
-		#if piece_around != null && piece_around.piece_type == Globals.PIECE_TYPES.SHIELD_KING && selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
-			#spawn_explosion(piece_around.position)
-			#board.delete_piece(piece_around)
-			#board.delete_piece(selected_piece)
-			#return
-	#for position in dest_piece.bishop_explode_positions():
-		#var piece_around = board.get_piece(position)
-		#if piece_around != null && piece_around.piece_type != Globals.PIECE_TYPES.DUCK:
-			#spawn_explosion(position)
-			#board.delete_piece(piece_around)
-		#if selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER:
-				#board.delete_piece(selected_piece)
+# Timer code
+
+func set_clock_durations(minutes : float) -> void:
+	move_clock.set_duration(minutes)
+	move_clock_2.set_duration(minutes)
+
+func stop_clocks():
+	move_clock.end_turn()
+	move_clock_2.end_turn()
+
+func process_expired_clock():
+	game_over = true
+	stop_clocks()
+	set_win(Globals.PLAYER.TWO if status == player_color else Globals.PLAYER.ONE)
+	return true

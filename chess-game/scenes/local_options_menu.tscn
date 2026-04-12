@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://cfc02oc4dv2pe"]
+[gd_scene load_steps=7 format=3 uid="uid://cfc02oc4dv2pe"]
 
 [ext_resource type="Script" uid="uid://34f0adtywheq" path="res://scripts/options_menu.gd" id="1_34a7a"]
 [ext_resource type="Texture2D" uid="uid://dsxn1xc4dr5bu" path="res://Assets/Buttons/LoadoutButton.png" id="2_3falw"]
 [ext_resource type="Texture2D" uid="uid://cpfhv5akv2vp2" path="res://Assets/Backgrounds/HighResolution_MedievalTown2.png" id="2_inqc7"]
 [ext_resource type="PackedScene" uid="uid://dqrdpth8xiafq" path="res://scenes/notification.tscn" id="3_inqc7"]
+[ext_resource type="Texture2D" uid="uid://cw1w0oajlkhhw" path="res://Assets/Buttons/EXIT_Button.png" id="5_k83ln"]
+[ext_resource type="Texture2D" uid="uid://bdj5co4n8e2aw" path="res://Assets/Buttons/EXIT_Button_Hover.png" id="6_jiuty"]
 
 [node name="local_options_menu" type="Control"]
 layout_mode = 3
@@ -148,8 +150,26 @@ offset_bottom = 289.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="Button_Exit" type="TextureButton" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -87.5
+offset_top = 324.0
+offset_right = 87.5
+offset_bottom = 388.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_k83ln")
+texture_pressed = ExtResource("6_jiuty")
+texture_hover = ExtResource("6_jiuty")
+
 [connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer/Map1_Button" to="." method="_on_map_1_button_pressed"]
 [connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer/Map2_Button" to="." method="_on_map_2_button_pressed"]
 [connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer2/Map3_Button" to="." method="_on_map_3_button_pressed"]
 [connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer2/Map4_Button" to="." method="_on_map_4_button_pressed"]
 [connection signal="pressed" from="Panel/VBoxContainer/Continue_Button" to="." method="_on_continue_button_pressed"]
+[connection signal="pressed" from="Button_Exit" to="." method="_on_button_exit_pressed"]

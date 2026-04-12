@@ -1,0 +1,58 @@
+[gd_scene load_steps=4 format=3 uid="uid://bv1nq1ec8x4j0"]
+
+[ext_resource type="Script" uid="uid://bmuqsaqjhttix" path="res://scripts/previous_move.gd" id="1_6qfj1"]
+[ext_resource type="Texture2D" uid="uid://bhpcvx2c3573d" path="res://Assets/StunIndicator.png" id="2_r08ui"]
+[ext_resource type="Texture2D" uid="uid://bw2ccfiqhwrtb" path="res://customPiecesSpritesheetNew.png" id="3_c8vyc"]
+
+[node name="descriptions" type="Control"]
+custom_minimum_size = Vector2(290, 240)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 290.0
+offset_bottom = 240.0
+script = ExtResource("1_6qfj1")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="image_preview" type="TextureRect" parent="Panel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -79.0
+offset_top = 12.0
+offset_right = 79.0
+offset_bottom = 170.0
+grow_horizontal = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("2_r08ui")
+
+[node name="Label" type="Label" parent="Panel"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -137.5
+offset_top = -73.0
+offset_right = 137.5
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 25
+text = "HELLO THERE "
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+visible = false
+texture = ExtResource("3_c8vyc")

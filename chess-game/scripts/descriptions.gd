@@ -31,8 +31,6 @@ var current_index = 0
 
 @onready var image : TextureRect = $Panel/image_preview
 @onready var description_label = $Panel/Label
-@onready var left_button = $Panel/Left_Button
-@onready var right_button = $Panel/Right_Button
 
 @export var color : Globals.COLORS
 
