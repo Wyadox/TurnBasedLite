@@ -90,8 +90,6 @@ func eval_assessThreat(threat_map : Dictionary, eval_piece, pieces) -> float:
 	
 	var score = threat_count * THREAT_EVAL_INCREMENT * THREATEN_MULTIPLIER - danger_count * THREAT_EVAL_INCREMENT * DANGER_MULTIPLIER
 	
-	if eval_piece.color == Globals.COLORS.BLACK:
-		return -score
 	return score
 
 #

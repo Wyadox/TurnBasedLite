@@ -105,9 +105,9 @@ func _ready():
 		move_clock.global_position.y += MOVE_CLOCK_OFFSET
 		move_clock_2.global_position.y -= MOVE_CLOCK_OFFSET
 	
-	if multiplayer.multiplayer_peer != null:
-		player_color = Network.my_color
-		player2_type = Globals.PLAYER_2_TYPE.NETWORK
+	#if multiplayer.multiplayer_peer != null:
+		#player_color = Network.my_color
+		#player2_type = Globals.PLAYER_2_TYPE.NETWORK
 	
 func difficulty_settings() -> Dictionary:
 	match difficulty:
@@ -217,9 +217,9 @@ func _input(event):
 		selected_piece.z_index = 0
 		is_dragging = false
 		
-		if status == player_color:
+		if status == player_color or player2_type != Globals.PLAYER_2_TYPE.NETWORK:
 			var to_move = get_square_under_mouse()
-			if multiplayer.multiplayer_peer != null:
+			if multiplayer.multiplayer_peer != null and player2_type == Globals.PLAYER_2_TYPE.NETWORK:
 				request_move(previous_square, to_move)
 			else:
 				var is_valid_move = drop_piece()
@@ -384,6 +384,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 			else:
 				board.update_indicators()
 				player2_move()
+				print("calling player2 move")
 		return true
 	return false
 
@@ -470,6 +471,9 @@ func unique(arr: Array) -> Array:
 
 
 func player2_move():
+	print("player2 reached")
+	print("real game: ", real_game)
+	print("player 2 type: ", player2_type)
 	if real_game and player2_type == Globals.PLAYER_2_TYPE.AI:
 		#board.clear_borders()
 		#clear_piece_animations()
