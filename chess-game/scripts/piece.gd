@@ -1,6 +1,8 @@
+class_name Piece
 extends Node2D
 
 @onready var sprite = $Sprite2D
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
 
 const SPRITE_SIZE = 32
 const CELL_SIZE = 120
@@ -12,12 +14,19 @@ const Y_OFFSET = 60
 @export var color: Globals.COLORS
 @export var board_position: Vector2
 
-var board_handle;
+@export var board_handle : Board;
 
 @export var moved: bool;
 @export var promoted: bool;
 @export var stun_counter: int;
+@export var infect_counter: int;
 @export var cool_counter: int;
+
+@export var starting_rank : float
+
+# Juggernaut variables
+const MAX_HEALTH : int = 3
+var current_health : int
 
 func init_piece(
 	type: Globals.PIECE_TYPES,
@@ -32,6 +41,11 @@ func init_piece(
 	promoted = false;
 	moved = false
 	stun_counter = 0
+	infect_counter = 0
+	starting_rank = board_pos.y
+	
+	# Juggernaut
+	current_health = MAX_HEALTH
 	
 	update_sprite()
 	
@@ -74,29 +88,30 @@ func move_position(to_move: Vector2):
 			return
 	
 	# Update king position if they are moved
-	if piece_type == Globals.PIECE_TYPES.SHIELD_KING:
-		board_handle.register_king(board_position, color)
+	#if piece_type == Globals.PIECE_TYPES.SHIELD_KING:
+		#board_handle.register_king(board_position, color)
 	
 	# Promotion for pawns to KING BEHAVIOR
-	if (piece_type == Globals.PIECE_TYPES.PAWN or piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN or piece_type == Globals.PIECE_TYPES.WORM or piece_type == Globals.PIECE_TYPES.CHECKER) and (
-		(color == Globals.COLORS.BLACK and to_move[1] == board_handle.BOARD_HEIGHT - 1) or 
-		(color == Globals.COLORS.WHITE and to_move[1] == 0)
+	if (piece_type == Globals.PIECE_TYPES.PAWN or piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN or piece_type == Globals.PIECE_TYPES.WORM or piece_type == Globals.PIECE_TYPES.CHECKER or piece_type == Globals.PIECE_TYPES.INFECTOR) and (
+		(starting_rank < DIRECTION_THRESHOLD and to_move[1] == board_handle.BOARD_HEIGHT - 1) or 
+		(starting_rank > DIRECTION_THRESHOLD and to_move[1] == 0)
 	):
-		#piece_type = Globals.PIECE_TYPES.PROMOTED_PAWN
 		promoted = true
-		update_sprite()
-		
-	#if piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN and (
-		#(color == Globals.COLORS.BLACK and to_move[1] == 5) or 
-		#(color == Globals.COLORS.WHITE and to_move[1] == 0)
-	#):
-		#piece_type = Globals.PIECE_TYPES.KING
-		#update_sprite()
+
+const PIECE_SCENE = preload("res://scenes/Piece.tscn")
 
 func clone (_board):
-	var piece = self.duplicate()
-	piece.board_handle = _board
-	return piece
+	#var piece = self.duplicate()
+	
+	var copy : Piece = PIECE_SCENE.instantiate()
+	copy.init_piece(piece_type, color, board_position, board_handle)
+	copy.stun_counter = stun_counter
+	copy.promoted = promoted
+	copy.moved = moved
+	copy.current_health = current_health
+	copy.starting_rank = starting_rank
+	
+	return copy
 	
 func get_moveable_positions():
 	match piece_type:
@@ -132,6 +147,22 @@ func get_moveable_positions():
 			if promoted:
 				return promoted_checker_pos()
 			return pawn_move_pos()
+		Globals.PIECE_TYPES.JUGGERNAUT:
+			return king_threat_pos()
+		Globals.PIECE_TYPES.JUGGERNAUT2:
+			return king_threat_pos()
+		Globals.PIECE_TYPES.JUGGERNAUT1:
+			return king_threat_pos()
+		Globals.PIECE_TYPES.WARHORSE:
+			return knight_threat_pos()
+		Globals.PIECE_TYPES.INFECTOR:
+			if promoted:
+				return king_threat_pos()
+			return pawn_move_pos()
+		Globals.PIECE_TYPES.DUPLICATOR:
+			if promoted:
+				return promoted_duplicator_threat_pos()
+			return duplicator_move_pos()
 		_: return []
 
 func get_threatened_positions():
@@ -163,6 +194,22 @@ func get_threatened_positions():
 			return positions
 		Globals.PIECE_TYPES.DUCK: return []
 		Globals.PIECE_TYPES.CHECKER: return checker_threat_pos(false)
+		Globals.PIECE_TYPES.JUGGERNAUT:
+			return king_threat_pos()
+		Globals.PIECE_TYPES.JUGGERNAUT2:
+			return king_threat_pos()
+		Globals.PIECE_TYPES.JUGGERNAUT1:
+			return king_threat_pos()
+		Globals.PIECE_TYPES.WARHORSE:
+			return knight_threat_pos()
+		Globals.PIECE_TYPES.INFECTOR:
+			if promoted:
+				return king_threat_pos()
+			return pawn_threat_pos()
+		Globals.PIECE_TYPES.DUPLICATOR:
+			if promoted:
+				return promoted_duplicator_threat_pos()
+			return pawn_threat_pos()
 		_: return []
 
 
@@ -170,6 +217,7 @@ func get_threatened_positions():
 const PAWN_SPOT_INCREMENTS_MOVE = [[0, 1]] # Pawn move only one
 const PAWN_SPOT_INCREMENTS_MOVE_FIRST = [[0, 1], [0, 2]] # Pawn can move one and two times initially
 const PAWN_SPOT_INCREMENTS_TAKE = [[-1, 1], [1, 1]] # Pawn taking other piece at side 
+const DIRECTION_THRESHOLD = board_handle.BOARD_HEIGHT / 2.0
 
 func pawn_threat_pos():
 	var positions = []
@@ -178,7 +226,7 @@ func pawn_threat_pos():
 		var pos = board_handle.spot_search_threat(
 			color,
 			board_position[0], board_position[1],
-			inc[0], inc[1] if color == Globals.COLORS.BLACK else -inc[1],
+			inc[0], inc[1] if starting_rank < DIRECTION_THRESHOLD else -inc[1],
 			true, false
 		)
 		if pos != null:
@@ -193,7 +241,7 @@ func pawn_move_pos():
 		var pos = board_handle.spot_search_threat(
 			color,
 			board_position[0], board_position[1],
-			inc[0], inc[1] if color == Globals.COLORS.BLACK else -inc[1],
+			inc[0], inc[1] if starting_rank < DIRECTION_THRESHOLD else -inc[1],
 			false, false
 		)
 		if pos != null:
@@ -202,7 +250,7 @@ func pawn_move_pos():
 				pos = board_handle.spot_search_threat(
 				color,
 				board_position[0], board_position[1],
-				inc[0], inc[1] if color == Globals.COLORS.BLACK else -inc[1],
+				inc[0], inc[1] if starting_rank < DIRECTION_THRESHOLD else -inc[1],
 				false, true)
 		if pos != null:
 			positions.append(pos)
@@ -215,7 +263,7 @@ func pawn_move_pos():
 		var pos = board_handle.spot_search_threat(
 			color, 
 			board_position[0], board_position[1],
-			inc[0], inc[1] if color == Globals.COLORS.BLACK else -inc[1],
+			inc[0], inc[1] if starting_rank < DIRECTION_THRESHOLD else -inc[1],
 			true, false
 		)
 		if pos != null and piece_type != Globals.PIECE_TYPES.CHECKER:
@@ -226,6 +274,7 @@ func pawn_move_pos():
 const WORM_SPOT_THREAT_INCREMENTS = [[-6,1], [6, 1]];
 const WORM_SPOT_THREAT_OPPOSITE_INCREMENTS = [[-6,-1], [6, -1]];
 const WORM_SPOT_MOVE_INCREMENTS = [[-6,0], [6, 0], [-1, 0], [1, 0]];
+const WORM_PROMOTED_MOVE_INCREMENTS = [[0,6], [0,-6]]
 func worm_threat_pos():
 	var positions = []
 	var WORM_INCREMENTS = WORM_SPOT_THREAT_INCREMENTS
@@ -235,7 +284,7 @@ func worm_threat_pos():
 		var pos = board_handle.spot_search_threat(
 			color, 
 			board_position[0], board_position[1],
-			inc[0], inc[1] if color == Globals.COLORS.BLACK and !promoted else -inc[1],
+			inc[0], inc[1] if starting_rank < DIRECTION_THRESHOLD else -inc[1],
 			true, false
 		)
 		if pos != null:
@@ -243,12 +292,15 @@ func worm_threat_pos():
 	return positions
 	
 func worm_move_pos():
+	var WORM_INCREMENTS = WORM_SPOT_MOVE_INCREMENTS
 	var positions = []
-	for inc in WORM_SPOT_MOVE_INCREMENTS:
+	if promoted:
+		WORM_INCREMENTS += WORM_PROMOTED_MOVE_INCREMENTS
+	for inc in WORM_INCREMENTS:
 		var pos = board_handle.spot_search_threat(
 			color, 
 			board_position[0], board_position[1],
-			inc[0], inc[1] if color == Globals.COLORS.BLACK else -inc[1],
+			inc[0], inc[1] if starting_rank < DIRECTION_THRESHOLD else -inc[1],
 			false, true
 		)
 		if pos != null:
@@ -406,11 +458,17 @@ func perform_mitosis(new_pawn_pos: Vector2):
 	piece_type = Globals.PIECE_TYPES.PAWN
 	update_sprite()
 	
-	board_handle.create_piece(
+	var new_piece = board_handle.create_piece(
 		Globals.PIECE_TYPES.PAWN,
 		color,
 		new_pawn_pos
 	)
+	print("mitosis starting: ", new_piece.starting_rank)
+	new_piece.starting_rank = starting_rank
+	new_piece.moved = false
+	new_piece.promoted = promoted
+	moved = false
+	print("mitosis ending: ", new_piece.starting_rank)
 	SignalBus.emit_signal("mitosis_spawned", new_pawn_pos)
 
 # Stun Knight Stun Search
@@ -517,7 +575,7 @@ func checker_threat_pos(capture_pos : bool):
 func get_checker_increments():
 	var increments = []
 	
-	var direction = 1 if color == Globals.COLORS.BLACK else -1
+	var direction = 1 if starting_rank < DIRECTION_THRESHOLD else -1
 	
 	increments.append({"take": Vector2(-1, direction), "jump": Vector2(-2, direction * 2)})
 	increments.append({"take": Vector2(1, direction), "jump": Vector2(2, direction * 2)})
@@ -537,6 +595,74 @@ func promoted_checker_pos():
 			board_position[0], board_position[1],
 			inc[0], inc[1],
 			false, true
+		)
+		if pos != null:
+			positions.append(pos)
+	return positions
+
+const DUPLICATOR_DUPLICATE_INCREMENTS = [[1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1]]
+func duplicator_move_pos():
+	var positions = []
+	var increments = PAWN_SPOT_INCREMENTS_MOVE if moved else PAWN_SPOT_INCREMENTS_MOVE_FIRST
+	for inc in increments:
+		var pos = board_handle.spot_search_threat(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1] if starting_rank < DIRECTION_THRESHOLD else -inc[1],
+			false, false
+		)
+		if pos != null:
+			var piece = board_handle.get_piece(pos)
+			if piece != null and piece.piece_type != Globals.PIECE_TYPES.WEB:
+				pos = board_handle.spot_search_threat(
+				color,
+				board_position[0], board_position[1],
+				inc[0], inc[1] if starting_rank < DIRECTION_THRESHOLD else -inc[1],
+				false, true)
+		if pos != null:
+			positions.append(pos)
+		else:
+			# if there is something blocking in 1st pos
+			# then second pos can't be moved
+			break
+		
+	for inc in PAWN_SPOT_INCREMENTS_TAKE:
+		var pos = board_handle.spot_search_threat(
+			color, 
+			board_position[0], board_position[1],
+			inc[0], inc[1] if starting_rank < DIRECTION_THRESHOLD else -inc[1],
+			true, false
+		)
+		if pos != null and piece_type != Globals.PIECE_TYPES.CHECKER:
+			positions.append(pos)
+	
+	for inc in DUPLICATOR_DUPLICATE_INCREMENTS:
+		var pos = board_handle.spot_search_duplicate(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1]
+		)
+		if pos != null:
+			positions.append(pos)
+	
+	return positions
+
+func promoted_duplicator_threat_pos():
+	var positions = []
+	for inc in KING_SPOT_INCREMENTS:
+		var pos = board_handle.spot_search_threat(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1]
+		)
+		if pos != null:
+			positions.append(pos)
+			
+	for inc in DUPLICATOR_DUPLICATE_INCREMENTS:
+		var pos = board_handle.spot_search_duplicate(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1]
 		)
 		if pos != null:
 			positions.append(pos)

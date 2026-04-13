@@ -1,9 +1,10 @@
-[gd_scene load_steps=12 format=3 uid="uid://cec8ttfqyv3h"]
+[gd_scene load_steps=13 format=3 uid="uid://cec8ttfqyv3h"]
 
 [ext_resource type="Script" uid="uid://ft8v0cp8vk1p" path="res://scripts/main_menu.gd" id="1_l6cm7"]
 [ext_resource type="Texture2D" uid="uid://c6ydvqtgmvobh" path="res://Assets/Buttons/START_Button.png" id="2_bqqt6"]
+[ext_resource type="Texture2D" uid="uid://bmgcjpr7arobb" path="res://Assets/Backgrounds/HighResolution_MedievalTown1.png" id="2_lgwnu"]
 [ext_resource type="Texture2D" uid="uid://c0qnuxy142pbt" path="res://Assets/Buttons/START_Button_Hover.png" id="3_bqqt6"]
-[ext_resource type="Texture2D" uid="uid://uv7f2ydwkqrw" path="res://Assets/origbig.png" id="4_wu84c"]
+[ext_resource type="Texture2D" uid="uid://ct8mus3wg0nkb" path="res://Assets/ChessBoard/ChaosChessTitle.png" id="3_lgwnu"]
 [ext_resource type="Texture2D" uid="uid://y4gexaeejyan" path="res://Assets/Buttons/PIECES_Button.png" id="5_oa1go"]
 [ext_resource type="Texture2D" uid="uid://bhk0acna1ruql" path="res://Assets/Buttons/PIECES_Button_Hover.png" id="6_5dd4i"]
 [ext_resource type="Texture2D" uid="uid://bw48hi8eqwd3m" path="res://Assets/Buttons/LOADOUT_Button.png" id="6_tbmy8"]
@@ -14,16 +15,11 @@
 [sub_resource type="Theme" id="Theme_bqqt6"]
 
 [node name="MainMenu" type="Control"]
+custom_minimum_size = Vector2(1920, 1080)
 layout_mode = 3
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -100.5
-offset_top = -80.5
-offset_right = 100.5
-offset_bottom = 80.5
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
@@ -32,33 +28,43 @@ script = ExtResource("1_l6cm7")
 [node name="TextureRect" type="TextureRect" parent="."]
 z_index = -1
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -1020.5
-offset_top = -748.5
-offset_right = 1082.5
-offset_bottom = 386.5
+offset_right = 2103.0
+offset_bottom = 1135.0
+scale = Vector2(0.9867328, 0.9867328)
+texture = ExtResource("2_lgwnu")
+
+[node name="Title" type="TextureRect" parent="."]
+z_index = -1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 18.000061
+offset_top = -176.0
+offset_right = 18.000061
+offset_bottom = -176.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("4_wu84c")
-
-[node name="Label" type="Label" parent="."]
-layout_mode = 0
-offset_left = -140.0
-offset_top = -149.0
-offset_right = 374.0
-offset_bottom = -6.0
-theme_override_font_sizes/font_size = 77
-text = "CHAOS CHESS"
-horizontal_alignment = 1
-vertical_alignment = 1
+scale = Vector2(1.2787669, 1.2787669)
+texture = ExtResource("3_lgwnu")
+expand_mode = 1
+stretch_mode = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 0
-offset_left = -24.0
-offset_right = 264.0
-offset_bottom = 214.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -144.0
+offset_top = 4.0
+offset_right = 144.0
+offset_bottom = 218.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_constants/separation = 8
 
 [node name="StartButton" type="TextureButton" parent="VBoxContainer"]

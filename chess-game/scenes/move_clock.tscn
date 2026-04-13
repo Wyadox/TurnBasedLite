@@ -1,0 +1,51 @@
+[gd_scene load_steps=4 format=3 uid="uid://b40kfc55gm8m3"]
+
+[ext_resource type="Script" uid="uid://cqckudgtss54b" path="res://scripts/move_clock.gd" id="1_8epym"]
+[ext_resource type="StyleBox" uid="uid://crx3k8hqcy6k1" path="res://Assets/Themes/move_clock_default.tres" id="2_cc5o1"]
+[ext_resource type="StyleBox" uid="uid://bpg86fe0cv08u" path="res://Assets/Themes/progress_bar_default.tres" id="3_mn78v"]
+
+[node name="move_clock" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_8epym")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 249.0
+offset_bottom = 117.0
+theme_override_styles/panel = ExtResource("2_cc5o1")
+
+[node name="ProgressBar" type="ProgressBar" parent="Panel"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 27.0
+grow_horizontal = 2
+theme_override_styles/fill = ExtResource("3_mn78v")
+max_value = 1.0
+step = 0.001
+show_percentage = false
+
+[node name="Label" type="Label" parent="Panel"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -49.5
+offset_top = -80.0
+offset_right = 49.5
+offset_bottom = -11.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 50
+text = "3:00"
+
+[node name="Duration" type="Timer" parent="."]
+one_shot = true
+autostart = true

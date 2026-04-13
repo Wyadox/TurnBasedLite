@@ -29,10 +29,10 @@ var items = [
 
 var current_index = 0
 
-@onready var image : TextureRect = $image_preview
-@onready var description_label = $Label
-@onready var left_button = $Left_Button
-@onready var right_button = $Right_Button
+@onready var image : TextureRect = $Panel/image_preview
+@onready var description_label = $Panel/Label
+
+@export var color : Globals.COLORS
 
 var selected_pos
 
@@ -46,7 +46,7 @@ func set_selected_square(pos):
 	print("descriptions set pos: ", selected_pos)
 	
 func grab_region(piece_type):
-	var region_pos = Globals.SPRITE_MAPPING[Globals.COLORS.WHITE][piece_type]
+	var region_pos = Globals.SPRITE_MAPPING[color][piece_type]
 	var region = Rect2(
 		region_pos.y * SPRITE_SIZE,
 		region_pos.x * SPRITE_SIZE,
@@ -60,6 +60,9 @@ func grab_region(piece_type):
 	
 	return atlas
 	
+func set_color(col : Globals.COLORS):
+	color = col
+	update_display()
 	
 func update_display():
 	var item = items[current_index]

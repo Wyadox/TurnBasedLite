@@ -1,0 +1,28 @@
+[gd_scene load_steps=4 format=3 uid="uid://dp03twcoim8s8"]
+
+[ext_resource type="Script" uid="uid://touyquwqmuhw" path="res://scripts/evaluation_bar.gd" id="1_lei34"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_twq3v"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lei34"]
+bg_color = Color(1, 1, 1, 1)
+
+[node name="evaluation_bar" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_lei34")
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+layout_mode = 1
+offset_right = 30.0
+offset_bottom = 800.0
+theme_override_styles/background = SubResource("StyleBoxFlat_twq3v")
+theme_override_styles/fill = SubResource("StyleBoxFlat_lei34")
+max_value = 10.0
+fill_mode = 3
+show_percentage = false

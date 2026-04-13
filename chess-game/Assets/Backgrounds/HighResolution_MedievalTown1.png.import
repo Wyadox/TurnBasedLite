@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://uv7f2ydwkqrw"
-path="res://.godot/imported/origbig.png-083b8ff29f5c292de7f612cc5c1dcc98.ctex"
+uid="uid://bmgcjpr7arobb"
+path="res://.godot/imported/HighResolution_MedievalTown1.png-2439156c1cbc8d0f8baaa1ceb9955488.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/origbig.png"
-dest_files=["res://.godot/imported/origbig.png-083b8ff29f5c292de7f612cc5c1dcc98.ctex"]
+source_file="res://Assets/Backgrounds/HighResolution_MedievalTown1.png"
+dest_files=["res://.godot/imported/HighResolution_MedievalTown1.png-2439156c1cbc8d0f8baaa1ceb9955488.ctex"]
 
 [params]
 

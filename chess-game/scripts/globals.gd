@@ -11,6 +11,12 @@ enum COLORS {
 	BLACK, WHITE, TILE
 }
 
+enum DIFFICULTY {
+	EASY,
+	NORMAL,
+	HARD
+}
+
 enum PIECE_BASE {
 	PAWN,
 	BISHOP,
@@ -19,6 +25,14 @@ enum PIECE_BASE {
 	KING,
 	QUEEN
 }
+
+enum BORDER_STYLE {
+	BOX,
+	CIRCLE,
+	TARGET,
+	HIGHLIGHT
+}
+
 #pieces
 enum PIECE_TYPES {
 	KNIGHT,
