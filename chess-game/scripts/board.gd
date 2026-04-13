@@ -12,7 +12,7 @@ var bridge_mid: Texture2D = preload("res://Assets/bridgeMid.png")
 var bridge_right: Texture2D = preload("res://Assets/bridgeRight.png")
 var bridge_full: Texture2D = preload("res://Assets/bridgeFull.png")
 
-
+var shield_king = []
 @export var white_king_pos: Vector2 = Vector2(-2, -2)
 @export var black_king_pos: Vector2 = Vector2(-2, -2)
 
@@ -206,12 +206,10 @@ func draw_water(x,y):
 	rect.size = Vector2(CELL_SIZE, CELL_SIZE)
 	
 
-func register_king(pos, col):
-	match col:
-		Globals.COLORS.WHITE:
-			white_king_pos = pos
-		Globals.COLORS.BLACK:
-			black_king_pos = pos
+func register_king():
+	for piece in pieces:
+		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
+			shield_king.append(piece)
 
 func get_piece(pos: Vector2):
 	if pieces.size() < 1:
@@ -238,6 +236,10 @@ func play_sound(title : String):
 func on_capture(dest_piece, selected_piece, board, previous_position):
 	if selected_piece == null:
 		return
+	if dest_piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
+		for king in shield_king:
+			if king == dest_piece:
+				shield_king.erase(king)
 	if dest_piece.piece_type == Globals.PIECE_TYPES.WEB and selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER:
 		selected_piece.stun_counter = 3
 	if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
@@ -635,26 +637,28 @@ func update_indicators():
 			spawn_indicator(pos, "promoted")
 
 func piece_is_protected(piece):
-	var king_pos
-	if piece.color == Globals.COLORS.WHITE:
-		king_pos = white_king_pos
-	else:
-		king_pos = black_king_pos
-		
+	var protect_pos: Array
+	for king in shield_king:
+		if king.color == piece.color:
+			for pos in king.shield_king_protect_positions():
+				protect_pos.append(pos)
+
 	if piece.piece_type == Globals.PIECE_TYPES.DUCK:
 		return true
-
-	# Check if the king actually exists
-	if king_pos == Vector2(-2, -2):
+	if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
 		return false
-
-	var shield_king = get_piece(king_pos)
 		
-	if shield_king == null:
+	# Check if the king actually exists
+	if protect_pos.size() == 0:
 		return false
+
+	#var shield_king = get_piece(king_pos)
+		#
+	#if shield_king == null:
+		#return false
 	
 	
-	return piece.board_position in shield_king.shield_king_protect_positions()
+	return piece.board_position in protect_pos
 
 
 	

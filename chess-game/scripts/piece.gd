@@ -88,8 +88,8 @@ func move_position(to_move: Vector2):
 			return
 	
 	# Update king position if they are moved
-	if piece_type == Globals.PIECE_TYPES.SHIELD_KING:
-		board_handle.register_king(board_position, color)
+	#if piece_type == Globals.PIECE_TYPES.SHIELD_KING:
+		#board_handle.register_king(board_position, color)
 	
 	# Promotion for pawns to KING BEHAVIOR
 	if (piece_type == Globals.PIECE_TYPES.PAWN or piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN or piece_type == Globals.PIECE_TYPES.WORM or piece_type == Globals.PIECE_TYPES.CHECKER or piece_type == Globals.PIECE_TYPES.INFECTOR) and (

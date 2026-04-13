@@ -7,8 +7,8 @@ var game_over;
 var player_color;
 var status; # who is playing
 var player2_type; # Where AI or Human is playinh
-var white_shield_king_alive = false
-var black_shield_king_alive = false
+var white_shield_king = []
+var black_shield_king = []
 
 var current_map : int
 var difficulty : Globals.DIFFICULTY
@@ -243,26 +243,15 @@ func init_game():
 	# Initialize the board represntation array
 	board_repr.resize(board.BOARD_WIDTH * board.BOARD_HEIGHT)
 	
-	# Check to see if either player has a shield king, and mark it alive if it does.
+	# Check to see if either player has a shield king.
 	check_for_shield_king()
 
 func check_for_shield_king():
-	var white_shield_king_found = false
-	var black_shield_king_found = false
-	
 	for piece in board.pieces:
 		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING && piece.color == Globals.COLORS.WHITE:
-			white_shield_king_found = true
+			white_shield_king.append(piece)
 		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING && piece.color == Globals.COLORS.BLACK:
-			black_shield_king_found = true
-	
-	white_shield_king_alive = white_shield_king_found
-	black_shield_king_alive = black_shield_king_found
-	
-	if !white_shield_king_found:
-		board.white_king_pos = Vector2(-2,-2)
-	if !black_shield_king_found:
-		board.black_king_pos = Vector2(-2,-2)
+			black_shield_king.append(piece)
 
 func get_square_under_mouse():
 	var pos = get_global_mouse_position() - board.global_position
@@ -347,8 +336,8 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 					var piece = board.get_piece(space)
 					if piece != null and piece.color != Globals.COLORS.TILE:
 						piece.stun_counter = 2
-		if selected_piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
-			board.register_king(selected_piece.board_position, selected_piece.color)
+		#if selected_piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
+			#board.register_king(selected_piece.board_position, selected_piece.color)
 		if piece_died:
 			board.on_capture(selected_piece, dest_piece, board, old_pos)
 		if is_jousting:
@@ -565,6 +554,8 @@ func end_turn():
 					elif piece.color == Globals.COLORS.BLACK:
 						piece.color = Globals.COLORS.WHITE
 						piece.update_sprite()
+					if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
+						board.shield_king.append(piece)
 		if piece.cool_counter > 0:
 			piece.cool_counter -= 1
 			if piece.cool_counter == 4:
@@ -663,9 +654,7 @@ func _on_board_spawn_ai() -> void:
 		SignalBus.init_ai.emit(ai_color)
 
 func init_pieces():
-	for piece in board.pieces:
-		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
-			board.register_king(piece.board_position, piece.color)
+	board.register_king()
 
 func _on_piece_moved(old_pos, new_pos):
 	board_repr[board.BOARD_WIDTH * new_pos[1] + new_pos[0]] = board_repr[board.BOARD_WIDTH * old_pos[1] + old_pos[0]]
