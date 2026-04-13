@@ -335,7 +335,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 				board.on_capture(dest_piece, selected_piece, board, old_pos)
 				piece_captured = true
 			#selected_piece.move_position(selected_piece.board_position)
-			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER or selected_piece.piece_type == Globals.PIECE_TYPES.INFECTOR:
+			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER or (selected_piece.piece_type == Globals.PIECE_TYPES.INFECTOR and dest_piece.piece_type != Globals.PIECE_TYPES.WEB):
 				is_shooting = true
 				selected_piece.position = previous_position
 			if selected_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:

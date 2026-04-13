@@ -8,4 +8,6 @@ func trojan_spawn(dest_piece, board):
 				dest_piece.color,
 				position
 			)
+			var spawned_pawn = board.get_piece(position)
+			spawned_pawn.starting_rank = dest_piece.starting_rank
 			SignalBus.emit_signal("trojan_spawned", position)
