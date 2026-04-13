@@ -351,6 +351,27 @@ func spot_search_threat(
 		return cur_pos if cur_piece.color != own_color else null
 	return cur_pos if not threat_only else null
 	
+func spot_search_duplicate(
+	own_color, 
+	cur_x, cur_y, 
+	inc_x, inc_y,
+):
+	# Do a single move and check if move is valid or threatens a piece
+	cur_x += inc_x
+	cur_y += inc_y
+	
+	if !is_within_bounds(Vector2(cur_x, cur_y)):
+		return
+	
+	var cur_pos = Vector2(cur_x, cur_y)
+	var cur_piece = get_piece(cur_pos)
+	
+	#if cur_piece != null and cur_piece.piece_type == Globals.PIECE_TYPES.DUCK:
+		#return null
+	
+	if cur_piece != null:
+		return cur_pos if cur_piece.color == own_color else null
+	
 func spot_search_explode( 
 	cur_x, cur_y, 
 	inc_x, inc_y,
@@ -638,10 +659,11 @@ func update_indicators():
 
 func piece_is_protected(piece):
 	var protect_pos: Array
-	for king in shield_king:
-		if king.color == piece.color:
-			for pos in king.shield_king_protect_positions():
-				protect_pos.append(pos)
+	if shield_king.size() > 0:
+		for king in shield_king:
+			if king.color == piece.color:
+				for pos in king.shield_king_protect_positions():
+					protect_pos.append(pos)
 
 	if piece.piece_type == Globals.PIECE_TYPES.DUCK:
 		return true

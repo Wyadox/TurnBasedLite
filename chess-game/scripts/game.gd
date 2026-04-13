@@ -286,6 +286,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 	
 	var piece_captured = false
 	
+	
 	if valid_move(old_pos, to_move):
 		# For valid move:
 		# - if target has piece, then replace it
@@ -305,6 +306,10 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 					checker_captured = true
 					dest_piece = null
 					
+		if selected_piece.piece_type == Globals.PIECE_TYPES.DUPLICATOR and dest_piece != null and dest_piece.color == selected_piece.color:
+			Duplicator.Duplicate(selected_piece, dest_piece, board)
+			is_shooting = true
+			selected_piece.position = previous_position
 		# Delete only if the target piece is of different color
 		if dest_piece != null and dest_piece.color != selected_piece.color:
 			if dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT or dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT2:
@@ -328,6 +333,8 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 			if selected_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
 				if dest_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP and dest_piece.piece_type != Globals.PIECE_TYPES.JOUST_BISHOP:
 					is_jousting = true
+		if is_shooting == true or juggernaut_hit == true:
+			current_square = dest_piece.board_position
 		if is_shooting == false and juggernaut_hit == false:
 			selected_piece.move_position(to_move)
 			current_square = selected_piece.board_position
@@ -364,6 +371,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 			else:
 				board.update_indicators()
 				player2_move()
+		print(board.shield_king)
 		return true
 	return false
 

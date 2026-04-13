@@ -26,6 +26,7 @@ Juggernaut="*res://scripts/juggernaut.gd"
 Warhorse="*res://scripts/warhorse.gd"
 Infector="*res://scripts/infector.gd"
 Ai="*res://scripts/ai.gd"
+Duplicator="*res://scripts/duplicator.gd"
 
 [display]
 
