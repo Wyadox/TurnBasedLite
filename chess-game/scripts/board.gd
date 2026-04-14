@@ -456,7 +456,7 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 	create_piece(piece_type, color, selected_pos)
 	
 	# Determine if color needs to swap
-	if total_pieces + 1 < Globals.PIECES_PER_SIDE:
+	if total_pieces + 1 < Globals.PIECES_PER_SIDE or total_pieces > (Globals.PIECES_PER_SIDE - 1) * 2:
 		color = Globals.COLORS.WHITE
 	elif !is_loadout_board:
 		color = Globals.COLORS.BLACK

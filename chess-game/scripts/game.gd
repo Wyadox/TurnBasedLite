@@ -168,10 +168,6 @@ func loadout_button_pressed(loadout):
 		save_string = LoadoutSaves.loadouts_to_save.loadout3
 	parse_save_string(save_string)
 	$loadoutSlots.clear_selected()
-	
-	if online_game:
-		network_process_save_string.rpc(save_string, status)
-		print("calling network process")
 
 @rpc("any_peer", "reliable")
 func network_process_save_string(save_string, color):
@@ -710,9 +706,23 @@ func _on_board_setup_complete() -> void:
 		#if board_repr[space] != null:
 			#print(board_repr[space])
 
+var previous_status : Globals.COLORS = Globals.COLORS.WHITE
+
+func network_pass_board_pieces(color):
+	if online_game and status != previous_status:
+		var save_string = ""
+		
+		for piece in board.pieces:
+			if piece.color == color:
+				save_string += str(piece.piece_type) + ":" + str(piece.board_position + Vector2(-1,0)) + "_"
+		
+		network_process_save_string.rpc(save_string, status)
+		print("calling network process")
 
 func _on_board_set_status(color: Variant) -> void:
 	status = color
+	network_pass_board_pieces(previous_status)
+	previous_status = status
 	descriptions.set_color(color)
 	board.clear_selection_box()
 	if status == LOWER_COLOR:
