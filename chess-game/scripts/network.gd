@@ -38,8 +38,10 @@ func host_game():
 		return
 	multiplayer.multiplayer_peer = peer
 	print("NETWORK : Hosting on port ", PORT)
+	start_broadcasting()
 
 func join_game(address : String): 
+	stop_listening()
 	var peer = ENetMultiplayerPeer.new()
 	var error = peer.create_client(address, PORT)
 	if error != OK:
@@ -49,6 +51,8 @@ func join_game(address : String):
 	print("NETWORK : Connecting to ", address)
 
 func disconnect_game():
+	stop_broadcasting()
+	stop_listening()
 	multiplayer.multiplayer_peer = null
 
 func on_peer_connected(peer_id : int):
@@ -75,3 +79,78 @@ func on_server_disconnected():
 
 func network_print(message : String):
 	print("[%d] %s" % [multiplayer.get_unique_id(), message])
+
+# UDP Stuff for LAN Lobby
+
+signal host_discovered(ip_address : String, data : Dictionary)
+signal host_lost(ip_address : String)
+
+const BROADCAST_PORT = 7778
+const BROADCAST_INTERVAL = 1.0
+const GAME_IDENTIFIER = "CHAOS_CHESS_V1"
+
+var udp_server : UDPServer
+var broadcast_socket : PacketPeerUDP
+var broadcast_timer : float = 0.0
+var discovered_hosts : Dictionary = {}
+
+func start_broadcasting():
+	broadcast_socket = PacketPeerUDP.new()
+	broadcast_socket.set_broadcast_enabled(true)
+	broadcast_socket.bind(0)
+
+func stop_broadcasting():
+	if broadcast_socket:
+		broadcast_socket.close()
+		broadcast_socket = null
+
+func start_listening():
+	udp_server = UDPServer.new()
+	udp_server.listen(BROADCAST_PORT)
+
+func stop_listening():
+	if udp_server:
+		udp_server.stop()
+		udp_server = null
+	
+	discovered_hosts.clear()
+
+func _process(delta: float) -> void:
+	# Host
+	if broadcast_socket: 
+		broadcast_timer += delta
+		if broadcast_timer >= BROADCAST_INTERVAL:
+			broadcast_timer = 0.0
+			send_broadcast()
+	
+	# Client
+	if udp_server:
+		udp_server.poll()
+		while udp_server.is_connection_available():
+			var peer = udp_server.take_connection()
+			var packet = peer.get_packet()
+			handle_broadcast(packet, peer.get_packet_ip())
+
+func send_broadcast():
+	var data = {
+		"id" : GAME_IDENTIFIER,
+		"name" : "Player's game",
+		"port" : PORT
+	}
+	var json = JSON.stringify(data)
+	broadcast_socket.set_dest_address("255.255.255.255", BROADCAST_PORT)
+	broadcast_socket.put_packet(json.to_utf8_buffer())
+
+func handle_broadcast(packet : PackedByteArray, from_ip_address : String):
+	var json = JSON.new()
+	var result = json.parse(packet.get_string_from_utf8())
+	if result != OK:
+		return
+	var data = json.get_data()
+	if typeof(data) != TYPE_DICTIONARY:
+		return
+	if data.get("id") != GAME_IDENTIFIER:
+		return
+	
+	discovered_hosts[from_ip_address] = data
+	host_discovered.emit(from_ip_address, data)

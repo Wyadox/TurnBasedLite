@@ -5,8 +5,10 @@ extends Control
 @onready var join_button: Button = $VBoxContainer/Join_Button
 @onready var status: Label = $VBoxContainer/Status
 @onready var start_button: Button = $VBoxContainer/Start_Button
+@onready var host_list: ItemList = $VBoxContainer/Host_List
 
 var players_ready : int = 0
+var discovered_ip_addresses : Array = []
 
 func _ready() -> void:
 	start_button.hide()
@@ -15,30 +17,39 @@ func _ready() -> void:
 	Network.player_disconnected.connect(on_player_disconnected)
 	Network.connection_failed.connect(on_connection_failed)
 	Network.server_disconnected.connect(on_server_disconnected)
+	Network.host_discovered.connect(on_host_discovered)
 
 func _on_host_button_pressed() -> void:
 	Network.host_game()
 	status.text = "Waiting for opponent..."
 	host_button.disabled = true
 	join_button.disabled = true
-	ip_input.editable = false
+	host_list.hide()
 	players_ready = 1
 
 func _on_join_button_pressed() -> void:
-	var address = ip_input.text.strip_edges()
-	if address == "":
-		address = "127.0.0.1"
-	Network.join_game(address)
-	status.text = "Connecting..."
+	Network.start_listening()
+	status.text = "Looking for matches..."
 	host_button.disabled = true
 	join_button.disabled = true
-	ip_input.editable = false
+	host_list.clear()
+	discovered_ip_addresses.clear()
+	host_list.show()
+
+func on_host_discovered(ip_address : String, data : Dictionary):
+	if ip_address in discovered_ip_addresses:
+		return
+	
+	discovered_ip_addresses.append(ip_address)
+	host_list.add_item("Game at %s" % ip_address)
+	status.text = "Found %d game(s) - select one" % discovered_ip_addresses.size()
 
 func on_player_connected(_peer_id : int):
 	players_ready += 1
 	status.text = "Player connected (%d/2)" % players_ready
 	if players_ready >= 2:
 		if multiplayer.is_server():
+			Network.stop_broadcasting()
 			start_button.show()
 			status.text = "Both players are ready"
 
@@ -61,6 +72,8 @@ func _on_start_button_pressed() -> void:
 
 @rpc("authority", "call_local", "reliable")
 func load_game():
+	Network.stop_listening()
+	
 	const GAME_SCENE = preload("res://scenes/game.tscn")
 	var game_scene = GAME_SCENE.instantiate()
 	
@@ -78,5 +91,13 @@ func load_game():
 func reset_ui():
 	host_button.disabled = false
 	join_button.disabled = false
-	ip_input.editable = true
+	host_list.hide()
+	host_list.clear()
+	discovered_ip_addresses.clear()
 	players_ready = 0
+
+func _on_host_list_item_selected(index: int) -> void:
+	var ip_address = discovered_ip_addresses[index]
+	Network.join_game(ip_address)
+	status.text = "Connecting..."
+	host_list.hide()
