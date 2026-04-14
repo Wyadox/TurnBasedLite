@@ -88,8 +88,8 @@ func move_position(to_move: Vector2):
 			return
 	
 	# Update king position if they are moved
-	if piece_type == Globals.PIECE_TYPES.SHIELD_KING:
-		board_handle.register_king(board_position, color)
+	#if piece_type == Globals.PIECE_TYPES.SHIELD_KING:
+		#board_handle.register_king(board_position, color)
 	
 	# Promotion for pawns to KING BEHAVIOR
 	if (piece_type == Globals.PIECE_TYPES.PAWN or piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN or piece_type == Globals.PIECE_TYPES.WORM or piece_type == Globals.PIECE_TYPES.CHECKER or piece_type == Globals.PIECE_TYPES.INFECTOR) and (
@@ -159,6 +159,10 @@ func get_moveable_positions():
 			if promoted:
 				return king_threat_pos()
 			return pawn_move_pos()
+		Globals.PIECE_TYPES.DUPLICATOR:
+			if promoted:
+				return promoted_duplicator_threat_pos()
+			return duplicator_move_pos()
 		_: return []
 
 func get_threatened_positions():
@@ -199,8 +203,12 @@ func get_threatened_positions():
 		Globals.PIECE_TYPES.WARHORSE:
 			return knight_threat_pos()
 		Globals.PIECE_TYPES.INFECTOR:
-			if promoted == true:
+			if promoted:
 				return king_threat_pos()
+			return pawn_threat_pos()
+		Globals.PIECE_TYPES.DUPLICATOR:
+			if promoted:
+				return promoted_duplicator_threat_pos()
 			return pawn_threat_pos()
 		_: return []
 
@@ -266,6 +274,7 @@ func pawn_move_pos():
 const WORM_SPOT_THREAT_INCREMENTS = [[-6,1], [6, 1]];
 const WORM_SPOT_THREAT_OPPOSITE_INCREMENTS = [[-6,-1], [6, -1]];
 const WORM_SPOT_MOVE_INCREMENTS = [[-6,0], [6, 0], [-1, 0], [1, 0]];
+const WORM_PROMOTED_MOVE_INCREMENTS = [[0,6], [0,-6]]
 func worm_threat_pos():
 	var positions = []
 	var WORM_INCREMENTS = WORM_SPOT_THREAT_INCREMENTS
@@ -283,8 +292,11 @@ func worm_threat_pos():
 	return positions
 	
 func worm_move_pos():
+	var WORM_INCREMENTS = WORM_SPOT_MOVE_INCREMENTS
 	var positions = []
-	for inc in WORM_SPOT_MOVE_INCREMENTS:
+	if promoted:
+		WORM_INCREMENTS += WORM_PROMOTED_MOVE_INCREMENTS
+	for inc in WORM_INCREMENTS:
 		var pos = board_handle.spot_search_threat(
 			color, 
 			board_position[0], board_position[1],
@@ -583,6 +595,74 @@ func promoted_checker_pos():
 			board_position[0], board_position[1],
 			inc[0], inc[1],
 			false, true
+		)
+		if pos != null:
+			positions.append(pos)
+	return positions
+
+const DUPLICATOR_DUPLICATE_INCREMENTS = [[1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1]]
+func duplicator_move_pos():
+	var positions = []
+	var increments = PAWN_SPOT_INCREMENTS_MOVE if moved else PAWN_SPOT_INCREMENTS_MOVE_FIRST
+	for inc in increments:
+		var pos = board_handle.spot_search_threat(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1] if starting_rank < DIRECTION_THRESHOLD else -inc[1],
+			false, false
+		)
+		if pos != null:
+			var piece = board_handle.get_piece(pos)
+			if piece != null and piece.piece_type != Globals.PIECE_TYPES.WEB:
+				pos = board_handle.spot_search_threat(
+				color,
+				board_position[0], board_position[1],
+				inc[0], inc[1] if starting_rank < DIRECTION_THRESHOLD else -inc[1],
+				false, true)
+		if pos != null:
+			positions.append(pos)
+		else:
+			# if there is something blocking in 1st pos
+			# then second pos can't be moved
+			break
+		
+	for inc in PAWN_SPOT_INCREMENTS_TAKE:
+		var pos = board_handle.spot_search_threat(
+			color, 
+			board_position[0], board_position[1],
+			inc[0], inc[1] if starting_rank < DIRECTION_THRESHOLD else -inc[1],
+			true, false
+		)
+		if pos != null and piece_type != Globals.PIECE_TYPES.CHECKER:
+			positions.append(pos)
+	
+	for inc in DUPLICATOR_DUPLICATE_INCREMENTS:
+		var pos = board_handle.spot_search_duplicate(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1]
+		)
+		if pos != null:
+			positions.append(pos)
+	
+	return positions
+
+func promoted_duplicator_threat_pos():
+	var positions = []
+	for inc in KING_SPOT_INCREMENTS:
+		var pos = board_handle.spot_search_threat(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1]
+		)
+		if pos != null:
+			positions.append(pos)
+			
+	for inc in DUPLICATOR_DUPLICATE_INCREMENTS:
+		var pos = board_handle.spot_search_duplicate(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1]
 		)
 		if pos != null:
 			positions.append(pos)

@@ -24,23 +24,32 @@ func spawn_explosion(pos : Vector2):
 
 func explode_king(dest_piece, selected_piece, board):
 	board_handle = board
+	var king_killed = false
 	
 	if dest_piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
 		spawn_explosion(dest_piece.board_position)
 		board.delete_piece(dest_piece)
-		board.delete_piece(selected_piece)
-		return true
+		for king in board.shield_king:
+			if king == dest_piece:
+				board.shield_king.erase(dest_piece)
+		king_killed = true
 	for position in dest_piece.bishop_explode_positions():
 		var piece_around = board.get_piece(position)
 		if piece_around != null and piece_around.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
 			spawn_explosion(piece_around.board_position)
 			board.delete_piece(piece_around)
-			board.delete_piece(selected_piece)
-			return true
+			for king in board.shield_king:
+				if king == piece_around:
+					board.shield_king.erase(piece_around)
+			SignalBus.captured_piece.emit(piece_around.color, piece_around.piece_type)
+			king_killed = true
 			# When we have multiple shield kings on board, will need to fix this.
 	spawn_explosion(dest_piece.board_position)
-	explode_piece(dest_piece, selected_piece, board)
-	board.delete_piece(selected_piece)
+	if king_killed:
+		board.delete_piece(selected_piece)
+	else:
+		explode_piece(dest_piece, selected_piece, board)
+		board.delete_piece(selected_piece)
 
 func explosion_radius(piece, board):
 	board_handle = board

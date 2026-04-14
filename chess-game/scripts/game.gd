@@ -7,8 +7,8 @@ var game_over;
 var player_color;
 var status; # who is playing
 var player2_type; # Where AI or Human is playinh
-var white_shield_king_alive = false
-var black_shield_king_alive = false
+var white_shield_king = []
+var black_shield_king = []
 
 var current_map : int
 var difficulty : Globals.DIFFICULTY
@@ -252,26 +252,15 @@ func init_game():
 	# Initialize the board represntation array
 	board_repr.resize(board.BOARD_WIDTH * board.BOARD_HEIGHT)
 	
-	# Check to see if either player has a shield king, and mark it alive if it does.
+	# Check to see if either player has a shield king.
 	check_for_shield_king()
 
 func check_for_shield_king():
-	var white_shield_king_found = false
-	var black_shield_king_found = false
-	
 	for piece in board.pieces:
 		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING && piece.color == Globals.COLORS.WHITE:
-			white_shield_king_found = true
+			white_shield_king.append(piece)
 		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING && piece.color == Globals.COLORS.BLACK:
-			black_shield_king_found = true
-	
-	white_shield_king_alive = white_shield_king_found
-	black_shield_king_alive = black_shield_king_found
-	
-	if !white_shield_king_found:
-		board.white_king_pos = Vector2(-2,-2)
-	if !black_shield_king_found:
-		board.black_king_pos = Vector2(-2,-2)
+			black_shield_king.append(piece)
 
 func get_square_under_mouse():
 	var pos = get_global_mouse_position() - board.global_position
@@ -306,6 +295,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 	
 	var piece_captured = false
 	
+	
 	if valid_move(old_pos, to_move):
 		# For valid move:
 		# - if target has piece, then replace it
@@ -325,6 +315,10 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 					checker_captured = true
 					dest_piece = null
 					
+		if selected_piece.piece_type == Globals.PIECE_TYPES.DUPLICATOR and dest_piece != null and dest_piece.color == selected_piece.color:
+			Duplicator.Duplicate(selected_piece, dest_piece, board)
+			is_shooting = true
+			selected_piece.position = previous_position
 		# Delete only if the target piece is of different color
 		if dest_piece != null and dest_piece.color != selected_piece.color:
 			if dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT or dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT2:
@@ -342,12 +336,14 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 				board.on_capture(dest_piece, selected_piece, board, old_pos)
 				piece_captured = true
 			#selected_piece.move_position(selected_piece.board_position)
-			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER or selected_piece.piece_type == Globals.PIECE_TYPES.INFECTOR:
+			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER or (selected_piece.piece_type == Globals.PIECE_TYPES.INFECTOR and dest_piece.piece_type != Globals.PIECE_TYPES.WEB):
 				is_shooting = true
 				selected_piece.position = previous_position
 			if selected_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
 				if dest_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP and dest_piece.piece_type != Globals.PIECE_TYPES.JOUST_BISHOP:
 					is_jousting = true
+		if is_shooting == true or juggernaut_hit == true:
+			current_square = dest_piece.board_position
 		if is_shooting == false and juggernaut_hit == false:
 			selected_piece.move_position(to_move)
 			current_square = selected_piece.board_position
@@ -356,8 +352,8 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 					var piece = board.get_piece(space)
 					if piece != null and piece.color != Globals.COLORS.TILE:
 						piece.stun_counter = 2
-		if selected_piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
-			board.register_king(selected_piece.board_position, selected_piece.color)
+		#if selected_piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
+			#board.register_king(selected_piece.board_position, selected_piece.color)
 		if piece_died:
 			board.on_capture(selected_piece, dest_piece, board, old_pos)
 		if is_jousting:
@@ -385,6 +381,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 				board.update_indicators()
 				player2_move()
 				print("calling player2 move")
+		print(board.shield_king)
 		return true
 	return false
 
@@ -578,6 +575,8 @@ func end_turn():
 					elif piece.color == Globals.COLORS.BLACK:
 						piece.color = Globals.COLORS.WHITE
 						piece.update_sprite()
+					if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
+						board.shield_king.append(piece)
 		if piece.cool_counter > 0:
 			piece.cool_counter -= 1
 			if piece.cool_counter == 4:
@@ -676,9 +675,7 @@ func _on_board_spawn_ai() -> void:
 		SignalBus.init_ai.emit(ai_color)
 
 func init_pieces():
-	for piece in board.pieces:
-		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
-			board.register_king(piece.board_position, piece.color)
+	board.register_king()
 
 func _on_piece_moved(old_pos, new_pos):
 	board_repr[board.BOARD_WIDTH * new_pos[1] + new_pos[0]] = board_repr[board.BOARD_WIDTH * old_pos[1] + old_pos[0]]
