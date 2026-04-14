@@ -146,9 +146,7 @@ func start_minimax(pieces : Array, white_to_play : bool, difficulty_dict : Dicti
 	
 	game_scene.board = board
 	
-	for piece in new_pieces:
-		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
-			board.register_king(piece.board_position, piece.color)
+	board.register_king()
 	
 	var best_result = {}
 	var time_limit = difficulty_dict.get("time_limit", 2000)
