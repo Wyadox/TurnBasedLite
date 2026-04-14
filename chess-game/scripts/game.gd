@@ -262,6 +262,7 @@ func _input(event):
 		
 		var to_move = get_square_under_mouse()
 		if status == player_color and player2_type == Globals.PLAYER_2_TYPE.NETWORK:
+			selected_piece.position = previous_position
 			request_move(previous_square, to_move)
 		else:
 			var is_valid_move = drop_piece()
