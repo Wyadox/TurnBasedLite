@@ -435,7 +435,6 @@ var border_shape
 var borders = []
 
 func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
-	print(selected_pos)
 	if selected_pos == Vector2(-1, -1):
 		SignalBus.emit_signal("refund_piece", piece_type)
 		return

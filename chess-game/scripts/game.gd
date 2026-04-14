@@ -38,6 +38,9 @@ var failed_to_move : bool = false
 @onready var move_clock: Control = $move_clock
 @onready var move_clock_2: Control = $move_clock2
 
+@onready var captured_display: Control = $captured_display
+@onready var captured_display_2: Control = $captured_display2
+
 const MOVE_CLOCK_OFFSET : float = 300.0
 
 
@@ -97,6 +100,9 @@ func _ready():
 		move_clock.global_position.y -= MOVE_CLOCK_OFFSET
 		move_clock_2.global_position.y += MOVE_CLOCK_OFFSET
 		
+		captured_display.color = Globals.COLORS.WHITE
+		captured_display_2.color = Globals.COLORS.BLACK
+		
 		board._on_game_init_ai(Globals.COLORS.WHITE)
 	elif !online_game:
 		move_clock.global_position.y += MOVE_CLOCK_OFFSET
@@ -112,6 +118,9 @@ func _ready():
 			
 			move_clock.global_position.y -= MOVE_CLOCK_OFFSET
 			move_clock_2.global_position.y += MOVE_CLOCK_OFFSET
+			
+			captured_display.color = Globals.COLORS.WHITE
+			captured_display_2.color = Globals.COLORS.BLACK
 		else:
 			move_clock.global_position.y += MOVE_CLOCK_OFFSET
 			move_clock_2.global_position.y -= MOVE_CLOCK_OFFSET
@@ -179,18 +188,6 @@ func network_process_save_string(save_string, color):
 func parse_save_string(save_string):
 	var spawn_array = save_string.split("_", false)
 	var status_equal = status == LOWER_COLOR
-	for spawn in spawn_array:
-		var spawn_split = spawn.split(":")
-		var coord_split = spawn_split[1].split(",")
-		if status_equal:
-			board.selected_pos = Vector2(int(coord_split[0]) + 1,int(coord_split[1]))
-		else:
-			board.selected_pos = Vector2(int(coord_split[0]) * -1 + 5,int(coord_split[1]) * -1 + 6)
-		board._on_setup_phase_ui_spawn_piece(int(spawn_split[0]))
-
-func parse_save_string_inverted(save_string):
-	var spawn_array = save_string.split("_", false)
-	var status_equal = status == UPPER_COLOR
 	for spawn in spawn_array:
 		var spawn_split = spawn.split(":")
 		var coord_split = spawn_split[1].split(",")
@@ -851,7 +848,7 @@ func sync_end_turn():
 	board.update_indicators()
 	update_eval()
 	
-	#sync_clocks.rpc(status)
+	evaluate_end_game()
 
 @rpc("authority", "call_local", "reliable")
 func sync_clocks(player_status : Globals.COLORS):
