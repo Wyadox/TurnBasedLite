@@ -58,6 +58,7 @@ const PREVIOUS_MOVE_COLOR = Color(0.25, 1.0, 0.0, 0.1)
 var board_repr = []
 
 var real_game : bool = true
+var online_game : bool = false
 
 var LOWER_COLOR : Globals.COLORS = Globals.COLORS.WHITE
 var UPPER_COLOR : Globals.COLORS = Globals.COLORS.BLACK
@@ -87,11 +88,7 @@ func _ready():
 	
 	difficulty_dict = difficulty_settings()
 	
-	board.draw_selection_box(Vector2(0.0, 5.0), Vector2(7.0, 7.0), SELECTION_BOX_COLOR)
-	
-	$evaluation_bar.set_value(5.0)
-	if player_color == Globals.COLORS.BLACK:
-		$evaluation_bar.fill_mode_TTB()
+	board_vector = Vector2(board.BOARD_WIDTH - 1, board.BOARD_HEIGHT - 1)
 	
 	if ai_color == Globals.COLORS.WHITE:
 		LOWER_COLOR = Globals.COLORS.BLACK
@@ -101,13 +98,32 @@ func _ready():
 		move_clock_2.global_position.y += MOVE_CLOCK_OFFSET
 		
 		board._on_game_init_ai(Globals.COLORS.WHITE)
-	else:
+	elif !online_game:
 		move_clock.global_position.y += MOVE_CLOCK_OFFSET
 		move_clock_2.global_position.y -= MOVE_CLOCK_OFFSET
 	
-	#if multiplayer.multiplayer_peer != null:
-		#player_color = Network.my_color
-		#player2_type = Globals.PLAYER_2_TYPE.NETWORK
+	if online_game:
+		player_color = Network.my_color
+		player2_type = Globals.PLAYER_2_TYPE.NETWORK
+		
+		if player_color == Globals.COLORS.BLACK:
+			LOWER_COLOR = Globals.COLORS.BLACK
+			UPPER_COLOR = Globals.COLORS.WHITE
+			
+			move_clock.global_position.y -= MOVE_CLOCK_OFFSET
+			move_clock_2.global_position.y += MOVE_CLOCK_OFFSET
+		else:
+			move_clock.global_position.y += MOVE_CLOCK_OFFSET
+			move_clock_2.global_position.y -= MOVE_CLOCK_OFFSET
+	
+	$evaluation_bar.set_value(5.0)
+	if player_color == Globals.COLORS.BLACK:
+		$evaluation_bar.fill_mode_TTB()
+		
+	if status == LOWER_COLOR:
+		board.draw_selection_box(Vector2(0.0, 5.0), Vector2(7.0, 7.0), SELECTION_BOX_COLOR)
+	else:
+		board.draw_selection_box(Vector2(0.0, 0.0), Vector2(7.0, 2.0), SELECTION_BOX_COLOR)
 	
 func difficulty_settings() -> Dictionary:
 	match difficulty:
@@ -126,11 +142,15 @@ func show_notification(phrase : String):
 	$notification.set_text(phrase)
 	
 func loadout_button_pressed(loadout):
+	if online_game and status != Network.my_color:
+		return
+	
 	var save_string : String
 	if status == Globals.COLORS.WHITE:
 		board.wipe_pieces(true, false)
 	else:
 		board.wipe_pieces(false, true)
+	
 	if loadout == 1:
 		save_string = LoadoutSaves.loadouts_to_save.loadout1
 	elif loadout == 2:
@@ -139,16 +159,45 @@ func loadout_button_pressed(loadout):
 		save_string = LoadoutSaves.loadouts_to_save.loadout3
 	parse_save_string(save_string)
 	$loadoutSlots.clear_selected()
+	
+	if online_game:
+		network_process_save_string.rpc(save_string, status)
+		print("calling network process")
+
+@rpc("any_peer", "reliable")
+func network_process_save_string(save_string, color):
+	if color != Network.my_color:
+		return
+		
+	#var previous_status = status
+	#status = color
+	parse_save_string(save_string)
+	#status = previous_status
+	
+	$loadoutSlots.clear_selected()
 
 func parse_save_string(save_string):
 	var spawn_array = save_string.split("_", false)
+	var status_equal = status == LOWER_COLOR
 	for spawn in spawn_array:
 		var spawn_split = spawn.split(":")
 		var coord_split = spawn_split[1].split(",")
-		if status == LOWER_COLOR:
+		if status_equal:
 			board.selected_pos = Vector2(int(coord_split[0]) + 1,int(coord_split[1]))
-		elif status == UPPER_COLOR:
-			board.selected_pos = Vector2(int(coord_split[0]) + 1,int(coord_split[1]) * -1 + 6)
+		else:
+			board.selected_pos = Vector2(int(coord_split[0]) * -1 + 5,int(coord_split[1]) * -1 + 6)
+		board._on_setup_phase_ui_spawn_piece(int(spawn_split[0]))
+
+func parse_save_string_inverted(save_string):
+	var spawn_array = save_string.split("_", false)
+	var status_equal = status == UPPER_COLOR
+	for spawn in spawn_array:
+		var spawn_split = spawn.split(":")
+		var coord_split = spawn_split[1].split(",")
+		if status_equal:
+			board.selected_pos = Vector2(int(coord_split[0]) + 1,int(coord_split[1]))
+		else:
+			board.selected_pos = Vector2(int(coord_split[0]) * -1 + 5,int(coord_split[1]) * -1 + 6)
 		board._on_setup_phase_ui_spawn_piece(int(spawn_split[0]))
 
 var previous_square
@@ -170,10 +219,11 @@ func _input(event):
 			
 		if selected_piece == null and !setup_complete:
 			if square.x < board.BOARD_WIDTH and square.x > -1 and square.y < board.BOARD_HEIGHT and square.y > -1:
-				if status == LOWER_COLOR and square.y >= board.BOARD_HEIGHT - 2:
-					SignalBus.emit_signal("selected_square", square)
-				if status == UPPER_COLOR and square.y <= 1:
-					SignalBus.emit_signal("selected_square", square)
+				if player2_type != Globals.PLAYER_2_TYPE.NETWORK or status == Network.my_color:
+					if status == LOWER_COLOR and square.y >= board.BOARD_HEIGHT - 2:
+						SignalBus.emit_signal("selected_square", square)
+					if status == UPPER_COLOR and square.y <= 1:
+						SignalBus.emit_signal("selected_square", square)
 			return
 			
 		if selected_piece == null:
@@ -217,22 +267,21 @@ func _input(event):
 		selected_piece.z_index = 0
 		is_dragging = false
 		
-		if status == player_color or player2_type != Globals.PLAYER_2_TYPE.NETWORK:
-			var to_move = get_square_under_mouse()
-			if multiplayer.multiplayer_peer != null and player2_type == Globals.PLAYER_2_TYPE.NETWORK:
-				request_move(previous_square, to_move)
-			else:
-				var is_valid_move = drop_piece()
-				if !is_valid_move:
-					selected_piece.position = previous_position
-				if real_game:
-					# Check whether game is over after user's move
-					if evaluate_end_game():
-						return
-					
-					# If playerA has made valid move, then switch to other player's move
-					if is_valid_move:
-						player2_move()
+		var to_move = get_square_under_mouse()
+		if status == player_color and player2_type == Globals.PLAYER_2_TYPE.NETWORK:
+			request_move(previous_square, to_move)
+		else:
+			var is_valid_move = drop_piece()
+			if !is_valid_move:
+				selected_piece.position = previous_position
+			if real_game:
+				# Check whether game is over after user's move
+				if evaluate_end_game():
+					return
+				
+				# If playerA has made valid move, then switch to other player's move
+				if is_valid_move:
+					player2_move()
 		
 		selected_piece = null
 
@@ -376,7 +425,11 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 				board.play_sound("move")
 			
 			if !checker_captured:
-				end_turn()
+				if player2_type == Globals.PLAYER_2_TYPE.NETWORK:
+					if multiplayer.is_server():
+						sync_end_turn.rpc()
+				else:
+					end_turn()
 			else:
 				board.update_indicators()
 				player2_move()
@@ -705,27 +758,106 @@ func process_expired_clock():
 
 # Network code
 
+var board_vector
+
 func request_move(from_pos : Vector2, to_pos : Vector2):
 	if !multiplayer.is_server():
-		server_validate_move.rpc_id(1, from_pos, to_pos)
+		server_validate_move.rpc_id(1, abs(from_pos - board_vector), abs(to_pos - board_vector))
+		Network.network_print("Attempting to validate move")
 	else:
 		if valid_move(from_pos, to_pos):
 			apply_network_move.rpc(from_pos, to_pos)
+			Network.network_print("request_move: Attempting to apply")
 
 @rpc("any_peer", "reliable")
 func server_validate_move(from_pos : Vector2, to_pos : Vector2):
 	if !multiplayer.is_server():
+		Network.network_print("server_validate_move: Not multiplayer server")
 		return
 	if valid_move(from_pos, to_pos):
 		apply_network_move.rpc(from_pos, to_pos)
+		Network.network_print("server_validate_move: Attempting to apply")
 
 @rpc("authority", "call_local", "reliable")
 func apply_network_move(from_pos : Vector2, to_pos : Vector2):
-	var piece = board.get_piece(from_pos)
+	var flip_from = from_pos
+	var flip_to = to_pos
+	
+	if !multiplayer.is_server():
+		flip_from = abs(from_pos - board_vector)
+		flip_to = abs(to_pos - board_vector)
+	
+	var piece = board.get_piece(flip_from)
 	if piece == null:
 		return
 	
 	selected_piece = piece
 	previous_position = piece.position
-	previous_square = from_pos
-	print("Drop piece from network : ", drop_piece(false, to_pos))
+	previous_square = flip_from
+	var message = "Drop piece from network : " + str(drop_piece(false, flip_to))
+	Network.network_print(message)
+
+@rpc("authority", "call_local", "reliable")
+func sync_end_turn():
+	Network.network_print("entered sync_end_turn()")
+	for piece in board.pieces:
+		if piece.stun_counter > 0:
+			piece.stun_counter -= 1
+			if piece.infect_counter > 0:
+				piece.infect_counter -= 1
+				if piece.infect_counter == 0:
+					if piece.color == Globals.COLORS.WHITE:
+						piece.color = Globals.COLORS.BLACK
+						piece.update_sprite()
+					elif piece.color == Globals.COLORS.BLACK:
+						piece.color = Globals.COLORS.WHITE
+						piece.update_sprite()
+					if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
+						board.shield_king.append(piece)
+		if piece.cool_counter > 0:
+			piece.cool_counter -= 1
+			if piece.cool_counter == 4:
+				piece.piece_type = Globals.PIECE_TYPES.MAGMA_MED
+				piece.update_sprite()
+			elif piece.cool_counter == 2:
+				piece.piece_type = Globals.PIECE_TYPES.MAGMA_LOW
+				piece.update_sprite()
+			elif piece.cool_counter == 0:
+				board.delete_piece(piece)
+	status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
+	
+	if status == Globals.COLORS.WHITE:
+		move_clock.start_turn()
+		move_clock_2.end_turn()
+	else:
+		move_clock.end_turn()
+		move_clock_2.start_turn()
+	
+	if real_game:
+		turn_indicator.texture = get_turn_indicator_tex(status)
+		
+		board.clear_highlights()
+		board.draw_highlight(previous_square.x, previous_square.y, PREVIOUS_MOVE_COLOR, false)
+		board.draw_highlight(current_square.x, current_square.y, PREVIOUS_MOVE_COLOR, false)
+	
+	if board.num_pieces() == previous_piece_total:
+		turns_since_last_capture += 1
+	else:
+		previous_piece_total = board.num_pieces()
+		turns_since_last_capture = 0
+	
+	clear_piece_animations()
+	check_for_shield_king()
+	board.update_indicators()
+	update_eval()
+	
+	#sync_clocks.rpc(status)
+
+@rpc("authority", "call_local", "reliable")
+func sync_clocks(player_status : Globals.COLORS):
+	if player_status == Globals.COLORS.WHITE:
+		move_clock.start_turn()
+		move_clock_2.end_turn()
+	else:
+		move_clock.end_turn()
+		move_clock_2.start_turn()

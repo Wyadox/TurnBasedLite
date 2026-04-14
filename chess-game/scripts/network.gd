@@ -72,3 +72,6 @@ func on_server_disconnected():
 	push_error("Server disconnected")
 	multiplayer.multiplayer_peer = null
 	server_disconnected.emit()
+
+func network_print(message : String):
+	print("[%d] %s" % [multiplayer.get_unique_id(), message])

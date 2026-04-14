@@ -61,7 +61,19 @@ func _on_start_button_pressed() -> void:
 
 @rpc("authority", "call_local", "reliable")
 func load_game():
-	get_tree().change_scene_to_file("res://scenes/game.tscn")
+	const GAME_SCENE = preload("res://scenes/game.tscn")
+	var game_scene = GAME_SCENE.instantiate()
+	
+	game_scene.player2_type = Globals.PLAYER_2_TYPE.NETWORK
+	game_scene.difficulty = Globals.DIFFICULTY.EASY
+	game_scene.current_map = 0
+	game_scene.online_game = true
+	
+	var scene_tree = get_tree()
+	scene_tree.current_scene.queue_free()
+	scene_tree.root.add_child(game_scene)
+	scene_tree.current_scene = game_scene
+	SignalBus.emit_signal("change_map", 0)
 
 func reset_ui():
 	host_button.disabled = false
