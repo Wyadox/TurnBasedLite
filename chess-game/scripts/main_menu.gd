@@ -15,10 +15,14 @@ func _on_start_button_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/local_options_menu.tscn")
 
 func _on_options_button_pressed() -> void:
-	get_tree().change_scene_to_file("res://scenes/lobby.tscn")
+	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
 func _on_quit_button_pressed() -> void:
 	get_tree().quit()
 
 func _on_loadout_button_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/loadout_menu.tscn")
+
+
+func _on_online_button_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/lobby.tscn")

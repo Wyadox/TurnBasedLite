@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://20xne0v7msu7"]
 
 [ext_resource type="Texture2D" uid="uid://bai1iqhbnmbm7" path="res://Assets/LobbyMenuImages/WhiteShieldKing.png" id="1_3cotv"]
-[ext_resource type="Script" uid="uid://c6gy1al8lis6q" path="res://scenes/host_options_menu.gd" id="1_po1oe"]
+[ext_resource type="Script" uid="uid://c6gy1al8lis6q" path="res://scripts/host_options_menu.gd" id="1_po1oe"]
 [ext_resource type="Texture2D" uid="uid://dfkwxtb4oi86p" path="res://Assets/LobbyMenuImages/HalfShieldKing.png" id="2_po1oe"]
 [ext_resource type="Texture2D" uid="uid://biwpf20rfgy2y" path="res://Assets/LobbyMenuImages/BlackShieldKing.png" id="3_kkxp5"]
 [ext_resource type="PackedScene" uid="uid://bk8s3ckskgdde" path="res://scenes/difficulty_map_options_menu.tscn" id="4_57agf"]

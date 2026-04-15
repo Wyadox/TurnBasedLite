@@ -435,13 +435,13 @@ var border_shape
 var borders = []
 
 func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
-	if selected_pos == Vector2(-1, -1):
-		SignalBus.emit_signal("refund_piece", piece_type)
-		return
-	
-	if !is_within_bounds(selected_pos):
-		SignalBus.emit_signal("refund_piece", piece_type)
-		return
+	print("hi from spawn piece")
+	if selected_pos == Vector2(-1, -1) or !is_within_bounds(selected_pos):
+		if is_loadout_board:
+			selected_pos = find_viable_square()
+		else:
+			SignalBus.emit_signal("refund_piece", piece_type)
+			return
 	
 	if setup_done == true:
 		return
@@ -476,9 +476,25 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 		border_shape.queue_free()
 	selected_pos = Vector2(-1, -1)
 
+func find_viable_square() -> Vector2:
+	var flag : bool = true
+	for i in range(Board.BOARD_WIDTH):
+		for j in range(2):
+			flag = true
+			for piece in pieces:
+				if piece.board_position == Vector2(i,j):
+					flag = false
+			if flag:
+				return Vector2(i,j)
+	return Vector2(-1, -1)
 
 func _on_game_selected_square(pos: Vector2) -> void:
 	selected_pos = pos
+	if !is_within_bounds(selected_pos):
+		if border_shape:
+			border_shape.queue_free()
+		return
+	
 	if is_loadout_board:
 		draw_border(pos.x, pos.y, Color(0.0, 1.0, 0.38, 1.0), true, Globals.BORDER_STYLE.BOX)
 	else:
