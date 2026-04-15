@@ -13,7 +13,7 @@ var opponent_id : int = -1
 
 var game_info : Dictionary = {
 	"color" : Globals.COLORS.WHITE,
-	"map" : 0,
+	"map" : 1,
 	"difficulty" : Globals.DIFFICULTY.EASY
 }
 

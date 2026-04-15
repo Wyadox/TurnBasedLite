@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://bfijhxlgtbvqp"]
+[gd_scene load_steps=4 format=3 uid="uid://bfijhxlgtbvqp"]
 
 [ext_resource type="Script" uid="uid://bsqmnoolexdot" path="res://scripts/lobby.gd" id="1_o1atq"]
 [ext_resource type="PackedScene" uid="uid://dy8nxqsamussf" path="res://scenes/lobby_list.tscn" id="2_5gu6x"]
+[ext_resource type="PackedScene" uid="uid://20xne0v7msu7" path="res://scenes/host_options_menu.tscn" id="3_q60fs"]
 
 [node name="lobby" type="Control"]
 layout_mode = 3
@@ -50,7 +51,14 @@ layout_mode = 2
 size_flags_horizontal = 4
 text = "START"
 
-[node name="lobby_list" parent="VBoxContainer" instance=ExtResource("2_5gu6x")]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="lobby_list" parent="VBoxContainer/HBoxContainer" instance=ExtResource("2_5gu6x")]
+layout_mode = 2
+
+[node name="host_options_menu" parent="VBoxContainer/HBoxContainer" instance=ExtResource("3_q60fs")]
 layout_mode = 2
 
 [connection signal="pressed" from="VBoxContainer/Host_Button" to="." method="_on_host_button_pressed"]

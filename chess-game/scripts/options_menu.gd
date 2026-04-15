@@ -2,6 +2,7 @@ extends Control
 
 @onready var opponent_option_button: OptionButton = $Panel/VBoxContainer/Opponent_OptionButton
 @onready var notification_node: Control = $notification
+@onready var difficulty_map_options_menu: Control = $Panel/VBoxContainer/difficulty_map_options_menu
 
 var current_map : int = -1
 var current_difficulty : int = -1
@@ -12,6 +13,9 @@ func _ready() -> void:
 	pass # Replace with function body.
 	
 func _on_continue_button_pressed() -> void:
+	current_difficulty = difficulty_map_options_menu.difficulty
+	current_map = difficulty_map_options_menu.map
+	
 	if opponent_option_button.get_selected_id() == -1 or current_difficulty == -1 or current_map == -1:
 		notification_node.set_text("An option was not selected")
 		return
@@ -28,7 +32,7 @@ func _on_continue_button_pressed() -> void:
 	if game_scene.player2_type == Globals.PLAYER_2_TYPE.HUMAN:
 		scene_tree.root.add_child(game_scene)
 		scene_tree.current_scene = game_scene
-		SignalBus.emit_signal("change_map",current_map)
+		SignalBus.emit_signal("change_map", current_map)
 	else:
 		const COLOR_SCENE = preload("res://scenes/color_menu.tscn")
 		var color_scene = COLOR_SCENE.instantiate()
@@ -45,30 +49,5 @@ func convert_opponent_option(option : String) -> Globals.PLAYER_2_TYPE:
 	else:
 		return Globals.PLAYER_2_TYPE.AI
 
-func _on_map_1_button_pressed() -> void:
-	current_map = 1
-
-func _on_map_2_button_pressed() -> void:
-	current_map = 2
-
-func _on_map_3_button_pressed() -> void:
-	current_map = 3
-
-func _on_map_4_button_pressed() -> void:
-	current_map = 4
-
-
 func _on_button_exit_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
-
-
-func _on_easy_button_pressed() -> void:
-	current_difficulty = 0
-
-
-func _on_normal_button_pressed() -> void:
-	current_difficulty = 1
-
-
-func _on_hard_button_pressed() -> void:
-		current_difficulty = 2

@@ -1,13 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://cfc02oc4dv2pe"]
+[gd_scene load_steps=7 format=3 uid="uid://cfc02oc4dv2pe"]
 
 [ext_resource type="Script" uid="uid://34f0adtywheq" path="res://scripts/options_menu.gd" id="1_34a7a"]
-[ext_resource type="Texture2D" uid="uid://dsxn1xc4dr5bu" path="res://Assets/Buttons/LoadoutButton.png" id="2_3falw"]
 [ext_resource type="Texture2D" uid="uid://cpfhv5akv2vp2" path="res://Assets/Backgrounds/HighResolution_MedievalTown2.png" id="2_inqc7"]
 [ext_resource type="PackedScene" uid="uid://dqrdpth8xiafq" path="res://scenes/notification.tscn" id="3_inqc7"]
-[ext_resource type="Texture2D" uid="uid://1pcjdbetkwlp" path="res://Assets/LobbyMenuImages/EasyModeIconJug.png" id="3_jiuty"]
-[ext_resource type="Texture2D" uid="uid://yngs6wh52elw" path="res://Assets/LobbyMenuImages/NormalModeIconJug.png" id="4_fvu4y"]
+[ext_resource type="PackedScene" uid="uid://bk8s3ckskgdde" path="res://scenes/difficulty_map_options_menu.tscn" id="3_k83ln"]
 [ext_resource type="Texture2D" uid="uid://cw1w0oajlkhhw" path="res://Assets/Buttons/EXIT_Button.png" id="5_k83ln"]
-[ext_resource type="Texture2D" uid="uid://ckkuj6ttdvi5e" path="res://Assets/LobbyMenuImages/HardModeIconJug.png" id="5_lurgd"]
 [ext_resource type="Texture2D" uid="uid://bdj5co4n8e2aw" path="res://Assets/Buttons/EXIT_Button_Hover.png" id="6_jiuty"]
 
 [node name="local_options_menu" type="Control"]
@@ -59,7 +56,7 @@ layout_mode = 2
 
 [node name="Label-ChooseYourOpponent" type="Label" parent="Panel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 25
+theme_override_font_sizes/font_size = 30
 text = "CHOOSE YOUR OPPONENT"
 horizontal_alignment = 1
 
@@ -75,72 +72,15 @@ popup/item_1/id = 1
 [node name="HSeparator" type="HSeparator" parent="Panel/VBoxContainer"]
 layout_mode = 2
 
-[node name="Label-Difficulty" type="Label" parent="Panel/VBoxContainer"]
+[node name="difficulty_map_options_menu" parent="Panel/VBoxContainer" instance=ExtResource("3_k83ln")]
 layout_mode = 2
-theme_override_font_sizes/font_size = 25
-text = "DIFFICUTLY LEVEL"
-horizontal_alignment = 1
-
-[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer"]
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 2
-theme_override_constants/separation = 20
-alignment = 1
-
-[node name="Easy_Button" type="TextureButton" parent="Panel/VBoxContainer/HBoxContainer3"]
-layout_mode = 2
-texture_normal = ExtResource("3_jiuty")
-stretch_mode = 0
-
-[node name="Normal_Button" type="TextureButton" parent="Panel/VBoxContainer/HBoxContainer3"]
-layout_mode = 2
-texture_normal = ExtResource("4_fvu4y")
-stretch_mode = 0
-
-[node name="Hard_Button" type="TextureButton" parent="Panel/VBoxContainer/HBoxContainer3"]
-layout_mode = 2
-texture_normal = ExtResource("5_lurgd")
-stretch_mode = 0
-
-[node name="HSeparator2" type="HSeparator" parent="Panel/VBoxContainer"]
-layout_mode = 2
-
-[node name="Label-Difficulty2" type="Label" parent="Panel/VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 25
-text = "MAP SELECTION"
-horizontal_alignment = 1
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer"]
-layout_mode = 2
-alignment = 1
-
-[node name="Map1_Button" type="TextureButton" parent="Panel/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-texture_normal = ExtResource("2_3falw")
-
-[node name="Map2_Button" type="TextureButton" parent="Panel/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-texture_normal = ExtResource("2_3falw")
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer"]
-layout_mode = 2
-alignment = 1
-
-[node name="Map3_Button" type="TextureButton" parent="Panel/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
-texture_normal = ExtResource("2_3falw")
-
-[node name="Map4_Button" type="TextureButton" parent="Panel/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
-texture_normal = ExtResource("2_3falw")
 
 [node name="HSeparator4" type="HSeparator" parent="Panel/VBoxContainer"]
 layout_mode = 2
 
 [node name="Label-Difficulty3" type="Label" parent="Panel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 25
+theme_override_font_sizes/font_size = 30
 text = "SETUP PHASE"
 horizontal_alignment = 1
 
@@ -180,12 +120,5 @@ texture_normal = ExtResource("5_k83ln")
 texture_pressed = ExtResource("6_jiuty")
 texture_hover = ExtResource("6_jiuty")
 
-[connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer3/Easy_Button" to="." method="_on_easy_button_pressed"]
-[connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer3/Normal_Button" to="." method="_on_normal_button_pressed"]
-[connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer3/Hard_Button" to="." method="_on_hard_button_pressed"]
-[connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer/Map1_Button" to="." method="_on_map_1_button_pressed"]
-[connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer/Map2_Button" to="." method="_on_map_2_button_pressed"]
-[connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer2/Map3_Button" to="." method="_on_map_3_button_pressed"]
-[connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer2/Map4_Button" to="." method="_on_map_4_button_pressed"]
 [connection signal="pressed" from="Panel/VBoxContainer/Continue_Button" to="." method="_on_continue_button_pressed"]
 [connection signal="pressed" from="Button_Exit" to="." method="_on_button_exit_pressed"]
