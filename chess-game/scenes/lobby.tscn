@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://bfijhxlgtbvqp"]
+[gd_scene load_steps=3 format=3 uid="uid://bfijhxlgtbvqp"]
 
 [ext_resource type="Script" uid="uid://bsqmnoolexdot" path="res://scripts/lobby.gd" id="1_o1atq"]
+[ext_resource type="PackedScene" uid="uid://dy8nxqsamussf" path="res://scenes/lobby_list.tscn" id="2_5gu6x"]
 
 [node name="lobby" type="Control"]
 layout_mode = 3
@@ -19,39 +20,39 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -34.0
-offset_top = -97.0
-offset_right = 34.0
-offset_bottom = 97.0
+offset_left = -650.0
+offset_top = -349.5
+offset_right = 650.0
+offset_bottom = 349.5
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Title" type="Label" parent="VBoxContainer"]
 layout_mode = 2
-
-[node name="IP_Input" type="LineEdit" parent="VBoxContainer"]
-layout_mode = 2
+size_flags_horizontal = 4
 
 [node name="Host_Button" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
 text = "HOST"
 
 [node name="Join_Button" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
 text = "JOIN"
 
 [node name="Status" type="Label" parent="VBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
 
 [node name="Start_Button" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
 text = "START"
 
-[node name="Host_List" type="ItemList" parent="VBoxContainer"]
-custom_minimum_size = Vector2(200, 200)
+[node name="lobby_list" parent="VBoxContainer" instance=ExtResource("2_5gu6x")]
 layout_mode = 2
 
 [connection signal="pressed" from="VBoxContainer/Host_Button" to="." method="_on_host_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/Join_Button" to="." method="_on_join_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/Start_Button" to="." method="_on_start_button_pressed"]
-[connection signal="item_selected" from="VBoxContainer/Host_List" to="." method="_on_host_list_item_selected"]

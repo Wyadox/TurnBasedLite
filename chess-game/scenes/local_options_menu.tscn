@@ -1,10 +1,13 @@
-[gd_scene load_steps=7 format=3 uid="uid://cfc02oc4dv2pe"]
+[gd_scene load_steps=10 format=3 uid="uid://cfc02oc4dv2pe"]
 
 [ext_resource type="Script" uid="uid://34f0adtywheq" path="res://scripts/options_menu.gd" id="1_34a7a"]
 [ext_resource type="Texture2D" uid="uid://dsxn1xc4dr5bu" path="res://Assets/Buttons/LoadoutButton.png" id="2_3falw"]
 [ext_resource type="Texture2D" uid="uid://cpfhv5akv2vp2" path="res://Assets/Backgrounds/HighResolution_MedievalTown2.png" id="2_inqc7"]
 [ext_resource type="PackedScene" uid="uid://dqrdpth8xiafq" path="res://scenes/notification.tscn" id="3_inqc7"]
+[ext_resource type="Texture2D" uid="uid://1pcjdbetkwlp" path="res://Assets/LobbyMenuImages/EasyModeIconJug.png" id="3_jiuty"]
+[ext_resource type="Texture2D" uid="uid://yngs6wh52elw" path="res://Assets/LobbyMenuImages/NormalModeIconJug.png" id="4_fvu4y"]
 [ext_resource type="Texture2D" uid="uid://cw1w0oajlkhhw" path="res://Assets/Buttons/EXIT_Button.png" id="5_k83ln"]
+[ext_resource type="Texture2D" uid="uid://ckkuj6ttdvi5e" path="res://Assets/LobbyMenuImages/HardModeIconJug.png" id="5_lurgd"]
 [ext_resource type="Texture2D" uid="uid://bdj5co4n8e2aw" path="res://Assets/Buttons/EXIT_Button_Hover.png" id="6_jiuty"]
 
 [node name="local_options_menu" type="Control"]
@@ -29,10 +32,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -183.5
-offset_top = -261.0
-offset_right = 183.5
-offset_bottom = 261.0
+offset_left = -233.75
+offset_top = -332.47278
+offset_right = 233.75
+offset_bottom = 332.47278
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -78,16 +81,26 @@ theme_override_font_sizes/font_size = 25
 text = "DIFFICUTLY LEVEL"
 horizontal_alignment = 1
 
-[node name="Difficulty_OptionButton" type="OptionButton" parent="Panel/VBoxContainer"]
+[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer"]
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
+theme_override_constants/separation = 20
 alignment = 1
-item_count = 3
-popup/item_0/text = "EASY"
-popup/item_0/id = 0
-popup/item_1/text = "NORMAL"
-popup/item_1/id = 1
-popup/item_2/text = "HARD"
-popup/item_2/id = 2
+
+[node name="Easy_Button" type="TextureButton" parent="Panel/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+texture_normal = ExtResource("3_jiuty")
+stretch_mode = 0
+
+[node name="Normal_Button" type="TextureButton" parent="Panel/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+texture_normal = ExtResource("4_fvu4y")
+stretch_mode = 0
+
+[node name="Hard_Button" type="TextureButton" parent="Panel/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+texture_normal = ExtResource("5_lurgd")
+stretch_mode = 0
 
 [node name="HSeparator2" type="HSeparator" parent="Panel/VBoxContainer"]
 layout_mode = 2
@@ -145,8 +158,8 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_top = 289.0
-offset_bottom = 289.0
+offset_top = 369.0
+offset_bottom = 369.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -158,15 +171,18 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -87.5
-offset_top = 324.0
+offset_top = 410.0
 offset_right = 87.5
-offset_bottom = 388.0
+offset_bottom = 474.0
 grow_horizontal = 2
 grow_vertical = 2
 texture_normal = ExtResource("5_k83ln")
 texture_pressed = ExtResource("6_jiuty")
 texture_hover = ExtResource("6_jiuty")
 
+[connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer3/Easy_Button" to="." method="_on_easy_button_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer3/Normal_Button" to="." method="_on_normal_button_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer3/Hard_Button" to="." method="_on_hard_button_pressed"]
 [connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer/Map1_Button" to="." method="_on_map_1_button_pressed"]
 [connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer/Map2_Button" to="." method="_on_map_2_button_pressed"]
 [connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer2/Map3_Button" to="." method="_on_map_3_button_pressed"]

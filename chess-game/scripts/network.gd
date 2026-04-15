@@ -11,6 +11,12 @@ signal connection_failed()
 var my_color : Globals.COLORS = Globals.COLORS.WHITE
 var opponent_id : int = -1
 
+var game_info : Dictionary = {
+	"color" : Globals.COLORS.WHITE,
+	"map" : 0,
+	"difficulty" : Globals.DIFFICULTY.EASY
+}
+
 func _ready() -> void:
 	multiplayer.peer_connected.connect(on_peer_connected)
 	multiplayer.peer_disconnected.connect(on_peer_disconnected)
@@ -134,8 +140,11 @@ func _process(delta: float) -> void:
 func send_broadcast():
 	var data = {
 		"id" : GAME_IDENTIFIER,
-		"name" : "Player's game",
-		"port" : PORT
+		"name" : "Match Entry",
+		"port" : PORT,
+		"host_color" : game_info["color"],
+		"difficulty" : game_info["difficulty"],
+		"map" : game_info["map"]
 	}
 	var json = JSON.stringify(data)
 	broadcast_socket.set_dest_address("255.255.255.255", BROADCAST_PORT)

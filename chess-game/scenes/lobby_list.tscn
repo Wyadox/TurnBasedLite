@@ -1,0 +1,103 @@
+[gd_scene load_steps=3 format=3 uid="uid://dy8nxqsamussf"]
+
+[ext_resource type="Script" uid="uid://bq3qfn1rwrshn" path="res://scripts/lobby_list.gd" id="1_ny1s3"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_dtt3s"]
+font_size = 30
+font_color = Color(0, 0, 0, 1)
+
+[node name="lobby_list" type="Control"]
+custom_minimum_size = Vector2(1300, 540)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -620.0
+offset_bottom = -540.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ny1s3")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="HBoxContainer"]
+custom_minimum_size = Vector2(600, 540)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BackgroundColorRect" type="ColorRect" parent="HBoxContainer"]
+custom_minimum_size = Vector2(556, 540)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/BackgroundColorRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/BackgroundColorRect/MarginContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="HBoxContainer/BackgroundColorRect/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 60
+text = "TITLE"
+label_settings = SubResource("LabelSettings_dtt3s")
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="DetailsLabel" type="Label" parent="HBoxContainer/BackgroundColorRect/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+theme_override_font_sizes/font_size = 60
+text = "HELLO I AM DESCRIPTION"
+label_settings = SubResource("LabelSettings_dtt3s")
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="DescriptionLabel" type="Label" parent="HBoxContainer/BackgroundColorRect/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+theme_override_font_sizes/font_size = 60
+text = "HELLO I AM DESCRIPTION"
+label_settings = SubResource("LabelSettings_dtt3s")
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Join_Button" type="Button" parent="HBoxContainer/BackgroundColorRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "JOIN MATCH"
+
+[node name="NumberLabel" type="Label" parent="HBoxContainer/BackgroundColorRect/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 60
+text = "# 244"
+label_settings = SubResource("LabelSettings_dtt3s")
+
+[connection signal="pressed" from="HBoxContainer/BackgroundColorRect/MarginContainer/VBoxContainer/Join_Button" to="." method="_on_join_button_pressed"]
