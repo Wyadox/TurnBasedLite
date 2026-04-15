@@ -112,6 +112,8 @@ func _ready():
 		player_color = Network.my_color
 		player2_type = Globals.PLAYER_2_TYPE.NETWORK
 		
+		Network.network_print("my color : " + str(player_color))
+		
 		if player_color == Globals.COLORS.BLACK:
 			LOWER_COLOR = Globals.COLORS.BLACK
 			UPPER_COLOR = Globals.COLORS.WHITE

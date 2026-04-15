@@ -11,6 +11,9 @@ signal connection_failed()
 var my_color : Globals.COLORS = Globals.COLORS.WHITE
 var opponent_id : int = -1
 
+var host_color : Globals.COLORS = Globals.COLORS.WHITE
+var client_color : Globals.COLORS = Globals.COLORS.BLACK
+
 var game_info : Dictionary = {
 	"color" : Globals.COLORS.WHITE,
 	"map" : 1,
@@ -26,14 +29,15 @@ func _ready() -> void:
 
 func assign_colors():
 	if multiplayer.is_server():
-		my_color = Globals.COLORS.WHITE
+		my_color = host_color
 		for peer in multiplayer.get_peers():
 			opponent_id = peer
-		set_client_color.rpc_id(opponent_id)
+		var opponent_color = Globals.COLORS.BLACK if host_color == Globals.COLORS.WHITE else Globals.COLORS.WHITE
+		set_client_color.rpc_id(opponent_id, opponent_color)
 
 @rpc("authority", "reliable")
-func set_client_color():
-	my_color = Globals.COLORS.BLACK
+func set_client_color(color : Globals.COLORS):
+	my_color = color
 	multiplayer.get_unique_id()
 
 func host_game():

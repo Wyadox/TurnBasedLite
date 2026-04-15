@@ -47,6 +47,13 @@ func intialize_host() -> void:
 	Network.game_info["map"] = host_options_menu.get_map()
 	Network.game_info["color"] = host_options_menu.get_color()
 	
+	Network.host_color = Network.game_info["color"]
+	print("host_color set: ", Network.game_info["color"])
+	if Network.host_color == Globals.COLORS.WHITE:
+		Network.client_color = Globals.COLORS.BLACK
+	else:
+		Network.client_color = Globals.COLORS.WHITE
+	
 	lobby_game_info = Network.game_info
 	
 	Network.host_game()
