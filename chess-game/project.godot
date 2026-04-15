@@ -27,6 +27,7 @@ Warhorse="*res://scripts/warhorse.gd"
 Infector="*res://scripts/infector.gd"
 Ai="*res://scripts/ai.gd"
 Duplicator="*res://scripts/duplicator.gd"
+MagmaKnight="*res://scripts/magma_knight.gd"
 
 [display]
 
