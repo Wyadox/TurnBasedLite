@@ -439,6 +439,9 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 	if selected_pos == Vector2(-1, -1) or !is_within_bounds(selected_pos):
 		if is_loadout_board:
 			selected_pos = find_viable_square()
+			if selected_pos == Vector2(-1, -1) or !is_within_bounds(selected_pos):
+				SignalBus.emit_signal("refund_piece", piece_type)
+				return
 		else:
 			SignalBus.emit_signal("refund_piece", piece_type)
 			return
@@ -478,14 +481,18 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 
 func find_viable_square() -> Vector2:
 	var flag : bool = true
+	var flag_flip_count : int = 0
 	for i in range(Board.BOARD_WIDTH):
 		for j in range(2):
 			flag = true
 			for piece in pieces:
 				if piece.board_position == Vector2(i,j):
 					flag = false
+					flag_flip_count += 1
 			if flag:
 				return Vector2(i,j)
+			if flag_flip_count >= Globals.PIECES_PER_SIDE:
+				return Vector2(-1, -1)
 	return Vector2(-1, -1)
 
 func _on_game_selected_square(pos: Vector2) -> void:

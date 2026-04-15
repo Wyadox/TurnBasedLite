@@ -1,8 +1,9 @@
-[gd_scene load_steps=14 format=3 uid="uid://dux8e4cssk5i1"]
+[gd_scene load_steps=26 format=3 uid="uid://dux8e4cssk5i1"]
 
 [ext_resource type="Script" uid="uid://b1ibgxoocd1ub" path="res://scripts/loadout_menu.gd" id="1_yna6v"]
 [ext_resource type="PackedScene" uid="uid://dlld2p1r0gxox" path="res://scenes/setup_phase_ui.tscn" id="2_3c7rr"]
 [ext_resource type="Texture2D" uid="uid://q4d3whmmvlgw" path="res://Assets/Buttons/SAVE_Button.png" id="2_bcx0e"]
+[ext_resource type="Texture2D" uid="uid://b6agcr6rs37nc" path="res://Assets/Backgrounds/workshop_background.jpg" id="2_ki1oi"]
 [ext_resource type="Texture2D" uid="uid://b4dgipsc3p7xs" path="res://Assets/Buttons/SAVE_Button_Hover.png" id="3_21il4"]
 [ext_resource type="PackedScene" uid="uid://shbx8xrqrlr8" path="res://scenes/loadout_slots_hbox.tscn" id="3_gc7b0"]
 [ext_resource type="Texture2D" uid="uid://cdg0qw8fibr2" path="res://Assets/Buttons/LOAD_Button.png" id="4_ki1oi"]
@@ -13,6 +14,88 @@
 [ext_resource type="Texture2D" uid="uid://cw1w0oajlkhhw" path="res://Assets/Buttons/EXIT_Button.png" id="8_wxj56"]
 [ext_resource type="Texture2D" uid="uid://bdj5co4n8e2aw" path="res://Assets/Buttons/EXIT_Button_Hover.png" id="9_bf8y0"]
 [ext_resource type="PackedScene" uid="uid://c6ulmyy15jdeu" path="res://scenes/descriptions.tscn" id="13_21il4"]
+[ext_resource type="Texture2D" uid="uid://b3jo3krtvy036" path="res://Assets/Small Bin 1 - Animated_spritesheet.png" id="15_4vggf"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6ruvx"]
+atlas = ExtResource("15_4vggf")
+region = Rect2(0, 0, 34, 69)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dn7wr"]
+atlas = ExtResource("15_4vggf")
+region = Rect2(34, 0, 34, 69)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wxj56"]
+atlas = ExtResource("15_4vggf")
+region = Rect2(68, 0, 34, 69)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bf8y0"]
+atlas = ExtResource("15_4vggf")
+region = Rect2(102, 0, 34, 69)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vm44h"]
+atlas = ExtResource("15_4vggf")
+region = Rect2(102, 0, 34, 69)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4ci0w"]
+atlas = ExtResource("15_4vggf")
+region = Rect2(102, 0, 34, 69)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_phd5h"]
+atlas = ExtResource("15_4vggf")
+region = Rect2(68, 0, 34, 69)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xqcas"]
+atlas = ExtResource("15_4vggf")
+region = Rect2(34, 0, 34, 69)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7tmjp"]
+atlas = ExtResource("15_4vggf")
+region = Rect2(0, 0, 34, 69)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_0bpxs"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6ruvx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dn7wr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wxj56")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bf8y0")
+}],
+"loop": true,
+"name": &"close",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vm44h")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4ci0w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_phd5h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xqcas")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7tmjp")
+}],
+"loop": true,
+"name": &"open",
+"speed": 5.0
+}]
 
 [node name="loadout_menu" type="Control"]
 layout_mode = 3
@@ -22,6 +105,20 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_yna6v")
+
+[node name="BackgroundRect" type="TextureRect" parent="."]
+z_index = -1000
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -951.00006
+offset_right = -166.30444
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(1.3010994, 1.3010994)
+texture = ExtResource("2_ki1oi")
+expand_mode = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 1
@@ -119,6 +216,14 @@ offset_bottom = 156.0
 texture_normal = ExtResource("8_wxj56")
 texture_pressed = ExtResource("9_bf8y0")
 texture_hover = ExtResource("9_bf8y0")
+
+[node name="TrashCan" type="AnimatedSprite2D" parent="."]
+visible = false
+position = Vector2(1619.0001, 792)
+scale = Vector2(5, 5)
+sprite_frames = SubResource("SpriteFrames_0bpxs")
+animation = &"close"
+autoplay = "idle"
 
 [connection signal="pressed" from="HBoxContainer/Button_Save" to="." method="_on_button_save_pressed"]
 [connection signal="pressed" from="HBoxContainer/Button_Load" to="." method="_on_button_load_pressed"]

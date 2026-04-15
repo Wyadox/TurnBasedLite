@@ -22,6 +22,12 @@ func spawn_explosion(pos : Vector2):
 	explosion.position = actual_pos
 	add_child(explosion)
 
+func spawn_explosion_literal(pos : Vector2):
+	var explosion = explosionScene.instantiate()
+	explosion.position = pos
+	explosion.z_index = 1000
+	add_child(explosion)
+
 func explode_king(dest_piece, selected_piece, board):
 	board_handle = board
 	var king_killed = false

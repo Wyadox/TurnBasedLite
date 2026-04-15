@@ -45,6 +45,7 @@ func _input(event):
 			SignalBus.emit_signal("selected_square", Vector2(-1, -1))
 			is_dragging = true
 			previous_position = selected_piece.position
+			selected_piece.z_index = 100
 			selected_piece.play_animation("sway")
 	elif event is InputEventMouseMotion and is_dragging:
 		var piece_mouse_pos = get_global_mouse_position() - board_scene.global_position
@@ -58,12 +59,16 @@ func _input(event):
 		is_dragging = false
 		
 		var is_valid_move = drop_piece()
-		if !is_valid_move:
-			selected_piece.position = previous_position
 		
 		if piece_died:
+			ExplodingBishop.spawn_explosion_literal(selected_piece.position + board_scene.global_position)
+			
 			setup_scene._on_board_refund_piece(selected_piece.piece_type)
 			board_scene.delete_piece(selected_piece, true)
+			piece_died = false
+		
+		if !is_valid_move:
+			selected_piece.position = previous_position
 		
 		selected_piece = null
 		selected_square = null
@@ -81,7 +86,7 @@ func get_square_under_mouse():
 func drop_piece() -> bool:
 	var drop_square = get_square_under_mouse()
 	if !is_within_bounds(drop_square):
-		if drop_square.x > 7:
+		if drop_square.x > 7 and drop_square.y > 0:
 			piece_died = true
 		return false
 	
