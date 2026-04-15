@@ -89,6 +89,9 @@ func _ready():
 	SignalBus.show_notification.connect(show_notification)
 	SignalBus.move_clock_expired.connect(process_expired_clock)
 	
+	multiplayer.peer_disconnected.connect(on_player_disconnect)
+	multiplayer.server_disconnected.connect(on_server_disconnect)
+	
 	difficulty_dict = difficulty_settings()
 	
 	board_vector = Vector2(board.BOARD_WIDTH - 1, board.BOARD_HEIGHT - 1)
@@ -886,3 +889,15 @@ func sync_clocks(player_status : Globals.COLORS):
 	else:
 		move_clock.end_turn()
 		move_clock_2.start_turn()
+
+func on_player_disconnect(_peer_id : int):
+	game_over = true
+	stop_clocks()
+	set_win(Globals.PLAYER.ONE)
+	return true
+
+func on_server_disconnect():
+	game_over = true
+	stop_clocks()
+	set_win(Globals.PLAYER.TWO)
+	return true
