@@ -28,6 +28,7 @@ Infector="*res://scripts/infector.gd"
 Ai="*res://scripts/ai.gd"
 Network="*res://scripts/network.gd"
 Duplicator="*res://scripts/duplicator.gd"
+MagmaKnight="*res://scripts/magma_knight.gd"
 
 [display]
 

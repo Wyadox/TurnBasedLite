@@ -397,6 +397,8 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 			current_square = dest_piece.board_position
 		if is_shooting == false and juggernaut_hit == false:
 			selected_piece.move_position(to_move)
+			if selected_piece.piece_type == Globals.PIECE_TYPES.MAGMA_KNIGHT:
+				MagmaKnight.SpawnMagma(old_pos, board)
 			current_square = selected_piece.board_position
 			if selected_piece.piece_type == Globals.PIECE_TYPES.STUN_KNIGHT:
 				for space in selected_piece.get_stun_positions():

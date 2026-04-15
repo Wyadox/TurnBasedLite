@@ -163,6 +163,8 @@ func get_moveable_positions():
 			if promoted:
 				return promoted_duplicator_threat_pos()
 			return duplicator_move_pos()
+		Globals.PIECE_TYPES.MAGMA_KNIGHT:
+			return knight_threat_pos()
 		_: return []
 
 func get_threatened_positions():
@@ -210,6 +212,8 @@ func get_threatened_positions():
 			if promoted:
 				return promoted_duplicator_threat_pos()
 			return pawn_threat_pos()
+		Globals.PIECE_TYPES.MAGMA_KNIGHT:
+			return knight_threat_pos()
 		_: return []
 
 
