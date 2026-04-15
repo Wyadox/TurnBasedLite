@@ -116,7 +116,7 @@ offset_left = -951.00006
 offset_right = -166.30444
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(1.3010994, 1.3010994)
+scale = Vector2(1.3205299, 1.3205299)
 texture = ExtResource("2_ki1oi")
 expand_mode = 3
 
@@ -224,6 +224,81 @@ scale = Vector2(5, 5)
 sprite_frames = SubResource("SpriteFrames_0bpxs")
 animation = &"close"
 autoplay = "idle"
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 72.0
+offset_top = 84.0
+offset_right = 508.0
+offset_bottom = 732.0
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel"]
+layout_mode = 0
+offset_right = 432.99213
+offset_bottom = 195.0
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="Title_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "LOADOUT MENU"
+horizontal_alignment = 1
+
+[node name="Desciption_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+text = "Save time when you play by creating loadouts here"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Save_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "SAVE LOADOUT"
+horizontal_alignment = 1
+
+[node name="Saving_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+text = "Select the loadout slot you want to use. Cycle through the available pieces and spawn it. You can choose where to spawn it by clicking on the board. Drag pieces around to edit their position. Click \"SAVE\" when done."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Edit_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "EDIT LOADOUT"
+horizontal_alignment = 1
+
+[node name="Editing_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+text = "Select the loadout slot you want to edit. Click \"LOAD\". Drag pieces around to move them. Drag pieces to the furnace to delete them. Click \"SAVE\" when you are done."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Restrict_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "RESTRICTIONS"
+horizontal_alignment = 1
+
+[node name="Restricting_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+text = "You can only have one of each piece at a time
+You can only have two of a piece variant at a time (pawn, knight, etc.)
+You can only place 7 pieces total"
+horizontal_alignment = 1
+autowrap_mode = 3
 
 [connection signal="pressed" from="HBoxContainer/Button_Save" to="." method="_on_button_save_pressed"]
 [connection signal="pressed" from="HBoxContainer/Button_Load" to="." method="_on_button_load_pressed"]

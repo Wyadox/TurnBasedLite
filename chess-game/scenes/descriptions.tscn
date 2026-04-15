@@ -21,23 +21,27 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Panel"]
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 0
-offset_left = 252.0
+offset_left = 217.0
 offset_top = 139.0
-offset_right = 460.0
+offset_right = 525.0
 offset_bottom = 179.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
 [node name="Left_Button" type="Button" parent="Panel/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 text = "PREVIOUS"
 
 [node name="Right_Button" type="Button" parent="Panel/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 text = "NEXT"
 
 [node name="Spawn_Button" type="Button" parent="Panel/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 text = "SPAWN"
 

@@ -38,8 +38,8 @@ func _input(event):
 		if selected_piece == null:
 			if is_within_bounds(selected_square) and board_scene.num_pieces() < Globals.PIECES_PER_SIDE:
 				SignalBus.emit_signal("selected_square", selected_square)
-			else:
-				SignalBus.emit_signal("selected_square", Vector2(-1, -1))
+			#else:
+				#SignalBus.emit_signal("selected_square", Vector2(-1, -1))
 			return
 		else:
 			SignalBus.emit_signal("selected_square", Vector2(-1, -1))
