@@ -125,6 +125,7 @@ func _ready():
 			captured_display_2.color = Globals.COLORS.BLACK
 			
 			descriptions.hide()
+			loadout_ui.hide()
 		else:
 			move_clock.global_position.y += MOVE_CLOCK_OFFSET
 			move_clock_2.global_position.y -= MOVE_CLOCK_OFFSET
@@ -413,7 +414,12 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 				current_square = selected_piece.board_position
 				
 		if real_game and selected_piece:
-			SignalBus.previous_move.emit(selected_piece.piece_type, selected_piece.color, old_pos, to_move)
+			if online_game and Network.my_color == Globals.COLORS.BLACK:
+				var flip_old_pos = abs(old_pos - Vector2(Board.BOARD_WIDTH, Board.BOARD_HEIGHT) + Vector2(1,1))
+				var flip_to_move = abs(to_move - Vector2(Board.BOARD_WIDTH, Board.BOARD_HEIGHT) + Vector2(1,1))
+				SignalBus.previous_move.emit(selected_piece.piece_type, selected_piece.color, flip_old_pos, flip_to_move)
+			else:
+				SignalBus.previous_move.emit(selected_piece.piece_type, selected_piece.color, old_pos, to_move)
 				
 		if piece_died:
 			board.on_capture(selected_piece, dest_piece, board, old_pos)
@@ -726,8 +732,10 @@ func network_pass_board_pieces(color):
 		
 		if Network.my_color == status and !setup_complete:
 			descriptions.show()
+			loadout_ui.show()
 		else:
 			descriptions.hide()
+			loadout_ui.hide()
 
 func _on_board_set_status(color: Variant) -> void:
 	status = color
