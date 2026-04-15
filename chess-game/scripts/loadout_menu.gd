@@ -94,9 +94,11 @@ func drop_piece() -> bool:
 		if piece != selected_piece and piece.board_position == drop_square:
 			piece.move_position(selected_piece.board_position)
 			selected_piece.move_position(drop_square)
+			board_scene.play_sound("capture")
 			return true
 	
 	selected_piece.move_position(drop_square)
+	board_scene.play_sound("move")
 	return true
 
 func is_within_bounds(pos : Vector2):
