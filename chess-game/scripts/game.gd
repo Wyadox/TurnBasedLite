@@ -121,6 +121,8 @@ func _ready():
 			
 			captured_display.color = Globals.COLORS.WHITE
 			captured_display_2.color = Globals.COLORS.BLACK
+			
+			descriptions.hide()
 		else:
 			move_clock.global_position.y += MOVE_CLOCK_OFFSET
 			move_clock_2.global_position.y -= MOVE_CLOCK_OFFSET
@@ -719,6 +721,11 @@ func network_pass_board_pieces(color):
 		
 		network_process_save_string.rpc(save_string, status)
 		print("calling network process")
+		
+		if Network.my_color == status and !setup_complete:
+			descriptions.show()
+		else:
+			descriptions.hide()
 
 func _on_board_set_status(color: Variant) -> void:
 	status = color
