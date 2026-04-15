@@ -370,6 +370,9 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 			Duplicator.Duplicate(selected_piece, dest_piece, board)
 			is_shooting = true
 			selected_piece.position = previous_position
+		if selected_piece.piece_type == Globals.PIECE_TYPES.GUARDIAN_ANGEL and dest_piece != null and dest_piece.color == selected_piece.color:
+			dest_piece.move_position(old_pos)
+			GuardianAngel.Purify(dest_piece)
 		# Delete only if the target piece is of different color
 		if dest_piece != null and dest_piece.color != selected_piece.color:
 			if dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT or dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT2:
@@ -761,14 +764,17 @@ func init_pieces():
 	board.register_king()
 
 func _on_piece_moved(old_pos, new_pos):
-	board_repr[board.BOARD_WIDTH * new_pos[1] + new_pos[0]] = board_repr[board.BOARD_WIDTH * old_pos[1] + old_pos[0]]
-	board_repr[board.BOARD_WIDTH * old_pos[1] + old_pos[0]] = null
+	pass
+	#board_repr[board.BOARD_WIDTH * new_pos[1] + new_pos[0]] = board_repr[board.BOARD_WIDTH * old_pos[1] + old_pos[0]]
+	#board_repr[board.BOARD_WIDTH * old_pos[1] + old_pos[0]] = null
 
 func _on_trojan_spawned(pos):
-	board_repr[board.BOARD_WIDTH * position[1] + position[0]] = board.get_piece(pos)
+	pass
+	#board_repr[board.BOARD_WIDTH * position[1] + position[0]] = board.get_piece(pos)
 	
 func _on_mitosis_spawned(pos):
-	board_repr[board.BOARD_WIDTH * position[1] + position[0]] = board.get_piece(pos)
+	pass
+	#board_repr[board.BOARD_WIDTH * position[1] + position[0]] = board.get_piece(pos)
 
 # Timer code
 

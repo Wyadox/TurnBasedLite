@@ -371,6 +371,24 @@ func spot_search_duplicate(
 	
 	if cur_piece != null:
 		return cur_pos if cur_piece.color == own_color else null
+		
+func spot_search_guardian(
+	own_color, 
+	target_x, target_y
+):
+	# Do a single move and check if move is valid or threatens a piece
+	
+	if !is_within_bounds(Vector2(target_x, target_y)):
+		return
+	
+	var cur_pos = Vector2(target_x, target_y)
+	var cur_piece = get_piece(cur_pos)
+	
+	#if cur_piece != null and cur_piece.piece_type == Globals.PIECE_TYPES.DUCK:
+		#return null
+	
+	if cur_piece != null:
+		return cur_pos if cur_piece.color == own_color else null
 	
 func spot_search_explode( 
 	cur_x, cur_y, 
