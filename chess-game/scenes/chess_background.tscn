@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=3 uid="uid://bm18o0kocsj51"]
+
+[ext_resource type="Texture2D" uid="uid://bi27j240t7d1r" path="res://Assets/ChessBoard/ChessBoard.png" id="1_scvr5"]
+
+[node name="chess_background" type="Control"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1856.0
+offset_bottom = -1016.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="NinePatchRect" type="NinePatchRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_scvr5")
+patch_margin_left = 24
+patch_margin_top = 24
+patch_margin_right = 24
+patch_margin_bottom = 24

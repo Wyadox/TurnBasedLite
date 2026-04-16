@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://dux8e4cssk5i1"]
+[gd_scene load_steps=28 format=3 uid="uid://dux8e4cssk5i1"]
 
 [ext_resource type="Script" uid="uid://b1ibgxoocd1ub" path="res://scripts/loadout_menu.gd" id="1_yna6v"]
 [ext_resource type="PackedScene" uid="uid://dlld2p1r0gxox" path="res://scenes/setup_phase_ui.tscn" id="2_3c7rr"]
@@ -15,6 +15,8 @@
 [ext_resource type="Texture2D" uid="uid://bdj5co4n8e2aw" path="res://Assets/Buttons/EXIT_Button_Hover.png" id="9_bf8y0"]
 [ext_resource type="PackedScene" uid="uid://c6ulmyy15jdeu" path="res://scenes/descriptions.tscn" id="13_21il4"]
 [ext_resource type="Texture2D" uid="uid://b3jo3krtvy036" path="res://Assets/Small Bin 1 - Animated_spritesheet.png" id="15_4vggf"]
+[ext_resource type="PackedScene" uid="uid://bm18o0kocsj51" path="res://scenes/chess_background.tscn" id="16_6ruvx"]
+[ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="17_dn7wr"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6ruvx"]
 atlas = ExtResource("15_4vggf")
@@ -225,75 +227,87 @@ sprite_frames = SubResource("SpriteFrames_0bpxs")
 animation = &"close"
 autoplay = "idle"
 
-[node name="Panel" type="Panel" parent="."]
-layout_mode = 0
-offset_left = 72.0
-offset_top = 84.0
-offset_right = 508.0
-offset_bottom = 732.0
+[node name="chess_background" parent="." instance=ExtResource("16_6ruvx")]
+layout_mode = 1
+offset_left = 75.0
+offset_top = 85.0
+offset_right = -1417.0
+offset_bottom = -354.0
 
-[node name="MarginContainer" type="MarginContainer" parent="Panel"]
-layout_mode = 0
+[node name="MarginContainer" type="MarginContainer" parent="chess_background"]
+layout_mode = 1
 offset_right = 432.99213
-offset_bottom = 195.0
+offset_bottom = 636.0
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="chess_background/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 12
 alignment = 1
 
-[node name="Title_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="Title_Label" type="Label" parent="chess_background/MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_fonts/font = ExtResource("17_dn7wr")
+theme_override_font_sizes/font_size = 45
 text = "LOADOUT MENU"
 horizontal_alignment = 1
 
-[node name="Desciption_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="Desciption_Label" type="Label" parent="chess_background/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("17_dn7wr")
+theme_override_font_sizes/font_size = 20
 text = "Save time when you play by creating loadouts here"
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="Save_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="Save_Label" type="Label" parent="chess_background/MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_fonts/font = ExtResource("17_dn7wr")
+theme_override_font_sizes/font_size = 45
 text = "SAVE LOADOUT"
 horizontal_alignment = 1
 
-[node name="Saving_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="Saving_Label" type="Label" parent="chess_background/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("17_dn7wr")
+theme_override_font_sizes/font_size = 20
 text = "Select the loadout slot you want to use. Cycle through the available pieces and spawn it. You can choose where to spawn it by clicking on the board. Drag pieces around to edit their position. Click \"SAVE\" when done."
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="Edit_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="Edit_Label" type="Label" parent="chess_background/MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_fonts/font = ExtResource("17_dn7wr")
+theme_override_font_sizes/font_size = 45
 text = "EDIT LOADOUT"
 horizontal_alignment = 1
 
-[node name="Editing_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="Editing_Label" type="Label" parent="chess_background/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("17_dn7wr")
+theme_override_font_sizes/font_size = 20
 text = "Select the loadout slot you want to edit. Click \"LOAD\". Drag pieces around to move them. Drag pieces to the furnace to delete them. Click \"SAVE\" when you are done."
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="Restrict_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="Restrict_Label" type="Label" parent="chess_background/MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_fonts/font = ExtResource("17_dn7wr")
+theme_override_font_sizes/font_size = 45
 text = "RESTRICTIONS"
 horizontal_alignment = 1
 
-[node name="Restricting_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="Restricting_Label" type="Label" parent="chess_background/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("17_dn7wr")
+theme_override_font_sizes/font_size = 20
 text = "You can only have one of each piece at a time
 You can only have two of a piece variant at a time (pawn, knight, etc.)
 You can only place 7 pieces total"

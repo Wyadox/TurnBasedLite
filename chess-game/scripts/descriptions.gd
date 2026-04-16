@@ -29,8 +29,8 @@ var items = [
 
 var current_index = 0
 
-@onready var image : TextureRect = $Panel/image_preview
-@onready var description_label = $Panel/Label
+@onready var image: TextureRect = $chess_background/image_preview
+@onready var description_label: Label = $chess_background/Label
 
 @export var color : Globals.COLORS
 
