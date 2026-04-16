@@ -1,0 +1,52 @@
+[gd_scene load_steps=8 format=3 uid="uid://dbxe12unkumgf"]
+
+[ext_resource type="Texture2D" uid="uid://c8hk76k2fdhd7" path="res://Assets/Buttons/BLANK_Button.png" id="1_nyhqm"]
+[ext_resource type="Script" uid="uid://mp5imos42b51" path="res://scenes/dynamic_button.gd" id="1_oawso"]
+[ext_resource type="PackedScene" uid="uid://cec8ttfqyv3h" path="res://scenes/main_menu.tscn" id="2_j7kkt"]
+[ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="2_j11oi"]
+[ext_resource type="Texture2D" uid="uid://b6g7rfusoq6ao" path="res://Assets/Buttons/BLANK_Button_Press.png" id="2_vjjgn"]
+[ext_resource type="Texture2D" uid="uid://bd2jrwrbdre08" path="res://Assets/Buttons/BLANK_Button_Hover.png" id="4_3lcrm"]
+
+[sub_resource type="FontVariation" id="FontVariation_vjjgn"]
+base_font = ExtResource("2_j11oi")
+
+[node name="dynamic_button" type="Control"]
+custom_minimum_size = Vector2(175, 64)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 175.0
+offset_bottom = 64.0
+script = ExtResource("1_oawso")
+scene = ExtResource("2_j7kkt")
+
+[node name="Button" type="TextureButton" parent="."]
+layout_mode = 0
+offset_right = 175.0
+offset_bottom = 64.0
+texture_normal = ExtResource("1_nyhqm")
+texture_pressed = ExtResource("2_vjjgn")
+texture_hover = ExtResource("4_3lcrm")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -17.0
+offset_right = 20.0
+offset_bottom = 6.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = SubResource("FontVariation_vjjgn")
+theme_override_font_sizes/font_size = 52
+text = "LOADOUT"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="button_down" from="Button" to="." method="_on_button_button_down"]
+[connection signal="button_up" from="Button" to="." method="_on_button_button_up"]
+[connection signal="mouse_entered" from="Button" to="." method="_on_button_mouse_entered"]
+[connection signal="mouse_exited" from="Button" to="." method="_on_button_mouse_exited"]
