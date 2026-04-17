@@ -5,11 +5,17 @@ extends Control
 
 @onready var LABEL = $Label
 
-var normal_tex = preload("res://Assets/Buttons/LoadoutButton.png")
-var selected_tex = preload("res://Assets/Buttons/LoadoutButton_Selected.png")
+var normal_tex = preload("res://Assets/Buttons/LoadoutButtonNEW.png")
+var selected_tex = preload("res://Assets/Buttons/LoadoutButtonNEW_SELECTED.png")
+
+var label_default_pos : Vector2
+const LABEL_OFFSET : Vector2 = Vector2(0, 6)
 
 func _ready() -> void:
 	SignalBus.loadout_button.connect(update_visuals)
+	
+	label_default_pos = LABEL.position
+	LABEL.text = "LOADOUT " + str(SLOT_NUM)
 	
 	if SLOT_NUM == 1:
 		SAVE_STRING = LoadoutSaves.loadouts_to_save.loadout1
@@ -29,3 +35,15 @@ func update_visuals(loadout):
 
 func set_normal():
 	$TextureButton.texture_normal = normal_tex
+
+
+func _on_texture_button_mouse_exited() -> void:
+	LABEL.position = label_default_pos
+
+
+func _on_texture_button_button_up() -> void:
+	LABEL.position = label_default_pos
+
+
+func _on_texture_button_button_down() -> void:
+	LABEL.position = label_default_pos + LABEL_OFFSET

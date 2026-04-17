@@ -31,6 +31,9 @@ var current_index = 0
 
 @onready var image: TextureRect = $chess_background/image_preview
 @onready var description_label: Label = $chess_background/Label
+@onready var prev_button: DynamicButton = $chess_background/HBoxContainer/Prev_Button
+@onready var next_button: DynamicButton = $chess_background/HBoxContainer/Next_Button
+@onready var create_button: DynamicButton = $chess_background/HBoxContainer/Create_Button
 
 @export var color : Globals.COLORS
 
@@ -40,6 +43,10 @@ func _ready():
 	update_display()
 	
 	#SignalBus.selected_square.connect(set_selected_square)
+	
+	prev_button.button_triggered.connect(_on_left_button_pressed)
+	next_button.button_triggered.connect(_on_right_button_pressed)
+	create_button.button_triggered.connect(_on_spawn_button_pressed)
 	
 func set_selected_square(pos):
 	selected_pos = pos

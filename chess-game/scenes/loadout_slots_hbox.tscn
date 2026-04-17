@@ -5,42 +5,33 @@
 
 [node name="loadoutSlots" type="Control"]
 layout_mode = 3
-anchor_right = 0.324
-anchor_bottom = 0.15400001
-offset_right = 0.07998657
-offset_bottom = 0.31999207
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 0
 size_flags_vertical = 4
 script = ExtResource("1_qm34f")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-theme_override_constants/separation = 150
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -202.0
+offset_top = -64.0
+offset_right = 202.0
+offset_bottom = 64.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
 
 [node name="loadout_slot" parent="HBoxContainer" instance=ExtResource("2_mnxhk")]
 layout_mode = 2
-SAVE_STRING = "hiuagfiub"
 SLOT_NUM = 1
 
 [node name="loadout_slot2" parent="HBoxContainer" instance=ExtResource("2_mnxhk")]
 layout_mode = 2
 SLOT_NUM = 2
 
-[node name="Label" parent="HBoxContainer/loadout_slot2" index="2"]
-text = "2
-
-"
-
 [node name="loadout_slot3" parent="HBoxContainer" instance=ExtResource("2_mnxhk")]
 layout_mode = 2
 SLOT_NUM = 3
-
-[node name="Label" parent="HBoxContainer/loadout_slot3" index="2"]
-text = "3 "
-
-[editable path="HBoxContainer/loadout_slot"]
-[editable path="HBoxContainer/loadout_slot2"]
-[editable path="HBoxContainer/loadout_slot3"]

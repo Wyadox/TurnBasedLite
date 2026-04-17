@@ -1,4 +1,5 @@
 @tool
+class_name DynamicButton
 extends Control
 
 signal button_triggered()
@@ -52,10 +53,11 @@ func _on_button_button_up() -> void:
 	print(label_default_pos)
 	nine_patch_rect.texture = NORMAL_TEXTURE
 	
-	if scene and !cancel_function:
-		await get_tree().create_timer(DELAY).timeout
-		get_tree().change_scene_to_packed(scene)
+	if !cancel_function:
 		button_triggered.emit()
+		if scene:
+			await get_tree().create_timer(DELAY).timeout
+			get_tree().change_scene_to_packed(scene)
 	if quit_game:
 		get_tree().quit()
 
