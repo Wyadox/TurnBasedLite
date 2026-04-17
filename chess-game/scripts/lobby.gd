@@ -1,9 +1,10 @@
 extends Control
 
-@onready var host_button: Button = $VBoxContainer/Host_Button
-@onready var join_button: Button = $VBoxContainer/Join_Button
+@onready var host_button: DynamicButton = $VBoxContainer/VBoxContainer/Host_Button
+@onready var find_button: DynamicButton = $VBoxContainer/VBoxContainer/Find_Button
+@onready var start_button: DynamicButton = $VBoxContainer/VBoxContainer/Start_Button
+
 @onready var status: Label = $VBoxContainer/Status
-@onready var start_button: Button = $VBoxContainer/Start_Button
 @onready var lobby_list: LobbyList = $VBoxContainer/HBoxContainer/lobby_list
 @onready var host_options_menu: Control = $VBoxContainer/HBoxContainer/host_options_menu
 
@@ -31,13 +32,17 @@ func _ready() -> void:
 	lobby_list.join_button_pressed.connect(on_join_match_pressed)
 	
 	host_options_menu.host_button_pressed.connect(intialize_host)
+	
+	host_button.button_triggered.connect(_on_host_button_pressed)
+	find_button.button_triggered.connect(_on_join_button_pressed)
+	start_button.button_triggered.connect(_on_start_button_pressed)
 
 func _on_host_button_pressed() -> void:
 	host_options_menu.show()
 	lobby_list.hide()
 	
-	host_button.disabled = true
-	join_button.disabled = true
+	host_button.disable()
+	find_button.disable()
 	
 
 func intialize_host() -> void:
@@ -63,8 +68,8 @@ func intialize_host() -> void:
 func _on_join_button_pressed() -> void:
 	Network.start_listening()
 	status.text = "Looking for matches..."
-	host_button.disabled = true
-	join_button.disabled = true
+	host_button.disable()
+	find_button.disable()
 	lobby_list.clear()
 	discovered_ip_addresses.clear()
 	lobby_list.show()
@@ -119,7 +124,7 @@ func _on_start_button_pressed() -> void:
 func load_game():
 	Network.stop_listening()
 	
-	const GAME_SCENE = preload("res://scenes/game.tscn")
+	var GAME_SCENE = load("res://scenes/game.tscn")
 	var game_scene = GAME_SCENE.instantiate()
 	
 	game_scene.player2_type = Globals.PLAYER_2_TYPE.NETWORK
@@ -134,8 +139,8 @@ func load_game():
 	SignalBus.emit_signal("change_map", lobby_game_info["map"])
 
 func reset_ui():
-	host_button.disabled = false
-	join_button.disabled = false
+	host_button.enable()
+	find_button.enable()
 	lobby_list.hide()
 	lobby_list.clear()
 	discovered_ip_addresses.clear()

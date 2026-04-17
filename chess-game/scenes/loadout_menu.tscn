@@ -100,8 +100,8 @@ color = 1
 layout_mode = 1
 offset_left = 75.0
 offset_top = 85.0
-offset_right = -1417.0
-offset_bottom = -354.0
+offset_right = 508.0
+offset_bottom = 724.0
 
 [node name="MarginContainer" type="MarginContainer" parent="chess_background"]
 layout_mode = 1
@@ -188,8 +188,8 @@ z_index = -100
 layout_mode = 1
 offset_left = 535.0
 offset_top = 610.0
-offset_right = -515.0
-offset_bottom = -200.0
+offset_right = 1405.0
+offset_bottom = 880.0
 
 [node name="Exit_Button" parent="." instance=ExtResource("18_wxj56")]
 custom_minimum_size = Vector2(175, 64)

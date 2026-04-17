@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://bfijhxlgtbvqp"]
+[gd_scene load_steps=5 format=3 uid="uid://bfijhxlgtbvqp"]
 
 [ext_resource type="Script" uid="uid://bsqmnoolexdot" path="res://scripts/lobby.gd" id="1_o1atq"]
 [ext_resource type="PackedScene" uid="uid://dy8nxqsamussf" path="res://scenes/lobby_list.tscn" id="2_5gu6x"]
+[ext_resource type="PackedScene" uid="uid://dbxe12unkumgf" path="res://scenes/dynamic_button.tscn" id="2_nqcc7"]
 [ext_resource type="PackedScene" uid="uid://20xne0v7msu7" path="res://scenes/host_options_menu.tscn" id="3_q60fs"]
 
 [node name="lobby" type="Control"]
@@ -14,42 +15,50 @@ grow_vertical = 2
 script = ExtResource("1_o1atq")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
-custom_minimum_size = Vector2(0, 60)
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -650.0
-offset_top = -349.5
-offset_right = 650.0
-offset_bottom = 349.5
+offset_left = -888.0
+offset_top = -459.5
+offset_right = 888.0
+offset_bottom = 459.5
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="VBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+custom_minimum_size = Vector2(175, 0)
+layout_mode = 2
+alignment = 1
+
+[node name="Host_Button" parent="VBoxContainer/VBoxContainer" instance=ExtResource("2_nqcc7")]
+custom_minimum_size = Vector2(175, 64)
+layout_mode = 2
+button_text = "HOST MATCH"
+button_size = Vector2(175, 64)
+
+[node name="Find_Button" parent="VBoxContainer/VBoxContainer" instance=ExtResource("2_nqcc7")]
+custom_minimum_size = Vector2(175, 64)
+layout_mode = 2
+button_text = "FIND MATCH"
+button_size = Vector2(175, 64)
+
+[node name="Start_Button" parent="VBoxContainer/VBoxContainer" instance=ExtResource("2_nqcc7")]
+custom_minimum_size = Vector2(175, 64)
+layout_mode = 2
+button_text = "START MATCH"
+button_size = Vector2(175, 64)
 
 [node name="Title" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 
-[node name="Host_Button" type="Button" parent="VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-text = "HOST"
-
-[node name="Join_Button" type="Button" parent="VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-text = "JOIN"
-
 [node name="Status" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-
-[node name="Start_Button" type="Button" parent="VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-text = "START"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -60,7 +69,3 @@ layout_mode = 2
 
 [node name="host_options_menu" parent="VBoxContainer/HBoxContainer" instance=ExtResource("3_q60fs")]
 layout_mode = 2
-
-[connection signal="pressed" from="VBoxContainer/Host_Button" to="." method="_on_host_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/Join_Button" to="." method="_on_join_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/Start_Button" to="." method="_on_start_button_pressed"]

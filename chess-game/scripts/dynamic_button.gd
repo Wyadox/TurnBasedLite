@@ -26,6 +26,7 @@ const MINIMUM_SIZE : Vector2 = Vector2(64, 64)
 const NORMAL_TEXTURE = preload("res://Assets/Buttons/BLANK_Button.png")
 const HOVER_TEXTURE = preload("res://Assets/Buttons/BLANK_Button_Hover.png")
 const PRESS_TEXTURE = preload("res://Assets/Buttons/BLANK_Button_Press.png")
+const DISABLED_TEXTURE = preload("res://Assets/Buttons/BLANK_Button_Disabled.png")
 
 var label_default_pos : Vector2
 var press_offset : Vector2 = Vector2(0, 6)
@@ -55,7 +56,7 @@ func _on_button_button_up() -> void:
 	
 	if !cancel_function:
 		button_triggered.emit()
-		if scene:
+		if scene and get_tree():
 			await get_tree().create_timer(DELAY).timeout
 			get_tree().change_scene_to_packed(scene)
 	if quit_game:
@@ -70,12 +71,23 @@ func _on_button_button_down() -> void:
 
 func _on_button_mouse_entered() -> void:
 	cancel_function = false
-	nine_patch_rect.texture = HOVER_TEXTURE
+	if !button.disabled:
+		nine_patch_rect.texture = HOVER_TEXTURE
 
 func _on_button_mouse_exited() -> void:
 	cancel_function = true
-	nine_patch_rect.texture = NORMAL_TEXTURE
+	if button.disabled:
+		nine_patch_rect.texture = DISABLED_TEXTURE
+	else:
+		nine_patch_rect.texture = NORMAL_TEXTURE
 	label.position = label_default_pos
 	print(label_default_pos)
 	print("exit")
-	
+
+func disable():
+	button.disabled = true
+	nine_patch_rect.texture = DISABLED_TEXTURE
+
+func enable():
+	button.disabled = false
+	nine_patch_rect.texture = NORMAL_TEXTURE

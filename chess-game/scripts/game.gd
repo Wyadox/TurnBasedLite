@@ -1,3 +1,4 @@
+class_name Game
 extends Node2D
 
 #var explosionScene = preload("res://scenes/Explosion.tscn")
@@ -40,6 +41,8 @@ var failed_to_move : bool = false
 
 @onready var captured_display: Control = $captured_display
 @onready var captured_display_2: Control = $captured_display2
+
+@onready var main_menu_button: DynamicButton = $Control/MainMenu_Button
 
 const MOVE_CLOCK_OFFSET : float = 300.0
 
@@ -88,6 +91,8 @@ func _ready():
 	SignalBus.mitosis_spawned.connect(_on_mitosis_spawned)
 	SignalBus.show_notification.connect(show_notification)
 	SignalBus.move_clock_expired.connect(process_expired_clock)
+	
+	main_menu_button.button_triggered.connect(_on_button_pressed)
 	
 	multiplayer.peer_disconnected.connect(on_player_disconnect)
 	multiplayer.server_disconnected.connect(on_server_disconnect)

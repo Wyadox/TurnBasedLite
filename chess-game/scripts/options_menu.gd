@@ -1,8 +1,10 @@
 extends Control
 
-@onready var opponent_option_button: OptionButton = $Panel/VBoxContainer/Opponent_OptionButton
+@onready var opponent_option_button: OptionButton = $chess_background/VBoxContainer/Opponent_OptionButton
 @onready var notification_node: Control = $notification
-@onready var difficulty_map_options_menu: Control = $Panel/VBoxContainer/difficulty_map_options_menu
+@onready var continue_button: DynamicButton = $chess_background/VBoxContainer/HBoxContainer/Continue_Button
+@onready var difficulty_map_options_menu: Control = $chess_background/VBoxContainer/difficulty_map_options_menu
+@onready var return_button: DynamicButton = $Return_Button
 
 var current_map : int = -1
 var current_difficulty : int = -1
@@ -10,7 +12,8 @@ var color : Globals.COLORS
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	continue_button.button_triggered.connect(_on_continue_button_pressed)
+	return_button.button_triggered.connect(_on_button_exit_pressed)
 	
 func _on_continue_button_pressed() -> void:
 	current_difficulty = difficulty_map_options_menu.difficulty
@@ -20,11 +23,14 @@ func _on_continue_button_pressed() -> void:
 		notification_node.set_text("An option was not selected")
 		return
 	
-	const GAME_SCENE = preload("res://scenes/game.tscn")
-	var game_scene = GAME_SCENE.instantiate()
+	var GAME_SCENE = load("res://scenes/game.tscn")
+	if GAME_SCENE == null:
+		push_error("game.tscn really??")
+		return
+	var game_scene : Game = GAME_SCENE.instantiate()
 	
 	game_scene.player2_type = convert_opponent_option(opponent_option_button.get_item_text(opponent_option_button.get_selected_id()))
-	game_scene.difficulty = current_difficulty
+	game_scene.difficulty = current_difficulty as Globals.DIFFICULTY
 	game_scene.current_map = current_map
 	
 	var scene_tree = get_tree()
@@ -39,7 +45,6 @@ func _on_continue_button_pressed() -> void:
 		
 		color_scene.load_scene = game_scene
 		
-		scene_tree.current_scene.queue_free()
 		scene_tree.root.add_child(color_scene)
 		scene_tree.current_scene = color_scene
 	
