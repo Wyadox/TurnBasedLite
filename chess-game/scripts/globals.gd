@@ -2,9 +2,11 @@ extends Node
 
 const PIECES_PER_SIDE = 7
 
+var show_tooltips : bool = true
+
 enum PLAYER { ONE, TWO }
 enum PLAYER_2_TYPE {
-	HUMAN, AI
+	HUMAN, AI, NETWORK
 }
 
 enum COLORS {
@@ -56,7 +58,7 @@ enum PIECE_TYPES {
 	MAGMA_KNIGHT,
 	DUPLICATOR,
 	WARHORSE,
-	INFECTOR,
+	INFECTOR, #21
 	JUGGERNAUT,
 	JUGGERNAUT2,
 	JUGGERNAUT1,

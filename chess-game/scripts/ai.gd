@@ -90,8 +90,6 @@ func eval_assessThreat(threat_map : Dictionary, eval_piece, pieces) -> float:
 	
 	var score = threat_count * THREAT_EVAL_INCREMENT * THREATEN_MULTIPLIER - danger_count * THREAT_EVAL_INCREMENT * DANGER_MULTIPLIER
 	
-	if eval_piece.color == Globals.COLORS.BLACK:
-		return -score
 	return score
 
 #
@@ -148,9 +146,7 @@ func start_minimax(pieces : Array, white_to_play : bool, difficulty_dict : Dicti
 	
 	game_scene.board = board
 	
-	for piece in new_pieces:
-		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
-			board.register_king(piece.board_position, piece.color)
+	board.register_king()
 	
 	var best_result = {}
 	var time_limit = difficulty_dict.get("time_limit", 2000)

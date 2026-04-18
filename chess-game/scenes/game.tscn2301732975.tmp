@@ -63,19 +63,18 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Loadouts_Label" type="Label" parent="."]
-visible = false
 offset_left = 1523.0
-offset_top = 243.0
+offset_top = 292.0
 offset_right = 1786.0
-offset_bottom = 285.0
+offset_bottom = 334.0
 theme_override_font_sizes/font_size = 30
 text = "SAVED LOADOUTS"
 
 [node name="loadoutSlots" parent="." instance=ExtResource("7_u5sy4")]
 offset_left = 1632.0
-offset_top = 335.0
+offset_top = 384.0
 offset_right = 1632.08
-offset_bottom = 335.32
+offset_bottom = 384.32
 
 [node name="evaluation_bar" parent="." instance=ExtResource("8_0tnpc")]
 offset_left = 448.0

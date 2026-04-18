@@ -8,6 +8,13 @@ const SETUP_SCENE = preload("res://scenes/setup_phase_ui.tscn")
 
 var selected_loadout = 0
 
+var is_dragging : bool = false
+var piece_died : bool = false
+
+var selected_piece
+var selected_square = null
+var previous_position = Vector2(0, 0)
+
 # ISSUE 4/1 2 AM, Loading loadout doesn't work since board reposition
 
 func _ready() -> void:
@@ -23,18 +30,48 @@ func _ready() -> void:
 	SignalBus.show_notification.connect(show_notification)
 	
 
-func _input(_event):
+func _input(event):
 	if Input.is_action_just_pressed("left_click"):
-		var square = get_square_under_mouse()
-		var selected_piece = board_scene.get_piece(square)
+		selected_square = get_square_under_mouse()
+		selected_piece = board_scene.get_piece(selected_square)
 			
 		if selected_piece == null:
-			if square.x < board_scene.BOARD_WIDTH and square.x > -1 and square.y > -1 and square.y < 2 and board_scene.num_pieces() < Globals.PIECES_PER_SIDE:
-				SignalBus.emit_signal("selected_square", square)
+			if is_within_bounds(selected_square) and board_scene.num_pieces() < Globals.PIECES_PER_SIDE:
+				SignalBus.emit_signal("selected_square", selected_square)
+			#else:
+				#SignalBus.emit_signal("selected_square", Vector2(-1, -1))
 			return
 		else:
+			SignalBus.emit_signal("selected_square", Vector2(-1, -1))
+			is_dragging = true
+			previous_position = selected_piece.position
+			selected_piece.z_index = 100
+			selected_piece.play_animation("sway")
+	elif event is InputEventMouseMotion and is_dragging:
+		var piece_mouse_pos = get_global_mouse_position() - board_scene.global_position
+		selected_piece.position = piece_mouse_pos
+	elif Input.is_action_just_released("left_click") and is_dragging:
+		if !selected_piece:
+			return
+		
+		selected_piece.play_animation("idle")
+		selected_piece.z_index = 0
+		is_dragging = false
+		
+		var is_valid_move = drop_piece()
+		
+		if piece_died:
+			ExplodingBishop.spawn_explosion_literal(selected_piece.position + board_scene.global_position)
+			
 			setup_scene._on_board_refund_piece(selected_piece.piece_type)
 			board_scene.delete_piece(selected_piece, true)
+			piece_died = false
+		
+		if !is_valid_move:
+			selected_piece.position = previous_position
+		
+		selected_piece = null
+		selected_square = null
 
 func get_square_under_mouse():
 	var square = get_global_mouse_position() - board_scene.global_position
@@ -46,6 +83,26 @@ func get_square_under_mouse():
 	square.y = int(square.y / 120)
 	return square
 
+func drop_piece() -> bool:
+	var drop_square = get_square_under_mouse()
+	if !is_within_bounds(drop_square):
+		if drop_square.x > 7 and drop_square.y > 0:
+			piece_died = true
+		return false
+	
+	for piece in board_scene.pieces:
+		if piece != selected_piece and piece.board_position == drop_square:
+			piece.move_position(selected_piece.board_position)
+			selected_piece.move_position(drop_square)
+			board_scene.play_sound("capture")
+			return true
+	
+	selected_piece.move_position(drop_square)
+	board_scene.play_sound("move")
+	return true
+
+func is_within_bounds(pos : Vector2):
+	return pos.x < board_scene.BOARD_WIDTH and pos.x > -1 and pos.y > -1 and pos.y < 2
 
 func _on_button_clear_pressed() -> void:
 	board_scene.wipe_pieces(true, true)

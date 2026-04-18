@@ -371,6 +371,24 @@ func spot_search_duplicate(
 	
 	if cur_piece != null:
 		return cur_pos if cur_piece.color == own_color else null
+		
+func spot_search_guardian(
+	own_color, 
+	target_x, target_y
+):
+	# Do a single move and check if move is valid or threatens a piece
+	
+	if !is_within_bounds(Vector2(target_x, target_y)):
+		return
+	
+	var cur_pos = Vector2(target_x, target_y)
+	var cur_piece = get_piece(cur_pos)
+	
+	#if cur_piece != null and cur_piece.piece_type == Globals.PIECE_TYPES.DUCK:
+		#return null
+	
+	if cur_piece != null:
+		return cur_pos if cur_piece.color == own_color else null
 	
 func spot_search_explode( 
 	cur_x, cur_y, 
@@ -435,13 +453,16 @@ var border_shape
 var borders = []
 
 func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
-	if selected_pos == Vector2(-1, -1):
-		SignalBus.emit_signal("refund_piece", piece_type)
-		return
-	
-	if !is_within_bounds(selected_pos):
-		SignalBus.emit_signal("refund_piece", piece_type)
-		return
+	print("hi from spawn piece")
+	if selected_pos == Vector2(-1, -1) or !is_within_bounds(selected_pos):
+		if is_loadout_board:
+			selected_pos = find_viable_square()
+			if selected_pos == Vector2(-1, -1) or !is_within_bounds(selected_pos):
+				SignalBus.emit_signal("refund_piece", piece_type)
+				return
+		else:
+			SignalBus.emit_signal("refund_piece", piece_type)
+			return
 	
 	if setup_done == true:
 		return
@@ -456,7 +477,7 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 	create_piece(piece_type, color, selected_pos)
 	
 	# Determine if color needs to swap
-	if total_pieces + 1 < Globals.PIECES_PER_SIDE:
+	if total_pieces + 1 < Globals.PIECES_PER_SIDE or total_pieces > (Globals.PIECES_PER_SIDE - 1) * 2:
 		color = Globals.COLORS.WHITE
 	elif !is_loadout_board:
 		color = Globals.COLORS.BLACK
@@ -476,9 +497,29 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 		border_shape.queue_free()
 	selected_pos = Vector2(-1, -1)
 
+func find_viable_square() -> Vector2:
+	var flag : bool = true
+	var flag_flip_count : int = 0
+	for i in range(Board.BOARD_WIDTH):
+		for j in range(2):
+			flag = true
+			for piece in pieces:
+				if piece.board_position == Vector2(i,j):
+					flag = false
+					flag_flip_count += 1
+			if flag:
+				return Vector2(i,j)
+			if flag_flip_count >= Globals.PIECES_PER_SIDE:
+				return Vector2(-1, -1)
+	return Vector2(-1, -1)
 
 func _on_game_selected_square(pos: Vector2) -> void:
 	selected_pos = pos
+	if !is_within_bounds(selected_pos):
+		if border_shape:
+			border_shape.queue_free()
+		return
+	
 	if is_loadout_board:
 		draw_border(pos.x, pos.y, Color(0.0, 1.0, 0.38, 1.0), true, Globals.BORDER_STYLE.BOX)
 	else:
