@@ -43,6 +43,8 @@ var failed_to_move : bool = false
 @onready var captured_display_2: Control = $captured_display2
 
 @onready var main_menu_button: DynamicButton = $Control/MainMenu_Button
+@onready var upper_resign_button: DynamicButton = $Upper_Resign_Button
+@onready var lower_resign_button: DynamicButton = $Lower_Resign_Button
 
 const MOVE_CLOCK_OFFSET : float = 300.0
 
@@ -93,6 +95,8 @@ func _ready():
 	SignalBus.move_clock_expired.connect(process_expired_clock)
 	
 	main_menu_button.button_triggered.connect(_on_button_pressed)
+	upper_resign_button.button_triggered.connect(on_resign)
+	lower_resign_button.button_triggered.connect(on_resign)
 	
 	multiplayer.peer_disconnected.connect(on_player_disconnect)
 	multiplayer.server_disconnected.connect(on_server_disconnect)
@@ -573,7 +577,7 @@ func evaluate_end_game():
 	if len(moves) == 0:
 		game_over = true
 		stop_clocks()
-		set_win(Globals.PLAYER.TWO if status == player_color else Globals.PLAYER.ONE)
+		set_win(status)
 		return true
 		
 	# Check if Duck is only remaining piece
@@ -594,7 +598,7 @@ func evaluate_end_game():
 	if white_piece_count == 1 and white_duck or black_piece_count == 1 and black_duck:
 		game_over = true
 		stop_clocks()
-		set_win(Globals.PLAYER.TWO if status == player_color else Globals.PLAYER.ONE)
+		set_win(status)
 		return true
 		
 	if turns_since_last_capture > MAX_TURNS_WITHOUT_CAPTURE:
@@ -606,16 +610,19 @@ func evaluate_end_game():
 			
 	return false
 
-func set_win(who):
+func set_win(color):
 	game_over = true
-	if who == Globals.PLAYER.ONE:
-		win_label.text = "Player One Won"
-	elif who == Globals.PLAYER.TWO:
-		win_label.text = "Player Two Won"
+	if color == Globals.COLORS.WHITE:
+		win_label.text = "BLACK Won"
+	elif color == Globals.PLAYER.TWO:
+		win_label.text = "WHITE Won"
 	else:
 		win_label.text = "DRAW"
 	win_label.show()
 	ui_control.show()
+	
+	upper_resign_button.hide()
+	lower_resign_button.hide()
 	
 #func spawn_explosion(pos : Vector2):
 	#var actual_pos = Vector2(pos.x * 120 + 60, pos.y * 120 + 60)
@@ -678,6 +685,7 @@ func end_turn():
 	check_for_shield_king()
 	board.update_indicators()
 	update_eval()
+	toggle_resign_buttons()
 	
 func update_eval():
 	var eval = Ai.board_evaluation(board.pieces, 0.0)
@@ -715,6 +723,7 @@ func _on_board_setup_complete() -> void:
 	update_eval()
 	
 	move_clock.start_turn()
+	toggle_resign_buttons()
 	
 	if ai_color == Globals.COLORS.WHITE:
 		player2_move()
@@ -786,7 +795,7 @@ func stop_clocks():
 func process_expired_clock():
 	game_over = true
 	stop_clocks()
-	set_win(Globals.PLAYER.TWO if status == player_color else Globals.PLAYER.ONE)
+	set_win(status)
 	return true
 
 # Network code
@@ -883,6 +892,7 @@ func sync_end_turn():
 	check_for_shield_king()
 	board.update_indicators()
 	update_eval()
+	toggle_resign_buttons()
 	
 	evaluate_end_game()
 
@@ -898,11 +908,33 @@ func sync_clocks(player_status : Globals.COLORS):
 func on_player_disconnect(_peer_id : int):
 	game_over = true
 	stop_clocks()
-	set_win(Globals.PLAYER.ONE)
+	set_win(Network.my_color)
 	return true
 
 func on_server_disconnect():
 	game_over = true
 	stop_clocks()
-	set_win(Globals.PLAYER.TWO)
+	set_win(Network.my_color)
 	return true
+
+# Resigning
+
+func on_resign():
+	if online_game:
+		if multiplayer.is_server():
+			multiplayer.server_disconnected.emit()
+		else:
+			multiplayer.peer_disconnected.emit()
+	
+	game_over = true
+	stop_clocks()
+	set_win(status)
+	return true
+
+func toggle_resign_buttons():
+	if status == LOWER_COLOR:
+		lower_resign_button.show()
+		upper_resign_button.hide()
+	else:
+		lower_resign_button.hide()
+		upper_resign_button.show()

@@ -223,3 +223,23 @@ grow_horizontal = 2
 grow_vertical = 2
 button_text = "Main Menu"
 button_size = Vector2(175, 64)
+
+[node name="Upper_Resign_Button" parent="." instance=ExtResource("15_ca42v")]
+custom_minimum_size = Vector2(110, 64)
+offset_left = 1572.0
+offset_top = 310.0
+offset_right = 1682.0
+offset_bottom = 374.0
+button_text = "RESIGN"
+instant = true
+button_size = Vector2(110, 64)
+
+[node name="Lower_Resign_Button" parent="." instance=ExtResource("15_ca42v")]
+custom_minimum_size = Vector2(110, 64)
+offset_left = 1572.0
+offset_top = 620.0
+offset_right = 1682.0
+offset_bottom = 684.0
+button_text = "RESIGN"
+instant = true
+button_size = Vector2(110, 64)
