@@ -553,22 +553,16 @@ func draw_border(x, y, color, clear, border_style : Globals.BORDER_STYLE):
 			
 			border_shape = target
 			add_child(target)
-		Globals.BORDER_STYLE.HIGHLIGHT:
-			border_shape = Panel.new()
-			border_shape.size = Vector2(CELL_SIZE, CELL_SIZE)
-			border_shape.position = pos
-			border_shape.z_index = 20
+		Globals.BORDER_STYLE.FRIENDLY:
+			var friendly = FriendlyTarget.new()
+			friendly.size = Vector2(CELL_SIZE, CELL_SIZE)
+			friendly.position = pos
+			friendly.color = color
+			friendly.radius = CELL_SIZE as float / 2 - 4
+			friendly.z_index = 50
 			
-			var style := StyleBoxFlat.new()
-			style.bg_color = color
-			style.border_color = color
-			style.border_width_left = 4
-			style.border_width_top = 4
-			style.border_width_right = 4
-			style.border_width_bottom = 4
-			border_shape.add_theme_stylebox_override("panel", style)
-			
-			add_child(border_shape)
+			border_shape = friendly
+			add_child(friendly)
 	
 	if !clear:
 		borders.push_back(border_shape)

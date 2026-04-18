@@ -259,9 +259,14 @@ func _input(event):
 			var color : Color
 			var dest_piece = board.get_piece(Vector2(it.x, it.y))
 			if dest_piece != null and !board.piece_is_protected(dest_piece) and (dest_piece.color != Globals.COLORS.TILE or dest_piece.piece_type == Globals.PIECE_TYPES.WEB):
-				color = Color(1.0, 0.0, 0.0, 0.3)
-				dest_piece.play_animation("cower")
-				board.draw_border(it.x, it.y, color, false, Globals.BORDER_STYLE.TARGET)
+				if dest_piece.color == selected_piece.color:
+					color = Color(0.0, 0.648, 0.158, 0.5)
+					dest_piece.play_animation("sway")
+					board.draw_border(it.x, it.y, color, false, Globals.BORDER_STYLE.FRIENDLY)
+				else:
+					color = Color(1.0, 0.0, 0.0, 0.3)
+					dest_piece.play_animation("cower")
+					board.draw_border(it.x, it.y, color, false, Globals.BORDER_STYLE.TARGET)
 			elif dest_piece == null:
 				color = Color(1.0, 1.0, 0.0, 0.3)
 				board.draw_border(it.x, it.y, color, false, Globals.BORDER_STYLE.CIRCLE)

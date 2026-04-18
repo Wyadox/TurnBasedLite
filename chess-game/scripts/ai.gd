@@ -270,7 +270,7 @@ func get_move_list(piece : Piece, slice_num : int, previous_best):
 		var dest_piece : Piece = piece.board_handle.get_piece(pos)
 		
 		# REVISIT FOR GUARDIAN ANGEL and SUMO ROOK
-		if dest_piece != null and ((dest_piece.color == Globals.COLORS.TILE and dest_piece.piece_type != Globals.PIECE_TYPES.WEB) or (dest_piece.color == piece.color)):
+		if dest_piece != null and ((dest_piece.color == Globals.COLORS.TILE and dest_piece.piece_type != Globals.PIECE_TYPES.WEB) or (dest_piece.color == piece.color and dest_piece.piece_type != Globals.PIECE_TYPES.DUPLICATOR)):
 			continue
 		
 		if !game_scene.valid_move(piece.board_position, pos):
