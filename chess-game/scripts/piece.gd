@@ -21,12 +21,20 @@ const Y_OFFSET = 60
 @export var stun_counter: int;
 @export var infect_counter: int;
 @export var cool_counter: int;
+@export var fireball_cooldown: int;
+@export var teleport_cooldown: int;
 
 @export var starting_rank : float
 
 # Juggernaut variables
 const MAX_HEALTH : int = 3
 var current_health : int
+
+# Wizard Cooldowns
+const FIREBALL_COOLDOWN : int = 6
+const TELEPORT_COOLDOWN : int = 4
+var current_fireball_cooldown : int = 6
+var current_teleport_cooldown : int = 4
 
 func init_piece(
 	type: Globals.PIECE_TYPES,
@@ -46,6 +54,10 @@ func init_piece(
 	
 	# Juggernaut
 	current_health = MAX_HEALTH
+	
+	# Wizard
+	current_fireball_cooldown = 0;
+	current_teleport_cooldown = 0;
 	
 	update_sprite()
 	
@@ -167,6 +179,12 @@ func get_moveable_positions():
 			return knight_threat_pos()
 		Globals.PIECE_TYPES.GUARDIAN_ANGEL:
 			return guardian_angel_move_pos()
+		Globals.PIECE_TYPES.SUMO:
+		#	pass
+			return sumo_move_pos()
+		Globals.PIECE_TYPES.WIZARD:
+		#	pass
+			return wizard_move_pos()
 		_: return []
 
 func get_threatened_positions():
@@ -218,6 +236,13 @@ func get_threatened_positions():
 			return knight_threat_pos()
 		Globals.PIECE_TYPES.GUARDIAN_ANGEL:
 			return king_threat_pos()
+		#Globals.PIECE_TYPES.SUMO:
+		#	pass
+			#return sumo_threat_pos()
+		#Globals.PIECE_TYPES.WIZARD:
+		#	pass
+			#return king_threat_pos()
+		
 		_: return []
 
 
@@ -696,3 +721,46 @@ func guardian_angel_move_pos():
 			positions.append(pos)
 			
 	return positions
+
+const SUMO_MOVE_INCREMENTS = [[-1,0],[1,0],[0,-1],[0,1]]
+const SUMO_THROW_INCREMENTS = [[-6,0],[-5,0],[-4,0],[-3,0],[-2,0],[-1,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[0,-6],[0,-5],[0,-4],[0,-3],[0,-2],[0,-1],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6]]
+func sumo_move_pos():
+	var positions = []
+	for inc in SUMO_MOVE_INCREMENTS:
+		var pos = board_handle.spot_search_threat(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1], false, true
+		)
+		if pos != null:
+			positions.append(pos)
+	return positions
+
+func sumo_threat_pos():
+	var positions = []
+	for inc in SUMO_THROW_INCREMENTS:
+		var pos = board_handle.spot_search_threat(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1]
+		)
+		positions.append(pos)
+	return positions
+
+const WIZARD_MOVE_INCREMENTS = [[-1,0],[1,0],[0,-1],[0,1],[1,1],[-1,1],[-1,-1],[1,-1]]
+const WIZARD_TELEPORT_INCREMENTS = [[-6,0],[-5,0],[-4,0],[-3,0],[-2,0],[-1,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0]]
+func wizard_move_pos():
+	var positions = []
+	var increments = WIZARD_MOVE_INCREMENTS if teleport_cooldown > 0 else WIZARD_TELEPORT_INCREMENTS
+	for inc in increments:
+		var pos = board_handle.spot_search_threat(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1]
+		)
+		if pos != null:
+			positions.append(pos)
+	return positions
+
+func wizard_threat_pos():
+	pass

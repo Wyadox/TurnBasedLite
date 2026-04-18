@@ -652,6 +652,10 @@ func end_turn():
 				piece.update_sprite()
 			elif piece.cool_counter == 0:
 				board.delete_piece(piece)
+		if piece.fireball_cooldown > 0:
+			piece.fireball_cooldown -= 1
+		if piece.teleport_cooldown > 0:
+			piece.teleport_cooldown -= 1
 	status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
 	
 	if status == Globals.COLORS.WHITE:
@@ -860,6 +864,10 @@ func sync_end_turn():
 				piece.update_sprite()
 			elif piece.cool_counter == 0:
 				board.delete_piece(piece)
+		if piece.fireball_cooldown > 0:
+			piece.fireball_cooldown -= 1
+		if piece.teleport_cooldown > 0:
+			piece.teleport_cooldown -= 1
 	status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
 	
 	if status == Globals.COLORS.WHITE:
