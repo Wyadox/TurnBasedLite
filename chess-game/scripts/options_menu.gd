@@ -15,6 +15,8 @@ func _ready() -> void:
 	continue_button.button_triggered.connect(_on_continue_button_pressed)
 	return_button.button_triggered.connect(_on_button_exit_pressed)
 	
+	continue_button.condition = false
+	
 func _on_continue_button_pressed() -> void:
 	current_difficulty = difficulty_map_options_menu.difficulty
 	current_map = difficulty_map_options_menu.map
@@ -22,6 +24,8 @@ func _on_continue_button_pressed() -> void:
 	if opponent_option_button.get_selected_id() == -1 or current_difficulty == -1 or current_map == -1:
 		notification_node.set_text("An option was not selected")
 		return
+	
+	continue_button.condition = true
 	
 	var GAME_SCENE = load("res://scenes/game.tscn")
 	if GAME_SCENE == null:

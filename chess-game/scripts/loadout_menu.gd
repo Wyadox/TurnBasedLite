@@ -36,8 +36,8 @@ func _ready() -> void:
 	
 	save_button.button_triggered.connect(_on_button_save_pressed)
 	load_button.button_triggered.connect(_on_button_load_pressed)
-	exit_button.button_triggered.connect(_on_button_exit_pressed)
 	clear_button.button_triggered.connect(_on_button_clear_pressed)
+	exit_button.button_triggered.connect(_on_button_exit_pressed)
 	
 
 func _input(event):

@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://c8ghnkg4lmoc"]
+[gd_scene load_steps=5 format=3 uid="uid://c8ghnkg4lmoc"]
 
 [ext_resource type="Script" uid="uid://bnl5inp4l7m2t" path="res://scripts/move_history.gd" id="1_ta2ll"]
+[ext_resource type="PackedScene" uid="uid://bm18o0kocsj51" path="res://scenes/chess_background.tscn" id="2_ta2ll"]
 [ext_resource type="Texture2D" uid="uid://bw2ccfiqhwrtb" path="res://customPiecesSpritesheetNew.png" id="3_bkxfs"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_h6ifk"]
@@ -13,24 +14,31 @@ offset_right = 290.0
 offset_bottom = 240.0
 script = ExtResource("1_ta2ll")
 
-[node name="Panel" type="Panel" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="chess_background" parent="." instance=ExtResource("2_ta2ll")]
+z_index = 1
+layout_mode = 0
+offset_right = 290.0
+offset_bottom = 240.0
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Panel"]
+[node name="MarginContainer" type="MarginContainer" parent="chess_background"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="ScrollContainer" type="ScrollContainer" parent="chess_background/MarginContainer"]
+z_index = 2
+layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_h6ifk")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/ScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="chess_background/MarginContainer/ScrollContainer"]
+z_index = 2
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4

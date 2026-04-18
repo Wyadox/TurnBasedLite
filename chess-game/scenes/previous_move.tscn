@@ -1,8 +1,13 @@
-[gd_scene load_steps=4 format=3 uid="uid://bv1nq1ec8x4j0"]
+[gd_scene load_steps=7 format=3 uid="uid://bv1nq1ec8x4j0"]
 
 [ext_resource type="Script" uid="uid://bmuqsaqjhttix" path="res://scripts/previous_move.gd" id="1_6qfj1"]
+[ext_resource type="PackedScene" uid="uid://bm18o0kocsj51" path="res://scenes/chess_background.tscn" id="2_c8vyc"]
 [ext_resource type="Texture2D" uid="uid://bhpcvx2c3573d" path="res://Assets/StunIndicator.png" id="2_r08ui"]
 [ext_resource type="Texture2D" uid="uid://bw2ccfiqhwrtb" path="res://customPiecesSpritesheetNew.png" id="3_c8vyc"]
+[ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="4_c8vyc"]
+
+[sub_resource type="FontVariation" id="FontVariation_vd3bx"]
+base_font = ExtResource("4_c8vyc")
 
 [node name="descriptions" type="Control"]
 custom_minimum_size = Vector2(290, 240)
@@ -11,6 +16,12 @@ anchors_preset = 0
 offset_right = 290.0
 offset_bottom = 240.0
 script = ExtResource("1_6qfj1")
+
+[node name="chess_background" parent="." instance=ExtResource("2_c8vyc")]
+z_index = 1
+layout_mode = 0
+offset_right = 290.0
+offset_bottom = 240.0
 
 [node name="Panel" type="Panel" parent="."]
 layout_mode = 1
@@ -21,6 +32,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="image_preview" type="TextureRect" parent="Panel"]
+z_index = 2
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -35,6 +47,7 @@ size_flags_vertical = 4
 texture = ExtResource("2_r08ui")
 
 [node name="Label" type="Label" parent="Panel"]
+z_index = 2
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -47,7 +60,8 @@ offset_right = 137.5
 grow_horizontal = 2
 grow_vertical = 0
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 25
+theme_override_fonts/font = SubResource("FontVariation_vd3bx")
+theme_override_font_sizes/font_size = 35
 text = "HELLO THERE "
 horizontal_alignment = 1
 vertical_alignment = 1

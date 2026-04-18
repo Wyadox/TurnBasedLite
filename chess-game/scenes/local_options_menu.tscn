@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://cfc02oc4dv2pe"]
+[gd_scene load_steps=9 format=3 uid="uid://cfc02oc4dv2pe"]
 
 [ext_resource type="Script" uid="uid://34f0adtywheq" path="res://scripts/options_menu.gd" id="1_34a7a"]
 [ext_resource type="Texture2D" uid="uid://cpfhv5akv2vp2" path="res://Assets/Backgrounds/HighResolution_MedievalTown2.png" id="2_inqc7"]
@@ -7,7 +7,6 @@
 [ext_resource type="PackedScene" uid="uid://bk8s3ckskgdde" path="res://scenes/difficulty_map_options_menu.tscn" id="3_k83ln"]
 [ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="4_fvu4y"]
 [ext_resource type="PackedScene" uid="uid://dbxe12unkumgf" path="res://scenes/dynamic_button.tscn" id="5_gcmtx"]
-[ext_resource type="PackedScene" uid="uid://cec8ttfqyv3h" path="res://scenes/main_menu.tscn" id="10_lurgd"]
 
 [sub_resource type="FontVariation" id="FontVariation_lurgd"]
 base_font = ExtResource("4_fvu4y")
@@ -103,6 +102,5 @@ offset_top = 128.0
 offset_right = 87.5
 offset_bottom = 192.0
 grow_horizontal = 2
-scene = ExtResource("10_lurgd")
 button_text = "RETURN"
 button_size = Vector2(175, 64)

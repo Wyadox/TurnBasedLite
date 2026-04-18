@@ -1,8 +1,8 @@
 extends Control
 
 @onready var sprite = $Sprite2D
-@onready var v_box_container: VBoxContainer = $Panel/ScrollContainer/VBoxContainer
-@onready var scroll_container: ScrollContainer = $Panel/ScrollContainer
+@onready var scroll_container: ScrollContainer = $chess_background/MarginContainer/ScrollContainer
+@onready var v_box_container: VBoxContainer = $chess_background/MarginContainer/ScrollContainer/VBoxContainer
 
 @export var color : Globals.COLORS
 

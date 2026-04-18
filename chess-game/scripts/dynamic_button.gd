@@ -11,6 +11,7 @@ signal button_triggered()
 @export var scene : PackedScene
 @export var button_text : String
 @export var quit_game : bool = false
+@export var instant : bool = false
 
 @export var button_size : Vector2 = Vector2(64, 64) :
 	set(value):
@@ -31,6 +32,7 @@ const DISABLED_TEXTURE = preload("res://Assets/Buttons/BLANK_Button_Disabled.png
 var label_default_pos : Vector2
 var press_offset : Vector2 = Vector2(0, 6)
 var cancel_function : bool = false
+var condition : bool = true
 
 func _ready() -> void:
 	apply_size()
@@ -54,11 +56,24 @@ func _on_button_button_up() -> void:
 	print(label_default_pos)
 	nine_patch_rect.texture = NORMAL_TEXTURE
 	
+	var audioPlayer = AudioStreamPlayer2D.new()
+	add_child(audioPlayer)
+	audioPlayer.stream = preload("res://Assets/Sounds/button_click_cropped.mp3")
+	audioPlayer.volume_db = linear_to_db(0.5)
+	audioPlayer.play()
+	audioPlayer.finished.connect(audioPlayer.queue_free)
+	
+	if instant:
+		on_sound_complete()
+	else:
+		audioPlayer.finished.connect(on_sound_complete)
+
+func on_sound_complete():
 	if !cancel_function:
-		button_triggered.emit()
-		if scene and get_tree():
+		if scene and is_inside_tree() and condition:
 			await get_tree().create_timer(DELAY).timeout
 			get_tree().change_scene_to_packed(scene)
+		button_triggered.emit()
 	if quit_game:
 		get_tree().quit()
 
@@ -75,7 +90,7 @@ func _on_button_mouse_entered() -> void:
 		nine_patch_rect.texture = HOVER_TEXTURE
 
 func _on_button_mouse_exited() -> void:
-	cancel_function = true
+	#cancel_function = true
 	if button.disabled:
 		nine_patch_rect.texture = DISABLED_TEXTURE
 	else:

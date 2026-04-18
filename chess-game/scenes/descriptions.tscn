@@ -20,13 +20,8 @@ script = ExtResource("1_n6byr")
 
 [node name="chess_background" parent="." instance=ExtResource("2_h1h23")]
 layout_mode = 1
-anchors_preset = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
 offset_right = 580.0
 offset_bottom = 250.0
-grow_horizontal = 1
-grow_vertical = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="chess_background"]
 custom_minimum_size = Vector2(100, 0)
@@ -41,15 +36,18 @@ size_flags_vertical = 4
 [node name="Prev_Button" parent="chess_background/HBoxContainer" instance=ExtResource("2_i3205")]
 layout_mode = 2
 button_text = "<"
+instant = true
 
 [node name="Next_Button" parent="chess_background/HBoxContainer" instance=ExtResource("2_i3205")]
 layout_mode = 2
 button_text = ">"
+instant = true
 
 [node name="Create_Button" parent="chess_background/HBoxContainer" instance=ExtResource("2_i3205")]
 custom_minimum_size = Vector2(110, 64)
 layout_mode = 2
 button_text = "SPAWN"
+instant = true
 button_size = Vector2(110, 64)
 
 [node name="image_preview" type="TextureRect" parent="chess_background"]

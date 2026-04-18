@@ -1,9 +1,9 @@
 extends Control
 
 @onready var duration_timer: Timer = $Duration
-@onready var progress_bar: ProgressBar = $Panel/ProgressBar
-@onready var label: Label = $Panel/Label
-@onready var panel: Panel = $Panel
+#@onready var panel: Panel = $Panel
+@onready var progress_bar: ProgressBar = $chess_background/MarginContainer/ProgressBar
+@onready var label: Label = $chess_background/MarginContainer/Label
 
 const PANEL_DEFAULT = preload("res://Assets/Themes/move_clock_default.tres")
 const PANEL_CURRENT = preload("res://Assets/Themes/move_clock_current.tres")
@@ -29,12 +29,12 @@ func _process(_delta: float) -> void:
 
 func start_turn():
 	duration_timer.paused = false
-	panel.add_theme_stylebox_override("panel", PANEL_CURRENT)
+	#panel.add_theme_stylebox_override("panel", PANEL_CURRENT)
 	progress_bar.add_theme_stylebox_override("fill", BAR_CURRENT)
 	
 func end_turn():
 	duration_timer.paused = true
-	panel.add_theme_stylebox_override("panel", PANEL_DEFAULT)
+	#panel.add_theme_stylebox_override("panel", PANEL_DEFAULT)
 	progress_bar.add_theme_stylebox_override("fill", BAR_DEFAULT)
 
 func set_duration(minutes : float) -> void:
