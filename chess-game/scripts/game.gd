@@ -98,6 +98,9 @@ func _ready():
 	upper_resign_button.button_triggered.connect(on_resign)
 	lower_resign_button.button_triggered.connect(on_resign)
 	
+	lower_resign_button.hide()
+	upper_resign_button.hide()
+	
 	multiplayer.peer_disconnected.connect(on_player_disconnect)
 	multiplayer.server_disconnected.connect(on_server_disconnect)
 	
@@ -614,7 +617,7 @@ func set_win(color):
 	game_over = true
 	if color == Globals.COLORS.WHITE:
 		win_label.text = "BLACK Won"
-	elif color == Globals.PLAYER.TWO:
+	elif color == Globals.COLORS.BLACK:
 		win_label.text = "WHITE Won"
 	else:
 		win_label.text = "DRAW"
@@ -908,33 +911,54 @@ func sync_clocks(player_status : Globals.COLORS):
 func on_player_disconnect(_peer_id : int):
 	game_over = true
 	stop_clocks()
-	set_win(Network.my_color)
+	set_win(flip_color(Network.my_color))
 	return true
 
 func on_server_disconnect():
 	game_over = true
 	stop_clocks()
-	set_win(Network.my_color)
+	set_win(flip_color(Network.my_color))
 	return true
 
 # Resigning
 
 func on_resign():
 	if online_game:
-		if multiplayer.is_server():
-			multiplayer.server_disconnected.emit()
-		else:
-			multiplayer.peer_disconnected.emit()
+		sync_resign.rpc()
+		return
 	
 	game_over = true
 	stop_clocks()
 	set_win(status)
 	return true
 
+@rpc("any_peer", "call_local")
+func sync_resign():
+	game_over = true
+	stop_clocks()
+	set_win(status)
+	return true
+
 func toggle_resign_buttons():
+	if online_game:
+		if status == LOWER_COLOR:
+			if status == Network.my_color:
+				lower_resign_button.show()
+			upper_resign_button.hide()
+		else:
+			lower_resign_button.hide()
+			if status == Network.my_color:
+				upper_resign_button.show()
+		return
+	
 	if status == LOWER_COLOR:
 		lower_resign_button.show()
 		upper_resign_button.hide()
 	else:
 		lower_resign_button.hide()
 		upper_resign_button.show()
+
+func flip_color(color : Globals.COLORS):
+	if color == Globals.COLORS.WHITE:
+		return Globals.COLORS.BLACK
+	return Globals.COLORS.WHITE
