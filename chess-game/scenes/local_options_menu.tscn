@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://cfc02oc4dv2pe"]
 
 [ext_resource type="Script" uid="uid://34f0adtywheq" path="res://scripts/options_menu.gd" id="1_34a7a"]
-[ext_resource type="Texture2D" uid="uid://cpfhv5akv2vp2" path="res://Assets/Backgrounds/HighResolution_MedievalTown2.png" id="2_inqc7"]
+[ext_resource type="Texture2D" uid="uid://brmuq1lfkx5xs" path="res://Assets/Backgrounds/HR_Fantasy_Landscape.png" id="2_jiuty"]
 [ext_resource type="PackedScene" uid="uid://dqrdpth8xiafq" path="res://scenes/notification.tscn" id="3_inqc7"]
 [ext_resource type="PackedScene" uid="uid://bm18o0kocsj51" path="res://scenes/chess_background.tscn" id="3_jiuty"]
 [ext_resource type="PackedScene" uid="uid://bk8s3ckskgdde" path="res://scenes/difficulty_map_options_menu.tscn" id="3_k83ln"]
@@ -24,7 +24,7 @@ script = ExtResource("1_34a7a")
 layout_mode = 0
 offset_right = 1920.0
 offset_bottom = 1080.0
-texture = ExtResource("2_inqc7")
+texture = ExtResource("2_jiuty")
 
 [node name="chess_background" parent="." instance=ExtResource("3_jiuty")]
 z_index = 1
