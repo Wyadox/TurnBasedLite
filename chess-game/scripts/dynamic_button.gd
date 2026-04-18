@@ -8,7 +8,6 @@ signal button_triggered()
 @onready var button: TextureButton = $Button
 @onready var label: Label = $Label
 
-@export var scene : PackedScene
 @export var button_text : String
 @export var quit_game : bool = false
 @export var instant : bool = false
@@ -70,9 +69,9 @@ func _on_button_button_up() -> void:
 
 func on_sound_complete():
 	if !cancel_function:
-		if scene and is_inside_tree() and condition:
-			await get_tree().create_timer(DELAY).timeout
-			get_tree().change_scene_to_packed(scene)
+		#if scene and is_inside_tree() and condition:
+			#await get_tree().create_timer(DELAY).timeout
+			#get_tree().change_scene_to_packed(scene)
 		button_triggered.emit()
 	if quit_game:
 		get_tree().quit()

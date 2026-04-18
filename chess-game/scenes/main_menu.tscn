@@ -1,12 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://cec8ttfqyv3h"]
+[gd_scene load_steps=5 format=3 uid="uid://cec8ttfqyv3h"]
 
 [ext_resource type="Script" uid="uid://ft8v0cp8vk1p" path="res://scripts/main_menu.gd" id="1_l6cm7"]
 [ext_resource type="Texture2D" uid="uid://cwmcqgg74cibd" path="res://Assets/Backgrounds/HR_CastleOnTheMountains-Valrok.png" id="2_oa1go"]
 [ext_resource type="Texture2D" uid="uid://ct8mus3wg0nkb" path="res://Assets/ChessBoard/ChaosChessTitle.png" id="3_lgwnu"]
 [ext_resource type="PackedScene" uid="uid://dbxe12unkumgf" path="res://scenes/dynamic_button.tscn" id="12_7b55j"]
-[ext_resource type="PackedScene" uid="uid://cfc02oc4dv2pe" path="res://scenes/local_options_menu.tscn" id="13_5pajh"]
-[ext_resource type="PackedScene" uid="uid://bfijhxlgtbvqp" path="res://scenes/lobby.tscn" id="14_j7ex8"]
-[ext_resource type="PackedScene" uid="uid://dux8e4cssk5i1" path="res://scenes/loadout_menu.tscn" id="15_a8gd2"]
 
 [node name="MainMenu" type="Control"]
 custom_minimum_size = Vector2(1920, 1080)
@@ -63,28 +60,24 @@ grow_vertical = 2
 [node name="Local_Button" parent="VBoxContainer" instance=ExtResource("12_7b55j")]
 custom_minimum_size = Vector2(200, 64)
 layout_mode = 2
-scene = ExtResource("13_5pajh")
 button_text = "LOCAL"
 button_size = Vector2(200, 64)
 
 [node name="Multiplayer_Button" parent="VBoxContainer" instance=ExtResource("12_7b55j")]
 custom_minimum_size = Vector2(200, 64)
 layout_mode = 2
-scene = ExtResource("14_j7ex8")
 button_text = "MULTIPLAYER"
 button_size = Vector2(200, 64)
 
 [node name="Loadout_Button" parent="VBoxContainer" instance=ExtResource("12_7b55j")]
 custom_minimum_size = Vector2(200, 64)
 layout_mode = 2
-scene = ExtResource("15_a8gd2")
 button_text = "LOADOUT"
 button_size = Vector2(200, 64)
 
 [node name="Options_Button" parent="VBoxContainer" instance=ExtResource("12_7b55j")]
 custom_minimum_size = Vector2(200, 64)
 layout_mode = 2
-scene = ExtResource("13_5pajh")
 button_text = "OPTIONS"
 button_size = Vector2(200, 64)
 
