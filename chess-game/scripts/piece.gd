@@ -33,8 +33,8 @@ var current_health : int
 # Wizard Cooldowns
 const FIREBALL_COOLDOWN : int = 6
 const TELEPORT_COOLDOWN : int = 4
-var current_fireball_cooldown : int = 6
-var current_teleport_cooldown : int = 4
+var current_fireball_cooldown : int = 0
+var current_teleport_cooldown : int = 0
 
 func init_piece(
 	type: Globals.PIECE_TYPES,
@@ -748,10 +748,10 @@ func sumo_threat_pos():
 	return positions
 
 const WIZARD_MOVE_INCREMENTS = [[-1,0],[1,0],[0,-1],[0,1],[1,1],[-1,1],[-1,-1],[1,-1]]
-const WIZARD_TELEPORT_INCREMENTS = [[-6,0],[-5,0],[-4,0],[-3,0],[-2,0],[-1,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0]]
+const WIZARD_TELEPORT_INCREMENTS = [[-6,0],[-5,0],[-4,0],[-3,0],[-2,0],[-1,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[1,1],[-1,1],[-1,-1],[1,-1]]
 func wizard_move_pos():
 	var positions = []
-	var increments = WIZARD_MOVE_INCREMENTS if teleport_cooldown > 0 else WIZARD_TELEPORT_INCREMENTS
+	var increments = WIZARD_MOVE_INCREMENTS if current_teleport_cooldown > 0 else WIZARD_TELEPORT_INCREMENTS
 	for inc in increments:
 		var pos = board_handle.spot_search_threat(
 			color,
