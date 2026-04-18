@@ -1,11 +1,17 @@
-[gd_scene load_steps=8 format=3 uid="uid://bk8s3ckskgdde"]
+[gd_scene load_steps=14 format=3 uid="uid://bk8s3ckskgdde"]
 
-[ext_resource type="Texture2D" uid="uid://1pcjdbetkwlp" path="res://Assets/LobbyMenuImages/EasyModeIconJug.png" id="1_c1nmu"]
 [ext_resource type="Script" uid="uid://bcq0g3f3sv1pl" path="res://scripts/difficulty_map_options_menu.gd" id="1_kvkiy"]
-[ext_resource type="Texture2D" uid="uid://yngs6wh52elw" path="res://Assets/LobbyMenuImages/NormalModeIconJug.png" id="2_1wcdk"]
 [ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="2_dgpvi"]
-[ext_resource type="Texture2D" uid="uid://ckkuj6ttdvi5e" path="res://Assets/LobbyMenuImages/HardModeIconJug.png" id="3_kvkiy"]
+[ext_resource type="Texture2D" uid="uid://ivhjvf1cxotd" path="res://Assets/Buttons/Easy_Button.png" id="3_c78vh"]
 [ext_resource type="Texture2D" uid="uid://dsxn1xc4dr5bu" path="res://Assets/Buttons/LoadoutButton.png" id="4_1wcdk"]
+[ext_resource type="Texture2D" uid="uid://ck5gr8thka0oe" path="res://Assets/Buttons/Easy_Button_PRESS.png" id="4_jntim"]
+[ext_resource type="Texture2D" uid="uid://cg4b3tu15pk7" path="res://Assets/Buttons/Easy_Button_HOVER.png" id="5_q27s5"]
+[ext_resource type="Texture2D" uid="uid://bevp08scu2omo" path="res://Assets/Buttons/Normal_Button.png" id="6_pdoex"]
+[ext_resource type="Texture2D" uid="uid://ccbhcn2sk8xg0" path="res://Assets/Buttons/Normal_Button_PRESS.png" id="7_viefo"]
+[ext_resource type="Texture2D" uid="uid://bc3rwljdu8mk0" path="res://Assets/Buttons/Normal_Button_HOVER.png" id="8_42oqh"]
+[ext_resource type="Texture2D" uid="uid://1o22l7gje04j" path="res://Assets/Buttons/Hard_Button.png" id="9_wninj"]
+[ext_resource type="Texture2D" uid="uid://bh1juvdlc77ca" path="res://Assets/Buttons/Hard_Button_PRESS.png" id="10_7k4mc"]
+[ext_resource type="Texture2D" uid="uid://bk78o8wfk0afb" path="res://Assets/Buttons/Hard_Button_HOVER.png" id="11_4ug82"]
 
 [sub_resource type="FontVariation" id="FontVariation_2alwo"]
 base_font = ExtResource("2_dgpvi")
@@ -46,17 +52,23 @@ alignment = 1
 
 [node name="Easy_Button" type="TextureButton" parent="VBoxContainer/Difficulty_Hbox"]
 layout_mode = 2
-texture_normal = ExtResource("1_c1nmu")
+texture_normal = ExtResource("3_c78vh")
+texture_pressed = ExtResource("4_jntim")
+texture_hover = ExtResource("5_q27s5")
 stretch_mode = 0
 
 [node name="Normal_Button" type="TextureButton" parent="VBoxContainer/Difficulty_Hbox"]
 layout_mode = 2
-texture_normal = ExtResource("2_1wcdk")
+texture_normal = ExtResource("6_pdoex")
+texture_pressed = ExtResource("7_viefo")
+texture_hover = ExtResource("8_42oqh")
 stretch_mode = 0
 
 [node name="Hard_Button" type="TextureButton" parent="VBoxContainer/Difficulty_Hbox"]
 layout_mode = 2
-texture_normal = ExtResource("3_kvkiy")
+texture_normal = ExtResource("9_wninj")
+texture_pressed = ExtResource("10_7k4mc")
+texture_hover = ExtResource("11_4ug82")
 stretch_mode = 0
 
 [node name="Map_Label" type="Label" parent="VBoxContainer"]
@@ -92,8 +104,11 @@ texture_normal = ExtResource("4_1wcdk")
 layout_mode = 2
 texture_normal = ExtResource("4_1wcdk")
 
+[connection signal="button_up" from="VBoxContainer/Difficulty_Hbox/Easy_Button" to="." method="_on_easy_button_button_up"]
 [connection signal="pressed" from="VBoxContainer/Difficulty_Hbox/Easy_Button" to="." method="_on_easy_button_pressed"]
+[connection signal="button_up" from="VBoxContainer/Difficulty_Hbox/Normal_Button" to="." method="_on_normal_button_button_up"]
 [connection signal="pressed" from="VBoxContainer/Difficulty_Hbox/Normal_Button" to="." method="_on_normal_button_pressed"]
+[connection signal="button_up" from="VBoxContainer/Difficulty_Hbox/Hard_Button" to="." method="_on_hard_button_button_up"]
 [connection signal="pressed" from="VBoxContainer/Difficulty_Hbox/Hard_Button" to="." method="_on_hard_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/Map1_Button" to="." method="_on_map_1_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/Map2_Button" to="." method="_on_map_2_button_pressed"]

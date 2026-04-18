@@ -1,11 +1,10 @@
-[gd_scene load_steps=11 format=3 uid="uid://dux8e4cssk5i1"]
+[gd_scene load_steps=10 format=3 uid="uid://dux8e4cssk5i1"]
 
 [ext_resource type="Script" uid="uid://b1ibgxoocd1ub" path="res://scripts/loadout_menu.gd" id="1_yna6v"]
 [ext_resource type="PackedScene" uid="uid://dlld2p1r0gxox" path="res://scenes/setup_phase_ui.tscn" id="2_3c7rr"]
 [ext_resource type="Texture2D" uid="uid://b6agcr6rs37nc" path="res://Assets/Backgrounds/workshop_background.jpg" id="2_ki1oi"]
 [ext_resource type="PackedScene" uid="uid://shbx8xrqrlr8" path="res://scenes/loadout_slots_hbox.tscn" id="3_gc7b0"]
 [ext_resource type="PackedScene" uid="uid://dqrdpth8xiafq" path="res://scenes/notification.tscn" id="4_p557w"]
-[ext_resource type="PackedScene" uid="uid://cec8ttfqyv3h" path="res://scenes/main_menu.tscn" id="9_ej3gl"]
 [ext_resource type="PackedScene" uid="uid://c6ulmyy15jdeu" path="res://scenes/descriptions.tscn" id="13_21il4"]
 [ext_resource type="PackedScene" uid="uid://bm18o0kocsj51" path="res://scenes/chess_background.tscn" id="16_6ruvx"]
 [ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="17_dn7wr"]
@@ -200,12 +199,11 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -634.0
-offset_top = 93.0
-offset_right = -459.0
-offset_bottom = 157.0
+offset_left = -420.0
+offset_top = 100.0
+offset_right = -245.0
+offset_bottom = 164.0
 grow_horizontal = 0
-scene = ExtResource("9_ej3gl")
 button_text = "RETURN"
 button_size = Vector2(175, 64)
 

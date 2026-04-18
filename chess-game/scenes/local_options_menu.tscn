@@ -32,7 +32,7 @@ layout_mode = 1
 offset_left = 730.0
 offset_top = 200.0
 offset_right = 1200.0
-offset_bottom = 870.0
+offset_bottom = 904.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="chess_background"]
 layout_mode = 1
@@ -42,9 +42,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -220.0
-offset_top = -317.0
+offset_top = -335.0
 offset_right = 220.0
-offset_bottom = 317.0
+offset_bottom = 335.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 10
@@ -57,14 +57,23 @@ theme_override_font_sizes/font_size = 40
 text = "CHOOSE YOUR OPPONENT"
 horizontal_alignment = 1
 
-[node name="Opponent_OptionButton" type="OptionButton" parent="chess_background/VBoxContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="chess_background/VBoxContainer"]
 layout_mode = 2
 alignment = 1
-item_count = 2
-popup/item_0/text = "HUMAN"
-popup/item_0/id = 0
-popup/item_1/text = "COMPUTER"
-popup/item_1/id = 1
+
+[node name="Human_Button" parent="chess_background/VBoxContainer/HBoxContainer2" instance=ExtResource("5_gcmtx")]
+custom_minimum_size = Vector2(150, 64)
+layout_mode = 2
+button_text = "HUMAN"
+instant = true
+button_size = Vector2(150, 64)
+
+[node name="Computer_Button" parent="chess_background/VBoxContainer/HBoxContainer2" instance=ExtResource("5_gcmtx")]
+custom_minimum_size = Vector2(150, 64)
+layout_mode = 2
+button_text = "COMPUTER"
+instant = true
+button_size = Vector2(150, 64)
 
 [node name="difficulty_map_options_menu" parent="chess_background/VBoxContainer" instance=ExtResource("3_k83ln")]
 layout_mode = 2
@@ -86,21 +95,21 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_top = 369.0
-offset_bottom = 369.0
+offset_top = 404.0
+offset_bottom = 404.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Return_Button" parent="." instance=ExtResource("5_gcmtx")]
 custom_minimum_size = Vector2(175, 64)
 layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -87.5
-offset_top = 128.0
-offset_right = 87.5
-offset_bottom = 192.0
-grow_horizontal = 2
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -420.0
+offset_top = 100.0
+offset_right = -245.0
+offset_bottom = 164.0
+grow_horizontal = 0
 button_text = "RETURN"
 button_size = Vector2(175, 64)
