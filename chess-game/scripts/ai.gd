@@ -385,12 +385,12 @@ func eval_positionAdjustment(piece) -> float:
 	match piece.piece_type:
 		Globals.PIECE_TYPES.PAWN:
 			return eval_cornerOrCenterPref(piece)
-		Globals.PIECE_TYPES.KNIGHT:
-			return eval_cornerOrCenterPref(piece, false)
-		Globals.PIECE_TYPES.BISHOP:
-			return eval_cornerOrCenterPref(piece, false)
-		Globals.PIECE_TYPES.KING:
-			return eval_cornerOrCenterPref(piece)
+		#Globals.PIECE_TYPES.KNIGHT:
+			#return eval_cornerOrCenterPref(piece, false)
+		#Globals.PIECE_TYPES.BISHOP:
+			#return eval_cornerOrCenterPref(piece, false)
+		#Globals.PIECE_TYPES.KING:
+			#return eval_cornerOrCenterPref(piece)
 		Globals.PIECE_TYPES.HORSE_ARCHER:
 			return eval_cornerOrCenterPref(piece, false)
 		Globals.PIECE_TYPES.ARCHBISHOP:

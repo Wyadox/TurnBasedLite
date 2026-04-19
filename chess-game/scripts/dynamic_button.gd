@@ -7,10 +7,13 @@ signal button_triggered()
 @onready var nine_patch_rect: NinePatchRect = $NinePatchRect
 @onready var button: TextureButton = $Button
 @onready var label: Label = $Label
+@onready var texture_rect: TextureRect = $MarginContainer/TextureRect
+@onready var margin_container: MarginContainer = $MarginContainer
 
 @export var button_text : String
 @export var quit_game : bool = false
 @export var instant : bool = false
+@export var image : Texture2D
 
 @export var button_size : Vector2 = Vector2(64, 64) :
 	set(value):
@@ -37,8 +40,13 @@ var selected : bool = false
 
 func _ready() -> void:
 	apply_size()
+	texture_rect.texture = image
 	label_default_pos = label.position
 	label.text = button_text
+
+func _process(_delta: float) -> void:
+	texture_rect.position = label.position
+	texture_rect.position += button_size / 2 - texture_rect.size / 2
 
 func apply_size() -> void:
 	custom_minimum_size = button_size
@@ -50,6 +58,8 @@ func apply_size() -> void:
 	if label:
 		label.position = Vector2.ZERO - press_offset
 		label.size = button_size
+	if margin_container:
+		margin_container.size = button_size
 
 func _on_button_button_up() -> void:
 	label.position = label_default_pos
@@ -89,7 +99,7 @@ func _on_button_mouse_entered() -> void:
 
 func _on_button_mouse_exited() -> void:
 	cancel_function = true
-	if button.disabled:
+	if button.disabled and !selected:
 		nine_patch_rect.texture = DISABLED_TEXTURE
 	elif selected:
 		nine_patch_rect.texture = SELECTED_TEXTURE
@@ -99,7 +109,10 @@ func _on_button_mouse_exited() -> void:
 
 func disable():
 	button.disabled = true
-	nine_patch_rect.texture = DISABLED_TEXTURE
+	if selected:
+		nine_patch_rect.texture = SELECTED_TEXTURE
+	else:
+		nine_patch_rect.texture = DISABLED_TEXTURE
 
 func enable():
 	button.disabled = false
@@ -111,3 +124,12 @@ func select():
 func deselect():
 	selected = false
 	nine_patch_rect.texture = NORMAL_TEXTURE
+
+func set_texture(texture : Texture2D):
+	texture_rect.texture = texture
+	if texture is AtlasTexture:
+		texture_rect.custom_minimum_size = texture.region.size
+	else:
+		texture_rect.custom_minimum_size = texture.get_size()
+	texture_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED

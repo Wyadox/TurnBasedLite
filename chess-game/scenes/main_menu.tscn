@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://cec8ttfqyv3h"]
 
 [ext_resource type="Script" uid="uid://ft8v0cp8vk1p" path="res://scripts/main_menu.gd" id="1_l6cm7"]
-[ext_resource type="Texture2D" uid="uid://cwmcqgg74cibd" path="res://Assets/Backgrounds/HR_CastleOnTheMountains-Valrok.png" id="2_oa1go"]
+[ext_resource type="Texture2D" uid="uid://brmuq1lfkx5xs" path="res://Assets/Backgrounds/HR_Fantasy_Landscape.png" id="2_8ln24"]
 [ext_resource type="Texture2D" uid="uid://ct8mus3wg0nkb" path="res://Assets/ChessBoard/ChaosChessTitle.png" id="3_lgwnu"]
 [ext_resource type="PackedScene" uid="uid://bm18o0kocsj51" path="res://scenes/chess_background.tscn" id="4_8ln24"]
 [ext_resource type="PackedScene" uid="uid://dbxe12unkumgf" path="res://scenes/dynamic_button.tscn" id="12_7b55j"]
@@ -22,8 +22,8 @@ z_index = -1
 layout_mode = 1
 offset_right = 2103.0
 offset_bottom = 1135.0
-scale = Vector2(1.2948745, 1.2948745)
-texture = ExtResource("2_oa1go")
+scale = Vector2(0.96886533, 0.96886533)
+texture = ExtResource("2_8ln24")
 
 [node name="Title" type="TextureRect" parent="."]
 z_index = -1
