@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://bfijhxlgtbvqp"]
+[gd_scene load_steps=11 format=3 uid="uid://bfijhxlgtbvqp"]
 
 [ext_resource type="Script" uid="uid://bsqmnoolexdot" path="res://scripts/lobby.gd" id="1_o1atq"]
 [ext_resource type="PackedScene" uid="uid://dy8nxqsamussf" path="res://scenes/lobby_list.tscn" id="2_5gu6x"]
@@ -7,11 +7,12 @@
 [ext_resource type="PackedScene" uid="uid://20xne0v7msu7" path="res://scenes/host_options_menu.tscn" id="3_q60fs"]
 [ext_resource type="PackedScene" uid="uid://bm18o0kocsj51" path="res://scenes/chess_background.tscn" id="4_apkv3"]
 [ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="5_omrgh"]
-
-[sub_resource type="FontVariation" id="FontVariation_ncsg4"]
-base_font = ExtResource("5_omrgh")
+[ext_resource type="PackedScene" uid="uid://cnt8uu7kya2m3" path="res://scenes/loading_indicator.tscn" id="8_ncsg4"]
 
 [sub_resource type="FontVariation" id="FontVariation_omrgh"]
+base_font = ExtResource("5_omrgh")
+
+[sub_resource type="FontVariation" id="FontVariation_ncsg4"]
 base_font = ExtResource("5_omrgh")
 
 [node name="lobby" type="Control"]
@@ -24,6 +25,7 @@ grow_vertical = 2
 script = ExtResource("1_o1atq")
 
 [node name="TextureRect" type="TextureRect" parent="."]
+z_index = -1000
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
@@ -43,7 +45,28 @@ grow_horizontal = 0
 button_text = "RETURN"
 button_size = Vector2(175, 64)
 
+[node name="Status" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -313.0
+offset_top = -45.5
+offset_right = 313.0
+offset_bottom = 45.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = SubResource("FontVariation_omrgh")
+theme_override_font_sizes/font_size = 84
+text = "HOST A MATCH / SEARCH FOR ONE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="status_control" parent="." instance=ExtResource("4_apkv3")]
+visible = false
 custom_minimum_size = Vector2(350, 100)
 layout_mode = 1
 anchors_preset = 8
@@ -57,7 +80,6 @@ offset_right = 175.0
 offset_bottom = 50.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
 
 [node name="Status_Header" type="Label" parent="status_control"]
 layout_mode = 1
@@ -73,27 +95,8 @@ theme_override_fonts/font = SubResource("FontVariation_ncsg4")
 theme_override_font_sizes/font_size = 44
 text = "STATUS"
 
-[node name="Status" type="Label" parent="status_control"]
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -112.0
-offset_top = -50.5
-offset_right = 112.0
-offset_bottom = -16.5
-grow_horizontal = 2
-grow_vertical = 0
-size_flags_horizontal = 4
-theme_override_fonts/font = SubResource("FontVariation_omrgh")
-theme_override_font_sizes/font_size = 30
-text = "UPDATES APPEAR HERE"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="lobby_list" parent="." instance=ExtResource("2_5gu6x")]
+visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -106,6 +109,7 @@ offset_right = 650.0
 offset_bottom = 360.0
 
 [node name="host_options_menu" parent="." instance=ExtResource("3_q60fs")]
+visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -132,6 +136,7 @@ offset_bottom = -61.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+theme_override_constants/separation = 24
 alignment = 1
 
 [node name="Host_Button" parent="HBoxContainer4" instance=ExtResource("2_nqcc7")]
@@ -162,3 +167,39 @@ grow_horizontal = 2
 grow_vertical = 2
 button_text = "START MATCH"
 button_size = Vector2(175, 64)
+
+[node name="search_indicator" parent="." instance=ExtResource("8_ncsg4")]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_top = 104.0
+offset_bottom = 104.0
+grow_horizontal = 2
+display_text = "Searching..."
+
+[node name="wait_indicator" parent="." instance=ExtResource("8_ncsg4")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+display_text = "Waiting for opponent..."
+
+[node name="chess_background" parent="." instance=ExtResource("4_apkv3")]
+z_index = -1
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -500.0
+offset_top = -150.0
+offset_right = 500.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2

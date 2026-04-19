@@ -6,9 +6,13 @@ extends Control
 @onready var start_button: DynamicButton = $Start_Button
 
 @onready var status_control: Control = $status_control
-@onready var status: Label = $status_control/Status
+@onready var status: Label = $Status
 @onready var lobby_list: LobbyList = $lobby_list
 @onready var host_options_menu: Control = $host_options_menu
+@onready var chess_background: Control = $chess_background
+
+@onready var search_indicator: LoadingIndicator = $search_indicator
+@onready var wait_indicator: LoadingIndicator = $wait_indicator
 
 const LOBBY_LIST_ENTRY = preload("uid://beekdbp76itqm")
 
@@ -24,6 +28,8 @@ func _ready() -> void:
 	start_button.hide()
 	lobby_list.hide()
 	host_options_menu.hide()
+	search_indicator.hide()
+	wait_indicator.hide()
 	
 	Network.player_connected.connect(on_player_connected)
 	Network.player_disconnected.connect(on_player_disconnected)
@@ -47,7 +53,10 @@ func _on_host_button_pressed() -> void:
 	host_button.disable()
 	find_button.disable()
 	
+	chess_background.hide()
+	
 	hide_controls()
+	status.hide()
 	
 
 func intialize_host() -> void:
@@ -70,6 +79,9 @@ func intialize_host() -> void:
 	status.text = "Waiting for opponent..."
 	players_ready = 1
 	
+	wait_indicator.show()
+	chess_background.show()
+	
 	show_controls()
 
 func _on_join_button_pressed() -> void:
@@ -81,7 +93,11 @@ func _on_join_button_pressed() -> void:
 	discovered_ip_addresses.clear()
 	lobby_list.show()
 	
+	search_indicator.show()
+	chess_background.hide()
+	
 	hide_controls()
+	status.hide()
 
 func on_host_discovered(ip_address : String, data : Dictionary):
 	if ip_address in discovered_ip_addresses:
@@ -113,25 +129,36 @@ func on_player_connected(_peer_id : int):
 	players_ready += 1
 	#status.text = "Player connected (%d/2)" % players_ready
 	status.text = "Waiting for host to start..."
+	if !multiplayer.is_server():
+		wait_indicator.set_text("Waiting for host to start...")
+		chess_background.show()
+		wait_indicator.show()
 	show_controls()
+	
+	search_indicator.hide()
 	
 	if players_ready >= 2:
 		if multiplayer.is_server():
 			Network.stop_broadcasting()
 			start_button.show()
 			status.text = "Both players are ready"
+			status.show()
+			wait_indicator.hide()
 
 func on_player_disconnected(_peer_id : int):
 	players_ready -= 1
 	status.text = "Opponent disconnected"
+	status.show()
 	start_button.hide()
 
 func on_connection_failed():
 	status.text = "Connection failed. Try again"
+	status.show()
 	reset_ui()
 
 func on_server_disconnected():
 	status.text = "Host disconnected"
+	status.show()
 	reset_ui()
 
 func _on_start_button_pressed() -> void:
@@ -190,7 +217,7 @@ func show_controls():
 	find_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	start_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	
-	status_control.show()
+	#status_control.show()
 
 func find_time_limit(difficulty_param : Globals.DIFFICULTY) -> String:
 	match difficulty_param:

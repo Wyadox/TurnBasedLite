@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://bxdepwhprt4pp"]
+[gd_scene load_steps=19 format=3 uid="uid://bxdepwhprt4pp"]
 
 [ext_resource type="Script" uid="uid://bj20fx8i5xny6" path="res://scripts/game.gd" id="1_yqjtg"]
 [ext_resource type="Texture2D" uid="uid://bi27j240t7d1r" path="res://Assets/ChessBoard/ChessBoard.png" id="2_kvpfn"]
@@ -16,6 +16,7 @@
 [ext_resource type="PackedScene" uid="uid://c8ghnkg4lmoc" path="res://scenes/move_history.tscn" id="15_ir15t"]
 [ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="15_rysoc"]
 [ext_resource type="PackedScene" uid="uid://b40kfc55gm8m3" path="res://scenes/move_clock.tscn" id="16_ca42v"]
+[ext_resource type="PackedScene" uid="uid://cnt8uu7kya2m3" path="res://scenes/loading_indicator.tscn" id="17_rysoc"]
 
 [sub_resource type="FontVariation" id="FontVariation_ssvqc"]
 base_font = ExtResource("15_rysoc")
@@ -125,6 +126,7 @@ mouse_filter = 2
 texture = ExtResource("11_kvpfn")
 
 [node name="descriptions" parent="." instance=ExtResource("12_dinhu")]
+z_index = 1
 offset_left = 663.0
 offset_top = 388.0
 offset_right = 1243.0
@@ -223,6 +225,27 @@ grow_horizontal = 2
 grow_vertical = 2
 button_text = "Main Menu"
 button_size = Vector2(175, 64)
+
+[node name="setting_indicator" parent="." instance=ExtResource("17_rysoc")]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 944.0
+offset_top = 518.0
+offset_right = 944.0
+offset_bottom = 518.0
+grow_horizontal = 2
+grow_vertical = 2
+display_text = "Setting up..."
+
+[node name="thinking_indicator" parent="." instance=ExtResource("17_rysoc")]
+offset_left = 172.0
+offset_top = 160.0
+offset_right = 268.0
+offset_bottom = 256.0
+display_text = "Thinking..."
 
 [node name="Upper_Resign_Button" parent="." instance=ExtResource("15_ca42v")]
 custom_minimum_size = Vector2(110, 64)

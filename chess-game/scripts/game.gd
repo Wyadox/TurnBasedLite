@@ -46,6 +46,9 @@ var failed_to_move : bool = false
 @onready var upper_resign_button: DynamicButton = $Upper_Resign_Button
 @onready var lower_resign_button: DynamicButton = $Lower_Resign_Button
 
+@onready var setting_indicator: LoadingIndicator = $setting_indicator
+@onready var thinking_indicator: LoadingIndicator = $thinking_indicator
+
 const MOVE_CLOCK_OFFSET : float = 300.0
 
 
@@ -107,6 +110,9 @@ func _ready():
 	difficulty_dict = difficulty_settings()
 	
 	board_vector = Vector2(board.BOARD_WIDTH - 1, board.BOARD_HEIGHT - 1)
+	
+	setting_indicator.show()
+	thinking_indicator.hide()
 	
 	if ai_color == Globals.COLORS.WHITE:
 		LOWER_COLOR = Globals.COLORS.BLACK
@@ -548,12 +554,15 @@ func player2_move():
 	print("player2 reached")
 	print("real game: ", real_game)
 	print("player 2 type: ", player2_type)
+	
 	if real_game and player2_type == Globals.PLAYER_2_TYPE.AI:
 		#board.clear_borders()
 		#clear_piece_animations()
-		#
-		#await get_tree().process_frame
-		#await get_tree().process_frame
+		
+		thinking_indicator.show()
+		
+		await get_tree().process_frame
+		await get_tree().process_frame
 		
 		var minimax_result = Ai.start_minimax(board.pieces, true if status == Globals.COLORS.WHITE else false, difficulty_dict)
 		print("RESULT: ", minimax_result)
@@ -578,6 +587,8 @@ func player2_move():
 		previous_position = selected_piece.position
 		previous_square = selected_piece.board_position
 		print ("drop_piece result: ", drop_piece(false, minimax_result["pos"]))
+		
+		thinking_indicator.hide()
 
 func evaluate_end_game():
 	# Check whether the current user can make any legal move
@@ -723,6 +734,7 @@ func _on_board_setup_complete() -> void:
 	descriptions.hide()
 	loadouts_label.hide()
 	loadout_ui.hide()
+	setting_indicator.hide()
 	status = Globals.COLORS.WHITE
 	init_pieces()
 	board.update_indicators()
