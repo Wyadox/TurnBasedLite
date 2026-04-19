@@ -59,6 +59,7 @@ horizontal_alignment = 1
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="chess_background/VBoxContainer"]
 layout_mode = 2
+theme_override_constants/separation = 8
 alignment = 1
 
 [node name="Human_Button" parent="chess_background/VBoxContainer/HBoxContainer2" instance=ExtResource("5_gcmtx")]
@@ -83,10 +84,10 @@ layout_mode = 2
 alignment = 1
 
 [node name="Continue_Button" parent="chess_background/VBoxContainer/HBoxContainer" instance=ExtResource("5_gcmtx")]
-custom_minimum_size = Vector2(400, 64)
+custom_minimum_size = Vector2(300, 64)
 layout_mode = 2
-button_text = "CONTINUE TO SETUP PHASE"
-button_size = Vector2(400, 64)
+button_text = "CONTINUE"
+button_size = Vector2(300, 64)
 
 [node name="notification" parent="." instance=ExtResource("3_inqc7")]
 layout_mode = 1
@@ -113,3 +114,91 @@ offset_bottom = 164.0
 grow_horizontal = 0
 button_text = "RETURN"
 button_size = Vector2(175, 64)
+
+[node name="Tooltip" parent="." instance=ExtResource("3_jiuty")]
+layout_mode = 0
+offset_left = 75.0
+offset_top = 85.0
+offset_right = 508.0
+offset_bottom = 685.0
+
+[node name="MarginContainer" type="MarginContainer" parent="Tooltip"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Tooltip/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="Title_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_fvu4y")
+theme_override_font_sizes/font_size = 45
+text = "LOCAL OPTIONS MENU"
+horizontal_alignment = 1
+
+[node name="Desciption_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_fvu4y")
+theme_override_font_sizes/font_size = 25
+text = "Select your opponent, difficulty, and map for this match"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Opponent_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_fvu4y")
+theme_override_font_sizes/font_size = 45
+text = "OPPONENT"
+horizontal_alignment = 1
+
+[node name="Opposition_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_fvu4y")
+theme_override_font_sizes/font_size = 25
+text = "Play against another person locally, or play against the Computer"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Difficulty_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_fvu4y")
+theme_override_font_sizes/font_size = 45
+text = "DIFFICULTY"
+horizontal_alignment = 1
+
+[node name="Difficulting_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_fvu4y")
+theme_override_font_sizes/font_size = 25
+text = "The higher the difficulty, the less time is on your Move Clock. If playing the Computer, this difficulty improves move selection."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Map_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_fvu4y")
+theme_override_font_sizes/font_size = 45
+text = "MAP"
+horizontal_alignment = 1
+
+[node name="Mapping_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_fvu4y")
+theme_override_font_sizes/font_size = 25
+text = "Choose between your Regular Chess Board, a calming river, the dense forest, or the lava wall."
+horizontal_alignment = 1
+autowrap_mode = 3
