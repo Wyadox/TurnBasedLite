@@ -25,7 +25,7 @@ var difficulty : Globals.DIFFICULTY = Globals.DIFFICULTY.EASY
 var lobby_game_info : Dictionary = {}
 
 func _ready() -> void:
-	start_button.hide()
+	start_button.disable()
 	lobby_list.hide()
 	host_options_menu.hide()
 	search_indicator.hide()
@@ -140,7 +140,7 @@ func on_player_connected(_peer_id : int):
 	if players_ready >= 2:
 		if multiplayer.is_server():
 			Network.stop_broadcasting()
-			start_button.show()
+			start_button.enable()
 			status.text = "Both players are ready"
 			status.show()
 			wait_indicator.hide()
@@ -204,6 +204,7 @@ func on_return():
 func hide_controls():
 	host_button.hide()
 	find_button.hide()
+	start_button.hide()
 	host_button.mouse_filter = Control.MOUSE_FILTER_STOP
 	find_button.mouse_filter = Control.MOUSE_FILTER_STOP
 	start_button.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -213,6 +214,7 @@ func hide_controls():
 func show_controls():
 	host_button.show()
 	find_button.show()
+	start_button.show()
 	host_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	find_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	start_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
