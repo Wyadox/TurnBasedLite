@@ -94,10 +94,16 @@ func on_host_discovered(ip_address : String, data : Dictionary):
 		entry.background_color = Color(0.8, 0.6, 0.4)
 	else:
 		entry.background_color = Color(0.4, 0.3, 0.2)
-	print("hello", data["host_color"])
-	entry.title = "Play against " + Globals.COLORS.find_key(int(data["host_color"]))
-	entry.details = "Playing on " + Globals.DIFFICULTY.find_key(int(data["difficulty"])) + " difficulty"
-	entry.description = "HELLO"
+	
+	var color_string = ""
+	if data["host_color"] == Globals.COLORS.WHITE:
+		color_string = "BLACK"
+	else:
+		color_string = "WHITE"
+	
+	entry.title = "Play as " + color_string
+	entry.details = "Playing on " + Globals.DIFFICULTY.find_key(int(data["difficulty"])) + " difficulty, with " + find_time_limit(data["difficulty"]) + " on the Move Clock"
+	entry.description = "Playing on " + Board.BOARD_TYPE.find_key(int(data["map"]) - 1)
 	lobby_list.add_list_entry(entry)
 	entry.set_textures(data["difficulty"], data["host_color"] as Globals.DIFFICULTY, data["map"])
 	lobby_game_info = data
@@ -185,3 +191,13 @@ func show_controls():
 	start_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	
 	status_control.show()
+
+func find_time_limit(difficulty_param : Globals.DIFFICULTY) -> String:
+	match difficulty_param:
+		Globals.DIFFICULTY.EASY:
+			return "3:00 minutes"
+		Globals.DIFFICULTY.NORMAL:
+			return "2:00 minutes"
+		Globals.DIFFICULTY.HARD:
+			return "1:00 minute"
+	return ""

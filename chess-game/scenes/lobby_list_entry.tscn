@@ -1,13 +1,17 @@
-[gd_scene load_steps=7 format=3 uid="uid://beekdbp76itqm"]
+[gd_scene load_steps=9 format=3 uid="uid://beekdbp76itqm"]
 
 [ext_resource type="Script" uid="uid://c1gdphnpgnv0u" path="res://scripts/lobby_list_entry.gd" id="1_neqra"]
 [ext_resource type="Texture2D" uid="uid://bai1iqhbnmbm7" path="res://Assets/LobbyMenuImages/WhiteShieldKing.png" id="2_5dst7"]
 [ext_resource type="PackedScene" uid="uid://bm18o0kocsj51" path="res://scenes/chess_background.tscn" id="2_qyrq6"]
 [ext_resource type="Texture2D" uid="uid://1pcjdbetkwlp" path="res://Assets/LobbyMenuImages/EasyModeIconJug.png" id="3_5dst7"]
+[ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="3_y74be"]
 [ext_resource type="Texture2D" uid="uid://dsxn1xc4dr5bu" path="res://Assets/Buttons/LoadoutButton.png" id="4_2yhni"]
 
+[sub_resource type="FontVariation" id="FontVariation_fkdnp"]
+base_font = ExtResource("3_y74be")
+
 [sub_resource type="LabelSettings" id="LabelSettings_ynpte"]
-font_size = 60
+font_size = 78
 
 [node name="lobby_list_entry" type="Button"]
 custom_minimum_size = Vector2(600, 150)
@@ -19,7 +23,6 @@ script = ExtResource("1_neqra")
 layout_mode = 0
 offset_right = 600.0
 offset_bottom = 150.0
-mouse_filter = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="chess_background"]
 layout_mode = 1
@@ -44,6 +47,8 @@ alignment = 1
 [node name="Number_Label" type="Label" parent="chess_background/MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_fkdnp")
+theme_override_font_sizes/font_size = 30
 text = "#24"
 label_settings = SubResource("LabelSettings_ynpte")
 
