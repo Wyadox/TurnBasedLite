@@ -385,8 +385,9 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 			print("current teleport cd is "+ str(selected_piece.current_teleport_cooldown))
 			print("teleport cd constant is " + str(selected_piece.TELEPORT_COOLDOWN))
 			selected_piece.current_teleport_cooldown = selected_piece.TELEPORT_COOLDOWN
-			#if piece.current_teleport_cooldown < piece.
-			
+		if selected_piece.piece_type == Globals.PIECE_TYPES.WIZARD and abs(old_pos.y - to_move.y)>0 and old_pos.x == to_move.x:
+			print("fireballing")	
+			#Wizard.Fireball()
 		if dest_piece != null and dest_piece.color != selected_piece.color:
 			if dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT or dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT2:
 				juggernaut_hit = true
