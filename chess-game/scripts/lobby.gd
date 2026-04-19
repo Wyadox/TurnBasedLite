@@ -1,12 +1,14 @@
 extends Control
 
-@onready var host_button: DynamicButton = $VBoxContainer/VBoxContainer/Host_Button
-@onready var find_button: DynamicButton = $VBoxContainer/VBoxContainer/Find_Button
-@onready var start_button: DynamicButton = $VBoxContainer/VBoxContainer/Start_Button
+@onready var return_button: DynamicButton = $Return_Button
+@onready var host_button: DynamicButton = $HBoxContainer4/Host_Button
+@onready var find_button: DynamicButton = $HBoxContainer4/Find_Button
+@onready var start_button: DynamicButton = $Start_Button
 
-@onready var status: Label = $VBoxContainer/Status
-@onready var lobby_list: LobbyList = $VBoxContainer/HBoxContainer/lobby_list
-@onready var host_options_menu: Control = $VBoxContainer/HBoxContainer/host_options_menu
+@onready var status_control: Control = $status_control
+@onready var status: Label = $status_control/Status
+@onready var lobby_list: LobbyList = $lobby_list
+@onready var host_options_menu: Control = $host_options_menu
 
 const LOBBY_LIST_ENTRY = preload("uid://beekdbp76itqm")
 
@@ -36,6 +38,7 @@ func _ready() -> void:
 	host_button.button_triggered.connect(_on_host_button_pressed)
 	find_button.button_triggered.connect(_on_join_button_pressed)
 	start_button.button_triggered.connect(_on_start_button_pressed)
+	return_button.button_triggered.connect(on_return)
 
 func _on_host_button_pressed() -> void:
 	host_options_menu.show()
@@ -43,6 +46,8 @@ func _on_host_button_pressed() -> void:
 	
 	host_button.disable()
 	find_button.disable()
+	
+	hide_controls()
 	
 
 func intialize_host() -> void:
@@ -64,6 +69,8 @@ func intialize_host() -> void:
 	Network.host_game()
 	status.text = "Waiting for opponent..."
 	players_ready = 1
+	
+	show_controls()
 
 func _on_join_button_pressed() -> void:
 	Network.start_listening()
@@ -73,6 +80,8 @@ func _on_join_button_pressed() -> void:
 	lobby_list.clear()
 	discovered_ip_addresses.clear()
 	lobby_list.show()
+	
+	hide_controls()
 
 func on_host_discovered(ip_address : String, data : Dictionary):
 	if ip_address in discovered_ip_addresses:
@@ -96,7 +105,10 @@ func on_host_discovered(ip_address : String, data : Dictionary):
 
 func on_player_connected(_peer_id : int):
 	players_ready += 1
-	status.text = "Player connected (%d/2)" % players_ready
+	#status.text = "Player connected (%d/2)" % players_ready
+	status.text = "Waiting for host to start..."
+	show_controls()
+	
 	if players_ready >= 2:
 		if multiplayer.is_server():
 			Network.stop_broadcasting()
@@ -151,3 +163,25 @@ func on_join_match_pressed(index: int) -> void:
 	Network.join_game(ip_address)
 	status.text = "Connecting..."
 	lobby_list.hide()
+
+func on_return():
+	Network.disconnect_game()
+	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+
+func hide_controls():
+	host_button.hide()
+	find_button.hide()
+	host_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	find_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	start_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	
+	status_control.hide()
+
+func show_controls():
+	host_button.show()
+	find_button.show()
+	host_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	find_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	start_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
+	status_control.show()

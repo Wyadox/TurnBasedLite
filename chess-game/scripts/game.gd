@@ -914,12 +914,16 @@ func sync_clocks(player_status : Globals.COLORS):
 		move_clock_2.start_turn()
 
 func on_player_disconnect(_peer_id : int):
+	if game_over:
+		return
 	game_over = true
 	stop_clocks()
 	set_win(flip_color(Network.my_color))
 	return true
 
 func on_server_disconnect():
+	if game_over:
+		return
 	game_over = true
 	stop_clocks()
 	set_win(flip_color(Network.my_color))
@@ -942,6 +946,7 @@ func sync_resign():
 	game_over = true
 	stop_clocks()
 	set_win(status)
+	Network.disconnect_game()
 	return true
 
 func toggle_resign_buttons():

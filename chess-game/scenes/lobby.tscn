@@ -1,10 +1,18 @@
-[gd_scene load_steps=6 format=3 uid="uid://bfijhxlgtbvqp"]
+[gd_scene load_steps=10 format=3 uid="uid://bfijhxlgtbvqp"]
 
 [ext_resource type="Script" uid="uid://bsqmnoolexdot" path="res://scripts/lobby.gd" id="1_o1atq"]
 [ext_resource type="PackedScene" uid="uid://dy8nxqsamussf" path="res://scenes/lobby_list.tscn" id="2_5gu6x"]
 [ext_resource type="PackedScene" uid="uid://dbxe12unkumgf" path="res://scenes/dynamic_button.tscn" id="2_nqcc7"]
 [ext_resource type="Texture2D" uid="uid://dqthi3k7ct4ox" path="res://Assets/Backgrounds/Lamora HR.png" id="2_pc087"]
 [ext_resource type="PackedScene" uid="uid://20xne0v7msu7" path="res://scenes/host_options_menu.tscn" id="3_q60fs"]
+[ext_resource type="PackedScene" uid="uid://bm18o0kocsj51" path="res://scenes/chess_background.tscn" id="4_apkv3"]
+[ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="5_omrgh"]
+
+[sub_resource type="FontVariation" id="FontVariation_ncsg4"]
+base_font = ExtResource("5_omrgh")
+
+[sub_resource type="FontVariation" id="FontVariation_omrgh"]
+base_font = ExtResource("5_omrgh")
 
 [node name="lobby" type="Control"]
 layout_mode = 3
@@ -21,8 +29,96 @@ offset_right = 40.0
 offset_bottom = 40.0
 texture = ExtResource("2_pc087")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
-custom_minimum_size = Vector2(100, 0)
+[node name="Return_Button" parent="." instance=ExtResource("2_nqcc7")]
+custom_minimum_size = Vector2(175, 64)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -420.0
+offset_top = 100.0
+offset_right = -245.0
+offset_bottom = 164.0
+grow_horizontal = 0
+button_text = "RETURN"
+button_size = Vector2(175, 64)
+
+[node name="status_control" parent="." instance=ExtResource("4_apkv3")]
+custom_minimum_size = Vector2(350, 100)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -175.0
+offset_top = -50.0
+offset_right = 175.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Status_Header" type="Label" parent="status_control"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -54.0
+offset_top = 9.5
+offset_right = 54.0
+offset_bottom = 57.5
+grow_horizontal = 2
+theme_override_fonts/font = SubResource("FontVariation_ncsg4")
+theme_override_font_sizes/font_size = 44
+text = "STATUS"
+
+[node name="Status" type="Label" parent="status_control"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -112.0
+offset_top = -50.5
+offset_right = 112.0
+offset_bottom = -16.5
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 4
+theme_override_fonts/font = SubResource("FontVariation_omrgh")
+theme_override_font_sizes/font_size = 30
+text = "UPDATES APPEAR HERE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="lobby_list" parent="." instance=ExtResource("2_5gu6x")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -650.0
+offset_top = -360.0
+offset_right = 650.0
+offset_bottom = 360.0
+
+[node name="host_options_menu" parent="." instance=ExtResource("3_q60fs")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -236.0
+offset_top = -360.0
+offset_right = 236.0
+offset_bottom = 360.0
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(175, 0)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -30,49 +126,39 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -888.0
-offset_top = -459.5
+offset_top = -125.0
 offset_right = 888.0
-offset_bottom = 459.5
+offset_bottom = -61.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="VBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
-custom_minimum_size = Vector2(175, 0)
-layout_mode = 2
+mouse_filter = 2
 alignment = 1
 
-[node name="Host_Button" parent="VBoxContainer/VBoxContainer" instance=ExtResource("2_nqcc7")]
+[node name="Host_Button" parent="HBoxContainer4" instance=ExtResource("2_nqcc7")]
 custom_minimum_size = Vector2(175, 64)
 layout_mode = 2
 button_text = "HOST MATCH"
 button_size = Vector2(175, 64)
 
-[node name="Find_Button" parent="VBoxContainer/VBoxContainer" instance=ExtResource("2_nqcc7")]
+[node name="Find_Button" parent="HBoxContainer4" instance=ExtResource("2_nqcc7")]
 custom_minimum_size = Vector2(175, 64)
 layout_mode = 2
 button_text = "FIND MATCH"
 button_size = Vector2(175, 64)
 
-[node name="Start_Button" parent="VBoxContainer/VBoxContainer" instance=ExtResource("2_nqcc7")]
+[node name="Start_Button" parent="." instance=ExtResource("2_nqcc7")]
 custom_minimum_size = Vector2(175, 64)
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -87.5
+offset_top = 63.0
+offset_right = 87.5
+offset_bottom = 127.0
+grow_horizontal = 2
+grow_vertical = 2
 button_text = "START MATCH"
 button_size = Vector2(175, 64)
-
-[node name="Title" type="Label" parent="VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-
-[node name="Status" type="Label" parent="VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
-layout_mode = 2
-alignment = 1
-
-[node name="lobby_list" parent="VBoxContainer/HBoxContainer" instance=ExtResource("2_5gu6x")]
-layout_mode = 2
-
-[node name="host_options_menu" parent="VBoxContainer/HBoxContainer" instance=ExtResource("3_q60fs")]
-layout_mode = 2

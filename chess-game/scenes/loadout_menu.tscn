@@ -98,14 +98,14 @@ grow_horizontal = 2
 grow_vertical = 2
 color = 1
 
-[node name="chess_background" parent="." instance=ExtResource("16_6ruvx")]
+[node name="Tooltip" parent="." instance=ExtResource("16_6ruvx")]
 layout_mode = 1
 offset_left = 75.0
 offset_top = 85.0
 offset_right = 508.0
 offset_bottom = 724.0
 
-[node name="MarginContainer" type="MarginContainer" parent="chess_background"]
+[node name="MarginContainer" type="MarginContainer" parent="Tooltip"]
 layout_mode = 1
 offset_right = 432.99213
 offset_bottom = 636.0
@@ -114,19 +114,19 @@ theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="VBoxContainer" type="VBoxContainer" parent="chess_background/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Tooltip/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 12
 alignment = 1
 
-[node name="Title_Label" type="Label" parent="chess_background/MarginContainer/VBoxContainer"]
+[node name="Title_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("17_dn7wr")
 theme_override_font_sizes/font_size = 45
 text = "LOADOUT MENU"
 horizontal_alignment = 1
 
-[node name="Desciption_Label" type="Label" parent="chess_background/MarginContainer/VBoxContainer"]
+[node name="Desciption_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("17_dn7wr")
@@ -135,14 +135,14 @@ text = "Save time when you play by creating loadouts here"
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="Save_Label" type="Label" parent="chess_background/MarginContainer/VBoxContainer"]
+[node name="Save_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("17_dn7wr")
 theme_override_font_sizes/font_size = 45
 text = "SAVE LOADOUT"
 horizontal_alignment = 1
 
-[node name="Saving_Label" type="Label" parent="chess_background/MarginContainer/VBoxContainer"]
+[node name="Saving_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("17_dn7wr")
@@ -151,14 +151,14 @@ text = "Select the loadout slot you want to use. Cycle through the available pie
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="Edit_Label" type="Label" parent="chess_background/MarginContainer/VBoxContainer"]
+[node name="Edit_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("17_dn7wr")
 theme_override_font_sizes/font_size = 45
 text = "EDIT LOADOUT"
 horizontal_alignment = 1
 
-[node name="Editing_Label" type="Label" parent="chess_background/MarginContainer/VBoxContainer"]
+[node name="Editing_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("17_dn7wr")
@@ -167,14 +167,14 @@ text = "Select the loadout slot you want to edit. Click \"LOAD\". Drag pieces ar
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="Restrict_Label" type="Label" parent="chess_background/MarginContainer/VBoxContainer"]
+[node name="Restrict_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("17_dn7wr")
 theme_override_font_sizes/font_size = 45
 text = "RESTRICTIONS"
 horizontal_alignment = 1
 
-[node name="Restricting_Label" type="Label" parent="chess_background/MarginContainer/VBoxContainer"]
+[node name="Restricting_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("17_dn7wr")

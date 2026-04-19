@@ -1,15 +1,12 @@
 class_name LobbyListEntry
 extends Button
 
-
-@onready var background_color_rect: ColorRect = $BackgroundColor
-@onready var number_label: Label = $MarginContainer/HBoxContainer/Number_Label
-@onready var title_label: Label = $MarginContainer/HBoxContainer/Title_Label
-@onready var details_label: Label = $MarginContainer/HBoxContainer/Details_Label
-
-@onready var color_image: TextureRect = $MarginContainer/HBoxContainer/Color_Image
-@onready var map_image: TextureRect = $MarginContainer/HBoxContainer/Map_Image
-@onready var difficulty_image: TextureRect = $MarginContainer/HBoxContainer/Difficulty_Image
+@onready var number_label: Label = $chess_background/MarginContainer/HBoxContainer/Number_Label
+@onready var color_image: TextureRect = $chess_background/MarginContainer/HBoxContainer/Color_Image
+@onready var map_image: TextureRect = $chess_background/MarginContainer/HBoxContainer/Map_Image
+@onready var difficulty_image: TextureRect = $chess_background/MarginContainer/HBoxContainer/Difficulty_Image
+@onready var title_label: Label = $chess_background/MarginContainer/HBoxContainer/Title_Label
+@onready var details_label: Label = $chess_background/MarginContainer/HBoxContainer/Details_Label
 
 var description : String
 
@@ -19,7 +16,7 @@ var description : String
 @export var details : String
 
 func _ready() -> void:
-	background_color_rect.color = background_color
+	#background_color_rect.color = background_color
 	number_label.text = "#" + str(number)
 	title_label.text = title
 	details_label.text = details

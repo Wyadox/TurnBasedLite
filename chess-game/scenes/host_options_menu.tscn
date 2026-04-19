@@ -1,13 +1,15 @@
-[gd_scene load_steps=6 format=3 uid="uid://20xne0v7msu7"]
+[gd_scene load_steps=8 format=3 uid="uid://20xne0v7msu7"]
 
 [ext_resource type="Texture2D" uid="uid://bai1iqhbnmbm7" path="res://Assets/LobbyMenuImages/WhiteShieldKing.png" id="1_3cotv"]
 [ext_resource type="Script" uid="uid://c6gy1al8lis6q" path="res://scripts/host_options_menu.gd" id="1_po1oe"]
+[ext_resource type="PackedScene" uid="uid://bm18o0kocsj51" path="res://scenes/chess_background.tscn" id="2_kkxp5"]
 [ext_resource type="Texture2D" uid="uid://dfkwxtb4oi86p" path="res://Assets/LobbyMenuImages/HalfShieldKing.png" id="2_po1oe"]
 [ext_resource type="Texture2D" uid="uid://biwpf20rfgy2y" path="res://Assets/LobbyMenuImages/BlackShieldKing.png" id="3_kkxp5"]
 [ext_resource type="PackedScene" uid="uid://bk8s3ckskgdde" path="res://scenes/difficulty_map_options_menu.tscn" id="4_57agf"]
+[ext_resource type="PackedScene" uid="uid://dbxe12unkumgf" path="res://scenes/dynamic_button.tscn" id="7_57agf"]
 
 [node name="host_options_menu" type="Control"]
-custom_minimum_size = Vector2(472, 661)
+custom_minimum_size = Vector2(472, 720)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -16,7 +18,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_po1oe")
 
-[node name="Panel" type="Panel" parent="."]
+[node name="chess_background" parent="." instance=ExtResource("2_kkxp5")]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -24,58 +26,63 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -236.0
-offset_top = -330.5
+offset_top = -360.0
 offset_right = 236.0
-offset_bottom = 330.5
+offset_bottom = 360.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="Panel"]
-layout_mode = 0
-offset_right = 472.0
-offset_bottom = 661.0
+[node name="MarginContainer" type="MarginContainer" parent="chess_background"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="chess_background/MarginContainer"]
 layout_mode = 2
 
-[node name="Color_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="Color_Label" type="Label" parent="chess_background/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "PLAY AS..."
 horizontal_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="chess_background/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 20
 alignment = 1
 
-[node name="White_Button" type="TextureButton" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="White_Button" type="TextureButton" parent="chess_background/MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 texture_normal = ExtResource("1_3cotv")
 
-[node name="Half_Button" type="TextureButton" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="Half_Button" type="TextureButton" parent="chess_background/MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 texture_normal = ExtResource("2_po1oe")
 
-[node name="Black_Button" type="TextureButton" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="Black_Button" type="TextureButton" parent="chess_background/MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 texture_normal = ExtResource("3_kkxp5")
 
-[node name="HSeparator" type="HSeparator" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="difficulty_map_options_menu" parent="chess_background/MarginContainer/VBoxContainer" instance=ExtResource("4_57agf")]
 layout_mode = 2
 
-[node name="difficulty_map_options_menu" parent="Panel/MarginContainer/VBoxContainer" instance=ExtResource("4_57agf")]
+[node name="HBoxContainer2" type="HBoxContainer" parent="chess_background/MarginContainer/VBoxContainer"]
 layout_mode = 2
+alignment = 1
 
-[node name="Host_Button" type="Button" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="Host_Button" parent="chess_background/MarginContainer/VBoxContainer/HBoxContainer2" instance=ExtResource("7_57agf")]
+custom_minimum_size = Vector2(300, 64)
 layout_mode = 2
-text = "Host Match"
+button_text = "HOST MATCH"
+button_size = Vector2(300, 64)
 
-[connection signal="pressed" from="Panel/MarginContainer/VBoxContainer/HBoxContainer/White_Button" to="." method="_on_white_button_pressed"]
-[connection signal="pressed" from="Panel/MarginContainer/VBoxContainer/HBoxContainer/Half_Button" to="." method="_on_half_button_pressed"]
-[connection signal="pressed" from="Panel/MarginContainer/VBoxContainer/HBoxContainer/Black_Button" to="." method="_on_black_button_pressed"]
-[connection signal="pressed" from="Panel/MarginContainer/VBoxContainer/Host_Button" to="." method="_on_host_button_pressed"]
+[connection signal="pressed" from="chess_background/MarginContainer/VBoxContainer/HBoxContainer/White_Button" to="." method="_on_white_button_pressed"]
+[connection signal="pressed" from="chess_background/MarginContainer/VBoxContainer/HBoxContainer/Half_Button" to="." method="_on_half_button_pressed"]
+[connection signal="pressed" from="chess_background/MarginContainer/VBoxContainer/HBoxContainer/Black_Button" to="." method="_on_black_button_pressed"]
