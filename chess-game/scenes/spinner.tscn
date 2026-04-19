@@ -54,6 +54,7 @@ offset_right = 128.0
 offset_bottom = 59.0
 grow_horizontal = 2
 grow_vertical = 2
+rotation = -1.5707964
 pivot_offset = Vector2(128, 128)
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -82,12 +83,11 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -40.0
-offset_top = 16.0
+offset_top = -95.0
 offset_right = 40.0
-offset_bottom = 96.0
+offset_bottom = -15.0
 grow_horizontal = 2
 grow_vertical = 2
-rotation = 3.1415927
 pivot_offset = Vector2(40, 40)
 
 [node name="Black_Rect" type="TextureRect" parent="Spinner_Whole"]
@@ -98,11 +98,12 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -40.0
-offset_top = -95.0
+offset_top = 16.0
 offset_right = 40.0
-offset_bottom = -15.0
+offset_bottom = 96.0
 grow_horizontal = 2
 grow_vertical = 2
+rotation = 3.1415927
 pivot_offset = Vector2(40, 40)
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]

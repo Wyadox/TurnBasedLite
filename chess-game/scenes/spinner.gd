@@ -17,8 +17,8 @@ const TEXTURE = preload("res://Assets/Spinner/Spinner.png")
 const WHEEL_SOUND = preload("res://Assets/Sounds/freesound_community-wheel-spin-click-slow-down-101152.mp3")
 
 const SPRITE_SIZE : int = 32
-const SPIN_MINIMUM : int = 4
-const SPIN_MAXIMUM : int = 8
+const SPIN_MINIMUM : int = 3
+const SPIN_MAXIMUM : int = 6
 const SPIN_INCREMENT : int = 150
 const MAX_SPIN_SPEED : int = 500
 
@@ -125,11 +125,11 @@ func process_spin():
 	var winning_piece : Globals.PIECE_TYPES
 	
 	if normal_rotation >= PI/2 and normal_rotation <= 3*PI/2:
-		print(Globals.PIECE_TYPES.find_key(white_piece))
-		winning_piece = white_piece
-	else:
 		print(Globals.PIECE_TYPES.find_key(black_piece))
 		winning_piece = black_piece
+	else:
+		print(Globals.PIECE_TYPES.find_key(white_piece))
+		winning_piece = white_piece
 	
 	var winning_text = "YOU WON : PLAYING AS WHITE"
 	if choice == Globals.COLORS.WHITE and winning_piece == white_piece:
