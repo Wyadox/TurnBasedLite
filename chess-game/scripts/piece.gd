@@ -68,7 +68,7 @@ func play_animation(title : String):
 	$AnimationPlayer.stop()
 	$AnimationPlayer.play(title)
 
-func move_position(to_move: Vector2):
+func move_position(to_move: Vector2, cancel = false):
 	var old_pos = board_position #For moving Mitosis Pawn
 	moved = true
 	board_position = to_move
@@ -82,7 +82,7 @@ func move_position(to_move: Vector2):
 	if piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN:
 		var dx = int(to_move.x - old_pos.x)
 		var dy = int(to_move.y - old_pos.y)
-		if abs(dx) == 2 and dy == 0:
+		if abs(dx) == 2 and dy == 0 and !cancel:
 			var mid_pos = Vector2(old_pos.x, old_pos.y)
 			perform_mitosis(mid_pos)
 			return

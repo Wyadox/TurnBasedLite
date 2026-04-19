@@ -21,6 +21,9 @@ var setup_done: bool = false
 
 var real_board : bool = true
 
+var LOWER_COLOR : Globals.COLORS = Globals.COLORS.WHITE
+var UPPER_COLOR : Globals.COLORS = Globals.COLORS.BLACK
+
 enum BOARD_TYPE {
 	STANDARD,
 	RIVER,
@@ -436,19 +439,6 @@ var borders = []
 
 func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 	print("hi from spawn piece")
-	if selected_pos == Vector2(-1, -1) or !is_within_bounds(selected_pos):
-		if is_loadout_board:
-			selected_pos = find_viable_square()
-			if selected_pos == Vector2(-1, -1) or !is_within_bounds(selected_pos):
-				SignalBus.emit_signal("refund_piece", piece_type)
-				return
-		else:
-			SignalBus.emit_signal("refund_piece", piece_type)
-			return
-	
-	if setup_done == true:
-		return
-		
 	# Determine color for current piece
 	var color
 	var total_pieces : int = num_pieces()
@@ -456,6 +446,25 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 		color = Globals.COLORS.WHITE
 	elif !is_loadout_board:
 		color = Globals.COLORS.BLACK
+	
+	if selected_pos == Vector2(-1, -1) or !is_within_bounds(selected_pos):
+		selected_pos = find_viable_square(color)
+		if selected_pos == Vector2(-1, -1) or !is_within_bounds(selected_pos):
+			SignalBus.emit_signal("refund_piece", piece_type)
+			return
+		#if is_loadout_board:
+			#selected_pos = find_viable_square()
+			#if selected_pos == Vector2(-1, -1) or !is_within_bounds(selected_pos):
+				#SignalBus.emit_signal("refund_piece", piece_type)
+				#return
+		#else:
+			#SignalBus.emit_signal("refund_piece", piece_type)
+			#return
+	
+	if setup_done == true:
+		return
+		
+	
 	create_piece(piece_type, color, selected_pos)
 	
 	# Determine if color needs to swap
@@ -479,11 +488,17 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 		border_shape.queue_free()
 	selected_pos = Vector2(-1, -1)
 
-func find_viable_square() -> Vector2:
+func find_viable_square(color : Globals.COLORS) -> Vector2:
 	var flag : bool = true
 	var flag_flip_count : int = 0
+	var bound : Vector2
+	if color == UPPER_COLOR:
+		bound = Vector2(0, 2)
+	else:
+		bound = Vector2(5, 7)
+	
 	for i in range(Board.BOARD_WIDTH):
-		for j in range(2):
+		for j in range(bound.x, bound.y):
 			flag = true
 			for piece in pieces:
 				if piece.board_position == Vector2(i,j):

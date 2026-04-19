@@ -70,6 +70,7 @@ var board_repr = []
 
 var real_game : bool = true
 var online_game : bool = false
+var setup_piece_died : bool = false
 
 var LOWER_COLOR : Globals.COLORS = Globals.COLORS.WHITE
 var UPPER_COLOR : Globals.COLORS = Globals.COLORS.BLACK
@@ -117,6 +118,8 @@ func _ready():
 	if ai_color == Globals.COLORS.WHITE:
 		LOWER_COLOR = Globals.COLORS.BLACK
 		UPPER_COLOR = Globals.COLORS.WHITE
+		board.LOWER_COLOR = Globals.COLORS.BLACK
+		board.UPPER_COLOR = Globals.COLORS.WHITE
 		
 		move_clock.global_position.y -= MOVE_CLOCK_OFFSET
 		move_clock_2.global_position.y += MOVE_CLOCK_OFFSET
@@ -222,13 +225,14 @@ func parse_save_string(save_string):
 var previous_square
 var current_square
 var color_to_be_moved : Globals.COLORS
+var square
 
 func _input(event):
 	if game_over:
 		return
 	# Mouse left clicks/drags
 	if Input.is_action_just_pressed("left_click"):
-		var square = get_square_under_mouse()
+		square = get_square_under_mouse()
 		previous_square = square
 		selected_piece = board.get_piece(square)
 		
@@ -245,11 +249,17 @@ func _input(event):
 						SignalBus.emit_signal("selected_square", square)
 			return
 			
-		if selected_piece == null:
+		if selected_piece != null and !setup_complete and selected_piece.color == status and (player2_type != Globals.PLAYER_2_TYPE.NETWORK or status == Network.my_color):
+			SignalBus.emit_signal("selected_square", Vector2(-1, -1))
+			is_dragging = true
+			previous_position = selected_piece.position
+			selected_piece.z_index = 100
+			selected_piece.play_animation("sway")
 			return
 			
-		if selected_piece.color != status or selected_piece.stun_counter != 0 or (player2_type == Globals.PLAYER_2_TYPE.NETWORK and status != Network.my_color):
-			return
+		if selected_piece:
+			if selected_piece.color != status or selected_piece.stun_counter != 0 or (player2_type == Globals.PLAYER_2_TYPE.NETWORK and status != Network.my_color):
+				return
 			
 		if !setup_complete:
 			return
@@ -282,6 +292,30 @@ func _input(event):
 		#piece_mouse_pos.y += 40
 		selected_piece.position = piece_mouse_pos
 	elif Input.is_action_just_released("left_click") and is_dragging:
+		if !setup_complete:
+			if !selected_piece:
+				return
+			
+			selected_piece.play_animation("idle")
+			selected_piece.z_index = 0
+			is_dragging = false
+			
+			var is_valid_move = setup_drop_piece()
+			
+			if setup_piece_died:
+				ExplodingBishop.spawn_explosion_literal(selected_piece.position + board.global_position)
+				
+				setup_ui._on_board_refund_piece(selected_piece.piece_type)
+				board.delete_piece(selected_piece, true)
+				setup_piece_died = false
+			
+			if !is_valid_move:
+				selected_piece.position = previous_position
+			
+			selected_piece = null
+			square = null
+			return
+		
 		board.clear_borders()
 		clear_piece_animations()
 		
@@ -313,6 +347,30 @@ func _input(event):
 func clear_piece_animations():
 	for piece in board.pieces:
 		piece.play_animation("idle")
+
+func setup_drop_piece() -> bool:
+	var drop_square = get_square_under_mouse()
+	if !setup_is_within_bounds(drop_square, selected_piece.color):
+		print("drop square x: ", drop_square.x)
+		if drop_square.x > 7 or drop_square.x < -1:
+			setup_piece_died = true
+		return false
+	
+	for piece in board.pieces:
+		if piece != selected_piece and piece.board_position == drop_square:
+			piece.move_position(selected_piece.board_position, true)
+			selected_piece.move_position(drop_square, true)
+			board.play_sound("capture")
+			return true
+	
+	selected_piece.move_position(drop_square, true)
+	board.play_sound("move")
+	return true
+
+func setup_is_within_bounds(pos : Vector2, color : Globals.COLORS):
+	if color == LOWER_COLOR:
+		return pos.x < board.BOARD_WIDTH and pos.x > -1 and pos.y > 4 and pos.y < 7
+	return pos.x < board.BOARD_WIDTH and pos.x > -1 and pos.y > -1 and pos.y < 2
 
 func init_game():
 	game_over = false

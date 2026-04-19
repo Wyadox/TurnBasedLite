@@ -102,12 +102,12 @@ func drop_piece() -> bool:
 	
 	for piece in board_scene.pieces:
 		if piece != selected_piece and piece.board_position == drop_square:
-			piece.move_position(selected_piece.board_position)
-			selected_piece.move_position(drop_square)
+			piece.move_position(selected_piece.board_position, true)
+			selected_piece.move_position(drop_square, true)
 			board_scene.play_sound("capture")
 			return true
 	
-	selected_piece.move_position(drop_square)
+	selected_piece.move_position(drop_square, true)
 	board_scene.play_sound("move")
 	return true
 
