@@ -377,16 +377,25 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 			dest_piece.move_position(old_pos)
 			GuardianAngel.Purify(dest_piece)
 		if selected_piece.piece_type == Globals.PIECE_TYPES.SUMO and dest_piece != null and dest_piece.color != Globals.COLORS.TILE:
+			print("throwing")
 			pass
 			#Sumo.Throw(dest_piece) 
 		# Delete only if the target piece is of different color
 		if selected_piece.piece_type == Globals.PIECE_TYPES.WIZARD and abs(old_pos.x - to_move.x)>1:
 			print("teleported")
-			print("current teleport cd is "+ str(selected_piece.current_teleport_cooldown))
+			
 			print("teleport cd constant is " + str(selected_piece.TELEPORT_COOLDOWN))
-			selected_piece.current_teleport_cooldown = selected_piece.TELEPORT_COOLDOWN
-		if selected_piece.piece_type == Globals.PIECE_TYPES.WIZARD and abs(old_pos.y - to_move.y)>0 and old_pos.x == to_move.x:
-			print("fireballing")	
+			if selected_piece.current_teleport_cooldown != selected_piece.TELEPORT_COOLDOWN:
+				selected_piece.current_teleport_cooldown = selected_piece.TELEPORT_COOLDOWN
+				print("current teleport cd is "+ str(selected_piece.current_teleport_cooldown))
+		if selected_piece.piece_type == Globals.PIECE_TYPES.WIZARD and dest_piece != null and dest_piece.color != selected_piece.color and dest_piece.piece_type!= Globals.PIECE_TYPES.WATER and dest_piece.piece_type!= Globals.PIECE_TYPES.MAGMA_HIGH and dest_piece.piece_type!= Globals.PIECE_TYPES.MAGMA_MED and dest_piece.piece_type!= Globals.PIECE_TYPES.MAGMA_LOW and dest_piece.piece_type != Globals.PIECE_TYPES.BRICKS:
+			print("fireball")
+			if selected_piece.current_fireball_cooldown != selected_piece.FIREBALL_COOLDOWN:
+				selected_piece.current_fireball_cooldown = selected_piece.FIREBALL_COOLDOWN
+		#if selected_piece.piece_type == Globals.PIECE_TYPES.WIZARD and selected_piece.current_fireball_cooldown == 0: #and abs(old_pos.y - to_move.y)>0 and old_pos.x == to_move.x:
+			#print("fireballing")
+			#is_shooting = true
+			#selected_piece.position = previous_position	
 			#Wizard.Fireball()
 		if dest_piece != null and dest_piece.color != selected_piece.color:
 			if dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT or dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT2:
@@ -404,7 +413,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 				board.on_capture(dest_piece, selected_piece, board, old_pos)
 				piece_captured = true
 			#selected_piece.move_position(selected_piece.board_position)
-			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER or (selected_piece.piece_type == Globals.PIECE_TYPES.INFECTOR and dest_piece.piece_type != Globals.PIECE_TYPES.WEB):
+			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER or selected_piece.piece_type == Globals.PIECE_TYPES.WIZARD or (selected_piece.piece_type == Globals.PIECE_TYPES.INFECTOR and dest_piece.piece_type != Globals.PIECE_TYPES.WEB):
 				is_shooting = true
 				selected_piece.position = previous_position
 			if selected_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
@@ -670,6 +679,7 @@ func end_turn():
 			piece.current_fireball_cooldown -= 1
 		if piece.current_teleport_cooldown > 0:
 			piece.current_teleport_cooldown -= 1
+			print(piece.current_teleport_cooldown)
 	status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
 	
 	if status == Globals.COLORS.WHITE:

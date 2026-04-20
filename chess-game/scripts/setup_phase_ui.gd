@@ -151,6 +151,7 @@ func _on_mitosis_button_pressed() -> void:
 		SignalBus.emit_signal("spawn_piece", Globals.PIECE_TYPES.MITOSIS_PAWN)
 		
 static func determineAiPieces(color):
+	#var board_type = 
 	var piecesToSpawn = []
 	var pieces = [
 	Globals.PIECE_TYPES.HORSE_ARCHER,

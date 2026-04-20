@@ -241,7 +241,8 @@ func on_capture(dest_piece, selected_piece, board, previous_position):
 			if king == dest_piece:
 				shield_king.erase(king)
 	if dest_piece.piece_type == Globals.PIECE_TYPES.WEB and selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER:
-		selected_piece.stun_counter = 3
+		if dest_piece.piece_type == Globals.PIECE_TYPES.WEB and selected_piece.piece_type != Globals.PIECE_TYPES.WIZARD:
+			selected_piece.stun_counter = 3
 	if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
 		ExplodingBishop.explode_piece(dest_piece, selected_piece, board)
 		delete_piece(selected_piece)
@@ -296,15 +297,18 @@ func wipe_pieces(if_white = true, if_black = true):
 		piece.queue_free()
 		pieces.erase(piece)
 
-func beam_search_threat(own_color, cur_x, cur_y, inc_x, inc_y):
+func beam_search_threat(own_color, cur_x, cur_y, inc_x, inc_y, threat_only=false):
 	# Moves a pointer in a line in given inc_x/y direction
 	# to find the thratened pieces
 	var threat_pos = []
 	var is_duck = false
+	var is_wizard = false
 	
 	var check_piece = get_piece(Vector2(cur_x, cur_y))
 	if check_piece.piece_type == Globals.PIECE_TYPES.DUCK:
 		is_duck = true
+	if check_piece.piece_type == Globals.PIECE_TYPES.WIZARD:
+		is_wizard = true
 	
 	cur_x += inc_x
 	cur_y += inc_y
@@ -320,7 +324,8 @@ func beam_search_threat(own_color, cur_x, cur_y, inc_x, inc_y):
 			elif is_duck and cur_piece.piece_type == Globals.PIECE_TYPES.WEB:
 				threat_pos.append(cur_pos)
 			break
-		threat_pos.append(cur_pos)
+		if !threat_only:
+			threat_pos.append(cur_pos)
 		cur_x += inc_x
 		cur_y += inc_y
 	
