@@ -860,6 +860,10 @@ func on_setup_board_updated() -> void:
 		return
 	
 	if board.num_pieces(status) == Globals.PIECES_PER_SIDE and (!online_game or status == Network.my_color):
+		if player2_type == Globals.PLAYER_2_TYPE.AI and ai_color == Globals.COLORS.WHITE:
+			on_confirm_loadout()
+			return
+		
 		confirm_button.show()
 		if status == LOWER_COLOR:
 			confirm_button.position = Vector2(819, 608)
