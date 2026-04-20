@@ -87,6 +87,7 @@ func _ready():
 	init_game()
 	
 	descriptions.show()
+	loadout_ui.show()
 	setup_complete = false
 	allow_select = true
 	
@@ -319,7 +320,7 @@ func _input(event):
 			if setup_piece_died:
 				ExplodingBishop.spawn_explosion_literal(selected_piece.position + board.global_position)
 				
-				board.delete_piece(selected_piece, true)
+				board.delete_piece(selected_piece, true, true)
 				setup_ui._on_board_refund_piece(selected_piece.piece_type)
 				setup_piece_died = false
 			
@@ -859,8 +860,10 @@ func on_setup_board_updated() -> void:
 	if !real_game or board.is_loadout_board or setup_complete:
 		return
 	
+	print("checking for status: ", status)
+	print("board count: ", board.num_pieces(status))
 	if board.num_pieces(status) == Globals.PIECES_PER_SIDE and (!online_game or status == Network.my_color):
-		if player2_type == Globals.PLAYER_2_TYPE.AI and ai_color == Globals.COLORS.WHITE:
+		if player2_type == Globals.PLAYER_2_TYPE.AI and ai_color == Globals.COLORS.WHITE and status == Globals.COLORS.WHITE:
 			on_confirm_loadout()
 			return
 		
@@ -870,10 +873,12 @@ func on_setup_board_updated() -> void:
 		else:
 			confirm_button.position = Vector2(819, 364)
 		descriptions.hide()
+		loadout_ui.hide()
 	else:
 		confirm_button.hide()
 		if !online_game or status == Network.my_color:
 			descriptions.show()
+			loadout_ui.show()
 
 @rpc("any_peer", "call_local")
 func on_confirm_loadout() -> void:
@@ -914,9 +919,13 @@ func on_confirm_loadout() -> void:
 	else:
 		descriptions.show()
 		descriptions.set_color(status)
+		loadout_ui.show()
 		
 		if board.num_pieces() == Globals.PIECES_PER_SIDE * 2:
 			_on_board_setup_complete()
+		if board.num_pieces() == Globals.PIECES_PER_SIDE and player2_type == Globals.PLAYER_2_TYPE.AI and ai_color == Globals.COLORS.BLACK and status == Globals.COLORS.BLACK:
+			SignalBus.emit_signal("spawn_ai")
+			on_confirm_loadout()
 
 @rpc("any_peer", "reliable")
 func send_pieces_to_opponent(color : Globals.COLORS, save_string : String):

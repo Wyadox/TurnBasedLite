@@ -269,11 +269,14 @@ func on_capture(dest_piece, selected_piece, board, previous_position):
 	
 	delete_piece(dest_piece)
 	
-func delete_piece(piece, force = false):
+func delete_piece(piece, force = false, refund = false):
 	for i in range(len(pieces)):
 		if pieces[i] == piece && (piece_is_protected(piece) == false or force):
 			var popped = pieces.pop_at(i)
 			popped.queue_free()
+			if refund:
+				print("emitting REFUND")
+				SignalBus.piece_refunded.emit()
 			return
 
 #
@@ -466,6 +469,7 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 		
 	
 	create_piece(piece_type, color, selected_pos)
+	print("emitting piece_added")
 	SignalBus.piece_added.emit()
 	
 	# Determine if color needs to swap
@@ -476,7 +480,7 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 	#SignalBus.emit_signal("set_status", color)
 	
 	if total_pieces == Globals.PIECES_PER_SIDE - 1:
-		SignalBus.emit_signal("spawn_ai")
+		#SignalBus.emit_signal("spawn_ai")
 		total_pieces = num_pieces()
 	
 	# Ready to play
@@ -742,6 +746,7 @@ func _on_game_init_ai(color) -> void:
 	var i = 0
 	for it in piecesToSpawn.size() / 2:
 		create_piece(piecesToSpawn[i], color, piecesToSpawn[i + 1] + Vector2(0, 0 if color == Globals.COLORS.BLACK else -5))
+		SignalBus.piece_added.emit()
 		i += 2
 		
 	var colorSet

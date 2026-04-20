@@ -70,7 +70,8 @@ func play_animation(title : String):
 
 func move_position(to_move: Vector2, cancel = false):
 	var old_pos = board_position #For moving Mitosis Pawn
-	moved = true
+	if !cancel:
+		moved = true
 	board_position = to_move
 	position = Vector2(
 		X_OFFSET + board_position[0] * CELL_SIZE,
