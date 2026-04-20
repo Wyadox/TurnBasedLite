@@ -152,6 +152,8 @@ func _ready():
 		if player_color == Globals.COLORS.BLACK:
 			LOWER_COLOR = Globals.COLORS.BLACK
 			UPPER_COLOR = Globals.COLORS.WHITE
+			board.LOWER_COLOR = Globals.COLORS.BLACK
+			board.UPPER_COLOR = Globals.COLORS.WHITE
 			
 			move_clock.global_position.y -= MOVE_CLOCK_OFFSET
 			move_clock_2.global_position.y += MOVE_CLOCK_OFFSET
@@ -711,9 +713,9 @@ func evaluate_end_game():
 func set_win(color):
 	game_over = true
 	if color == Globals.COLORS.WHITE:
-		win_label.text = "BLACK Won"
+		win_label.text = "BLACK WON"
 	elif color == Globals.COLORS.BLACK:
-		win_label.text = "WHITE Won"
+		win_label.text = "WHITE WON"
 	else:
 		win_label.text = "DRAW"
 	win_label.show()
@@ -902,9 +904,9 @@ func on_confirm_loadout() -> void:
 			save_string
 		)
 	
+	previous_status = status
 	status = Globals.COLORS.BLACK
 	setup_ui.status = status
-	previous_status = status
 	board.clear_selection_box()
 	if status == LOWER_COLOR:
 		board.draw_selection_box(Vector2(0.0, 5.0), Vector2(7.0, 7.0), SELECTION_BOX_COLOR)
@@ -922,6 +924,9 @@ func on_confirm_loadout() -> void:
 			descriptions.hide()
 			loadout_ui.hide()
 			setting_indicator.show()
+		
+		if previous_status == Globals.COLORS.BLACK and board.num_pieces() == Globals.PIECES_PER_SIDE * 2:
+			_on_board_setup_complete()
 	else:
 		descriptions.show()
 		descriptions.set_color(status)
@@ -943,6 +948,9 @@ func send_pieces_to_opponent(color : Globals.COLORS, save_string : String):
 	parse_save_string(save_string)
 	status = old_status
 	loadout_ui.clear_selected()
+	
+	if color == Globals.COLORS.BLACK:
+		_on_board_setup_complete()
 
 func _on_board_spawn_ai() -> void:
 	if player2_type == Globals.PLAYER_2_TYPE.AI:
