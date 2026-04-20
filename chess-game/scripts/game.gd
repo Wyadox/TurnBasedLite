@@ -622,6 +622,8 @@ func unique(arr: Array) -> Array:
 		dict[a] = 1
 	return dict.keys()
 
+const MINIMUM_WAIT_TIME : float = 1.0
+const MAXIMUM_WAIT_TIME : float = 3.0
 
 func player2_move():
 	print("player2 reached")
@@ -636,6 +638,10 @@ func player2_move():
 		
 		await get_tree().process_frame
 		await get_tree().process_frame
+		
+		# REVISIT
+		var wait_time = randf_range(MINIMUM_WAIT_TIME, MAXIMUM_WAIT_TIME)
+		await get_tree().create_timer(wait_time).timeout
 		
 		var minimax_result = Ai.start_minimax(board.pieces, true if status == Globals.COLORS.WHITE else false, difficulty_dict)
 		print("RESULT: ", minimax_result)
