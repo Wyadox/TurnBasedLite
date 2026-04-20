@@ -910,6 +910,9 @@ func on_confirm_loadout() -> void:
 	else:
 		descriptions.show()
 		descriptions.set_color(status)
+		
+		if board.num_pieces() == Globals.PIECES_PER_SIDE * 2:
+			_on_board_setup_complete()
 
 @rpc("any_peer", "reliable")
 func send_pieces_to_opponent(color : Globals.COLORS, save_string : String):
