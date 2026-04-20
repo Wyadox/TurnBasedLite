@@ -246,7 +246,7 @@ func on_capture(dest_piece, selected_piece, board, previous_position):
 		ExplodingBishop.explode_piece(dest_piece, selected_piece, board)
 		delete_piece(selected_piece)
 	elif selected_piece.piece_type == Globals.PIECE_TYPES.INFECTOR and dest_piece.piece_type != Globals.PIECE_TYPES.WEB:
-		Infector.InfectPiece(dest_piece)
+		Infector.InfectPiece(dest_piece, selected_piece)
 		return
 	elif dest_piece.piece_type == Globals.PIECE_TYPES.TROJAN_HORSE:
 		TrojanHorse.trojan_spawn(dest_piece, board)
@@ -387,7 +387,7 @@ func spot_search_guardian(
 	#if cur_piece != null and cur_piece.piece_type == Globals.PIECE_TYPES.DUCK:
 		#return null
 	
-	if cur_piece != null:
+	if cur_piece != null && cur_piece.piece_type != Globals.PIECE_TYPES.GUARDIAN_ANGEL:
 		return cur_pos if cur_piece.color == own_color else null
 	
 func spot_search_explode( 

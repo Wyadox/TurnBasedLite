@@ -23,6 +23,7 @@ const Y_OFFSET = 60
 @export var cool_counter: int;
 
 @export var starting_rank : float
+@export var exploded: bool
 
 # Juggernaut variables
 const MAX_HEALTH : int = 3
@@ -43,6 +44,7 @@ func init_piece(
 	stun_counter = 0
 	infect_counter = 0
 	starting_rank = board_pos.y
+	exploded = false
 	
 	# Juggernaut
 	current_health = MAX_HEALTH
@@ -110,7 +112,7 @@ func clone (_board):
 	copy.moved = moved
 	copy.current_health = current_health
 	copy.starting_rank = starting_rank
-	
+	copy.exploded = exploded
 	return copy
 	
 func get_moveable_positions():
@@ -495,7 +497,7 @@ func get_stun_positions():
 	
 
 # Trojan Horse Spawn Search
-const TROJAN_SPAWN_INCREMENT = [[1, 0], [-1, 0]]
+const TROJAN_SPAWN_INCREMENT = [[1, 0], [-1, 0], [0, 1], [0, -1]]
 func get_trojan_spawn_positions():
 	var positions = []
 	for inc in TROJAN_SPAWN_INCREMENT:
@@ -535,7 +537,8 @@ func explode_spawn_positions():
 			positions.append(pos)
 	return positions
 	
-const SHIELD_KING_PROTECT_INCREMENTS = [[1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1]]
+#const SHIELD_KING_PROTECT_INCREMENTS = [[1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1]]
+const SHIELD_KING_PROTECT_INCREMENTS = [[1, 0], [0, -1], [-1, 0], [0, 1]]
 func shield_king_protect_positions():
 	var positions = []
 	for inc in SHIELD_KING_PROTECT_INCREMENTS:
