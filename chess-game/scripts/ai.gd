@@ -316,7 +316,7 @@ func get_move_list(piece : Piece, slice_num : int, previous_best):
 	return moves
 
 #
-# HERE if you add piece attributes
+# HERE if you add piece attributes WIZARD SUMO ROOK
 #
 func snapshot_board(pieces : Array):
 	var snap = []

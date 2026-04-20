@@ -469,7 +469,7 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 		
 	
 	create_piece(piece_type, color, selected_pos)
-	print("emitting piece_added")
+	print("emitting piece_added at ", selected_pos)
 	SignalBus.piece_added.emit()
 	
 	# Determine if color needs to swap
@@ -497,7 +497,7 @@ func find_viable_square(color : Globals.COLORS) -> Vector2:
 	var flag : bool = true
 	var flag_flip_count : int = 0
 	var bound : Vector2
-	if color == UPPER_COLOR:
+	if color == UPPER_COLOR or is_loadout_board:
 		bound = Vector2(0, 2)
 	else:
 		bound = Vector2(5, 7)
