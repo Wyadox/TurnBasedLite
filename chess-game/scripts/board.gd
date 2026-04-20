@@ -466,22 +466,23 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 		
 	
 	create_piece(piece_type, color, selected_pos)
+	SignalBus.piece_added.emit()
 	
 	# Determine if color needs to swap
-	if total_pieces + 1 < Globals.PIECES_PER_SIDE or total_pieces > (Globals.PIECES_PER_SIDE - 1) * 2:
-		color = Globals.COLORS.WHITE
-	elif !is_loadout_board:
-		color = Globals.COLORS.BLACK
-	SignalBus.emit_signal("set_status", color)
+	#if total_pieces + 1 < Globals.PIECES_PER_SIDE or total_pieces > (Globals.PIECES_PER_SIDE - 1) * 2:
+		#color = Globals.COLORS.WHITE
+	#elif !is_loadout_board:
+		#color = Globals.COLORS.BLACK
+	#SignalBus.emit_signal("set_status", color)
 	
 	if total_pieces == Globals.PIECES_PER_SIDE - 1:
 		SignalBus.emit_signal("spawn_ai")
 		total_pieces = num_pieces()
 	
 	# Ready to play
-	if total_pieces > (Globals.PIECES_PER_SIDE - 1) * 2:
-		setup_done = true
-		SignalBus.emit_signal("setup_complete")
+	#if total_pieces > (Globals.PIECES_PER_SIDE - 1) * 2:
+		#setup_done = true
+		#SignalBus.emit_signal("setup_complete")
 		
 	# Reset border visual and selected pos
 	if border_shape and border_shape.is_inside_tree():
@@ -716,12 +717,22 @@ func piece_is_protected(piece):
 
 
 	
-func num_pieces():
-	var count : int = 0
+func num_pieces(color = Globals.COLORS.TILE):
+	var white_count : int = 0
+	var black_count : int = 0
 	for piece in pieces:
-		if piece.color != Globals.COLORS.TILE:
-			count += 1
-	return count
+		if piece.color == Globals.COLORS.WHITE:
+			white_count += 1
+		if piece.color == Globals.COLORS.BLACK:
+			black_count += 1
+	
+	if color == Globals.COLORS.WHITE:
+		print("white ", white_count)
+		return white_count
+	elif color == Globals.COLORS.BLACK:
+		return black_count
+	else:
+		return white_count + black_count
 
 
 func _on_game_init_ai(color) -> void:

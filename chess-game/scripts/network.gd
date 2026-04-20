@@ -33,12 +33,12 @@ func assign_colors():
 		for peer in multiplayer.get_peers():
 			opponent_id = peer
 		var opponent_color = Globals.COLORS.BLACK if host_color == Globals.COLORS.WHITE else Globals.COLORS.WHITE
-		set_client_color.rpc_id(opponent_id, opponent_color)
+		set_client_color.rpc_id(opponent_id, opponent_color, multiplayer.get_unique_id())
 
 @rpc("authority", "reliable")
-func set_client_color(color : Globals.COLORS):
+func set_client_color(color : Globals.COLORS, host_peer_id : int):
 	my_color = color
-	multiplayer.get_unique_id()
+	opponent_id = host_peer_id
 
 func host_game():
 	var peer = ENetMultiplayerPeer.new()

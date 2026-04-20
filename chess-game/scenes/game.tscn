@@ -266,3 +266,13 @@ offset_bottom = 684.0
 button_text = "RESIGN"
 instant = true
 button_size = Vector2(110, 64)
+
+[node name="Confirm_Button" parent="." instance=ExtResource("15_ca42v")]
+z_index = 2
+custom_minimum_size = Vector2(250, 64)
+offset_left = 819.0
+offset_top = 364.0
+offset_right = 1069.0
+offset_bottom = 428.0
+button_text = "CONFIRM LOADOUT"
+button_size = Vector2(250, 64)

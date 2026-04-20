@@ -49,6 +49,8 @@ var failed_to_move : bool = false
 @onready var setting_indicator: LoadingIndicator = $setting_indicator
 @onready var thinking_indicator: LoadingIndicator = $thinking_indicator
 
+@onready var confirm_button: DynamicButton = $Confirm_Button
+
 const MOVE_CLOCK_OFFSET : float = 300.0
 
 
@@ -98,9 +100,16 @@ func _ready():
 	SignalBus.show_notification.connect(show_notification)
 	SignalBus.move_clock_expired.connect(process_expired_clock)
 	
+	SignalBus.piece_added.connect(on_setup_board_updated)
+	SignalBus.piece_refunded.connect(on_setup_board_updated)
+	
 	main_menu_button.button_triggered.connect(_on_button_pressed)
 	upper_resign_button.button_triggered.connect(on_resign)
 	lower_resign_button.button_triggered.connect(on_resign)
+	if online_game:
+		confirm_button.button_triggered.connect(on_confirm_loadout.rpc)
+	else:
+		confirm_button.button_triggered.connect(on_confirm_loadout)
 	
 	lower_resign_button.hide()
 	upper_resign_button.hide()
@@ -112,8 +121,9 @@ func _ready():
 	
 	board_vector = Vector2(board.BOARD_WIDTH - 1, board.BOARD_HEIGHT - 1)
 	
-	setting_indicator.show()
 	thinking_indicator.hide()
+	confirm_button.hide()
+	setting_indicator.hide()
 	
 	if ai_color == Globals.COLORS.WHITE:
 		LOWER_COLOR = Globals.COLORS.BLACK
@@ -150,6 +160,7 @@ func _ready():
 			
 			descriptions.hide()
 			loadout_ui.hide()
+			setting_indicator.show()
 		else:
 			move_clock.global_position.y += MOVE_CLOCK_OFFSET
 			move_clock_2.global_position.y -= MOVE_CLOCK_OFFSET
@@ -200,13 +211,16 @@ func loadout_button_pressed(loadout):
 
 @rpc("any_peer", "reliable")
 func network_process_save_string(save_string, color):
-	if color != Network.my_color:
+	Network.network_print("network_process_save_string received: color=%s my_color=%s string=%s" % [color, Network.my_color, save_string])
+	if color == Network.my_color:
+		Network.network_print("Skipping - this is my own pieces")
 		return
 		
-	#var previous_status = status
+	#var old_status = status
 	#status = color
+	#Network.network_print("Parsing with status=%s" % status)
 	parse_save_string(save_string)
-	#status = previous_status
+	#status = old_status
 	
 	$loadoutSlots.clear_selected()
 
@@ -261,7 +275,7 @@ func _input(event):
 			if selected_piece.color != status or selected_piece.stun_counter != 0 or (player2_type == Globals.PLAYER_2_TYPE.NETWORK and status != Network.my_color):
 				return
 			
-		if !setup_complete:
+		if !setup_complete or !selected_piece:
 			return
 			
 		is_dragging = true
@@ -305,8 +319,8 @@ func _input(event):
 			if setup_piece_died:
 				ExplodingBishop.spawn_explosion_literal(selected_piece.position + board.global_position)
 				
-				setup_ui._on_board_refund_piece(selected_piece.piece_type)
 				board.delete_piece(selected_piece, true)
+				setup_ui._on_board_refund_piece(selected_piece.piece_type)
 				setup_piece_died = false
 			
 			if !is_valid_move:
@@ -815,33 +829,98 @@ func _on_board_setup_complete() -> void:
 var previous_status : Globals.COLORS = Globals.COLORS.WHITE
 
 func network_pass_board_pieces(color):
-	if online_game and status != previous_status:
-		var save_string = ""
-		
-		for piece in board.pieces:
-			if piece.color == color:
-				save_string += str(piece.piece_type) + ":" + str(piece.board_position + Vector2(-1,0)) + "_"
-		
-		network_process_save_string.rpc(save_string, status)
-		print("calling network process")
-		
-		if Network.my_color == status and !setup_complete:
-			descriptions.show()
-			loadout_ui.show()
-		else:
-			descriptions.hide()
-			loadout_ui.hide()
+	if !online_game:
+		return
+	
+	var save_string = ""
+	
+	for piece in board.pieces:
+		if piece.color == color:
+			save_string += str(piece.piece_type) + ":" + str(piece.board_position + Vector2(-1,0)) + "_"
+	
+	Network.network_print("network_pass_board_pieces: color=%s string=%s" % [color, save_string])
+	network_process_save_string.rpc(save_string, color)
+	print("calling network process")
+	
+	if Network.my_color == status and !setup_complete:
+		descriptions.show()
+		loadout_ui.show()
+		setting_indicator.hide()
+	else:
+		descriptions.hide()
+		loadout_ui.hide()
+		setting_indicator.show()
 
 func _on_board_set_status(color: Variant) -> void:
-	status = color
-	network_pass_board_pieces(previous_status)
+	print("attempted to set to: ", color)
+	pass
+
+func on_setup_board_updated() -> void:
+	if !real_game or board.is_loadout_board or setup_complete:
+		return
+	
+	if board.num_pieces(status) == Globals.PIECES_PER_SIDE and (!online_game or status == Network.my_color):
+		confirm_button.show()
+		if status == LOWER_COLOR:
+			confirm_button.position = Vector2(819, 608)
+		else:
+			confirm_button.position = Vector2(819, 364)
+		descriptions.hide()
+	else:
+		confirm_button.hide()
+		if !online_game or status == Network.my_color:
+			descriptions.show()
+
+@rpc("any_peer", "call_local")
+func on_confirm_loadout() -> void:
+	if online_game and status == Network.my_color:
+		var save_string = ""
+	
+		for piece in board.pieces:
+			if piece.color == status:
+				save_string += str(piece.piece_type) + ":" + str(piece.board_position + Vector2(-1,0)) + "_"
+		
+		var confirming_color = status
+		send_pieces_to_opponent.rpc_id(
+			Network.opponent_id,
+			confirming_color,
+			save_string
+		)
+	
+	status = Globals.COLORS.BLACK
+	setup_ui.status = status
 	previous_status = status
-	descriptions.set_color(color)
 	board.clear_selection_box()
 	if status == LOWER_COLOR:
 		board.draw_selection_box(Vector2(0.0, 5.0), Vector2(7.0, 7.0), SELECTION_BOX_COLOR)
 	else:
 		board.draw_selection_box(Vector2(0.0, 0.0), Vector2(7.0, 2.0), SELECTION_BOX_COLOR)
+	
+	confirm_button.hide()
+	if online_game:
+		if Network.my_color == Globals.COLORS.BLACK:
+			descriptions.show()
+			descriptions.set_color(Globals.COLORS.BLACK)
+			loadout_ui.show()
+			setting_indicator.hide()
+		else:
+			descriptions.hide()
+			loadout_ui.hide()
+			setting_indicator.show()
+	else:
+		descriptions.show()
+		descriptions.set_color(status)
+
+@rpc("any_peer", "reliable")
+func send_pieces_to_opponent(color : Globals.COLORS, save_string : String):
+	Network.network_print("received pieces for color %s: %s" % [color, save_string])
+	
+	var old_status = status
+	status = color
+	Network.network_print("Parsing with status=%s" % status)
+	parse_save_string(save_string)
+	status = old_status
+	loadout_ui.clear_selected()
 
 func _on_board_spawn_ai() -> void:
 	if player2_type == Globals.PLAYER_2_TYPE.AI:

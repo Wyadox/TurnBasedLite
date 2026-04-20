@@ -109,6 +109,7 @@ func _on_board_refund_piece(piece_type: Variant) -> void:
 			black_dict.erase(piece_type)
 			black_base_dict[piece_base] -= 1
 		print("Piece REFUNDED")
+		SignalBus.piece_refunded.emit()
 	else:
 		print("Piece NOT refunded")
 	
