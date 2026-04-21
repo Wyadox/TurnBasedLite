@@ -67,6 +67,7 @@ custom_minimum_size = Vector2(150, 64)
 layout_mode = 2
 button_text = "HUMAN"
 instant = true
+stay_down_on_select = true
 button_size = Vector2(150, 64)
 
 [node name="Computer_Button" parent="chess_background/VBoxContainer/HBoxContainer2" instance=ExtResource("5_gcmtx")]
@@ -74,6 +75,7 @@ custom_minimum_size = Vector2(150, 64)
 layout_mode = 2
 button_text = "COMPUTER"
 instant = true
+stay_down_on_select = true
 button_size = Vector2(150, 64)
 
 [node name="difficulty_map_options_menu" parent="chess_background/VBoxContainer" instance=ExtResource("3_k83ln")]
@@ -87,6 +89,7 @@ alignment = 1
 custom_minimum_size = Vector2(300, 64)
 layout_mode = 2
 button_text = "CONTINUE"
+stay_down_on_select = false
 button_size = Vector2(300, 64)
 
 [node name="notification" parent="." instance=ExtResource("3_inqc7")]
@@ -113,6 +116,7 @@ offset_right = -245.0
 offset_bottom = 164.0
 grow_horizontal = 0
 button_text = "RETURN"
+stay_down_on_select = false
 button_size = Vector2(175, 64)
 
 [node name="Tooltip" parent="." instance=ExtResource("3_jiuty")]

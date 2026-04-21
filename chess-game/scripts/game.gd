@@ -46,7 +46,7 @@ var failed_to_move : bool = false
 @onready var upper_resign_button: DynamicButton = $Upper_Resign_Button
 @onready var lower_resign_button: DynamicButton = $Lower_Resign_Button
 
-@onready var setting_indicator: LoadingIndicator = $setting_indicator
+@onready var setting_indicator: Control = $setting_control
 @onready var thinking_indicator: LoadingIndicator = $thinking_indicator
 
 @onready var confirm_button: DynamicButton = $Confirm_Button

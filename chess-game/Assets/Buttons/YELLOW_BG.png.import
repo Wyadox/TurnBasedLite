@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c0j7ln5th26il"
-path="res://.godot/imported/Easy_Button.png-5018298b7b5e0d514cadd28316651a43.ctex"
+uid="uid://4g18m48bgvun"
+path="res://.godot/imported/YELLOW_BG.png-e4c5874400f71d2fe0ecc894ebf95092.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Buttons/Easy_Button.png"
-dest_files=["res://.godot/imported/Easy_Button.png-5018298b7b5e0d514cadd28316651a43.ctex"]
+source_file="res://Assets/Buttons/YELLOW_BG.png"
+dest_files=["res://.godot/imported/YELLOW_BG.png-e4c5874400f71d2fe0ecc894ebf95092.ctex"]
 
 [params]
 

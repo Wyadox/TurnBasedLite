@@ -136,6 +136,7 @@ offset_bottom = -22.0
 grow_horizontal = 2
 grow_vertical = 0
 button_text = "JOIN MATCH"
+stay_down_on_select = false
 button_size = Vector2(200, 64)
 
 [node name="TitleLabel" type="Label" parent="HBoxContainer/chess_background"]

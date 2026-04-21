@@ -127,12 +127,16 @@ alignment = 1
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 button_text = ""
+instant = true
+stay_down_on_select = true
 button_size = Vector2(100, 100)
 
 [node name="Black_Button" parent="HBoxContainer" instance=ExtResource("4_gjgub")]
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 button_text = ""
+instant = true
+stay_down_on_select = true
 button_size = Vector2(100, 100)
 
 [node name="Label" type="Label" parent="."]

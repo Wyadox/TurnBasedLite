@@ -63,17 +63,32 @@ layout_mode = 2
 theme_override_constants/separation = 20
 alignment = 1
 
-[node name="White_Button" type="TextureButton" parent="chess_background/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="White_Button" parent="chess_background/MarginContainer/VBoxContainer/HBoxContainer" instance=ExtResource("7_57agf")]
+custom_minimum_size = Vector2(96, 96)
 layout_mode = 2
-texture_normal = ExtResource("1_3cotv")
+button_text = ""
+instant = true
+image = ExtResource("1_3cotv")
+stay_down_on_select = true
+button_size = Vector2(96, 96)
 
-[node name="Half_Button" type="TextureButton" parent="chess_background/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="Half_Button" parent="chess_background/MarginContainer/VBoxContainer/HBoxContainer" instance=ExtResource("7_57agf")]
+custom_minimum_size = Vector2(96, 96)
 layout_mode = 2
-texture_normal = ExtResource("2_po1oe")
+button_text = ""
+instant = true
+image = ExtResource("2_po1oe")
+stay_down_on_select = true
+button_size = Vector2(96, 96)
 
-[node name="Black_Button" type="TextureButton" parent="chess_background/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="Black_Button" parent="chess_background/MarginContainer/VBoxContainer/HBoxContainer" instance=ExtResource("7_57agf")]
+custom_minimum_size = Vector2(96, 96)
 layout_mode = 2
-texture_normal = ExtResource("3_kkxp5")
+button_text = ""
+instant = true
+image = ExtResource("3_kkxp5")
+stay_down_on_select = true
+button_size = Vector2(96, 96)
 
 [node name="difficulty_map_options_menu" parent="chess_background/MarginContainer/VBoxContainer" instance=ExtResource("4_57agf")]
 layout_mode = 2
@@ -86,8 +101,5 @@ alignment = 1
 custom_minimum_size = Vector2(300, 64)
 layout_mode = 2
 button_text = "HOST MATCH"
+stay_down_on_select = false
 button_size = Vector2(300, 64)
-
-[connection signal="pressed" from="chess_background/MarginContainer/VBoxContainer/HBoxContainer/White_Button" to="." method="_on_white_button_pressed"]
-[connection signal="pressed" from="chess_background/MarginContainer/VBoxContainer/HBoxContainer/Half_Button" to="." method="_on_half_button_pressed"]
-[connection signal="pressed" from="chess_background/MarginContainer/VBoxContainer/HBoxContainer/Black_Button" to="." method="_on_black_button_pressed"]

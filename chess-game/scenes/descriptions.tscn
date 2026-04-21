@@ -37,17 +37,20 @@ size_flags_vertical = 4
 layout_mode = 2
 button_text = "<"
 instant = true
+stay_down_on_select = false
 
 [node name="Next_Button" parent="chess_background/HBoxContainer" instance=ExtResource("2_i3205")]
 layout_mode = 2
 button_text = ">"
 instant = true
+stay_down_on_select = false
 
 [node name="Create_Button" parent="chess_background/HBoxContainer" instance=ExtResource("2_i3205")]
 custom_minimum_size = Vector2(110, 64)
 layout_mode = 2
 button_text = "SPAWN"
 instant = true
+stay_down_on_select = false
 button_size = Vector2(110, 64)
 
 [node name="image_preview" type="TextureRect" parent="chess_background"]

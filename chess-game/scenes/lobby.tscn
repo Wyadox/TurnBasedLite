@@ -43,6 +43,7 @@ offset_right = -245.0
 offset_bottom = 164.0
 grow_horizontal = 0
 button_text = "RETURN"
+stay_down_on_select = false
 button_size = Vector2(175, 64)
 
 [node name="Status" type="Label" parent="."]
@@ -143,12 +144,14 @@ alignment = 1
 custom_minimum_size = Vector2(175, 64)
 layout_mode = 2
 button_text = "HOST MATCH"
+stay_down_on_select = false
 button_size = Vector2(175, 64)
 
 [node name="Find_Button" parent="HBoxContainer4" instance=ExtResource("2_nqcc7")]
 custom_minimum_size = Vector2(175, 64)
 layout_mode = 2
 button_text = "FIND MATCH"
+stay_down_on_select = false
 button_size = Vector2(175, 64)
 
 [node name="Start_Button" parent="." instance=ExtResource("2_nqcc7")]
@@ -166,6 +169,7 @@ offset_bottom = 127.0
 grow_horizontal = 2
 grow_vertical = 2
 button_text = "START MATCH"
+stay_down_on_select = false
 button_size = Vector2(175, 64)
 
 [node name="search_indicator" parent="." instance=ExtResource("8_ncsg4")]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://bxdepwhprt4pp"]
+[gd_scene load_steps=20 format=3 uid="uid://bxdepwhprt4pp"]
 
 [ext_resource type="Script" uid="uid://bj20fx8i5xny6" path="res://scripts/game.gd" id="1_yqjtg"]
 [ext_resource type="Texture2D" uid="uid://bi27j240t7d1r" path="res://Assets/ChessBoard/ChessBoard.png" id="2_kvpfn"]
@@ -17,6 +17,7 @@
 [ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="15_rysoc"]
 [ext_resource type="PackedScene" uid="uid://b40kfc55gm8m3" path="res://scenes/move_clock.tscn" id="16_ca42v"]
 [ext_resource type="PackedScene" uid="uid://cnt8uu7kya2m3" path="res://scenes/loading_indicator.tscn" id="17_rysoc"]
+[ext_resource type="PackedScene" uid="uid://bm18o0kocsj51" path="res://scenes/chess_background.tscn" id="17_ssvqc"]
 
 [sub_resource type="FontVariation" id="FontVariation_ssvqc"]
 base_font = ExtResource("15_rysoc")
@@ -224,20 +225,39 @@ offset_bottom = 534.0
 grow_horizontal = 2
 grow_vertical = 2
 button_text = "Main Menu"
+stay_down_on_select = false
 button_size = Vector2(175, 64)
 
-[node name="setting_indicator" parent="." instance=ExtResource("17_rysoc")]
+[node name="setting_control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 944.0
+offset_top = 518.0
+offset_right = 984.0
+offset_bottom = 558.0
+mouse_filter = 2
+
+[node name="chess_background" parent="setting_control" instance=ExtResource("17_ssvqc")]
+layout_mode = 0
+offset_left = -277.0
+offset_top = -126.0
+offset_right = 295.0
+offset_bottom = 113.0
+
+[node name="setting_indicator" parent="setting_control" instance=ExtResource("17_rysoc")]
+layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 944.0
-offset_top = 518.0
-offset_right = 944.0
-offset_bottom = 518.0
+offset_left = -20.0
+offset_top = -20.0
+offset_right = -20.0
+offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 display_text = "Setting up..."
 
 [node name="thinking_indicator" parent="." instance=ExtResource("17_rysoc")]
@@ -245,6 +265,7 @@ offset_left = 172.0
 offset_top = 160.0
 offset_right = 268.0
 offset_bottom = 256.0
+mouse_filter = 2
 display_text = "Thinking..."
 
 [node name="Upper_Resign_Button" parent="." instance=ExtResource("15_ca42v")]
@@ -255,6 +276,7 @@ offset_right = 1682.0
 offset_bottom = 374.0
 button_text = "RESIGN"
 instant = true
+stay_down_on_select = false
 button_size = Vector2(110, 64)
 
 [node name="Lower_Resign_Button" parent="." instance=ExtResource("15_ca42v")]
@@ -265,6 +287,7 @@ offset_right = 1682.0
 offset_bottom = 684.0
 button_text = "RESIGN"
 instant = true
+stay_down_on_select = false
 button_size = Vector2(110, 64)
 
 [node name="Confirm_Button" parent="." instance=ExtResource("15_ca42v")]
@@ -275,4 +298,5 @@ offset_top = 364.0
 offset_right = 1069.0
 offset_bottom = 428.0
 button_text = "CONFIRM LOADOUT"
+stay_down_on_select = false
 button_size = Vector2(250, 64)
