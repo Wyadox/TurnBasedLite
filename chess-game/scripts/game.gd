@@ -819,6 +819,7 @@ func _on_board_setup_complete() -> void:
 	status = Globals.COLORS.WHITE
 	init_pieces()
 	board.update_indicators()
+	board.clear_selection_box()
 	turn_indicator.texture = get_turn_indicator_tex(status)
 	turn_indicator.show()
 	update_eval()
@@ -908,10 +909,11 @@ func on_confirm_loadout() -> void:
 	status = Globals.COLORS.BLACK
 	setup_ui.status = status
 	board.clear_selection_box()
-	if status == LOWER_COLOR:
-		board.draw_selection_box(Vector2(0.0, 5.0), Vector2(7.0, 7.0), SELECTION_BOX_COLOR)
-	else:
-		board.draw_selection_box(Vector2(0.0, 0.0), Vector2(7.0, 2.0), SELECTION_BOX_COLOR)
+	if player2_type != Globals.PLAYER_2_TYPE.AI:
+		if status == LOWER_COLOR:
+			board.draw_selection_box(Vector2(0.0, 5.0), Vector2(7.0, 7.0), SELECTION_BOX_COLOR)
+		else:
+			board.draw_selection_box(Vector2(0.0, 0.0), Vector2(7.0, 2.0), SELECTION_BOX_COLOR)
 	
 	confirm_button.hide()
 	if online_game:

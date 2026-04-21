@@ -53,6 +53,8 @@ func _ready() -> void:
 	label.text = button_text
 
 func _process(_delta: float) -> void:
+	if !texture_rect:
+		return
 	texture_rect.position = label.position
 	texture_rect.position += button_size / 2 - texture_rect.size / 2
 

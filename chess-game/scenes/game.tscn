@@ -177,12 +177,13 @@ duration = 1.0
 
 [node name="Control" type="Control" parent="."]
 z_index = 200
+custom_minimum_size = Vector2(1980, 1080)
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 0
+offset_left = -35.0
+offset_top = -22.0
+offset_right = 1945.0
+offset_bottom = 1058.0
 
 [node name="ColorRect" type="ColorRect" parent="Control"]
 layout_mode = 0
@@ -192,6 +193,21 @@ offset_bottom = 980.0
 scale = Vector2(1.7687603, 1.7687603)
 color = Color(0.4862745, 0.4862745, 0.4862745, 0.5882353)
 
+[node name="chess_background" parent="Control" instance=ExtResource("17_ssvqc")]
+custom_minimum_size = Vector2(500, 200)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
+grow_horizontal = 2
+grow_vertical = 2
+
 [node name="Win Label" type="Label" parent="Control"]
 layout_mode = 1
 anchors_preset = 8
@@ -199,10 +215,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 635.0
-offset_top = 371.0
-offset_right = 1248.0
-offset_bottom = 477.0
+offset_left = -306.5
+offset_top = -90.0
+offset_right = 306.5
+offset_bottom = 18.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_fonts/font = SubResource("FontVariation_ssvqc")
@@ -218,10 +234,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 851.0
-offset_top = 470.0
-offset_right = 1026.0
-offset_bottom = 534.0
+offset_left = -87.5
+offset_top = 9.0
+offset_right = 87.5
+offset_bottom = 73.0
 grow_horizontal = 2
 grow_vertical = 2
 button_text = "Main Menu"

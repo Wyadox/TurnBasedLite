@@ -67,8 +67,8 @@ alignment = 1
 custom_minimum_size = Vector2(96, 96)
 layout_mode = 2
 button_text = ""
-instant = true
 image = ExtResource("1_3cotv")
+instant = true
 stay_down_on_select = true
 button_size = Vector2(96, 96)
 
@@ -76,8 +76,8 @@ button_size = Vector2(96, 96)
 custom_minimum_size = Vector2(96, 96)
 layout_mode = 2
 button_text = ""
-instant = true
 image = ExtResource("2_po1oe")
+instant = true
 stay_down_on_select = true
 button_size = Vector2(96, 96)
 
@@ -85,8 +85,8 @@ button_size = Vector2(96, 96)
 custom_minimum_size = Vector2(96, 96)
 layout_mode = 2
 button_text = ""
-instant = true
 image = ExtResource("3_kkxp5")
+instant = true
 stay_down_on_select = true
 button_size = Vector2(96, 96)
 
