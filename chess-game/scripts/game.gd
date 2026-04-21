@@ -1146,6 +1146,11 @@ func toggle_resign_buttons():
 	else:
 		lower_resign_button.hide()
 		upper_resign_button.show()
+	
+	if player2_type == Globals.PLAYER_2_TYPE.AI:
+		if status == ai_color:
+			lower_resign_button.hide()
+			upper_resign_button.hide()
 
 func flip_color(color : Globals.COLORS):
 	if color == Globals.COLORS.WHITE:
