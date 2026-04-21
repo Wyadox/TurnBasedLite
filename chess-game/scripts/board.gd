@@ -201,7 +201,7 @@ const LABEL_Y_NUMBER_OFFSET = 0
 const LABEL_X_NUMBER_OFFSET = 15
 
 func draw_letter(cell_position, x, y) -> void:
-	if y != BOARD_HEIGHT - 1 and x != BOARD_WIDTH - 1:
+	if (y != BOARD_HEIGHT - 1 and x != BOARD_WIDTH - 1) or is_loadout_board:
 		return
 	
 	var label = Label.new()
