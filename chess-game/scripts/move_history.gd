@@ -49,4 +49,6 @@ func grab_region(piece_type):
 	return atlas
 	
 func get_label():
-	return str(start_pos + Vector2(1,1), " : ", end_pos + Vector2(1,1))
+	var start_vector = Globals.get_letters_for_history(start_pos)
+	var end_vector = Globals.get_letters_for_history(end_pos)
+	return str("(", start_vector[0] as String, ",", start_vector[1] as int, ") : (", end_vector[0] as String, ",", end_vector[1] as int, ")")

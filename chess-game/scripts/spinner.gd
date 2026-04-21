@@ -17,8 +17,8 @@ const TEXTURE = preload("res://Assets/Spinner/Spinner.png")
 const WHEEL_SOUND = preload("res://Assets/Sounds/freesound_community-wheel-spin-click-slow-down-101152.mp3")
 
 const SPRITE_SIZE : int = 32
-const SPIN_MINIMUM : int = 3
-const SPIN_MAXIMUM : int = 6
+const SPIN_MINIMUM : int = 1
+const SPIN_MAXIMUM : int = 4
 const SPIN_INCREMENT : int = 150
 const MAX_SPIN_SPEED : int = 500
 

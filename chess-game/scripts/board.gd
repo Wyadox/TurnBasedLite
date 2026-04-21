@@ -61,6 +61,7 @@ func _ready() -> void:
 	SignalBus.change_map.connect(_on_set_board_type)
 
 func draw_board():
+	clear_labels()
 	if !is_loadout_board:
 		for x in range(BOARD_WIDTH):
 			for y in range(BOARD_HEIGHT):
@@ -71,7 +72,6 @@ func draw_board():
 				draw_cell(x, y)
 				
 func _on_set_board_type(current_map):
-	
 	if current_map == 1:
 		selected_board = BOARD_TYPE.STANDARD
 		draw_board()
@@ -186,12 +186,69 @@ func draw_cell(x, y):
 	elif selected_board == BOARD_TYPE.WALL:
 		rect.color = Color(0.955, 0.761, 0.361, 1.0) if (x + y) % 2 == 0 else Color(0.295, 0.217, 0.139, 1.0)
 	rect.size = Vector2(CELL_SIZE, CELL_SIZE)
-	rect.position = Vector2(
+	var cell_position = Vector2(
 		x * CELL_SIZE,
 		y * CELL_SIZE
 	)
+	rect.position = cell_position
+	draw_letter(cell_position, x, y)
 	rect.z_index = -100
 	add_child(rect)
+
+const LABEL_Y_LETTER_OFFSET = 30
+const LABEL_X_LETTER_OFFSET = 8
+const LABEL_Y_NUMBER_OFFSET = 0
+const LABEL_X_NUMBER_OFFSET = 15
+
+func draw_letter(cell_position, x, y) -> void:
+	if y != BOARD_HEIGHT - 1 and x != BOARD_WIDTH - 1:
+		return
+	
+	var label = Label.new()
+	label.text = get_letter(x, y)
+	if Globals.LETTERS.has(label.text):
+		label.position = cell_position + Vector2(LABEL_X_LETTER_OFFSET, CELL_SIZE - LABEL_Y_LETTER_OFFSET)
+	else:
+		label.position = cell_position + Vector2(CELL_SIZE - LABEL_X_NUMBER_OFFSET, LABEL_Y_NUMBER_OFFSET)
+	
+	var font = preload("res://Assets/Buttons/Jersey10-Regular.ttf")
+	if (x == BOARD_WIDTH - 1 and y == BOARD_HEIGHT - 1) or (x == 0 and y == 0):
+		var extra_label = Label.new()
+		if LOWER_COLOR == Globals.COLORS.BLACK:
+			extra_label.text = str(BOARD_HEIGHT)
+		else:
+			extra_label.text = "1"
+		extra_label.position = cell_position + Vector2(CELL_SIZE - LABEL_X_NUMBER_OFFSET, LABEL_Y_NUMBER_OFFSET)
+		extra_label.add_theme_font_override("font", font)
+		extra_label.add_theme_font_size_override("font_size", 20)
+		extra_label.z_index = 1000
+		add_child(extra_label)
+	
+	add_child(label)
+	print("label added")
+	
+	label.add_theme_font_override("font", font)
+	label.add_theme_font_size_override("font_size", 20)
+	label.z_index = 1000
+
+func get_letter(x, y) -> String:
+	if LOWER_COLOR == Globals.COLORS.WHITE:
+		if y == BOARD_HEIGHT - 1:
+			return Globals.LETTERS[x]
+		if x == BOARD_WIDTH - 1:
+			return str(abs(y - BOARD_HEIGHT))
+	else:
+		if y == BOARD_HEIGHT - 1:
+			return Globals.LETTERS[abs(x - BOARD_WIDTH + 1)]
+		if x == BOARD_WIDTH - 1:
+			return str(y + 1)
+	print("returning nothing")
+	return ""
+
+func clear_labels() -> void:
+	for child in get_children():
+		if child is Label:
+			child.queue_free()
 
 func draw_bridge(texture, x, y):
 	var rect = TextureRect.new()
