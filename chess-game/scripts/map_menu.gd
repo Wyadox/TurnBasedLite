@@ -4,6 +4,8 @@ extends Control
 @onready var map_3_button: TextureButton = $VBoxContainer/HBoxContainer2/Map3_Button
 @onready var map_4_button: TextureButton = $VBoxContainer/HBoxContainer2/Map4_Button
 
+
+
 var current_map : int
 var player2_type : Globals.PLAYER_2_TYPE
 

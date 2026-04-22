@@ -419,13 +419,15 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 				piece_captured = true
 			#selected_piece.move_position(selected_piece.board_position)
 			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER or selected_piece.piece_type == Globals.PIECE_TYPES.WIZARD or (selected_piece.piece_type == Globals.PIECE_TYPES.INFECTOR and dest_piece.piece_type != Globals.PIECE_TYPES.WEB):
-				is_shooting = true
-				selected_piece.position = previous_position
+				#if not is_throwing:
+					is_shooting = true
+					selected_piece.position = previous_position
 			if selected_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
 				if dest_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP and dest_piece.piece_type != Globals.PIECE_TYPES.JOUST_BISHOP:
 					is_jousting = true
 		if is_shooting == true or juggernaut_hit == true:
-			current_square = dest_piece.board_position
+			#if not is_throwing:
+				current_square = dest_piece.board_position
 		if is_shooting == false and juggernaut_hit == false:
 			selected_piece.move_position(to_move)
 			if selected_piece.piece_type == Globals.PIECE_TYPES.MAGMA_KNIGHT:
