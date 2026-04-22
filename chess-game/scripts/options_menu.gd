@@ -1,30 +1,45 @@
 extends Control
 
-@onready var opponent_option_button: OptionButton = $Panel/VBoxContainer/Opponent_OptionButton
 @onready var notification_node: Control = $notification
-@onready var difficulty_map_options_menu: Control = $Panel/VBoxContainer/difficulty_map_options_menu
+@onready var continue_button: DynamicButton = $chess_background/VBoxContainer/HBoxContainer/Continue_Button
+@onready var difficulty_map_options_menu: Control = $chess_background/VBoxContainer/difficulty_map_options_menu
+@onready var return_button: DynamicButton = $Return_Button
+@onready var human_button: DynamicButton = $chess_background/VBoxContainer/HBoxContainer2/Human_Button
+@onready var computer_button: DynamicButton = $chess_background/VBoxContainer/HBoxContainer2/Computer_Button
 
 var current_map : int = -1
 var current_difficulty : int = -1
+var current_opponent : int = -1
 var color : Globals.COLORS
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	continue_button.button_triggered.connect(_on_continue_button_pressed)
+	return_button.button_triggered.connect(_on_button_exit_pressed)
+	
+	human_button.button_triggered.connect(on_human_button)
+	computer_button.button_triggered.connect(on_computer_button)
+	
+	continue_button.condition = false
 	
 func _on_continue_button_pressed() -> void:
 	current_difficulty = difficulty_map_options_menu.difficulty
 	current_map = difficulty_map_options_menu.map
 	
-	if opponent_option_button.get_selected_id() == -1 or current_difficulty == -1 or current_map == -1:
+	if current_opponent == -1 or current_difficulty == -1 or current_map == -1:
 		notification_node.set_text("An option was not selected")
 		return
 	
-	const GAME_SCENE = preload("res://scenes/game.tscn")
-	var game_scene = GAME_SCENE.instantiate()
+	continue_button.condition = true
 	
-	game_scene.player2_type = convert_opponent_option(opponent_option_button.get_item_text(opponent_option_button.get_selected_id()))
-	game_scene.difficulty = current_difficulty
+	var GAME_SCENE = load("res://scenes/game.tscn")
+	if GAME_SCENE == null:
+		push_error("game.tscn really??")
+		return
+	var game_scene : Game = GAME_SCENE.instantiate()
+	
+	game_scene.player2_type = current_opponent
+	game_scene.difficulty = current_difficulty as Globals.DIFFICULTY
 	game_scene.current_map = current_map
 	
 	var scene_tree = get_tree()
@@ -39,7 +54,6 @@ func _on_continue_button_pressed() -> void:
 		
 		color_scene.load_scene = game_scene
 		
-		scene_tree.current_scene.queue_free()
 		scene_tree.root.add_child(color_scene)
 		scene_tree.current_scene = color_scene
 	
@@ -51,3 +65,15 @@ func convert_opponent_option(option : String) -> Globals.PLAYER_2_TYPE:
 
 func _on_button_exit_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+
+func on_human_button():
+	current_opponent = Globals.PLAYER_2_TYPE.HUMAN
+	
+	human_button.select()
+	computer_button.deselect()
+
+func on_computer_button():
+	current_opponent = Globals.PLAYER_2_TYPE.AI
+	
+	human_button.deselect()
+	computer_button.select()

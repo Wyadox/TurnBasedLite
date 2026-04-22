@@ -39,12 +39,12 @@ func piece_base_converter(piece_type : Globals.PIECE_TYPES):
 	match piece_type:
 		Globals.PIECE_TYPES.PAWN:
 			return Globals.PIECE_BASE.PAWN
-		Globals.PIECE_TYPES.KNIGHT:
-			return Globals.PIECE_BASE.KNIGHT
-		Globals.PIECE_TYPES.BISHOP:
-			return Globals.PIECE_BASE.BISHOP
-		Globals.PIECE_TYPES.KING:
-			return Globals.PIECE_BASE.KING
+		#Globals.PIECE_TYPES.KNIGHT:
+			#return Globals.PIECE_BASE.KNIGHT
+		#Globals.PIECE_TYPES.BISHOP:
+			#return Globals.PIECE_BASE.BISHOP
+		#Globals.PIECE_TYPES.KING:
+			#return Globals.PIECE_BASE.KING
 		Globals.PIECE_TYPES.HORSE_ARCHER:
 			return Globals.PIECE_BASE.KNIGHT
 		Globals.PIECE_TYPES.ARCHBISHOP:
@@ -109,6 +109,7 @@ func _on_board_refund_piece(piece_type: Variant) -> void:
 			black_dict.erase(piece_type)
 			black_base_dict[piece_base] -= 1
 		print("Piece REFUNDED")
+		#SignalBus.piece_refunded.emit()
 	else:
 		print("Piece NOT refunded")
 	
@@ -120,20 +121,20 @@ func _on_pawn_button_pressed() -> void:
 	if (valid_spawn(Globals.PIECE_TYPES.PAWN)):
 		emit_signal("spawn_piece", Globals.PIECE_TYPES.PAWN)
 
-func _on_bishop_button_pressed() -> void:
-	print("Bishop")
-	if (valid_spawn(Globals.PIECE_TYPES.BISHOP)):
-		emit_signal("spawn_piece", Globals.PIECE_TYPES.BISHOP)
-
-func _on_knight_button_pressed() -> void:
-	print("Knight")
-	if (valid_spawn(Globals.PIECE_TYPES.KNIGHT)):
-		emit_signal("spawn_piece", Globals.PIECE_TYPES.KNIGHT)
-
-func _on_king_button_pressed() -> void:
-	print("King")
-	if (valid_spawn(Globals.PIECE_TYPES.KING)):
-		emit_signal("spawn_piece", Globals.PIECE_TYPES.KING)
+#func _on_bishop_button_pressed() -> void:
+	#print("Bishop")
+	#if (valid_spawn(Globals.PIECE_TYPES.BISHOP)):
+		#emit_signal("spawn_piece", Globals.PIECE_TYPES.BISHOP)
+#
+#func _on_knight_button_pressed() -> void:
+	#print("Knight")
+	#if (valid_spawn(Globals.PIECE_TYPES.KNIGHT)):
+		#emit_signal("spawn_piece", Globals.PIECE_TYPES.KNIGHT)
+#
+#func _on_king_button_pressed() -> void:
+	#print("King")
+	#if (valid_spawn(Globals.PIECE_TYPES.KING)):
+		#emit_signal("spawn_piece", Globals.PIECE_TYPES.KING)
 
 func _on_archer_button_pressed() -> void:
 	print("Archer")

@@ -61,3 +61,11 @@ signal archive_move(piece_type, color, old_pos, new_pos)
 # Used for when Move Clock runs out 
 @warning_ignore("unused_signal")
 signal move_clock_expired()
+
+# Used when Setup Phase piece is added
+@warning_ignore("unused_signal")
+signal piece_added()
+
+# Used when Setup Phase piece is refunded
+@warning_ignore("unused_signal")
+signal piece_refunded()

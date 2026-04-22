@@ -1,3 +1,4 @@
+class_name Game
 extends Node2D
 
 #var explosionScene = preload("res://scenes/Explosion.tscn")
@@ -41,6 +42,15 @@ var failed_to_move : bool = false
 @onready var captured_display: Control = $captured_display
 @onready var captured_display_2: Control = $captured_display2
 
+@onready var main_menu_button: DynamicButton = $Control/MainMenu_Button
+@onready var upper_resign_button: DynamicButton = $Upper_Resign_Button
+@onready var lower_resign_button: DynamicButton = $Lower_Resign_Button
+
+@onready var setting_indicator: Control = $setting_control
+@onready var thinking_indicator: LoadingIndicator = $thinking_indicator
+
+@onready var confirm_button: DynamicButton = $Confirm_Button
+
 const MOVE_CLOCK_OFFSET : float = 300.0
 
 
@@ -62,6 +72,7 @@ var board_repr = []
 
 var real_game : bool = true
 var online_game : bool = false
+var setup_piece_died : bool = false
 
 var LOWER_COLOR : Globals.COLORS = Globals.COLORS.WHITE
 var UPPER_COLOR : Globals.COLORS = Globals.COLORS.BLACK
@@ -76,6 +87,7 @@ func _ready():
 	init_game()
 	
 	descriptions.show()
+	loadout_ui.show()
 	setup_complete = false
 	allow_select = true
 	
@@ -89,6 +101,20 @@ func _ready():
 	SignalBus.show_notification.connect(show_notification)
 	SignalBus.move_clock_expired.connect(process_expired_clock)
 	
+	SignalBus.piece_added.connect(on_setup_board_updated)
+	SignalBus.piece_refunded.connect(on_setup_board_updated)
+	
+	main_menu_button.button_triggered.connect(_on_button_pressed)
+	upper_resign_button.button_triggered.connect(on_resign)
+	lower_resign_button.button_triggered.connect(on_resign)
+	if online_game:
+		confirm_button.button_triggered.connect(on_confirm_loadout.rpc)
+	else:
+		confirm_button.button_triggered.connect(on_confirm_loadout)
+	
+	lower_resign_button.hide()
+	upper_resign_button.hide()
+	
 	multiplayer.peer_disconnected.connect(on_player_disconnect)
 	multiplayer.server_disconnected.connect(on_server_disconnect)
 	
@@ -96,9 +122,15 @@ func _ready():
 	
 	board_vector = Vector2(board.BOARD_WIDTH - 1, board.BOARD_HEIGHT - 1)
 	
+	thinking_indicator.hide()
+	confirm_button.hide()
+	setting_indicator.hide()
+	
 	if ai_color == Globals.COLORS.WHITE:
 		LOWER_COLOR = Globals.COLORS.BLACK
 		UPPER_COLOR = Globals.COLORS.WHITE
+		board.LOWER_COLOR = Globals.COLORS.BLACK
+		board.UPPER_COLOR = Globals.COLORS.WHITE
 		
 		move_clock.global_position.y -= MOVE_CLOCK_OFFSET
 		move_clock_2.global_position.y += MOVE_CLOCK_OFFSET
@@ -120,6 +152,8 @@ func _ready():
 		if player_color == Globals.COLORS.BLACK:
 			LOWER_COLOR = Globals.COLORS.BLACK
 			UPPER_COLOR = Globals.COLORS.WHITE
+			board.LOWER_COLOR = Globals.COLORS.BLACK
+			board.UPPER_COLOR = Globals.COLORS.WHITE
 			
 			move_clock.global_position.y -= MOVE_CLOCK_OFFSET
 			move_clock_2.global_position.y += MOVE_CLOCK_OFFSET
@@ -129,6 +163,7 @@ func _ready():
 			
 			descriptions.hide()
 			loadout_ui.hide()
+			setting_indicator.show()
 		else:
 			move_clock.global_position.y += MOVE_CLOCK_OFFSET
 			move_clock_2.global_position.y -= MOVE_CLOCK_OFFSET
@@ -179,13 +214,16 @@ func loadout_button_pressed(loadout):
 
 @rpc("any_peer", "reliable")
 func network_process_save_string(save_string, color):
-	if color != Network.my_color:
+	Network.network_print("network_process_save_string received: color=%s my_color=%s string=%s" % [color, Network.my_color, save_string])
+	if color == Network.my_color:
+		Network.network_print("Skipping - this is my own pieces")
 		return
 		
-	#var previous_status = status
+	#var old_status = status
 	#status = color
+	#Network.network_print("Parsing with status=%s" % status)
 	parse_save_string(save_string)
-	#status = previous_status
+	#status = old_status
 	
 	$loadoutSlots.clear_selected()
 
@@ -204,13 +242,14 @@ func parse_save_string(save_string):
 var previous_square
 var current_square
 var color_to_be_moved : Globals.COLORS
+var square
 
 func _input(event):
 	if game_over:
 		return
 	# Mouse left clicks/drags
 	if Input.is_action_just_pressed("left_click"):
-		var square = get_square_under_mouse()
+		square = get_square_under_mouse()
 		previous_square = square
 		selected_piece = board.get_piece(square)
 		
@@ -227,13 +266,19 @@ func _input(event):
 						SignalBus.emit_signal("selected_square", square)
 			return
 			
-		if selected_piece == null:
+		if selected_piece != null and !setup_complete and selected_piece.color == status and (player2_type != Globals.PLAYER_2_TYPE.NETWORK or status == Network.my_color):
+			SignalBus.emit_signal("selected_square", Vector2(-1, -1))
+			is_dragging = true
+			previous_position = selected_piece.position
+			selected_piece.z_index = 100
+			selected_piece.play_animation("sway")
 			return
 			
-		if selected_piece.color != status or selected_piece.stun_counter != 0 or (player2_type == Globals.PLAYER_2_TYPE.NETWORK and status != Network.my_color):
-			return
+		if selected_piece:
+			if selected_piece.color != status or selected_piece.stun_counter != 0 or (player2_type == Globals.PLAYER_2_TYPE.NETWORK and status != Network.my_color):
+				return
 			
-		if !setup_complete:
+		if !setup_complete or !selected_piece:
 			return
 			
 		is_dragging = true
@@ -247,9 +292,14 @@ func _input(event):
 			var color : Color
 			var dest_piece = board.get_piece(Vector2(it.x, it.y))
 			if dest_piece != null and !board.piece_is_protected(dest_piece) and (dest_piece.color != Globals.COLORS.TILE or dest_piece.piece_type == Globals.PIECE_TYPES.WEB):
-				color = Color(1.0, 0.0, 0.0, 0.3)
-				dest_piece.play_animation("cower")
-				board.draw_border(it.x, it.y, color, false, Globals.BORDER_STYLE.TARGET)
+				if dest_piece.color == selected_piece.color:
+					color = Color(0.0, 0.648, 0.158, 0.5)
+					dest_piece.play_animation("sway")
+					board.draw_border(it.x, it.y, color, false, Globals.BORDER_STYLE.FRIENDLY)
+				else:
+					color = Color(1.0, 0.0, 0.0, 0.3)
+					dest_piece.play_animation("cower")
+					board.draw_border(it.x, it.y, color, false, Globals.BORDER_STYLE.TARGET)
 			elif dest_piece == null:
 				color = Color(1.0, 1.0, 0.0, 0.3)
 				board.draw_border(it.x, it.y, color, false, Globals.BORDER_STYLE.CIRCLE)
@@ -259,6 +309,30 @@ func _input(event):
 		#piece_mouse_pos.y += 40
 		selected_piece.position = piece_mouse_pos
 	elif Input.is_action_just_released("left_click") and is_dragging:
+		if !setup_complete:
+			if !selected_piece:
+				return
+			
+			selected_piece.play_animation("idle")
+			selected_piece.z_index = 0
+			is_dragging = false
+			
+			var is_valid_move = setup_drop_piece()
+			
+			if setup_piece_died:
+				ExplodingBishop.spawn_explosion_literal(selected_piece.position + board.global_position)
+				
+				board.delete_piece(selected_piece, true, true)
+				setup_ui._on_board_refund_piece(selected_piece.piece_type)
+				setup_piece_died = false
+			
+			if !is_valid_move:
+				selected_piece.position = previous_position
+			
+			selected_piece = null
+			square = null
+			return
+		
 		board.clear_borders()
 		clear_piece_animations()
 		
@@ -290,6 +364,30 @@ func _input(event):
 func clear_piece_animations():
 	for piece in board.pieces:
 		piece.play_animation("idle")
+
+func setup_drop_piece() -> bool:
+	var drop_square = get_square_under_mouse()
+	if !setup_is_within_bounds(drop_square, selected_piece.color):
+		print("drop square x: ", drop_square.x)
+		if drop_square.x > 7 or drop_square.x < -1:
+			setup_piece_died = true
+		return false
+	
+	for piece in board.pieces:
+		if piece != selected_piece and piece.board_position == drop_square:
+			piece.move_position(selected_piece.board_position, true)
+			selected_piece.move_position(drop_square, true)
+			board.play_sound("capture")
+			return true
+	
+	selected_piece.move_position(drop_square, true)
+	board.play_sound("move")
+	return true
+
+func setup_is_within_bounds(pos : Vector2, color : Globals.COLORS):
+	if color == LOWER_COLOR:
+		return pos.x < board.BOARD_WIDTH and pos.x > -1 and pos.y > 4 and pos.y < 7
+	return pos.x < board.BOARD_WIDTH and pos.x > -1 and pos.y > -1 and pos.y < 2
 
 func init_game():
 	game_over = false
@@ -554,17 +652,26 @@ func unique(arr: Array) -> Array:
 		dict[a] = 1
 	return dict.keys()
 
+const MINIMUM_WAIT_TIME : float = 1.0
+const MAXIMUM_WAIT_TIME : float = 3.0
 
 func player2_move():
 	print("player2 reached")
 	print("real game: ", real_game)
 	print("player 2 type: ", player2_type)
+	
 	if real_game and player2_type == Globals.PLAYER_2_TYPE.AI:
 		#board.clear_borders()
 		#clear_piece_animations()
-		#
-		#await get_tree().process_frame
-		#await get_tree().process_frame
+		
+		thinking_indicator.show()
+		
+		await get_tree().process_frame
+		await get_tree().process_frame
+		
+		# REVISIT
+		var wait_time = randf_range(MINIMUM_WAIT_TIME, MAXIMUM_WAIT_TIME)
+		await get_tree().create_timer(wait_time).timeout
 		
 		var minimax_result = Ai.start_minimax(board.pieces, true if status == Globals.COLORS.WHITE else false, difficulty_dict)
 		print("RESULT: ", minimax_result)
@@ -589,6 +696,8 @@ func player2_move():
 		previous_position = selected_piece.position
 		previous_square = selected_piece.board_position
 		print ("drop_piece result: ", drop_piece(false, minimax_result["pos"]))
+		
+		thinking_indicator.hide()
 
 func evaluate_end_game():
 	# Check whether the current user can make any legal move
@@ -596,7 +705,7 @@ func evaluate_end_game():
 	if len(moves) == 0:
 		game_over = true
 		stop_clocks()
-		set_win(Globals.PLAYER.TWO if status == player_color else Globals.PLAYER.ONE)
+		set_win(status)
 		return true
 		
 	# Check if Duck is only remaining piece
@@ -617,7 +726,7 @@ func evaluate_end_game():
 	if white_piece_count == 1 and white_duck or black_piece_count == 1 and black_duck:
 		game_over = true
 		stop_clocks()
-		set_win(Globals.PLAYER.TWO if status == player_color else Globals.PLAYER.ONE)
+		set_win(status)
 		return true
 		
 	if turns_since_last_capture > MAX_TURNS_WITHOUT_CAPTURE:
@@ -629,16 +738,19 @@ func evaluate_end_game():
 			
 	return false
 
-func set_win(who):
+func set_win(color):
 	game_over = true
-	if who == Globals.PLAYER.ONE:
-		win_label.text = "Player One Won"
-	elif who == Globals.PLAYER.TWO:
-		win_label.text = "Player Two Won"
+	if color == Globals.COLORS.WHITE:
+		win_label.text = "BLACK WON"
+	elif color == Globals.COLORS.BLACK:
+		win_label.text = "WHITE WON"
 	else:
 		win_label.text = "DRAW"
 	win_label.show()
 	ui_control.show()
+	
+	upper_resign_button.hide()
+	lower_resign_button.hide()
 	
 #func spawn_explosion(pos : Vector2):
 	#var actual_pos = Vector2(pos.x * 120 + 60, pos.y * 120 + 60)
@@ -706,6 +818,7 @@ func end_turn():
 	check_for_shield_king()
 	board.update_indicators()
 	update_eval()
+	toggle_resign_buttons()
 	
 func update_eval():
 	var eval = Ai.board_evaluation(board.pieces, 0.0)
@@ -735,14 +848,17 @@ func _on_board_setup_complete() -> void:
 	descriptions.hide()
 	loadouts_label.hide()
 	loadout_ui.hide()
+	setting_indicator.hide()
 	status = Globals.COLORS.WHITE
 	init_pieces()
 	board.update_indicators()
+	board.clear_selection_box()
 	turn_indicator.texture = get_turn_indicator_tex(status)
 	turn_indicator.show()
 	update_eval()
 	
 	move_clock.start_turn()
+	toggle_resign_buttons()
 	
 	if ai_color == Globals.COLORS.WHITE:
 		player2_move()
@@ -756,33 +872,120 @@ func _on_board_setup_complete() -> void:
 var previous_status : Globals.COLORS = Globals.COLORS.WHITE
 
 func network_pass_board_pieces(color):
-	if online_game and status != previous_status:
-		var save_string = ""
+	if !online_game:
+		return
+	
+	var save_string = ""
+	
+	for piece in board.pieces:
+		if piece.color == color:
+			save_string += str(piece.piece_type) + ":" + str(piece.board_position + Vector2(-1,0)) + "_"
+	
+	Network.network_print("network_pass_board_pieces: color=%s string=%s" % [color, save_string])
+	network_process_save_string.rpc(save_string, color)
+	print("calling network process")
+	
+	if Network.my_color == status and !setup_complete:
+		descriptions.show()
+		loadout_ui.show()
+		setting_indicator.hide()
+	else:
+		descriptions.hide()
+		loadout_ui.hide()
+		setting_indicator.show()
+
+func _on_board_set_status(color: Variant) -> void:
+	print("attempted to set to: ", color)
+	pass
+
+func on_setup_board_updated() -> void:
+	if !real_game or board.is_loadout_board or setup_complete:
+		return
+	
+	print("checking for status: ", status)
+	print("board count: ", board.num_pieces(status))
+	if board.num_pieces(status) == Globals.PIECES_PER_SIDE and (!online_game or status == Network.my_color):
+		if player2_type == Globals.PLAYER_2_TYPE.AI and ai_color == Globals.COLORS.WHITE and status == Globals.COLORS.WHITE:
+			on_confirm_loadout()
+			return
 		
-		for piece in board.pieces:
-			if piece.color == color:
-				save_string += str(piece.piece_type) + ":" + str(piece.board_position + Vector2(-1,0)) + "_"
-		
-		network_process_save_string.rpc(save_string, status)
-		print("calling network process")
-		
-		if Network.my_color == status and !setup_complete:
+		confirm_button.show()
+		if status == LOWER_COLOR:
+			confirm_button.position = Vector2(819, 608)
+		else:
+			confirm_button.position = Vector2(819, 364)
+		descriptions.hide()
+		loadout_ui.hide()
+	else:
+		confirm_button.hide()
+		if !online_game or status == Network.my_color:
 			descriptions.show()
 			loadout_ui.show()
+
+@rpc("any_peer", "call_local")
+func on_confirm_loadout() -> void:
+	if online_game and status == Network.my_color:
+		var save_string = ""
+	
+		for piece in board.pieces:
+			if piece.color == status:
+				save_string += str(piece.piece_type) + ":" + str(piece.board_position + Vector2(-1,0)) + "_"
+		
+		var confirming_color = status
+		send_pieces_to_opponent.rpc_id(
+			Network.opponent_id,
+			confirming_color,
+			save_string
+		)
+	
+	previous_status = status
+	status = Globals.COLORS.BLACK
+	setup_ui.status = status
+	board.clear_selection_box()
+	if player2_type != Globals.PLAYER_2_TYPE.AI:
+		if status == LOWER_COLOR:
+			board.draw_selection_box(Vector2(0.0, 5.0), Vector2(7.0, 7.0), SELECTION_BOX_COLOR)
+		else:
+			board.draw_selection_box(Vector2(0.0, 0.0), Vector2(7.0, 2.0), SELECTION_BOX_COLOR)
+	
+	confirm_button.hide()
+	if online_game:
+		if Network.my_color == Globals.COLORS.BLACK:
+			descriptions.show()
+			descriptions.set_color(Globals.COLORS.BLACK)
+			loadout_ui.show()
+			setting_indicator.hide()
 		else:
 			descriptions.hide()
 			loadout_ui.hide()
-
-func _on_board_set_status(color: Variant) -> void:
-	status = color
-	network_pass_board_pieces(previous_status)
-	previous_status = status
-	descriptions.set_color(color)
-	board.clear_selection_box()
-	if status == LOWER_COLOR:
-		board.draw_selection_box(Vector2(0.0, 5.0), Vector2(7.0, 7.0), SELECTION_BOX_COLOR)
+			setting_indicator.show()
+		
+		if previous_status == Globals.COLORS.BLACK and board.num_pieces() == Globals.PIECES_PER_SIDE * 2:
+			_on_board_setup_complete()
 	else:
-		board.draw_selection_box(Vector2(0.0, 0.0), Vector2(7.0, 2.0), SELECTION_BOX_COLOR)
+		descriptions.show()
+		descriptions.set_color(status)
+		loadout_ui.show()
+		
+		if board.num_pieces() == Globals.PIECES_PER_SIDE * 2:
+			_on_board_setup_complete()
+		if board.num_pieces() == Globals.PIECES_PER_SIDE and player2_type == Globals.PLAYER_2_TYPE.AI and ai_color == Globals.COLORS.BLACK and status == Globals.COLORS.BLACK:
+			SignalBus.emit_signal("spawn_ai")
+			on_confirm_loadout()
+
+@rpc("any_peer", "reliable")
+func send_pieces_to_opponent(color : Globals.COLORS, save_string : String):
+	Network.network_print("received pieces for color %s: %s" % [color, save_string])
+	
+	var old_status = status
+	status = color
+	Network.network_print("Parsing with status=%s" % status)
+	parse_save_string(save_string)
+	status = old_status
+	loadout_ui.clear_selected()
+	
+	if color == Globals.COLORS.BLACK:
+		_on_board_setup_complete()
 
 func _on_board_spawn_ai() -> void:
 	if player2_type == Globals.PLAYER_2_TYPE.AI:
@@ -817,7 +1020,7 @@ func stop_clocks():
 func process_expired_clock():
 	game_over = true
 	stop_clocks()
-	set_win(Globals.PLAYER.TWO if status == player_color else Globals.PLAYER.ONE)
+	set_win(status)
 	return true
 
 # Network code
@@ -918,6 +1121,7 @@ func sync_end_turn():
 	check_for_shield_king()
 	board.update_indicators()
 	update_eval()
+	toggle_resign_buttons()
 	
 	evaluate_end_game()
 
@@ -931,13 +1135,66 @@ func sync_clocks(player_status : Globals.COLORS):
 		move_clock_2.start_turn()
 
 func on_player_disconnect(_peer_id : int):
+	if game_over:
+		return
 	game_over = true
 	stop_clocks()
-	set_win(Globals.PLAYER.ONE)
+	set_win(flip_color(Network.my_color))
 	return true
 
 func on_server_disconnect():
+	if game_over:
+		return
 	game_over = true
 	stop_clocks()
-	set_win(Globals.PLAYER.TWO)
+	set_win(flip_color(Network.my_color))
 	return true
+
+# Resigning
+
+func on_resign():
+	if online_game:
+		sync_resign.rpc()
+		return
+	
+	game_over = true
+	stop_clocks()
+	set_win(status)
+	return true
+
+@rpc("any_peer", "call_local")
+func sync_resign():
+	game_over = true
+	stop_clocks()
+	set_win(status)
+	Network.disconnect_game()
+	return true
+
+func toggle_resign_buttons():
+	if online_game:
+		if status == LOWER_COLOR:
+			if status == Network.my_color:
+				lower_resign_button.show()
+			upper_resign_button.hide()
+		else:
+			lower_resign_button.hide()
+			if status == Network.my_color:
+				upper_resign_button.show()
+		return
+	
+	if status == LOWER_COLOR:
+		lower_resign_button.show()
+		upper_resign_button.hide()
+	else:
+		lower_resign_button.hide()
+		upper_resign_button.show()
+	
+	if player2_type == Globals.PLAYER_2_TYPE.AI:
+		if status == ai_color:
+			lower_resign_button.hide()
+			upper_resign_button.hide()
+
+func flip_color(color : Globals.COLORS):
+	if color == Globals.COLORS.WHITE:
+		return Globals.COLORS.BLACK
+	return Globals.COLORS.WHITE

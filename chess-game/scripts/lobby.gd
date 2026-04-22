@@ -1,11 +1,18 @@
 extends Control
 
-@onready var host_button: Button = $VBoxContainer/Host_Button
-@onready var join_button: Button = $VBoxContainer/Join_Button
-@onready var status: Label = $VBoxContainer/Status
-@onready var start_button: Button = $VBoxContainer/Start_Button
-@onready var lobby_list: LobbyList = $VBoxContainer/HBoxContainer/lobby_list
-@onready var host_options_menu: Control = $VBoxContainer/HBoxContainer/host_options_menu
+@onready var return_button: DynamicButton = $Return_Button
+@onready var host_button: DynamicButton = $HBoxContainer4/Host_Button
+@onready var find_button: DynamicButton = $HBoxContainer4/Find_Button
+@onready var start_button: DynamicButton = $Start_Button
+
+@onready var status_control: Control = $status_control
+@onready var status: Label = $Status
+@onready var lobby_list: LobbyList = $lobby_list
+@onready var host_options_menu: Control = $host_options_menu
+@onready var chess_background: Control = $chess_background
+
+@onready var search_indicator: LoadingIndicator = $search_indicator
+@onready var wait_indicator: LoadingIndicator = $wait_indicator
 
 const LOBBY_LIST_ENTRY = preload("uid://beekdbp76itqm")
 
@@ -18,9 +25,11 @@ var difficulty : Globals.DIFFICULTY = Globals.DIFFICULTY.EASY
 var lobby_game_info : Dictionary = {}
 
 func _ready() -> void:
-	start_button.hide()
+	start_button.disable()
 	lobby_list.hide()
 	host_options_menu.hide()
+	search_indicator.hide()
+	wait_indicator.hide()
 	
 	Network.player_connected.connect(on_player_connected)
 	Network.player_disconnected.connect(on_player_disconnected)
@@ -31,13 +40,23 @@ func _ready() -> void:
 	lobby_list.join_button_pressed.connect(on_join_match_pressed)
 	
 	host_options_menu.host_button_pressed.connect(intialize_host)
+	
+	host_button.button_triggered.connect(_on_host_button_pressed)
+	find_button.button_triggered.connect(_on_join_button_pressed)
+	start_button.button_triggered.connect(_on_start_button_pressed)
+	return_button.button_triggered.connect(on_return)
 
 func _on_host_button_pressed() -> void:
 	host_options_menu.show()
 	lobby_list.hide()
 	
-	host_button.disabled = true
-	join_button.disabled = true
+	host_button.disable()
+	find_button.disable()
+	
+	chess_background.hide()
+	
+	hide_controls()
+	status.hide()
 	
 
 func intialize_host() -> void:
@@ -59,15 +78,26 @@ func intialize_host() -> void:
 	Network.host_game()
 	status.text = "Waiting for opponent..."
 	players_ready = 1
+	
+	wait_indicator.show()
+	chess_background.show()
+	
+	show_controls()
 
 func _on_join_button_pressed() -> void:
 	Network.start_listening()
 	status.text = "Looking for matches..."
-	host_button.disabled = true
-	join_button.disabled = true
+	host_button.disable()
+	find_button.disable()
 	lobby_list.clear()
 	discovered_ip_addresses.clear()
 	lobby_list.show()
+	
+	search_indicator.show()
+	chess_background.hide()
+	
+	hide_controls()
+	status.hide()
 
 func on_host_discovered(ip_address : String, data : Dictionary):
 	if ip_address in discovered_ip_addresses:
@@ -80,10 +110,16 @@ func on_host_discovered(ip_address : String, data : Dictionary):
 		entry.background_color = Color(0.8, 0.6, 0.4)
 	else:
 		entry.background_color = Color(0.4, 0.3, 0.2)
-	print("hello", data["host_color"])
-	entry.title = "Play against " + Globals.COLORS.find_key(int(data["host_color"]))
-	entry.details = "Playing on " + Globals.DIFFICULTY.find_key(int(data["difficulty"])) + " difficulty"
-	entry.description = "HELLO"
+	
+	var color_string = ""
+	if data["host_color"] == Globals.COLORS.WHITE:
+		color_string = "BLACK"
+	else:
+		color_string = "WHITE"
+	
+	entry.title = "Play as " + color_string
+	entry.details = "Playing on " + Globals.DIFFICULTY.find_key(int(data["difficulty"])) + " difficulty, with " + find_time_limit(data["difficulty"]) + " on the Move Clock"
+	entry.description = "Playing on " + Board.BOARD_TYPE.find_key(int(data["map"]) - 1)
 	lobby_list.add_list_entry(entry)
 	entry.set_textures(data["difficulty"], data["host_color"] as Globals.DIFFICULTY, data["map"])
 	lobby_game_info = data
@@ -91,24 +127,38 @@ func on_host_discovered(ip_address : String, data : Dictionary):
 
 func on_player_connected(_peer_id : int):
 	players_ready += 1
-	status.text = "Player connected (%d/2)" % players_ready
+	#status.text = "Player connected (%d/2)" % players_ready
+	status.text = "Waiting for host to start..."
+	if !multiplayer.is_server():
+		wait_indicator.set_text("Waiting for host to start...")
+		chess_background.show()
+		wait_indicator.show()
+	show_controls()
+	
+	search_indicator.hide()
+	
 	if players_ready >= 2:
 		if multiplayer.is_server():
 			Network.stop_broadcasting()
-			start_button.show()
+			start_button.enable()
 			status.text = "Both players are ready"
+			status.show()
+			wait_indicator.hide()
 
 func on_player_disconnected(_peer_id : int):
 	players_ready -= 1
 	status.text = "Opponent disconnected"
+	status.show()
 	start_button.hide()
 
 func on_connection_failed():
 	status.text = "Connection failed. Try again"
+	status.show()
 	reset_ui()
 
 func on_server_disconnected():
 	status.text = "Host disconnected"
+	status.show()
 	reset_ui()
 
 func _on_start_button_pressed() -> void:
@@ -119,7 +169,7 @@ func _on_start_button_pressed() -> void:
 func load_game():
 	Network.stop_listening()
 	
-	const GAME_SCENE = preload("res://scenes/game.tscn")
+	var GAME_SCENE = load("res://scenes/game.tscn")
 	var game_scene = GAME_SCENE.instantiate()
 	
 	game_scene.player2_type = Globals.PLAYER_2_TYPE.NETWORK
@@ -134,8 +184,8 @@ func load_game():
 	SignalBus.emit_signal("change_map", lobby_game_info["map"])
 
 func reset_ui():
-	host_button.disabled = false
-	join_button.disabled = false
+	host_button.enable()
+	find_button.enable()
 	lobby_list.hide()
 	lobby_list.clear()
 	discovered_ip_addresses.clear()
@@ -146,3 +196,37 @@ func on_join_match_pressed(index: int) -> void:
 	Network.join_game(ip_address)
 	status.text = "Connecting..."
 	lobby_list.hide()
+
+func on_return():
+	Network.disconnect_game()
+	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+
+func hide_controls():
+	host_button.hide()
+	find_button.hide()
+	start_button.hide()
+	host_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	find_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	start_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	
+	status_control.hide()
+
+func show_controls():
+	host_button.show()
+	find_button.show()
+	start_button.show()
+	host_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	find_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	start_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
+	#status_control.show()
+
+func find_time_limit(difficulty_param : Globals.DIFFICULTY) -> String:
+	match difficulty_param:
+		Globals.DIFFICULTY.EASY:
+			return "3:00 minutes"
+		Globals.DIFFICULTY.NORMAL:
+			return "2:00 minutes"
+		Globals.DIFFICULTY.HARD:
+			return "1:00 minute"
+	return ""

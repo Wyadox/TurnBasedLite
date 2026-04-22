@@ -2,6 +2,11 @@ extends Node
 
 const PIECES_PER_SIDE = 7
 
+const LETTERS = ["a", "b", "c", "d", "e", "f", "g", "h"]
+
+func get_letters_for_history(pos : Vector2):
+	return [LETTERS[pos.x], pos.y + 1]
+
 var show_tooltips : bool = true
 
 enum PLAYER { ONE, TWO }
@@ -32,14 +37,15 @@ enum BORDER_STYLE {
 	BOX,
 	CIRCLE,
 	TARGET,
-	HIGHLIGHT
+	HIGHLIGHT,
+	FRIENDLY
 }
 
 #pieces
 enum PIECE_TYPES {
-	KNIGHT,
-	BISHOP,
-	KING,
+	#KNIGHT,
+	#BISHOP,
+	#KING,
 	PAWN,
 	HORSE_ARCHER,
 	ARCHBISHOP,
@@ -79,10 +85,10 @@ enum PIECE_TYPES {
 
 const SPRITE_MAPPING = {
 	COLORS.BLACK : {
-		PIECE_TYPES.KING: Vector2i(0, 0),
+		#PIECE_TYPES.KING: Vector2i(0, 0),
 		PIECE_TYPES.PAWN: Vector2i(0, 1),
-		PIECE_TYPES.BISHOP: Vector2i(0, 2),
-		PIECE_TYPES.KNIGHT: Vector2i(0, 3),
+		#PIECE_TYPES.BISHOP: Vector2i(0, 2),
+		#PIECE_TYPES.KNIGHT: Vector2i(0, 3),
 		PIECE_TYPES.SHIELD_KING: Vector2i(0, 4),
 		PIECE_TYPES.DUCK: Vector2i(0, 5),
 		PIECE_TYPES.MITOSIS_PAWN: Vector2i(0, 6),
@@ -107,10 +113,10 @@ const SPRITE_MAPPING = {
 		PIECE_TYPES.WIZARD: Vector2i(0, 25)
 	},
 	COLORS.WHITE:{
-		PIECE_TYPES.KING: Vector2i(1, 0),
+		#PIECE_TYPES.KING: Vector2i(1, 0),
 		PIECE_TYPES.PAWN: Vector2i(1, 1),
-		PIECE_TYPES.BISHOP: Vector2i(1, 2),
-		PIECE_TYPES.KNIGHT: Vector2i(1, 3),
+		#PIECE_TYPES.BISHOP: Vector2i(1, 2),
+		#PIECE_TYPES.KNIGHT: Vector2i(1, 3),
 		PIECE_TYPES.SHIELD_KING: Vector2i(1, 4),
 		PIECE_TYPES.DUCK: Vector2i(1, 5),
 		PIECE_TYPES.MITOSIS_PAWN: Vector2i(1, 6),

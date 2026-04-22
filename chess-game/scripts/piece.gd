@@ -81,9 +81,10 @@ func play_animation(title : String):
 	$AnimationPlayer.stop()
 	$AnimationPlayer.play(title)
 
-func move_position(to_move: Vector2):
+func move_position(to_move: Vector2, cancel = false):
 	var old_pos = board_position #For moving Mitosis Pawn
-	moved = true
+	if !cancel:
+		moved = true
 	board_position = to_move
 	position = Vector2(
 		X_OFFSET + board_position[0] * CELL_SIZE,
@@ -95,7 +96,7 @@ func move_position(to_move: Vector2):
 	if piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN:
 		var dx = int(to_move.x - old_pos.x)
 		var dy = int(to_move.y - old_pos.y)
-		if abs(dx) == 2 and dy == 0:
+		if abs(dx) == 2 and dy == 0 and !cancel:
 			var mid_pos = Vector2(old_pos.x, old_pos.y)
 			perform_mitosis(mid_pos)
 			return
@@ -105,7 +106,7 @@ func move_position(to_move: Vector2):
 		#board_handle.register_king(board_position, color)
 	
 	# Promotion for pawns to KING BEHAVIOR
-	if (piece_type == Globals.PIECE_TYPES.PAWN or piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN or piece_type == Globals.PIECE_TYPES.WORM or piece_type == Globals.PIECE_TYPES.CHECKER or piece_type == Globals.PIECE_TYPES.INFECTOR) and (
+	if (piece_type == Globals.PIECE_TYPES.PAWN or piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN or piece_type == Globals.PIECE_TYPES.WORM or piece_type == Globals.PIECE_TYPES.CHECKER or piece_type == Globals.PIECE_TYPES.INFECTOR or piece_type == Globals.PIECE_TYPES.DUPLICATOR) and (
 		(starting_rank < DIRECTION_THRESHOLD and to_move[1] == board_handle.BOARD_HEIGHT - 1) or 
 		(starting_rank > DIRECTION_THRESHOLD and to_move[1] == 0)
 	):
@@ -141,9 +142,9 @@ func get_moveable_positions():
 				ret += king_threat_pos()
 			ret += get_mitosis_positions()
 			return ret
-		Globals.PIECE_TYPES.BISHOP: return bishop_threat_pos()
-		Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()
-		Globals.PIECE_TYPES.KING: return king_threat_pos()
+		#Globals.PIECE_TYPES.BISHOP: return bishop_threat_pos()
+		#Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()
+		#Globals.PIECE_TYPES.KING: return king_threat_pos()
 		Globals.PIECE_TYPES.HORSE_ARCHER: return horse_archer_threat_pos()
 		Globals.PIECE_TYPES.ARCHBISHOP: return archbishop_threat_pos()
 		Globals.PIECE_TYPES.STUN_KNIGHT: return knight_threat_pos()
@@ -202,9 +203,9 @@ func get_threatened_positions():
 			if promoted == true:
 				return king_threat_pos()
 			return pawn_threat_pos()
-		Globals.PIECE_TYPES.BISHOP: return bishop_threat_pos()
-		Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()
-		Globals.PIECE_TYPES.KING: return king_threat_pos()
+		#Globals.PIECE_TYPES.BISHOP: return bishop_threat_pos()
+		#Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()
+		#Globals.PIECE_TYPES.KING: return king_threat_pos()
 		Globals.PIECE_TYPES.HORSE_ARCHER: return horse_archer_threat_pos()
 		Globals.PIECE_TYPES.ARCHBISHOP: return archbishop_threat_pos()
 		Globals.PIECE_TYPES.STUN_KNIGHT: return knight_threat_pos()

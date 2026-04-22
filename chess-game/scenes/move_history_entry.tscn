@@ -1,13 +1,17 @@
-[gd_scene load_steps=3 format=3 uid="uid://bfr12x1rtkkem"]
+[gd_scene load_steps=5 format=3 uid="uid://bfr12x1rtkkem"]
 
 [ext_resource type="Texture2D" uid="uid://bhpcvx2c3573d" path="res://Assets/StunIndicator.png" id="1_a88ic"]
 [ext_resource type="Script" uid="uid://bhmim6poph5an" path="res://scripts/move_history_entry.gd" id="1_trihv"]
+[ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="3_mde3l"]
+
+[sub_resource type="FontVariation" id="FontVariation_trvf4"]
+base_font = ExtResource("3_mde3l")
 
 [node name="move_history_entry" type="Control"]
-custom_minimum_size = Vector2(200, 40)
+custom_minimum_size = Vector2(146, 40)
 layout_mode = 3
 anchors_preset = 0
-offset_right = 200.0
+offset_right = 146.0
 offset_bottom = 40.0
 script = ExtResource("1_trihv")
 
@@ -31,4 +35,8 @@ expand_mode = 2
 
 [node name="Label" type="Label" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
-text = "(1.0, 1.0) : (2.0, 2.0)"
+theme_override_fonts/font = SubResource("FontVariation_trvf4")
+theme_override_font_sizes/font_size = 26
+text = "(a, 1) : (b, 2)"
+horizontal_alignment = 1
+vertical_alignment = 1

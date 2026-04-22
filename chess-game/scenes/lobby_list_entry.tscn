@@ -1,12 +1,17 @@
-[gd_scene load_steps=6 format=3 uid="uid://beekdbp76itqm"]
+[gd_scene load_steps=9 format=3 uid="uid://beekdbp76itqm"]
 
 [ext_resource type="Script" uid="uid://c1gdphnpgnv0u" path="res://scripts/lobby_list_entry.gd" id="1_neqra"]
 [ext_resource type="Texture2D" uid="uid://bai1iqhbnmbm7" path="res://Assets/LobbyMenuImages/WhiteShieldKing.png" id="2_5dst7"]
+[ext_resource type="PackedScene" uid="uid://bm18o0kocsj51" path="res://scenes/chess_background.tscn" id="2_qyrq6"]
 [ext_resource type="Texture2D" uid="uid://1pcjdbetkwlp" path="res://Assets/LobbyMenuImages/EasyModeIconJug.png" id="3_5dst7"]
+[ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="3_y74be"]
 [ext_resource type="Texture2D" uid="uid://dsxn1xc4dr5bu" path="res://Assets/Buttons/LoadoutButton.png" id="4_2yhni"]
 
+[sub_resource type="FontVariation" id="FontVariation_fkdnp"]
+base_font = ExtResource("3_y74be")
+
 [sub_resource type="LabelSettings" id="LabelSettings_ynpte"]
-font_size = 60
+font_size = 78
 
 [node name="lobby_list_entry" type="Button"]
 custom_minimum_size = Vector2(600, 150)
@@ -14,21 +19,18 @@ offset_right = 400.0
 offset_bottom = 100.0
 script = ExtResource("1_neqra")
 
-[node name="BackgroundColor" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-color = Color(0.8, 0.6, 0.4, 1)
+[node name="chess_background" parent="." instance=ExtResource("2_qyrq6")]
+layout_mode = 0
+offset_right = 600.0
+offset_bottom = 150.0
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="chess_background"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = -5.0
+offset_bottom = 5.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -37,32 +39,34 @@ theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="chess_background/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 20
 alignment = 1
 
-[node name="Number_Label" type="Label" parent="MarginContainer/HBoxContainer"]
+[node name="Number_Label" type="Label" parent="chess_background/MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_fkdnp")
+theme_override_font_sizes/font_size = 30
 text = "#24"
 label_settings = SubResource("LabelSettings_ynpte")
 
-[node name="Color_Image" type="TextureRect" parent="MarginContainer/HBoxContainer"]
+[node name="Color_Image" type="TextureRect" parent="chess_background/MarginContainer/HBoxContainer"]
 layout_mode = 2
 texture = ExtResource("2_5dst7")
 expand_mode = 2
 
-[node name="Map_Image" type="TextureRect" parent="MarginContainer/HBoxContainer"]
+[node name="Map_Image" type="TextureRect" parent="chess_background/MarginContainer/HBoxContainer"]
 layout_mode = 2
 texture = ExtResource("4_2yhni")
 expand_mode = 2
 
-[node name="Difficulty_Image" type="TextureRect" parent="MarginContainer/HBoxContainer"]
+[node name="Difficulty_Image" type="TextureRect" parent="chess_background/MarginContainer/HBoxContainer"]
 layout_mode = 2
 texture = ExtResource("3_5dst7")
 
-[node name="Title_Label" type="Label" parent="MarginContainer/HBoxContainer"]
+[node name="Title_Label" type="Label" parent="chess_background/MarginContainer/HBoxContainer"]
 visible = false
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
@@ -72,7 +76,7 @@ label_settings = SubResource("LabelSettings_ynpte")
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="Details_Label" type="Label" parent="MarginContainer/HBoxContainer"]
+[node name="Details_Label" type="Label" parent="chess_background/MarginContainer/HBoxContainer"]
 visible = false
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2

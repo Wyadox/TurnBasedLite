@@ -1,0 +1,222 @@
+[gd_scene load_steps=17 format=3 uid="uid://bxdepwhprt4pp"]
+
+[ext_resource type="Script" uid="uid://bj20fx8i5xny6" path="res://scripts/game.gd" id="1_yqjtg"]
+[ext_resource type="Texture2D" uid="uid://bi27j240t7d1r" path="res://Assets/ChessBoard/ChessBoard.png" id="2_kvpfn"]
+[ext_resource type="PackedScene" uid="uid://dnbpf2aas655b" path="res://scenes/board.tscn" id="2_p57ef"]
+[ext_resource type="PackedScene" uid="uid://dlld2p1r0gxox" path="res://scenes/setup_phase_ui.tscn" id="6_p57ef"]
+[ext_resource type="PackedScene" uid="uid://qrys574fx6lg" path="res://scenes/loadout_slots_vbox.tscn" id="7_u5sy4"]
+[ext_resource type="PackedScene" uid="uid://dp03twcoim8s8" path="res://scenes/evaluation_bar.tscn" id="8_0tnpc"]
+[ext_resource type="Texture2D" uid="uid://c2ffhrqxtv6do" path="res://Assets/customPiecesSpritesheet.png" id="8_gee14"]
+[ext_resource type="PackedScene" uid="uid://dqrdpth8xiafq" path="res://scenes/notification.tscn" id="8_kvuet"]
+[ext_resource type="PackedScene" uid="uid://cntck3ed2vkxt" path="res://scenes/captured_display.tscn" id="9_0tnpc"]
+[ext_resource type="Texture2D" uid="uid://bcr4alx5suqho" path="res://Assets/Backgrounds/castle bg full.png" id="11_kvpfn"]
+[ext_resource type="PackedScene" uid="uid://c6ulmyy15jdeu" path="res://scenes/descriptions.tscn" id="12_dinhu"]
+[ext_resource type="PackedScene" uid="uid://bv1nq1ec8x4j0" path="res://scenes/previous_move.tscn" id="14_trtic"]
+[ext_resource type="PackedScene" uid="uid://dbxe12unkumgf" path="res://scenes/dynamic_button.tscn" id="15_ca42v"]
+[ext_resource type="PackedScene" uid="uid://c8ghnkg4lmoc" path="res://scenes/move_history.tscn" id="15_ir15t"]
+[ext_resource type="PackedScene" uid="uid://b40kfc55gm8m3" path="res://scenes/move_clock.tscn" id="16_ca42v"]
+[ext_resource type="PackedScene" uid="uid://cec8ttfqyv3h" path="res://scenes/main_menu.tscn" id="16_rysoc"]
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_yqjtg")
+
+[node name="Board_Base" type="Sprite2D" parent="."]
+z_index = -101
+position = Vector2(952, 520.00006)
+scale = Vector2(3.6061954, 3.6061954)
+texture = ExtResource("2_kvpfn")
+
+[node name="Board" parent="." instance=ExtResource("2_p57ef")]
+position = Vector2(534.88, 100)
+
+[node name="TurnIndicator" type="TextureRect" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 1545.0
+offset_top = 426.0
+offset_right = 1710.0
+offset_bottom = 591.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="IndicatorImage" type="Sprite2D" parent="."]
+position = Vector2(-301, 57)
+texture = ExtResource("8_gee14")
+
+[node name="SetupPhaseUI" parent="." instance=ExtResource("6_p57ef")]
+visible = false
+offset_left = 801.0
+offset_right = 841.0
+
+[node name="notification" parent="." instance=ExtResource("8_kvuet")]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 961.0
+offset_top = 1021.0
+offset_right = 961.0
+offset_bottom = 1021.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Loadouts_Label" type="Label" parent="."]
+visible = false
+offset_left = 1523.0
+offset_top = 243.0
+offset_right = 1786.0
+offset_bottom = 285.0
+theme_override_font_sizes/font_size = 30
+text = "SAVED LOADOUTS"
+
+[node name="loadoutSlots" parent="." instance=ExtResource("7_u5sy4")]
+offset_left = 1626.0
+offset_top = 509.0
+offset_right = 1626.08
+offset_bottom = 509.32
+
+[node name="evaluation_bar" parent="." instance=ExtResource("8_0tnpc")]
+offset_left = 448.0
+offset_top = 130.0
+offset_right = 448.0
+offset_bottom = 130.0
+
+[node name="captured_display" parent="." instance=ExtResource("9_0tnpc")]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = 1422.0
+offset_top = 951.0
+offset_right = 1422.0
+offset_bottom = 951.0
+grow_vertical = 0
+direction = 1
+
+[node name="captured_display2" parent="." instance=ExtResource("9_0tnpc")]
+offset_left = 1424.0
+offset_top = 97.0
+offset_right = 1424.0
+offset_bottom = 97.0
+color = 1
+
+[node name="Background_Rect" type="TextureRect" parent="."]
+z_index = -1000
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -1568.0
+offset_top = -14.999996
+offset_right = 1732.0
+offset_bottom = 2535.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(1.1051352, 1.1051352)
+mouse_filter = 2
+texture = ExtResource("11_kvpfn")
+
+[node name="descriptions" parent="." instance=ExtResource("12_dinhu")]
+offset_left = 663.0
+offset_top = 388.0
+offset_right = 1243.0
+offset_bottom = 638.0
+color = 1
+
+[node name="previous_move" parent="." instance=ExtResource("14_trtic")]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 70.0
+offset_top = 276.0
+offset_right = 360.0
+offset_bottom = 516.0
+grow_vertical = 2
+
+[node name="move_history" parent="." instance=ExtResource("15_ir15t")]
+offset_left = 68.0
+offset_top = 532.0
+offset_right = 358.0
+offset_bottom = 772.0
+
+[node name="move_clock" parent="." instance=ExtResource("16_ca42v")]
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 1500.0
+offset_top = 450.0
+offset_right = 1500.0
+offset_bottom = 450.0
+grow_horizontal = 1
+grow_vertical = 1
+duration = 1.0
+color = 1
+
+[node name="move_clock2" parent="." instance=ExtResource("16_ca42v")]
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 1500.0
+offset_top = 450.0
+offset_right = 1500.0
+offset_bottom = 450.0
+grow_horizontal = 1
+grow_vertical = 1
+duration = 1.0
+
+[node name="Control" type="Control" parent="."]
+z_index = 200
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="Control"]
+layout_mode = 0
+offset_top = -27.0
+offset_right = 1107.0
+offset_bottom = 980.0
+scale = Vector2(1.7687603, 1.7687603)
+color = Color(0.4862745, 0.4862745, 0.4862745, 0.5882353)
+
+[node name="Win Label" type="Label" parent="Control"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 635.0
+offset_top = 371.0
+offset_right = 1248.0
+offset_bottom = 477.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 75
+text = "Player ONE WON"
+horizontal_alignment = 1
+
+[node name="MainMenu_Button" parent="Control" instance=ExtResource("15_ca42v")]
+custom_minimum_size = Vector2(175, 64)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 851.0
+offset_top = 470.0
+offset_right = 1026.0
+offset_bottom = 534.0
+grow_horizontal = 2
+grow_vertical = 2
+scene = ExtResource("16_rysoc")
+button_text = "Main Menu"
+button_size = Vector2(175, 64)

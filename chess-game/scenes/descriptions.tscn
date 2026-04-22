@@ -1,77 +1,87 @@
-[gd_scene load_steps=4 format=3 uid="uid://c6ulmyy15jdeu"]
+[gd_scene load_steps=8 format=3 uid="uid://c6ulmyy15jdeu"]
 
 [ext_resource type="Script" uid="uid://dbjmnp715fnbm" path="res://scripts/descriptions.gd" id="1_n6byr"]
 [ext_resource type="Texture2D" uid="uid://bhpcvx2c3573d" path="res://Assets/StunIndicator.png" id="2_5jbt0"]
+[ext_resource type="PackedScene" uid="uid://bm18o0kocsj51" path="res://scenes/chess_background.tscn" id="2_h1h23"]
+[ext_resource type="PackedScene" uid="uid://dbxe12unkumgf" path="res://scenes/dynamic_button.tscn" id="2_i3205"]
 [ext_resource type="Texture2D" uid="uid://bw2ccfiqhwrtb" path="res://customPiecesSpritesheetNew.png" id="3_n6byr"]
+[ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="5_yw4vj"]
+
+[sub_resource type="FontVariation" id="FontVariation_l7t8f"]
+base_font = ExtResource("5_yw4vj")
 
 [node name="descriptions" type="Control"]
-custom_minimum_size = Vector2(580, 200)
+custom_minimum_size = Vector2(580, 250)
 layout_mode = 3
 anchors_preset = 0
-offset_right = 581.0
-offset_bottom = 200.0
+offset_right = 580.0
+offset_bottom = 250.0
 script = ExtResource("1_n6byr")
 
-[node name="Panel" type="Panel" parent="."]
+[node name="chess_background" parent="." instance=ExtResource("2_h1h23")]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_right = 580.0
+offset_bottom = 250.0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel"]
+[node name="HBoxContainer" type="HBoxContainer" parent="chess_background"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 0
-offset_left = 217.0
-offset_top = 139.0
-offset_right = 525.0
-offset_bottom = 179.0
+offset_left = 253.0
+offset_top = 166.0
+offset_right = 553.0
+offset_bottom = 230.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="Left_Button" type="Button" parent="Panel/HBoxContainer"]
-custom_minimum_size = Vector2(100, 0)
+[node name="Prev_Button" parent="chess_background/HBoxContainer" instance=ExtResource("2_i3205")]
 layout_mode = 2
-text = "PREVIOUS"
+button_text = "<"
+instant = true
+stay_down_on_select = false
 
-[node name="Right_Button" type="Button" parent="Panel/HBoxContainer"]
-custom_minimum_size = Vector2(100, 0)
+[node name="Next_Button" parent="chess_background/HBoxContainer" instance=ExtResource("2_i3205")]
 layout_mode = 2
-text = "NEXT"
+button_text = ">"
+instant = true
+stay_down_on_select = false
 
-[node name="Spawn_Button" type="Button" parent="Panel/HBoxContainer"]
-custom_minimum_size = Vector2(100, 0)
+[node name="Create_Button" parent="chess_background/HBoxContainer" instance=ExtResource("2_i3205")]
+custom_minimum_size = Vector2(110, 64)
 layout_mode = 2
-text = "SPAWN"
+button_text = "SPAWN"
+instant = true
+stay_down_on_select = false
+button_size = Vector2(110, 64)
 
-[node name="image_preview" type="TextureRect" parent="Panel"]
+[node name="image_preview" type="TextureRect" parent="chess_background"]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_left = 10.0
+offset_left = 21.0
 offset_top = -79.0
-offset_right = 168.0
+offset_right = 179.0
 offset_bottom = 79.0
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource("2_5jbt0")
 
-[node name="Label" type="Label" parent="Panel"]
+[node name="Label" type="Label" parent="chess_background"]
 layout_mode = 0
-offset_left = 172.0
-offset_top = 8.0
-offset_right = 572.0
-offset_bottom = 81.0
+offset_left = 181.0
+offset_top = 27.0
+offset_right = 557.0
+offset_bottom = 140.0
 size_flags_horizontal = 4
+theme_override_fonts/font = SubResource("FontVariation_l7t8f")
+theme_override_font_sizes/font_size = 22
 text = "HELLO THERE "
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="Exit_Button" type="Button" parent="Panel"]
+[node name="Exit_Button" type="Button" parent="chess_background"]
 visible = false
 layout_mode = 0
 offset_left = 456.0
@@ -86,7 +96,4 @@ text = "EXIT"
 visible = false
 texture = ExtResource("3_n6byr")
 
-[connection signal="pressed" from="Panel/HBoxContainer/Left_Button" to="." method="_on_left_button_pressed"]
-[connection signal="pressed" from="Panel/HBoxContainer/Right_Button" to="." method="_on_right_button_pressed"]
-[connection signal="pressed" from="Panel/HBoxContainer/Spawn_Button" to="." method="_on_spawn_button_pressed"]
-[connection signal="pressed" from="Panel/Exit_Button" to="." method="_on_exit_button_pressed"]
+[connection signal="pressed" from="chess_background/Exit_Button" to="." method="_on_exit_button_pressed"]

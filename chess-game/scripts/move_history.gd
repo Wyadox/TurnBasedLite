@@ -1,8 +1,8 @@
 extends Control
 
 @onready var sprite = $Sprite2D
-@onready var v_box_container: VBoxContainer = $Panel/ScrollContainer/VBoxContainer
-@onready var scroll_container: ScrollContainer = $Panel/ScrollContainer
+@onready var scroll_container: ScrollContainer = $chess_background/MarginContainer/ScrollContainer
+@onready var v_box_container: VBoxContainer = $chess_background/MarginContainer/ScrollContainer/VBoxContainer
 
 @export var color : Globals.COLORS
 
@@ -49,4 +49,6 @@ func grab_region(piece_type):
 	return atlas
 	
 func get_label():
-	return str(start_pos + Vector2(1,1), " : ", end_pos + Vector2(1,1))
+	var start_vector = Globals.get_letters_for_history(start_pos)
+	var end_vector = Globals.get_letters_for_history(end_pos)
+	return str("(", start_vector[0] as String, ",", start_vector[1] as int, ") : (", end_vector[0] as String, ",", end_vector[1] as int, ")")

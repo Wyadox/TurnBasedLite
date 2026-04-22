@@ -1,31 +1,30 @@
-[gd_scene load_steps=5 format=3 uid="uid://bt1dnu27eu4td"]
+[gd_scene load_steps=8 format=3 uid="uid://bt1dnu27eu4td"]
 
 [ext_resource type="Texture2D" uid="uid://bhpcvx2c3573d" path="res://Assets/StunIndicator.png" id="1_76x2o"]
 [ext_resource type="Script" uid="uid://d3tyyh6ohaeg1" path="res://scripts/loadout_slot.gd" id="1_mqcpd"]
-[ext_resource type="Texture2D" uid="uid://dsxn1xc4dr5bu" path="res://Assets/Buttons/LoadoutButton.png" id="2_mqcpd"]
-[ext_resource type="Texture2D" uid="uid://ufinxyho3xxb" path="res://Assets/Buttons/LoadoutButton_Hover.png" id="3_hvdov"]
+[ext_resource type="Texture2D" uid="uid://bk4fdx5kmskvq" path="res://Assets/Buttons/LoadoutButtonNEW.png" id="2_glqop"]
+[ext_resource type="Texture2D" uid="uid://cx5vpwgfyqq32" path="res://Assets/Buttons/LoadoutButtonNEW_PRESS.png" id="3_kilqm"]
+[ext_resource type="Texture2D" uid="uid://bpd2thplos108" path="res://Assets/Buttons/LoadoutButtonNEW_HOVER.png" id="4_jlf4s"]
+[ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="5_kilqm"]
+
+[sub_resource type="FontVariation" id="FontVariation_jlf4s"]
+base_font = ExtResource("5_kilqm")
 
 [node name="loadout_slot" type="Control"]
+custom_minimum_size = Vector2(128, 128)
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -27.0
-offset_bottom = -27.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 0
+offset_right = 128.0
+offset_bottom = 128.0
 script = ExtResource("1_mqcpd")
 
 [node name="TextureButton" type="TextureButton" parent="."]
-layout_mode = 0
-offset_left = -64.0
-offset_top = -43.0
-offset_right = -24.0
-offset_bottom = -3.0
-scale = Vector2(1.3905994, 1.3905994)
-texture_normal = ExtResource("2_mqcpd")
-texture_pressed = ExtResource("3_hvdov")
-texture_hover = ExtResource("3_hvdov")
+layout_mode = 1
+offset_right = 96.0
+offset_bottom = 96.0
+texture_normal = ExtResource("2_glqop")
+texture_pressed = ExtResource("3_kilqm")
+texture_hover = ExtResource("4_jlf4s")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 visible = false
@@ -38,13 +37,22 @@ mouse_filter = 2
 texture = ExtResource("1_76x2o")
 
 [node name="Label" type="Label" parent="."]
-layout_mode = 0
-offset_left = -9.0
-offset_top = 48.0
-offset_right = 82.0
-offset_bottom = 135.0
-theme_override_font_sizes/font_size = 30
-text = "1
-"
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -56.0
+offset_top = 63.0
+offset_right = 56.0
+offset_bottom = 101.0
+grow_horizontal = 2
+theme_override_fonts/font = SubResource("FontVariation_jlf4s")
+theme_override_font_sizes/font_size = 32
+text = "LOADOUT 1"
+horizontal_alignment = 1
+vertical_alignment = 1
 
+[connection signal="button_down" from="TextureButton" to="." method="_on_texture_button_button_down"]
+[connection signal="button_up" from="TextureButton" to="." method="_on_texture_button_button_up"]
+[connection signal="mouse_exited" from="TextureButton" to="." method="_on_texture_button_mouse_exited"]
 [connection signal="pressed" from="TextureButton" to="." method="_on_texture_button_pressed"]

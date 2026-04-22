@@ -21,6 +21,9 @@ var setup_done: bool = false
 
 var real_board : bool = true
 
+var LOWER_COLOR : Globals.COLORS = Globals.COLORS.WHITE
+var UPPER_COLOR : Globals.COLORS = Globals.COLORS.BLACK
+
 enum BOARD_TYPE {
 	STANDARD,
 	RIVER,
@@ -58,6 +61,7 @@ func _ready() -> void:
 	SignalBus.change_map.connect(_on_set_board_type)
 
 func draw_board():
+	clear_labels()
 	if !is_loadout_board:
 		for x in range(BOARD_WIDTH):
 			for y in range(BOARD_HEIGHT):
@@ -68,7 +72,6 @@ func draw_board():
 				draw_cell(x, y)
 				
 func _on_set_board_type(current_map):
-	
 	if current_map == 1:
 		selected_board = BOARD_TYPE.STANDARD
 		draw_board()
@@ -183,12 +186,69 @@ func draw_cell(x, y):
 	elif selected_board == BOARD_TYPE.WALL:
 		rect.color = Color(0.955, 0.761, 0.361, 1.0) if (x + y) % 2 == 0 else Color(0.295, 0.217, 0.139, 1.0)
 	rect.size = Vector2(CELL_SIZE, CELL_SIZE)
-	rect.position = Vector2(
+	var cell_position = Vector2(
 		x * CELL_SIZE,
 		y * CELL_SIZE
 	)
+	rect.position = cell_position
+	draw_letter(cell_position, x, y)
 	rect.z_index = -100
 	add_child(rect)
+
+const LABEL_Y_LETTER_OFFSET = 30
+const LABEL_X_LETTER_OFFSET = 8
+const LABEL_Y_NUMBER_OFFSET = 0
+const LABEL_X_NUMBER_OFFSET = 15
+
+func draw_letter(cell_position, x, y) -> void:
+	if (y != BOARD_HEIGHT - 1 and x != BOARD_WIDTH - 1) or is_loadout_board:
+		return
+	
+	var label = Label.new()
+	label.text = get_letter(x, y)
+	if Globals.LETTERS.has(label.text):
+		label.position = cell_position + Vector2(LABEL_X_LETTER_OFFSET, CELL_SIZE - LABEL_Y_LETTER_OFFSET)
+	else:
+		label.position = cell_position + Vector2(CELL_SIZE - LABEL_X_NUMBER_OFFSET, LABEL_Y_NUMBER_OFFSET)
+	
+	var font = preload("res://Assets/Buttons/Jersey10-Regular.ttf")
+	if (x == BOARD_WIDTH - 1 and y == BOARD_HEIGHT - 1) or (x == 0 and y == 0):
+		var extra_label = Label.new()
+		if LOWER_COLOR == Globals.COLORS.BLACK:
+			extra_label.text = str(BOARD_HEIGHT)
+		else:
+			extra_label.text = "1"
+		extra_label.position = cell_position + Vector2(CELL_SIZE - LABEL_X_NUMBER_OFFSET, LABEL_Y_NUMBER_OFFSET)
+		extra_label.add_theme_font_override("font", font)
+		extra_label.add_theme_font_size_override("font_size", 20)
+		extra_label.z_index = 1000
+		add_child(extra_label)
+	
+	add_child(label)
+	print("label added")
+	
+	label.add_theme_font_override("font", font)
+	label.add_theme_font_size_override("font_size", 20)
+	label.z_index = 1000
+
+func get_letter(x, y) -> String:
+	if LOWER_COLOR == Globals.COLORS.WHITE:
+		if y == BOARD_HEIGHT - 1:
+			return Globals.LETTERS[x]
+		if x == BOARD_WIDTH - 1:
+			return str(abs(y - BOARD_HEIGHT))
+	else:
+		if y == BOARD_HEIGHT - 1:
+			return Globals.LETTERS[abs(x - BOARD_WIDTH + 1)]
+		if x == BOARD_WIDTH - 1:
+			return str(y + 1)
+	print("returning nothing")
+	return ""
+
+func clear_labels() -> void:
+	for child in get_children():
+		if child is Label:
+			child.queue_free()
 
 func draw_bridge(texture, x, y):
 	var rect = TextureRect.new()
@@ -267,11 +327,14 @@ func on_capture(dest_piece, selected_piece, board, previous_position):
 	
 	delete_piece(dest_piece)
 	
-func delete_piece(piece, force = false):
+func delete_piece(piece, force = false, refund = false):
 	for i in range(len(pieces)):
 		if pieces[i] == piece && (piece_is_protected(piece) == false or force):
 			var popped = pieces.pop_at(i)
 			popped.queue_free()
+			if refund:
+				print("emitting REFUND")
+				SignalBus.piece_refunded.emit()
 			return
 
 #
@@ -459,19 +522,6 @@ var borders = []
 
 func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 	print("hi from spawn piece")
-	if selected_pos == Vector2(-1, -1) or !is_within_bounds(selected_pos):
-		if is_loadout_board:
-			selected_pos = find_viable_square()
-			if selected_pos == Vector2(-1, -1) or !is_within_bounds(selected_pos):
-				SignalBus.emit_signal("refund_piece", piece_type)
-				return
-		else:
-			SignalBus.emit_signal("refund_piece", piece_type)
-			return
-	
-	if setup_done == true:
-		return
-		
 	# Determine color for current piece
 	var color
 	var total_pieces : int = num_pieces()
@@ -479,34 +529,61 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 		color = Globals.COLORS.WHITE
 	elif !is_loadout_board:
 		color = Globals.COLORS.BLACK
+	
+	if selected_pos == Vector2(-1, -1) or !is_within_bounds(selected_pos):
+		selected_pos = find_viable_square(color)
+		if selected_pos == Vector2(-1, -1) or !is_within_bounds(selected_pos):
+			SignalBus.emit_signal("refund_piece", piece_type)
+			return
+		#if is_loadout_board:
+			#selected_pos = find_viable_square()
+			#if selected_pos == Vector2(-1, -1) or !is_within_bounds(selected_pos):
+				#SignalBus.emit_signal("refund_piece", piece_type)
+				#return
+		#else:
+			#SignalBus.emit_signal("refund_piece", piece_type)
+			#return
+	
+	if setup_done == true:
+		return
+		
+	
 	create_piece(piece_type, color, selected_pos)
+	print("emitting piece_added at ", selected_pos)
+	SignalBus.piece_added.emit()
 	
 	# Determine if color needs to swap
-	if total_pieces + 1 < Globals.PIECES_PER_SIDE or total_pieces > (Globals.PIECES_PER_SIDE - 1) * 2:
-		color = Globals.COLORS.WHITE
-	elif !is_loadout_board:
-		color = Globals.COLORS.BLACK
-	SignalBus.emit_signal("set_status", color)
+	#if total_pieces + 1 < Globals.PIECES_PER_SIDE or total_pieces > (Globals.PIECES_PER_SIDE - 1) * 2:
+		#color = Globals.COLORS.WHITE
+	#elif !is_loadout_board:
+		#color = Globals.COLORS.BLACK
+	#SignalBus.emit_signal("set_status", color)
 	
 	if total_pieces == Globals.PIECES_PER_SIDE - 1:
-		SignalBus.emit_signal("spawn_ai")
+		#SignalBus.emit_signal("spawn_ai")
 		total_pieces = num_pieces()
 	
 	# Ready to play
-	if total_pieces > (Globals.PIECES_PER_SIDE - 1) * 2:
-		setup_done = true
-		SignalBus.emit_signal("setup_complete")
+	#if total_pieces > (Globals.PIECES_PER_SIDE - 1) * 2:
+		#setup_done = true
+		#SignalBus.emit_signal("setup_complete")
 		
 	# Reset border visual and selected pos
 	if border_shape and border_shape.is_inside_tree():
 		border_shape.queue_free()
 	selected_pos = Vector2(-1, -1)
 
-func find_viable_square() -> Vector2:
+func find_viable_square(color : Globals.COLORS) -> Vector2:
 	var flag : bool = true
 	var flag_flip_count : int = 0
+	var bound : Vector2
+	if color == UPPER_COLOR or is_loadout_board:
+		bound = Vector2(0, 2)
+	else:
+		bound = Vector2(5, 7)
+	
 	for i in range(Board.BOARD_WIDTH):
-		for j in range(2):
+		for j in range(bound.x, bound.y):
 			flag = true
 			for piece in pieces:
 				if piece.board_position == Vector2(i,j):
@@ -576,22 +653,16 @@ func draw_border(x, y, color, clear, border_style : Globals.BORDER_STYLE):
 			
 			border_shape = target
 			add_child(target)
-		Globals.BORDER_STYLE.HIGHLIGHT:
-			border_shape = Panel.new()
-			border_shape.size = Vector2(CELL_SIZE, CELL_SIZE)
-			border_shape.position = pos
-			border_shape.z_index = 20
+		Globals.BORDER_STYLE.FRIENDLY:
+			var friendly = FriendlyTarget.new()
+			friendly.size = Vector2(CELL_SIZE, CELL_SIZE)
+			friendly.position = pos
+			friendly.color = color
+			friendly.radius = CELL_SIZE as float / 2 - 4
+			friendly.z_index = 50
 			
-			var style := StyleBoxFlat.new()
-			style.bg_color = color
-			style.border_color = color
-			style.border_width_left = 4
-			style.border_width_top = 4
-			style.border_width_right = 4
-			style.border_width_bottom = 4
-			border_shape.add_theme_stylebox_override("panel", style)
-			
-			add_child(border_shape)
+			border_shape = friendly
+			add_child(friendly)
 	
 	if !clear:
 		borders.push_back(border_shape)
@@ -730,12 +801,22 @@ func piece_is_protected(piece):
 
 
 	
-func num_pieces():
-	var count : int = 0
+func num_pieces(color = Globals.COLORS.TILE):
+	var white_count : int = 0
+	var black_count : int = 0
 	for piece in pieces:
-		if piece.color != Globals.COLORS.TILE:
-			count += 1
-	return count
+		if piece.color == Globals.COLORS.WHITE:
+			white_count += 1
+		if piece.color == Globals.COLORS.BLACK:
+			black_count += 1
+	
+	if color == Globals.COLORS.WHITE:
+		print("white ", white_count)
+		return white_count
+	elif color == Globals.COLORS.BLACK:
+		return black_count
+	else:
+		return white_count + black_count
 
 
 func _on_game_init_ai(color) -> void:
@@ -745,6 +826,7 @@ func _on_game_init_ai(color) -> void:
 	var i = 0
 	for it in piecesToSpawn.size() / 2:
 		create_piece(piecesToSpawn[i], color, piecesToSpawn[i + 1] + Vector2(0, 0 if color == Globals.COLORS.BLACK else -5))
+		SignalBus.piece_added.emit()
 		i += 2
 		
 	var colorSet

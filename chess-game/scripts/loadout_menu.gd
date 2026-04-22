@@ -6,6 +6,11 @@ var board_scene
 @onready var setup_scene = $SetupPhaseUI
 const SETUP_SCENE = preload("res://scenes/setup_phase_ui.tscn")
 
+@onready var save_button: DynamicButton = $HBoxContainer/Save_Button
+@onready var load_button: DynamicButton = $HBoxContainer/Load_Button
+@onready var exit_button: DynamicButton = $Exit_Button
+@onready var clear_button: DynamicButton = $Clear_Button
+
 var selected_loadout = 0
 
 var is_dragging : bool = false
@@ -21,13 +26,18 @@ func _ready() -> void:
 	board_scene = BOARD.instantiate()
 	
 	board_scene.global_position.x += 550
-	board_scene.global_position.y += 600
+	board_scene.global_position.y += 625
 	board_scene.is_loadout_board = true
 	
 	add_child(board_scene)
 	
 	SignalBus.loadout_button.connect(loadout_button_pressed)
 	SignalBus.show_notification.connect(show_notification)
+	
+	save_button.button_triggered.connect(_on_button_save_pressed)
+	load_button.button_triggered.connect(_on_button_load_pressed)
+	clear_button.button_triggered.connect(_on_button_clear_pressed)
+	exit_button.button_triggered.connect(_on_button_exit_pressed)
 	
 
 func _input(event):
@@ -92,12 +102,12 @@ func drop_piece() -> bool:
 	
 	for piece in board_scene.pieces:
 		if piece != selected_piece and piece.board_position == drop_square:
-			piece.move_position(selected_piece.board_position)
-			selected_piece.move_position(drop_square)
+			piece.move_position(selected_piece.board_position, true)
+			selected_piece.move_position(drop_square, true)
 			board_scene.play_sound("capture")
 			return true
 	
-	selected_piece.move_position(drop_square)
+	selected_piece.move_position(drop_square, true)
 	board_scene.play_sound("move")
 	return true
 

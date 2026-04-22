@@ -1,7 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://dkmc2evyw53f"]
+[gd_scene load_steps=8 format=3 uid="uid://dkmc2evyw53f"]
 
 [ext_resource type="Script" uid="uid://63d8xda6pi3n" path="res://scripts/color_menu.gd" id="1_itt6i"]
-[ext_resource type="Texture2D" uid="uid://3dyvehvtliv5" path="res://Assets/FullBar.png" id="1_rae14"]
+[ext_resource type="Texture2D" uid="uid://bmgcjpr7arobb" path="res://Assets/Backgrounds/HighResolution_MedievalTown1.png" id="2_mwr25"]
+[ext_resource type="PackedScene" uid="uid://bm18o0kocsj51" path="res://scenes/chess_background.tscn" id="3_tu1go"]
+[ext_resource type="PackedScene" uid="uid://cgswc2v7pdjmj" path="res://scenes/spinner.tscn" id="3_ycy46"]
+[ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="4_ch0dw"]
+[ext_resource type="PackedScene" uid="uid://dbxe12unkumgf" path="res://scenes/dynamic_button.tscn" id="6_ch0dw"]
+
+[sub_resource type="FontVariation" id="FontVariation_tq7ks"]
+base_font = ExtResource("4_ch0dw")
 
 [node name="color_menu" type="Control"]
 layout_mode = 3
@@ -12,78 +19,79 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_itt6i")
 
-[node name="Label" type="Label" parent="."]
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_mwr25")
+
+[node name="chess_background" parent="." instance=ExtResource("3_tu1go")]
+custom_minimum_size = Vector2(400, 625)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -70.0
-offset_top = -257.0
-offset_right = 70.0
-offset_bottom = -202.0
+offset_left = -150.0
+offset_top = -300.0
+offset_right = 150.0
+offset_bottom = 300.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="chess_background"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -128.0
+offset_top = -234.0
+offset_right = 128.0
+offset_bottom = 234.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="chess_background/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_tq7ks")
 theme_override_font_sizes/font_size = 40
-text = "CALL IT"
+text = "BET ON A PIECE"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -57.5
-offset_top = -20.0
-offset_right = 57.5
-offset_bottom = 20.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Heads_Button" type="Button" parent="HBoxContainer"]
+[node name="spinner" parent="chess_background/VBoxContainer" instance=ExtResource("3_ycy46")]
 layout_mode = 2
-text = "HEADS"
 
-[node name="Tails_Button" type="Button" parent="HBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="chess_background/VBoxContainer"]
 layout_mode = 2
-text = "TAILS"
+alignment = 1
 
-[node name="Control" type="Control" parent="."]
+[node name="Continue_Button" parent="chess_background/VBoxContainer/HBoxContainer" instance=ExtResource("6_ch0dw")]
+custom_minimum_size = Vector2(175, 64)
+layout_mode = 2
+button_text = "CONTINUE"
+stay_down_on_select = false
+button_size = Vector2(175, 64)
+
+[node name="Return_Button" parent="." instance=ExtResource("6_ch0dw")]
+visible = false
+custom_minimum_size = Vector2(175, 64)
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -109.0
-offset_right = 20.0
-offset_bottom = -69.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Sprite2D" type="Sprite2D" parent="Control"]
-position = Vector2(26, 0)
-scale = Vector2(5.0400004, 5.0400004)
-texture = ExtResource("1_rae14")
-
-[node name="Continue_Button" type="Button" parent="."]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -45.5
-offset_top = 59.0
-offset_right = 45.5
-offset_bottom = 90.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "CONTINUE"
-
-[connection signal="pressed" from="HBoxContainer/Heads_Button" to="." method="_on_heads_button_pressed"]
-[connection signal="pressed" from="HBoxContainer/Tails_Button" to="." method="_on_tails_button_pressed"]
-[connection signal="pressed" from="Continue_Button" to="." method="_on_continue_button_pressed"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -420.0
+offset_top = 100.0
+offset_right = -245.0
+offset_bottom = 164.0
+grow_horizontal = 0
+button_text = "RETURN"
+stay_down_on_select = false
+button_size = Vector2(175, 64)

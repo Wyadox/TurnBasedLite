@@ -1,101 +1,14 @@
-[gd_scene load_steps=26 format=3 uid="uid://dux8e4cssk5i1"]
+[gd_scene load_steps=10 format=3 uid="uid://dux8e4cssk5i1"]
 
 [ext_resource type="Script" uid="uid://b1ibgxoocd1ub" path="res://scripts/loadout_menu.gd" id="1_yna6v"]
 [ext_resource type="PackedScene" uid="uid://dlld2p1r0gxox" path="res://scenes/setup_phase_ui.tscn" id="2_3c7rr"]
-[ext_resource type="Texture2D" uid="uid://q4d3whmmvlgw" path="res://Assets/Buttons/SAVE_Button.png" id="2_bcx0e"]
 [ext_resource type="Texture2D" uid="uid://b6agcr6rs37nc" path="res://Assets/Backgrounds/workshop_background.jpg" id="2_ki1oi"]
-[ext_resource type="Texture2D" uid="uid://b4dgipsc3p7xs" path="res://Assets/Buttons/SAVE_Button_Hover.png" id="3_21il4"]
 [ext_resource type="PackedScene" uid="uid://shbx8xrqrlr8" path="res://scenes/loadout_slots_hbox.tscn" id="3_gc7b0"]
-[ext_resource type="Texture2D" uid="uid://cdg0qw8fibr2" path="res://Assets/Buttons/LOAD_Button.png" id="4_ki1oi"]
 [ext_resource type="PackedScene" uid="uid://dqrdpth8xiafq" path="res://scenes/notification.tscn" id="4_p557w"]
-[ext_resource type="Texture2D" uid="uid://b6otvotb56exd" path="res://Assets/Buttons/LOAD_Button_Hover.png" id="5_4vggf"]
-[ext_resource type="Texture2D" uid="uid://dm516k1j36dje" path="res://Assets/Buttons/CLEAR_Button.png" id="6_6ruvx"]
-[ext_resource type="Texture2D" uid="uid://cjv860i1foy7c" path="res://Assets/Buttons/CLEAR_Button_Hover.png" id="7_dn7wr"]
-[ext_resource type="Texture2D" uid="uid://cw1w0oajlkhhw" path="res://Assets/Buttons/EXIT_Button.png" id="8_wxj56"]
-[ext_resource type="Texture2D" uid="uid://bdj5co4n8e2aw" path="res://Assets/Buttons/EXIT_Button_Hover.png" id="9_bf8y0"]
 [ext_resource type="PackedScene" uid="uid://c6ulmyy15jdeu" path="res://scenes/descriptions.tscn" id="13_21il4"]
-[ext_resource type="Texture2D" uid="uid://b3jo3krtvy036" path="res://Assets/Small Bin 1 - Animated_spritesheet.png" id="15_4vggf"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_6ruvx"]
-atlas = ExtResource("15_4vggf")
-region = Rect2(0, 0, 34, 69)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_dn7wr"]
-atlas = ExtResource("15_4vggf")
-region = Rect2(34, 0, 34, 69)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_wxj56"]
-atlas = ExtResource("15_4vggf")
-region = Rect2(68, 0, 34, 69)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_bf8y0"]
-atlas = ExtResource("15_4vggf")
-region = Rect2(102, 0, 34, 69)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_vm44h"]
-atlas = ExtResource("15_4vggf")
-region = Rect2(102, 0, 34, 69)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_4ci0w"]
-atlas = ExtResource("15_4vggf")
-region = Rect2(102, 0, 34, 69)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_phd5h"]
-atlas = ExtResource("15_4vggf")
-region = Rect2(68, 0, 34, 69)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_xqcas"]
-atlas = ExtResource("15_4vggf")
-region = Rect2(34, 0, 34, 69)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_7tmjp"]
-atlas = ExtResource("15_4vggf")
-region = Rect2(0, 0, 34, 69)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_0bpxs"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_6ruvx")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_dn7wr")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_wxj56")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_bf8y0")
-}],
-"loop": true,
-"name": &"close",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_vm44h")
-}],
-"loop": true,
-"name": &"idle",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_4ci0w")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_phd5h")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_xqcas")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_7tmjp")
-}],
-"loop": true,
-"name": &"open",
-"speed": 5.0
-}]
+[ext_resource type="PackedScene" uid="uid://bm18o0kocsj51" path="res://scenes/chess_background.tscn" id="16_6ruvx"]
+[ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="17_dn7wr"]
+[ext_resource type="PackedScene" uid="uid://dbxe12unkumgf" path="res://scenes/dynamic_button.tscn" id="18_wxj56"]
 
 [node name="loadout_menu" type="Control"]
 layout_mode = 3
@@ -128,25 +41,29 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -361.0
-offset_top = -824.0
+offset_top = -855.0
 offset_right = 363.0
-offset_bottom = -760.0
+offset_bottom = -791.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = 8
 alignment = 1
 
-[node name="Button_Save" type="TextureButton" parent="HBoxContainer"]
+[node name="Save_Button" parent="HBoxContainer" instance=ExtResource("18_wxj56")]
+custom_minimum_size = Vector2(175, 64)
 layout_mode = 2
-texture_normal = ExtResource("2_bcx0e")
-texture_pressed = ExtResource("3_21il4")
-texture_hover = ExtResource("3_21il4")
+button_text = "SAVE"
+instant = true
+stay_down_on_select = false
+button_size = Vector2(175, 64)
 
-[node name="Button_Load" type="TextureButton" parent="HBoxContainer"]
+[node name="Load_Button" parent="HBoxContainer" instance=ExtResource("18_wxj56")]
+custom_minimum_size = Vector2(175, 64)
 layout_mode = 2
-texture_normal = ExtResource("4_ki1oi")
-texture_pressed = ExtResource("5_4vggf")
-texture_hover = ExtResource("5_4vggf")
+button_text = "LOAD"
+instant = true
+stay_down_on_select = false
+button_size = Vector2(175, 64)
 
 [node name="SetupPhaseUI" parent="." instance=ExtResource("2_3c7rr")]
 visible = false
@@ -156,13 +73,6 @@ offset_top = -5.0
 offset_right = 143.0
 offset_bottom = 35.0
 
-[node name="loadoutSlots" parent="." instance=ExtResource("3_gc7b0")]
-layout_mode = 1
-offset_left = 813.0
-offset_top = 137.0
-offset_right = 813.00006
-offset_bottom = 65.67998
-
 [node name="notification" parent="." instance=ExtResource("4_p557w")]
 layout_mode = 1
 anchors_preset = 8
@@ -170,8 +80,8 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_top = 342.0
-offset_bottom = 342.0
+offset_top = 383.0
+offset_bottom = 383.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -183,124 +93,147 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -296.0
-offset_top = -190.0
+offset_top = -215.0
 offset_right = 284.0
-offset_bottom = 10.0
+offset_bottom = 35.0
 grow_horizontal = 2
 grow_vertical = 2
 color = 1
 
-[node name="Button_Clear" type="TextureButton" parent="."]
+[node name="Tooltip" parent="." instance=ExtResource("16_6ruvx")]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -87.5
-offset_top = 386.0
-offset_right = 87.5
-offset_bottom = 450.0
-grow_horizontal = 2
-grow_vertical = 2
-texture_normal = ExtResource("6_6ruvx")
-texture_pressed = ExtResource("7_dn7wr")
-texture_hover = ExtResource("7_dn7wr")
-
-[node name="Button_Exit" type="TextureButton" parent="."]
-layout_mode = 0
-offset_left = 1284.0
-offset_top = 92.0
-offset_right = 1459.0
-offset_bottom = 156.0
-texture_normal = ExtResource("8_wxj56")
-texture_pressed = ExtResource("9_bf8y0")
-texture_hover = ExtResource("9_bf8y0")
-
-[node name="TrashCan" type="AnimatedSprite2D" parent="."]
-visible = false
-position = Vector2(1619.0001, 792)
-scale = Vector2(5, 5)
-sprite_frames = SubResource("SpriteFrames_0bpxs")
-animation = &"close"
-autoplay = "idle"
-
-[node name="Panel" type="Panel" parent="."]
-layout_mode = 0
-offset_left = 72.0
-offset_top = 84.0
+offset_left = 75.0
+offset_top = 85.0
 offset_right = 508.0
-offset_bottom = 732.0
+offset_bottom = 724.0
 
-[node name="MarginContainer" type="MarginContainer" parent="Panel"]
-layout_mode = 0
+[node name="MarginContainer" type="MarginContainer" parent="Tooltip"]
+layout_mode = 1
 offset_right = 432.99213
-offset_bottom = 195.0
+offset_bottom = 636.0
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Tooltip/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 12
 alignment = 1
 
-[node name="Title_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="Title_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_fonts/font = ExtResource("17_dn7wr")
+theme_override_font_sizes/font_size = 45
 text = "LOADOUT MENU"
 horizontal_alignment = 1
 
-[node name="Desciption_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="Desciption_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("17_dn7wr")
+theme_override_font_sizes/font_size = 20
 text = "Save time when you play by creating loadouts here"
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="Save_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="Save_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_fonts/font = ExtResource("17_dn7wr")
+theme_override_font_sizes/font_size = 45
 text = "SAVE LOADOUT"
 horizontal_alignment = 1
 
-[node name="Saving_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="Saving_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("17_dn7wr")
+theme_override_font_sizes/font_size = 20
 text = "Select the loadout slot you want to use. Cycle through the available pieces and spawn it. You can choose where to spawn it by clicking on the board. Drag pieces around to edit their position. Click \"SAVE\" when done."
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="Edit_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="Edit_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_fonts/font = ExtResource("17_dn7wr")
+theme_override_font_sizes/font_size = 45
 text = "EDIT LOADOUT"
 horizontal_alignment = 1
 
-[node name="Editing_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="Editing_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("17_dn7wr")
+theme_override_font_sizes/font_size = 20
 text = "Select the loadout slot you want to edit. Click \"LOAD\". Drag pieces around to move them. Drag pieces to the furnace to delete them. Click \"SAVE\" when you are done."
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="Restrict_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="Restrict_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_fonts/font = ExtResource("17_dn7wr")
+theme_override_font_sizes/font_size = 45
 text = "RESTRICTIONS"
 horizontal_alignment = 1
 
-[node name="Restricting_Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="Restricting_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("17_dn7wr")
+theme_override_font_sizes/font_size = 20
 text = "You can only have one of each piece at a time
 You can only have two of a piece variant at a time (pawn, knight, etc.)
 You can only place 7 pieces total"
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[connection signal="pressed" from="HBoxContainer/Button_Save" to="." method="_on_button_save_pressed"]
-[connection signal="pressed" from="HBoxContainer/Button_Load" to="." method="_on_button_load_pressed"]
-[connection signal="pressed" from="Button_Clear" to="." method="_on_button_clear_pressed"]
-[connection signal="pressed" from="Button_Exit" to="." method="_on_button_exit_pressed"]
+[node name="chess_background2" parent="." instance=ExtResource("16_6ruvx")]
+z_index = -100
+layout_mode = 1
+offset_left = 535.0
+offset_top = 610.0
+offset_right = 1405.0
+offset_bottom = 880.0
+
+[node name="Exit_Button" parent="." instance=ExtResource("18_wxj56")]
+custom_minimum_size = Vector2(175, 64)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -420.0
+offset_top = 100.0
+offset_right = -245.0
+offset_bottom = 164.0
+grow_horizontal = 0
+button_text = "RETURN"
+stay_down_on_select = false
+button_size = Vector2(175, 64)
+
+[node name="Clear_Button" parent="." instance=ExtResource("18_wxj56")]
+custom_minimum_size = Vector2(300, 64)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = 436.0
+offset_right = 150.0
+offset_bottom = 500.0
+grow_horizontal = 2
+grow_vertical = 2
+button_text = "CLEAR BOARD"
+instant = true
+stay_down_on_select = false
+button_size = Vector2(300, 64)
+
+[node name="loadoutSlots" parent="." instance=ExtResource("3_gc7b0")]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_top = 134.0
+offset_bottom = 134.0
+grow_horizontal = 2

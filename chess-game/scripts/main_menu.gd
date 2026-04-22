@@ -3,8 +3,20 @@ extends Control
 @onready var main_menu_ui = $"."
 @onready var title: TextureRect = $Title
 
+@onready var local_button: DynamicButton = $VBoxContainer/Local_Button
+@onready var multiplayer_button: DynamicButton = $VBoxContainer/Multiplayer_Button
+@onready var loadout_button: DynamicButton = $VBoxContainer/Loadout_Button
+@onready var options_button: DynamicButton = $VBoxContainer/Options_Button
+@onready var quit_button: DynamicButton = $VBoxContainer/Quit_Button
+
 var direction : int = 1
 const ROTATION_INCREMENT : float = 0.25
+
+func _ready() -> void:
+	local_button.button_triggered.connect(_on_start_button_pressed)
+	multiplayer_button.button_triggered.connect(_on_online_button_pressed)
+	loadout_button.button_triggered.connect(_on_loadout_button_pressed)
+	options_button.button_triggered.connect(_on_options_button_pressed)
 
 func _process(delta: float) -> void:
 	title.rotation += ROTATION_INCREMENT * direction * delta

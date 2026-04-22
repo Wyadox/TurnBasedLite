@@ -1,10 +1,15 @@
-[gd_scene load_steps=3 format=3 uid="uid://dy8nxqsamussf"]
+[gd_scene load_steps=8 format=3 uid="uid://dy8nxqsamussf"]
 
 [ext_resource type="Script" uid="uid://bq3qfn1rwrshn" path="res://scripts/lobby_list.gd" id="1_ny1s3"]
+[ext_resource type="PackedScene" uid="uid://bm18o0kocsj51" path="res://scenes/chess_background.tscn" id="2_ny1s3"]
+[ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="3_f78iy"]
+[ext_resource type="PackedScene" uid="uid://dbxe12unkumgf" path="res://scenes/dynamic_button.tscn" id="3_rttxt"]
+[ext_resource type="Texture2D" uid="uid://bai1iqhbnmbm7" path="res://Assets/LobbyMenuImages/WhiteShieldKing.png" id="3_v0eoe"]
+[ext_resource type="Texture2D" uid="uid://c8unv6vyplb88" path="res://Assets/LoadoutButtonNEW.png" id="4_cbk5k"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_dtt3s"]
-font_size = 30
-font_color = Color(0, 0, 0, 1)
+font = ExtResource("3_f78iy")
+font_size = 54
 
 [node name="lobby_list" type="Control"]
 custom_minimum_size = Vector2(1300, 540)
@@ -35,69 +40,127 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="BackgroundColorRect" type="ColorRect" parent="HBoxContainer"]
-custom_minimum_size = Vector2(556, 540)
+[node name="chess_background" parent="HBoxContainer" instance=ExtResource("2_ny1s3")]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/BackgroundColorRect"]
+[node name="Color_Rect" type="TextureRect" parent="HBoxContainer/chess_background"]
+z_index = 1
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = 1
+anchor_left = 1.0
 anchor_right = 1.0
-anchor_bottom = 1.0
+offset_left = -116.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 116.0
+grow_horizontal = 0
+texture = ExtResource("3_v0eoe")
+expand_mode = 1
+stretch_mode = 2
+
+[node name="Map_Rect" type="TextureRect" parent="HBoxContainer/chess_background"]
+z_index = 1
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -64.0
+offset_top = -12.0
+offset_right = 64.0
+offset_bottom = 116.0
 grow_horizontal = 2
 grow_vertical = 2
-size_flags_horizontal = 3
-theme_override_constants/margin_left = 32
-theme_override_constants/margin_top = 32
-theme_override_constants/margin_right = 32
-theme_override_constants/margin_bottom = 32
+texture = ExtResource("4_cbk5k")
+expand_mode = 1
+stretch_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/BackgroundColorRect/MarginContainer"]
-layout_mode = 2
-
-[node name="TitleLabel" type="Label" parent="HBoxContainer/BackgroundColorRect/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(200, 0)
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 60
-text = "TITLE"
-label_settings = SubResource("LabelSettings_dtt3s")
-horizontal_alignment = 1
-autowrap_mode = 3
-
-[node name="DetailsLabel" type="Label" parent="HBoxContainer/BackgroundColorRect/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(400, 0)
-layout_mode = 2
+[node name="DescriptionLabel" type="Label" parent="HBoxContainer/chess_background"]
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = 117.0
+offset_right = 300.0
+offset_bottom = 176.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 6
 theme_override_font_sizes/font_size = 60
-text = "HELLO I AM DESCRIPTION"
+text = "Playing on MAP"
 label_settings = SubResource("LabelSettings_dtt3s")
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="DescriptionLabel" type="Label" parent="HBoxContainer/BackgroundColorRect/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(400, 0)
-layout_mode = 2
+[node name="DetailsLabel" type="Label" parent="HBoxContainer/chess_background"]
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -148.0
+offset_right = 300.0
+offset_bottom = -27.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 6
 theme_override_font_sizes/font_size = 60
-text = "HELLO I AM DESCRIPTION"
+text = "Playing on EASY difficulty, with 3:00 minutes on the move clock"
 label_settings = SubResource("LabelSettings_dtt3s")
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="Join_Button" type="Button" parent="HBoxContainer/BackgroundColorRect/MarginContainer/VBoxContainer"]
-layout_mode = 2
-text = "JOIN MATCH"
+[node name="Join_Button" parent="HBoxContainer/chess_background" instance=ExtResource("3_rttxt")]
+custom_minimum_size = Vector2(200, 64)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -86.0
+offset_right = 100.0
+offset_bottom = -22.0
+grow_horizontal = 2
+grow_vertical = 0
+button_text = "JOIN MATCH"
+stay_down_on_select = false
+button_size = Vector2(200, 64)
 
-[node name="NumberLabel" type="Label" parent="HBoxContainer/BackgroundColorRect/MarginContainer"]
-layout_mode = 2
+[node name="TitleLabel" type="Label" parent="HBoxContainer/chess_background"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 0
+offset_left = 173.0
+offset_top = 32.0
+offset_right = 548.0
+offset_bottom = 153.0
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 60
+text = "NO MATCH SELECTED"
+label_settings = SubResource("LabelSettings_dtt3s")
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="NumberLabel" type="Label" parent="HBoxContainer/chess_background"]
+layout_mode = 0
+offset_left = 32.0
+offset_top = 32.0
+offset_right = 142.0
+offset_bottom = 91.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 theme_override_font_sizes/font_size = 60
-text = "# 244"
+text = "# ??"
 label_settings = SubResource("LabelSettings_dtt3s")
-
-[connection signal="pressed" from="HBoxContainer/BackgroundColorRect/MarginContainer/VBoxContainer/Join_Button" to="." method="_on_join_button_pressed"]
