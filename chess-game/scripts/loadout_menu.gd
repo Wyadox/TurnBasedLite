@@ -10,6 +10,7 @@ const SETUP_SCENE = preload("res://scenes/setup_phase_ui.tscn")
 @onready var load_button: DynamicButton = $HBoxContainer/Load_Button
 @onready var exit_button: DynamicButton = $Exit_Button
 @onready var clear_button: DynamicButton = $Clear_Button
+@onready var tooltip: Control = $Tooltip
 
 var selected_loadout = 0
 
@@ -38,6 +39,9 @@ func _ready() -> void:
 	load_button.button_triggered.connect(_on_button_load_pressed)
 	clear_button.button_triggered.connect(_on_button_clear_pressed)
 	exit_button.button_triggered.connect(_on_button_exit_pressed)
+	
+	if !Globals.show_tooltips:
+		tooltip.hide()
 	
 
 func _input(event):

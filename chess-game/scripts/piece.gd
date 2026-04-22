@@ -52,7 +52,6 @@ func init_piece(
 			1: trojan_cloak_type = Globals.PIECE_TYPES.HORSE_ARCHER
 			2: trojan_cloak_type = Globals.PIECE_TYPES.STUN_KNIGHT
 			3: trojan_cloak_type = Globals.PIECE_TYPES.WARHORSE
-		print(roll)
 	color = col
 	board_position = board_pos
 	board_handle = board

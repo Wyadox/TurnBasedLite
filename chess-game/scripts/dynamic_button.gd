@@ -145,6 +145,7 @@ func select():
 	selected = true
 	if stay_down_on_select:
 		label.position = label_default_pos + press_offset
+		nine_patch_rect.texture = PRESS_TEXTURE
 
 func deselect():
 	selected = false

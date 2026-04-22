@@ -54,7 +54,6 @@ custom_minimum_size = Vector2(175, 64)
 layout_mode = 2
 button_text = "SAVE"
 instant = true
-stay_down_on_select = false
 button_size = Vector2(175, 64)
 
 [node name="Load_Button" parent="HBoxContainer" instance=ExtResource("18_wxj56")]
@@ -62,7 +61,6 @@ custom_minimum_size = Vector2(175, 64)
 layout_mode = 2
 button_text = "LOAD"
 instant = true
-stay_down_on_select = false
 button_size = Vector2(175, 64)
 
 [node name="SetupPhaseUI" parent="." instance=ExtResource("2_3c7rr")]
@@ -207,7 +205,6 @@ offset_right = -245.0
 offset_bottom = 164.0
 grow_horizontal = 0
 button_text = "RETURN"
-stay_down_on_select = false
 button_size = Vector2(175, 64)
 
 [node name="Clear_Button" parent="." instance=ExtResource("18_wxj56")]
@@ -226,7 +223,6 @@ grow_horizontal = 2
 grow_vertical = 2
 button_text = "CLEAR BOARD"
 instant = true
-stay_down_on_select = false
 button_size = Vector2(300, 64)
 
 [node name="loadoutSlots" parent="." instance=ExtResource("3_gc7b0")]
