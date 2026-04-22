@@ -93,7 +93,7 @@ func move_position(to_move: Vector2, cancel = false):
 		#board_handle.register_king(board_position, color)
 	
 	# Promotion for pawns to KING BEHAVIOR
-	if (piece_type == Globals.PIECE_TYPES.PAWN or piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN or piece_type == Globals.PIECE_TYPES.WORM or piece_type == Globals.PIECE_TYPES.CHECKER or piece_type == Globals.PIECE_TYPES.INFECTOR) and (
+	if (piece_type == Globals.PIECE_TYPES.PAWN or piece_type == Globals.PIECE_TYPES.MITOSIS_PAWN or piece_type == Globals.PIECE_TYPES.WORM or piece_type == Globals.PIECE_TYPES.CHECKER or piece_type == Globals.PIECE_TYPES.INFECTOR or piece_type == Globals.PIECE_TYPES.DUPLICATOR) and (
 		(starting_rank < DIRECTION_THRESHOLD and to_move[1] == board_handle.BOARD_HEIGHT - 1) or 
 		(starting_rank > DIRECTION_THRESHOLD and to_move[1] == 0)
 	):
