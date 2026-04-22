@@ -81,7 +81,6 @@ func _on_button_button_up() -> void:
 	else:
 		if should_swap():
 			nine_patch_rect.texture = HOVER_TEXTURE
-			print("huh?")
 		else:
 			label.position = label_default_pos + press_offset
 	

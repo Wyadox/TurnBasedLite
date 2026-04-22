@@ -157,7 +157,7 @@ func _input(event):
 		return
 	# Mouse left clicks/drags
 	if Input.is_action_just_pressed("left_click"):
-		print("left click")
+		#print("left click")
 		var square = get_square_under_mouse()
 		selected_piece = board.get_piece(square)
 		
@@ -171,10 +171,7 @@ func _input(event):
 					SignalBus.emit_signal("selected_square", square)
 				if status == UPPER_COLOR and square.y <= 1:
 					SignalBus.emit_signal("selected_square", square)
-			else:
-				print("no square was selected")
 			return
-		print("not in setup phase")
 			
 		if selected_piece == null:
 			return
@@ -198,7 +195,6 @@ func _input(event):
 			if dest_piece != null and !board.piece_is_protected(dest_piece):
 				color = Color(1.0, 0.0, 0.0)
 				dest_piece.play_animation("cower")
-				print("cower played")
 				board.draw_border(it.x, it.y, color, false)
 			elif dest_piece == null:
 				color = Color(1.0, 1.0, 0.0)
@@ -214,7 +210,6 @@ func _input(event):
 			selected_piece.position = previous_position
 		if selected_piece:
 			selected_piece.play_animation("idle")
-			print("idle played")
 		selected_piece.z_index = 0
 		selected_piece = null
 		is_dragging = false
@@ -361,7 +356,6 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 			if !checker_captured:
 				end_turn()
 			else:
-				reset_timer()
 				board.update_indicators()
 		return true
 	return false
@@ -420,7 +414,6 @@ func joust_direction(old_pos, to_move):
 	else:
 		pos.y = 1
 	
-	print(pos)
 	return pos
 
 func get_valid_moves():
@@ -576,15 +569,14 @@ func end_turn():
 	
 	clear_piece_animations()
 	check_for_shield_king()
-	reset_timer()
 	board.update_indicators()
 	update_eval()
 	
 func update_eval():
 	var eval = Ai.board_evaluation(board.pieces, 0.0)
-	print("Eval: ", eval)
+	#print("Eval: ", eval)
 	var eval_normalized = 1.0 / (1.0 + exp(-eval / EVAL_DIVISOR))
-	print("Normalized: ", eval_normalized)
+	#print("Normalized: ", eval_normalized)
 	$evaluation_bar.set_target(eval_normalized)
 
 func get_turn_indicator_tex(color):
@@ -615,20 +607,19 @@ func _on_board_setup_complete() -> void:
 	if ai_color == Globals.COLORS.WHITE:
 		player2_move()
 	init_pieces()
-	reset_timer()
 	board.update_indicators()
 	turn_indicator.texture = get_turn_indicator_tex(status)
 	turn_indicator.show()
-	print("setup complete connected")
 	update_eval()
 	
 	
 	for piece in board.pieces:
 		board_repr[board.BOARD_WIDTH * piece.board_position[1] + piece.board_position[0]] = piece
-	print(board_repr)
+	#print(board_repr)
 	for space in board_repr.size():
 		if board_repr[space] != null:
-			print(board_repr[space])
+			pass
+			#print(board_repr[space])
 
 
 func _on_board_set_status(color: Variant) -> void:
@@ -639,54 +630,16 @@ func _on_board_set_status(color: Variant) -> void:
 		board.draw_selection_box(Vector2(0.0, 5.0), Vector2(7.0, 7.0), SELECTION_BOX_COLOR)
 	else:
 		board.draw_selection_box(Vector2(0.0, 0.0), Vector2(7.0, 2.0), SELECTION_BOX_COLOR)
-		
-	print("status connected")
 
 func _on_board_spawn_ai() -> void:
 	if player2_type == Globals.PLAYER_2_TYPE.AI:
 		SignalBus.init_ai.emit(ai_color)
-	else:
-		print("fail")
 
 func init_pieces():
 	for piece in board.pieces:
 		if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
 			board.register_king(piece.board_position, piece.color)
 
-
-
-# Timer code
-
-func _on_move_timer_timeout() -> void:
-	print("ran out of time")
-	
-	if selected_piece and setup_complete:
-		selected_piece.position = previous_position
-		selected_piece.z_index = 0
-		selected_piece = null
-		is_dragging = false
-		board.clear_borders()
-		print("dropped piece INPUT")
-		
-	#move_from_timeout(player)
-	
-	end_turn()
-	player2_move()
-
-func _process(delta):
-	if move_timer.is_stopped():
-		return
-	
-	time_remaining -= delta
-	#timer_label.text = str(max(0, int(time_remaining)))
-	timer_bar.value = time_remaining
-	
-func reset_timer():
-	time_remaining = move_time
-	#timer_label.text = str(int(time_remaining))
-	if real_game:
-		timer_bar.value = move_time
-		move_timer.start(move_time)
 
 func _on_piece_moved(old_pos, new_pos):
 	board_repr[board.BOARD_WIDTH * new_pos[1] + new_pos[0]] = board_repr[board.BOARD_WIDTH * old_pos[1] + old_pos[0]]

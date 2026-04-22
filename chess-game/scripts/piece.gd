@@ -11,6 +11,7 @@ const X_OFFSET = 60
 const Y_OFFSET = 60
 
 @export var piece_type: Globals.PIECE_TYPES
+@export var trojan_cloak_type: Globals.PIECE_TYPES
 @export var color: Globals.COLORS
 @export var board_position: Vector2
 
@@ -26,6 +27,7 @@ const Y_OFFSET = 60
 
 @export var starting_rank : float
 @export var exploded: bool
+@export var loadout_piece: bool
 
 # Juggernaut variables
 const MAX_HEALTH : int = 3
@@ -43,6 +45,14 @@ func init_piece(
 	board
 ):
 	piece_type = type
+	trojan_cloak_type = type
+	if trojan_cloak_type == Globals.PIECE_TYPES.TROJAN_HORSE:
+		var roll = randi_range(1, 3)
+		match roll:
+			1: trojan_cloak_type = Globals.PIECE_TYPES.HORSE_ARCHER
+			2: trojan_cloak_type = Globals.PIECE_TYPES.STUN_KNIGHT
+			3: trojan_cloak_type = Globals.PIECE_TYPES.WARHORSE
+		print(roll)
 	color = col
 	board_position = board_pos
 	board_handle = board
@@ -52,6 +62,7 @@ func init_piece(
 	infect_counter = 0
 	starting_rank = board_pos.y
 	exploded = false
+	loadout_piece = false
 	
 	# Juggernaut
 	current_health = MAX_HEALTH
@@ -69,7 +80,11 @@ func init_piece(
 	
 func update_sprite():
 	if sprite:
-		var region_pos = Globals.SPRITE_MAPPING[color][piece_type]
+		var region_pos
+		if piece_type != trojan_cloak_type and not loadout_piece:
+			region_pos = Globals.SPRITE_MAPPING[color][trojan_cloak_type]
+		else:
+			region_pos = Globals.SPRITE_MAPPING[color][piece_type]
 		sprite.region_rect = Rect2(
 			region_pos.y * SPRITE_SIZE,
 			region_pos.x * SPRITE_SIZE,
