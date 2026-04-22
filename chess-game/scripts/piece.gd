@@ -776,13 +776,93 @@ func wizard_teleport_pos():
 			positions.append(pos)
 	return positions
 
-const WIZARD_THREAT_INCREMENTS = [[0,-1],[0,1]]
+const WIZARD_FORWARD_INCREMENTS = [[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],]
+const WIZARD_BACK_INCREMENTS = [[0,-1],[0,-2],[0,-3],[0,-4],[0,-5],[0,-6]]
 func wizard_threat_pos():
 	var positions = []
-	for inc in WIZARD_THREAT_INCREMENTS:
-		positions += board_handle.beam_search_threat(
+	var up_piece_found = false
+	var down_piece_found = false
+	for inc in WIZARD_FORWARD_INCREMENTS:
+		var pos = board_handle.spot_search_duplicate(
 			color,
 			board_position[0], board_position[1],
-			inc[0], inc[1], true
+			inc[0], inc[1]
 		)
+		if pos != null:
+			up_piece_found = true
+		if not up_piece_found:
+			pos = board_handle.spot_search_threat(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1], true, false
+		)
+		if pos != null:
+			var piece = board_handle.get_piece(pos) 
+			if piece != null and piece.piece_type!= Globals.PIECE_TYPES.WATER and piece.piece_type!= Globals.PIECE_TYPES.MAGMA_HIGH and piece.piece_type!= Globals.PIECE_TYPES.MAGMA_MED and piece.piece_type!= Globals.PIECE_TYPES.MAGMA_LOW:
+				pos = board_handle.spot_search_threat(
+					color,
+					board_position[0], board_position[1],
+					inc[0], inc[1], true, false
+				)
+			#else:
+				if pos!= null:
+					positions.append(pos)
+					break
+			
+	for inc in WIZARD_BACK_INCREMENTS:
+		var pos = board_handle.spot_search_duplicate(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1]
+		)
+		if pos != null:
+			down_piece_found = true
+		if not down_piece_found:
+			pos = board_handle.spot_search_threat(
+			color,
+			board_position[0], board_position[1],
+			inc[0], inc[1], true, false
+		)
+		if pos != null:
+			var piece = board_handle.get_piece(pos) 
+			if piece != null and piece.piece_type!= Globals.PIECE_TYPES.WATER and piece.piece_type!= Globals.PIECE_TYPES.MAGMA_HIGH and piece.piece_type!= Globals.PIECE_TYPES.MAGMA_MED and piece.piece_type!= Globals.PIECE_TYPES.MAGMA_LOW:
+				pos = board_handle.spot_search_threat(
+					color,
+					board_position[0], board_position[1],
+					inc[0], inc[1], true, false
+				)
+			#else:
+				if pos!= null:
+					positions.append(pos)
+					break
 	return positions
+
+#func wizard_back_pos():
+	#var positions = []
+	#for inc in WIZARD_BACK_INCREMENTS:
+		#var pos = board_handle.spot_search_threat(
+			#color,
+			#board_position[0], board_position[1],
+			#inc[0], inc[1], false, false
+		#)
+		#if pos != null:
+			#var piece = board_handle.get_piece(pos) 
+			#if piece != null and piece.piece_type!= Globals.PIECE_TYPES.WATER and piece.piece_type!= Globals.PIECE_TYPES.MAGMA_HIGH and piece.piece_type!= Globals.PIECE_TYPES.MAGMA_MED and piece.piece_type!= Globals.PIECE_TYPES.MAGMA_LOW:
+				#pos = board_handle.spot_search_threat(
+					#color,
+					#board_position[0], board_position[1],
+					#inc[0], inc[1], true, false
+				#)
+			##else:
+				#if pos!= null:
+					#positions.append(pos)
+					#break
+		#if pos!= null:
+			#positions.append(pos)
+	#return positions
+#
+#func wizard_threat_pos():
+	#var positions = []
+	#positions.append(wizard_front_pos())
+	#positions.append(wizard_back_pos())
+	#return positions

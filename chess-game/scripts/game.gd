@@ -488,12 +488,16 @@ func valid_move(from_pos, to_pos):
 		return false
 	
 	var dest_piece = board.get_piece(to_pos)
-	if dest_piece != null and ((board.piece_is_protected(dest_piece) && src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP) or dest_piece.piece_type == Globals.PIECE_TYPES.DUCK or (dest_piece.color == Globals.COLORS.TILE and dest_piece.piece_type != Globals.PIECE_TYPES.WEB)):
+	if dest_piece != null and ((board.piece_is_protected(dest_piece) && src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP) or dest_piece.piece_type == Globals.PIECE_TYPES.DUCK or (dest_piece.color == Globals.COLORS.TILE and (dest_piece.piece_type != Globals.PIECE_TYPES.WEB and dest_piece.piece_type != Globals.PIECE_TYPES.TREE))):
+		#if dest_piece.piece_type == Globals.PIECE_TYPES.TREE and src_piece.piece_type == Globals.PIECE_TYPES.WIZARD:
+			#print("is wizard and is tree")
+		#else: return false
 		return false
-			
+	if dest_piece != null and (dest_piece.piece_type == Globals.PIECE_TYPES.TREE and src_piece.piece_type != Globals.PIECE_TYPES.WIZARD):
+		return false
 	
 	var dst_piece = board_copy.get_piece(to_pos)
-	if dst_piece != null and (dst_piece.color != Globals.COLORS.TILE or dst_piece.piece_type == Globals.PIECE_TYPES.WEB):
+	if dst_piece != null and (dst_piece.color != Globals.COLORS.TILE or (dst_piece.piece_type == Globals.PIECE_TYPES.WEB or dst_piece.piece_type == Globals.PIECE_TYPES.TREE)):
 		board_copy.delete_piece(dst_piece)
 	#src_piece.move_position(to_pos)
 	

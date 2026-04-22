@@ -245,7 +245,8 @@ func on_capture(dest_piece, selected_piece, board, previous_position):
 			selected_piece.stun_counter = 3
 	if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
 		ExplodingBishop.explode_piece(dest_piece, selected_piece, board)
-		delete_piece(selected_piece)
+		if selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER and selected_piece.piece_type != Globals.PIECE_TYPES.WIZARD:
+			delete_piece(selected_piece)
 	elif selected_piece.piece_type == Globals.PIECE_TYPES.INFECTOR and dest_piece.piece_type != Globals.PIECE_TYPES.WEB:
 		Infector.InfectPiece(dest_piece)
 		return
