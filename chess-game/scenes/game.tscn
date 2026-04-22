@@ -33,11 +33,6 @@ texture = ExtResource("2_kvpfn")
 
 [node name="Board" parent="." instance=ExtResource("2_p57ef")]
 position = Vector2(534.88, 100)
-pieces = null
-piece_scene = null
-status_indicator = null
-white_king_pos = null
-black_king_pos = null
 
 [node name="TurnIndicator" type="TextureRect" parent="."]
 anchors_preset = 8

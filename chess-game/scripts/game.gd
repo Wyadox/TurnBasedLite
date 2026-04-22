@@ -402,7 +402,8 @@ func init_game():
 	board_repr.resize(board.BOARD_WIDTH * board.BOARD_HEIGHT)
 	
 	# Check to see if either player has a shield king.
-	check_for_shield_king()
+	#check_for_shield_king()
+	# MOVED TO on_board_setup_complete
 
 func check_for_shield_king():
 	for piece in board.pieces:
@@ -851,6 +852,7 @@ func _on_board_setup_complete() -> void:
 	setting_indicator.hide()
 	status = Globals.COLORS.WHITE
 	init_pieces()
+	check_for_shield_king()
 	board.update_indicators()
 	board.clear_selection_box()
 	turn_indicator.texture = get_turn_indicator_tex(status)
