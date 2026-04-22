@@ -329,7 +329,8 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 	var is_shooting = false
 	var is_jousting = false
 	var piece_died = false
-	
+	var is_throwing = false
+	var thrown_piece
 	
 	var to_move
 	if use_mouse:
@@ -344,9 +345,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 	#var jumped_piece_location
 	var shield_king_killed = false
 	var juggernaut_hit = false
-	var wizard_teleported = false
-	var wizard_fireballed = false
-	
+
 	var piece_captured = false
 	
 	
@@ -368,7 +367,22 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 					piece_captured = true
 					checker_captured = true
 					dest_piece = null
-					
+		if selected_piece.piece_type == Globals.PIECE_TYPES.SUMO and dest_piece != null and dest_piece.color != Globals.COLORS.TILE:
+			thrown_piece = dest_piece
+			is_shooting = true
+			selected_piece.position = previous_position
+			print("throwing")
+			is_throwing = true
+			for piece in board.pieces:
+				if piece.color != Globals.COLORS.TILE:
+					piece.stun_counter = 1
+			thrown_piece.stun_counter = 0
+			thrown_piece.is_thrown = true
+			if thrown_piece.color != selected_piece.color:
+				thrown_piece.infect_counter = 1
+				thrown_piece.color = selected_piece.color
+			
+			#dest_piece = null
 		if selected_piece.piece_type == Globals.PIECE_TYPES.DUPLICATOR and dest_piece != null and dest_piece.color == selected_piece.color:
 			Duplicator.Duplicate(selected_piece, dest_piece, board)
 			is_shooting = true
@@ -376,10 +390,6 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 		if selected_piece.piece_type == Globals.PIECE_TYPES.GUARDIAN_ANGEL and dest_piece != null and dest_piece.color == selected_piece.color:
 			dest_piece.move_position(old_pos)
 			GuardianAngel.Purify(dest_piece)
-		if selected_piece.piece_type == Globals.PIECE_TYPES.SUMO and dest_piece != null and dest_piece.color != Globals.COLORS.TILE:
-			print("throwing")
-			pass
-			#Sumo.Throw(dest_piece) 
 		# Delete only if the target piece is of different color
 		if selected_piece.piece_type == Globals.PIECE_TYPES.WIZARD and abs(old_pos.x - to_move.x)>1:
 			print("teleported")
@@ -392,11 +402,6 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 			print("fireball")
 			if selected_piece.current_fireball_cooldown != selected_piece.FIREBALL_COOLDOWN:
 				selected_piece.current_fireball_cooldown = selected_piece.FIREBALL_COOLDOWN
-		#if selected_piece.piece_type == Globals.PIECE_TYPES.WIZARD and selected_piece.current_fireball_cooldown == 0: #and abs(old_pos.y - to_move.y)>0 and old_pos.x == to_move.x:
-			#print("fireballing")
-			#is_shooting = true
-			#selected_piece.position = previous_position	
-			#Wizard.Fireball()
 		if dest_piece != null and dest_piece.color != selected_piece.color:
 			if dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT or dest_piece.piece_type == Globals.PIECE_TYPES.JUGGERNAUT2:
 				juggernaut_hit = true
@@ -459,12 +464,12 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 			if !piece_captured:
 				board.play_sound("move")
 			
-			if !checker_captured:
+			if !checker_captured and !is_throwing:
 				if player2_type == Globals.PLAYER_2_TYPE.NETWORK:
 					if multiplayer.is_server():
 						sync_end_turn.rpc()
 				else:
-					end_turn()
+						end_turn()
 			else:
 				board.update_indicators()
 				player2_move()
@@ -656,19 +661,20 @@ func _on_button_pressed():
 
 func end_turn():
 	for piece in board.pieces:
+		piece.is_thrown = false
 		if piece.stun_counter > 0:
 			piece.stun_counter -= 1
-			if piece.infect_counter > 0:
-				piece.infect_counter -= 1
-				if piece.infect_counter == 0:
-					if piece.color == Globals.COLORS.WHITE:
-						piece.color = Globals.COLORS.BLACK
-						piece.update_sprite()
-					elif piece.color == Globals.COLORS.BLACK:
-						piece.color = Globals.COLORS.WHITE
-						piece.update_sprite()
-					if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
-						board.shield_king.append(piece)
+		if piece.infect_counter > 0:
+			piece.infect_counter -= 1
+			if piece.infect_counter == 0:
+				if piece.color == Globals.COLORS.WHITE:
+					piece.color = Globals.COLORS.BLACK
+					piece.update_sprite()
+				elif piece.color == Globals.COLORS.BLACK:
+					piece.color = Globals.COLORS.WHITE
+					piece.update_sprite()
+				if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
+					board.shield_king.append(piece)
 		if piece.cool_counter > 0:
 			piece.cool_counter -= 1
 			if piece.cool_counter == 4:
@@ -869,19 +875,20 @@ func apply_network_move(from_pos : Vector2, to_pos : Vector2):
 func sync_end_turn():
 	Network.network_print("entered sync_end_turn()")
 	for piece in board.pieces:
+		piece.is_thrown = false
 		if piece.stun_counter > 0:
 			piece.stun_counter -= 1
-			if piece.infect_counter > 0:
-				piece.infect_counter -= 1
-				if piece.infect_counter == 0:
-					if piece.color == Globals.COLORS.WHITE:
-						piece.color = Globals.COLORS.BLACK
-						piece.update_sprite()
-					elif piece.color == Globals.COLORS.BLACK:
-						piece.color = Globals.COLORS.WHITE
-						piece.update_sprite()
-					if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
-						board.shield_king.append(piece)
+		if piece.infect_counter > 0:
+			piece.infect_counter -= 1
+			if piece.infect_counter == 0:
+				if piece.color == Globals.COLORS.WHITE:
+					piece.color = Globals.COLORS.BLACK
+					piece.update_sprite()
+				elif piece.color == Globals.COLORS.BLACK:
+					piece.color = Globals.COLORS.WHITE
+					piece.update_sprite()
+				if piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
+					board.shield_king.append(piece)
 		if piece.cool_counter > 0:
 			piece.cool_counter -= 1
 			if piece.cool_counter == 4:

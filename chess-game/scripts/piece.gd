@@ -23,6 +23,7 @@ const Y_OFFSET = 60
 @export var cool_counter: int;
 @export var current_fireball_cooldown: int;
 @export var current_teleport_cooldown: int;
+@export var is_thrown: bool;
 
 @export var starting_rank : float
 
@@ -49,6 +50,7 @@ func init_piece(
 	moved = false
 	stun_counter = 0
 	infect_counter = 0
+	is_thrown = false
 	starting_rank = board_pos.y
 	
 	# Juggernaut
@@ -123,130 +125,137 @@ func clone (_board):
 	copy.starting_rank = starting_rank
 	copy.current_fireball_cooldown = current_fireball_cooldown
 	copy.current_teleport_cooldown = current_teleport_cooldown
+	copy.is_thrown = is_thrown
 	
 	return copy
 	
 func get_moveable_positions():
-	match piece_type:
-		Globals.PIECE_TYPES.PAWN: 
-			if promoted:
+	if not is_thrown:
+		match piece_type:
+			Globals.PIECE_TYPES.PAWN: 
+				if promoted:
+					return king_threat_pos()
+				return pawn_move_pos()
+			Globals.PIECE_TYPES.MITOSIS_PAWN: 
+				var ret = pawn_move_pos()
+				if promoted:
+					ret += king_threat_pos()
+				ret += get_mitosis_positions()
+				return ret
+			Globals.PIECE_TYPES.BISHOP: return bishop_threat_pos()
+			Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()
+			Globals.PIECE_TYPES.KING: return king_threat_pos()
+			Globals.PIECE_TYPES.HORSE_ARCHER: return horse_archer_threat_pos()
+			Globals.PIECE_TYPES.ARCHBISHOP: return archbishop_threat_pos()
+			Globals.PIECE_TYPES.STUN_KNIGHT: return knight_threat_pos()
+			Globals.PIECE_TYPES.TROJAN_HORSE: return knight_threat_pos()
+			Globals.PIECE_TYPES.EXPLODING_BISHOP: return bishop_threat_pos()
+			Globals.PIECE_TYPES.SHIELD_KING: return king_threat_pos()
+			Globals.PIECE_TYPES.JOUST_BISHOP: return bishop_threat_pos()
+			Globals.PIECE_TYPES.ACROBISHOP: return acrobishop_threat_pos()
+			Globals.PIECE_TYPES.WORM: 
+				var positions = pawn_move_pos()
+				positions += worm_move_pos()
+				if promoted:
+					positions += king_threat_pos()
+				return positions
+			Globals.PIECE_TYPES.DUCK: return duck_move_pos()
+			Globals.PIECE_TYPES.CHECKER:
+				if promoted:
+					return promoted_checker_pos()
+				return pawn_move_pos()
+			Globals.PIECE_TYPES.JUGGERNAUT:
 				return king_threat_pos()
-			return pawn_move_pos()
-		Globals.PIECE_TYPES.MITOSIS_PAWN: 
-			var ret = pawn_move_pos()
-			if promoted:
-				ret += king_threat_pos()
-			ret += get_mitosis_positions()
-			return ret
-		Globals.PIECE_TYPES.BISHOP: return bishop_threat_pos()
-		Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()
-		Globals.PIECE_TYPES.KING: return king_threat_pos()
-		Globals.PIECE_TYPES.HORSE_ARCHER: return horse_archer_threat_pos()
-		Globals.PIECE_TYPES.ARCHBISHOP: return archbishop_threat_pos()
-		Globals.PIECE_TYPES.STUN_KNIGHT: return knight_threat_pos()
-		Globals.PIECE_TYPES.TROJAN_HORSE: return knight_threat_pos()
-		Globals.PIECE_TYPES.EXPLODING_BISHOP: return bishop_threat_pos()
-		Globals.PIECE_TYPES.SHIELD_KING: return king_threat_pos()
-		Globals.PIECE_TYPES.JOUST_BISHOP: return bishop_threat_pos()
-		Globals.PIECE_TYPES.ACROBISHOP: return acrobishop_threat_pos()
-		Globals.PIECE_TYPES.WORM: 
-			var positions = pawn_move_pos()
-			positions += worm_move_pos()
-			if promoted:
-				positions += king_threat_pos()
-			return positions
-		Globals.PIECE_TYPES.DUCK: return duck_move_pos()
-		Globals.PIECE_TYPES.CHECKER:
-			if promoted:
-				return promoted_checker_pos()
-			return pawn_move_pos()
-		Globals.PIECE_TYPES.JUGGERNAUT:
-			return king_threat_pos()
-		Globals.PIECE_TYPES.JUGGERNAUT2:
-			return king_threat_pos()
-		Globals.PIECE_TYPES.JUGGERNAUT1:
-			return king_threat_pos()
-		Globals.PIECE_TYPES.WARHORSE:
-			return knight_threat_pos()
-		Globals.PIECE_TYPES.INFECTOR:
-			if promoted:
+			Globals.PIECE_TYPES.JUGGERNAUT2:
 				return king_threat_pos()
-			return pawn_move_pos()
-		Globals.PIECE_TYPES.DUPLICATOR:
-			if promoted:
-				return promoted_duplicator_threat_pos()
-			return duplicator_move_pos()
-		Globals.PIECE_TYPES.MAGMA_KNIGHT:
-			return knight_threat_pos()
-		Globals.PIECE_TYPES.GUARDIAN_ANGEL:
-			return guardian_angel_move_pos()
-		Globals.PIECE_TYPES.SUMO:
-			return sumo_move_pos()
-		Globals.PIECE_TYPES.WIZARD:
-			if current_teleport_cooldown > 0:
-				return wizard_move_pos()
-			else:
-				return wizard_teleport_pos()
-		_: return []
+			Globals.PIECE_TYPES.JUGGERNAUT1:
+				return king_threat_pos()
+			Globals.PIECE_TYPES.WARHORSE:
+				return knight_threat_pos()
+			Globals.PIECE_TYPES.INFECTOR:
+				if promoted:
+					return king_threat_pos()
+				return pawn_move_pos()
+			Globals.PIECE_TYPES.DUPLICATOR:
+				if promoted:
+					return promoted_duplicator_threat_pos()
+				return duplicator_move_pos()
+			Globals.PIECE_TYPES.MAGMA_KNIGHT:
+				return knight_threat_pos()
+			Globals.PIECE_TYPES.GUARDIAN_ANGEL:
+				return guardian_angel_move_pos()
+			Globals.PIECE_TYPES.SUMO:
+				return sumo_move_pos()
+			Globals.PIECE_TYPES.WIZARD:
+				if current_teleport_cooldown > 0:
+					return wizard_move_pos()
+				else:
+					return wizard_teleport_pos()
+			_: return []
+	else:
+		return sumo_throw_pos()
 
 func get_threatened_positions():
-	match piece_type:
-		Globals.PIECE_TYPES.PAWN: 
-			if promoted == true:
+	if not is_thrown:
+		match piece_type:
+			Globals.PIECE_TYPES.PAWN: 
+				if promoted == true:
+					return king_threat_pos()
+				return pawn_threat_pos()
+			Globals.PIECE_TYPES.MITOSIS_PAWN: 
+				if promoted == true:
+					return king_threat_pos()
+				return pawn_threat_pos()
+			Globals.PIECE_TYPES.BISHOP: return bishop_threat_pos()
+			Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()
+			Globals.PIECE_TYPES.KING: return king_threat_pos()
+			Globals.PIECE_TYPES.HORSE_ARCHER: return horse_archer_threat_pos()
+			Globals.PIECE_TYPES.ARCHBISHOP: return archbishop_threat_pos()
+			Globals.PIECE_TYPES.STUN_KNIGHT: return knight_threat_pos()
+			Globals.PIECE_TYPES.TROJAN_HORSE: return knight_threat_pos()
+			Globals.PIECE_TYPES.EXPLODING_BISHOP: return bishop_threat_pos()
+			Globals.PIECE_TYPES.SHIELD_KING: return king_threat_pos()
+			Globals.PIECE_TYPES.JOUST_BISHOP: return bishop_threat_pos()
+			Globals.PIECE_TYPES.ACROBISHOP: return acrobishop_threat_pos()
+			Globals.PIECE_TYPES.WORM: 
+				var positions = pawn_threat_pos()
+				positions += worm_threat_pos()
+				if promoted:
+					positions += king_threat_pos()
+				return positions
+			Globals.PIECE_TYPES.DUCK: return []
+			Globals.PIECE_TYPES.CHECKER: return checker_threat_pos(false)
+			Globals.PIECE_TYPES.JUGGERNAUT:
 				return king_threat_pos()
-			return pawn_threat_pos()
-		Globals.PIECE_TYPES.MITOSIS_PAWN: 
-			if promoted == true:
+			Globals.PIECE_TYPES.JUGGERNAUT2:
 				return king_threat_pos()
-			return pawn_threat_pos()
-		Globals.PIECE_TYPES.BISHOP: return bishop_threat_pos()
-		Globals.PIECE_TYPES.KNIGHT: return knight_threat_pos()
-		Globals.PIECE_TYPES.KING: return king_threat_pos()
-		Globals.PIECE_TYPES.HORSE_ARCHER: return horse_archer_threat_pos()
-		Globals.PIECE_TYPES.ARCHBISHOP: return archbishop_threat_pos()
-		Globals.PIECE_TYPES.STUN_KNIGHT: return knight_threat_pos()
-		Globals.PIECE_TYPES.TROJAN_HORSE: return knight_threat_pos()
-		Globals.PIECE_TYPES.EXPLODING_BISHOP: return bishop_threat_pos()
-		Globals.PIECE_TYPES.SHIELD_KING: return king_threat_pos()
-		Globals.PIECE_TYPES.JOUST_BISHOP: return bishop_threat_pos()
-		Globals.PIECE_TYPES.ACROBISHOP: return acrobishop_threat_pos()
-		Globals.PIECE_TYPES.WORM: 
-			var positions = pawn_threat_pos()
-			positions += worm_threat_pos()
-			if promoted:
-				positions += king_threat_pos()
-			return positions
-		Globals.PIECE_TYPES.DUCK: return []
-		Globals.PIECE_TYPES.CHECKER: return checker_threat_pos(false)
-		Globals.PIECE_TYPES.JUGGERNAUT:
-			return king_threat_pos()
-		Globals.PIECE_TYPES.JUGGERNAUT2:
-			return king_threat_pos()
-		Globals.PIECE_TYPES.JUGGERNAUT1:
-			return king_threat_pos()
-		Globals.PIECE_TYPES.WARHORSE:
-			return knight_threat_pos()
-		Globals.PIECE_TYPES.INFECTOR:
-			if promoted:
+			Globals.PIECE_TYPES.JUGGERNAUT1:
 				return king_threat_pos()
-			return pawn_threat_pos()
-		Globals.PIECE_TYPES.DUPLICATOR:
-			if promoted:
-				return promoted_duplicator_threat_pos()
-			return pawn_threat_pos()
-		Globals.PIECE_TYPES.MAGMA_KNIGHT:
-			return knight_threat_pos()
-		Globals.PIECE_TYPES.GUARDIAN_ANGEL:
-			return king_threat_pos()
-		#Globals.PIECE_TYPES.SUMO:
-		#	pass
-			#return sumo_threat_pos()
-		Globals.PIECE_TYPES.WIZARD:
-			if current_fireball_cooldown == 0:
-				return wizard_threat_pos()
-			else: return []
-		
-		_: return []
+			Globals.PIECE_TYPES.WARHORSE:
+				return knight_threat_pos()
+			Globals.PIECE_TYPES.INFECTOR:
+				if promoted:
+					return king_threat_pos()
+				return pawn_threat_pos()
+			Globals.PIECE_TYPES.DUPLICATOR:
+				if promoted:
+					return promoted_duplicator_threat_pos()
+				return pawn_threat_pos()
+			Globals.PIECE_TYPES.MAGMA_KNIGHT:
+				return knight_threat_pos()
+			Globals.PIECE_TYPES.GUARDIAN_ANGEL:
+				return king_threat_pos()
+			Globals.PIECE_TYPES.SUMO:
+			#	pass
+				return sumo_threat_pos()
+			Globals.PIECE_TYPES.WIZARD:
+				if current_fireball_cooldown == 0:
+					return wizard_threat_pos()
+				else: return []
+			
+			_: return []
+	else:
+		return sumo_throw_pos()
 
 
 # Pawn Moves
@@ -725,7 +734,7 @@ func guardian_angel_move_pos():
 			
 	return positions
 
-const SUMO_MOVE_INCREMENTS = [[-1,0],[1,0],[0,-1],[0,1]]
+const SUMO_MOVE_INCREMENTS = [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,1],[-1,1],[1,-1]]
 const SUMO_THROW_INCREMENTS = [[-6,0],[-5,0],[-4,0],[-3,0],[-2,0],[-1,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[0,-6],[0,-5],[0,-4],[0,-3],[0,-2],[0,-1],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6]]
 func sumo_move_pos():
 	var positions = []
@@ -733,7 +742,7 @@ func sumo_move_pos():
 		var pos = board_handle.spot_search_threat(
 			color,
 			board_position[0], board_position[1],
-			inc[0], inc[1], false, true
+			inc[0], inc[1]
 		)
 		if pos != null:
 			positions.append(pos)
@@ -741,13 +750,34 @@ func sumo_move_pos():
 
 func sumo_threat_pos():
 	var positions = []
+	for inc in SUMO_MOVE_INCREMENTS:
+		var pos = board_handle.spot_search_threat(
+			color, 
+			board_position[0], board_position[1],
+			inc[0], inc[1] 
+		)
+		if pos != null:
+			positions.append(pos)
+	for inc in SUMO_MOVE_INCREMENTS:
+		var pos = board_handle.spot_search_duplicate(
+			color, 
+			board_position[0], board_position[1],
+			inc[0], inc[1] 
+		)
+		if pos != null:
+			positions.append(pos)
+	return positions
+
+func sumo_throw_pos():
+	var positions = []
 	for inc in SUMO_THROW_INCREMENTS:
 		var pos = board_handle.spot_search_threat(
 			color,
 			board_position[0], board_position[1],
-			inc[0], inc[1]
+			inc[0], inc[1] 
 		)
-		positions.append(pos)
+		if pos != null:
+			positions.append(pos)
 	return positions
 
 const WIZARD_MOVE_INCREMENTS = [[-1,0],[1,0],[0,-1],[0,1],[1,1],[-1,1],[-1,-1],[1,-1]]
