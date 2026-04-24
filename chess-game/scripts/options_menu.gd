@@ -23,7 +23,7 @@ func _ready() -> void:
 	
 	continue_button.condition = false
 	
-	if !Globals.show_tooltips:
+	if !SettingsManager.get_settings().show_tooltips:
 		tooltip.hide()
 	
 func _on_continue_button_pressed() -> void:

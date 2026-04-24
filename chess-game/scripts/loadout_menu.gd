@@ -40,7 +40,7 @@ func _ready() -> void:
 	clear_button.button_triggered.connect(_on_button_clear_pressed)
 	exit_button.button_triggered.connect(_on_button_exit_pressed)
 	
-	if !Globals.show_tooltips:
+	if !SettingsManager.get_settings().show_tooltips:
 		tooltip.hide()
 	
 

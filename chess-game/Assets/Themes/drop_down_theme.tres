@@ -1,0 +1,62 @@
+[gd_resource type="Theme" load_steps=7 format=3 uid="uid://cr17p0avkxt5k"]
+
+[ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="1_tmsd1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tmsd1"]
+bg_color = Color(0.4, 0.22352941, 0.19215687, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8c3fd"]
+bg_color = Color(0.8509804, 0.627451, 0.4, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_25qyp"]
+bg_color = Color(0.4, 0.22352941, 0.19215687, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hwc06"]
+bg_color = Color(0.4, 0.22352941, 0.19215687, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w774f"]
+bg_color = Color(0.8509804, 0.627451, 0.4, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[resource]
+Button/font_sizes/font_size = 24
+Button/fonts/font = ExtResource("1_tmsd1")
+Button/styles/hover = SubResource("StyleBoxFlat_tmsd1")
+Button/styles/normal = SubResource("StyleBoxFlat_8c3fd")
+Button/styles/pressed = SubResource("StyleBoxFlat_25qyp")
+PopupMenu/font_sizes/font_size = 24
+PopupMenu/fonts/font = ExtResource("1_tmsd1")
+PopupMenu/styles/hover = SubResource("StyleBoxFlat_hwc06")
+PopupMenu/styles/panel = SubResource("StyleBoxFlat_w774f")

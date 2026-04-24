@@ -1,10 +1,11 @@
-[gd_scene load_steps=11 format=3 uid="uid://dpw4rdpashksu"]
+[gd_scene load_steps=12 format=3 uid="uid://dpw4rdpashksu"]
 
 [ext_resource type="Script" uid="uid://etp6t4y62637" path="res://scripts/settings_menu.gd" id="1_48ojb"]
 [ext_resource type="Texture2D" uid="uid://cpfhv5akv2vp2" path="res://Assets/Backgrounds/HighResolution_MedievalTown2.png" id="2_n35ux"]
 [ext_resource type="PackedScene" uid="uid://bm18o0kocsj51" path="res://scenes/chess_background.tscn" id="3_fb6cq"]
 [ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="4_2ctot"]
 [ext_resource type="LabelSettings" uid="uid://bco61r5uaaytc" path="res://Assets/Themes/header.tres" id="4_fb6cq"]
+[ext_resource type="Theme" uid="uid://cr17p0avkxt5k" path="res://Assets/Themes/drop_down_theme.tres" id="5_2ctot"]
 [ext_resource type="PackedScene" uid="uid://dbxe12unkumgf" path="res://scenes/dynamic_button.tscn" id="5_jrqig"]
 [ext_resource type="Texture2D" uid="uid://cab25phsw1g0b" path="res://Assets/Buttons/GREEN_BG-export.png" id="6_fb6cq"]
 [ext_resource type="Texture2D" uid="uid://cxjiegsk02ban" path="res://Assets/Buttons/RED_BG.png" id="7_2ctot"]
@@ -58,6 +59,21 @@ text = "DISPLAY"
 label_settings = ExtResource("4_fb6cq")
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="chess_background/VBoxContainer"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 12
+
+[node name="Window_OptionButton" type="OptionButton" parent="chess_background/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("5_2ctot")
+
+[node name="Resolution_OptionButton" type="OptionButton" parent="chess_background/VBoxContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+theme = ExtResource("5_2ctot")
 
 [node name="Label_Volume" type="Label" parent="chess_background/VBoxContainer"]
 layout_mode = 2
@@ -164,3 +180,6 @@ theme_override_font_sizes/font_size = 25
 text = "This is where features will be explained"
 horizontal_alignment = 1
 autowrap_mode = 3
+
+[connection signal="item_selected" from="chess_background/VBoxContainer/VBoxContainer/Window_OptionButton" to="." method="_on_window_option_button_item_selected"]
+[connection signal="item_selected" from="chess_background/VBoxContainer/VBoxContainer/Resolution_OptionButton" to="." method="_on_resolution_option_button_item_selected"]
