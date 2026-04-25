@@ -39,10 +39,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -546.59
-offset_top = -327.125
-offset_right = 546.59
-offset_bottom = 327.125
+offset_left = -546.5901
+offset_top = -359.0625
+offset_right = 546.5901
+offset_bottom = 359.0625
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -277,6 +277,39 @@ stay_down_on_select = true
 background_texture = ExtResource("6_fb6cq")
 
 [node name="Tool_Off_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer6" instance=ExtResource("5_jrqig")]
+layout_mode = 2
+button_text = "OFF"
+instant = true
+stay_down_on_select = true
+background_texture = ExtResource("7_2ctot")
+
+[node name="Label_Toggles2" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX"]
+layout_mode = 2
+text = "NETWORK"
+label_settings = ExtResource("4_fb6cq")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Label_Highlights" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/HBoxContainer4"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_lurgd")
+theme_override_font_sizes/font_size = 40
+text = "USERNAME :"
+horizontal_alignment = 1
+
+[node name="Tool_On_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/HBoxContainer4" instance=ExtResource("5_jrqig")]
+layout_mode = 2
+button_text = "ON"
+instant = true
+stay_down_on_select = true
+background_texture = ExtResource("6_fb6cq")
+
+[node name="Tool_Off_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/HBoxContainer4" instance=ExtResource("5_jrqig")]
 layout_mode = 2
 button_text = "OFF"
 instant = true
