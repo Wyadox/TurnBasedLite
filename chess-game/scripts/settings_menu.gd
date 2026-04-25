@@ -3,12 +3,12 @@ extends Control
 @onready var notification_node: Control = $notification
 @onready var difficulty_map_options_menu: Control = $chess_background/VBoxContainer/difficulty_map_options_menu
 @onready var return_button: DynamicButton = $Return_Button
-@onready var tool_on_button: DynamicButton = $chess_background/VBoxContainer/HBoxContainer2/Tool_On_Button
-@onready var tool_off_button: DynamicButton = $chess_background/VBoxContainer/HBoxContainer2/Tool_Off_Button
 @onready var tooltip: Control = $Tooltip
+@onready var tool_on_button: DynamicButton = $chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer2/Tool_On_Button
+@onready var tool_off_button: DynamicButton = $chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer2/Tool_Off_Button
 
-@onready var window_option_button: OptionButton = $chess_background/VBoxContainer/VBoxContainer/Window_OptionButton
-@onready var resolution_option_button: OptionButton = $chess_background/VBoxContainer/VBoxContainer/Resolution_OptionButton
+@onready var window_option_button: OptionButton = $chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer/Window_OptionButton
+@onready var resolution_option_button: OptionButton = $chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer/Resolution_OptionButton
 
 var window_modes : Dictionary = {
 	"Fullscreen" : DisplayServer.WINDOW_MODE_FULLSCREEN,
