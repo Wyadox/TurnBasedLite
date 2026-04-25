@@ -1,13 +1,15 @@
-[gd_scene load_steps=12 format=3 uid="uid://dpw4rdpashksu"]
+[gd_scene load_steps=14 format=3 uid="uid://dpw4rdpashksu"]
 
 [ext_resource type="Script" uid="uid://etp6t4y62637" path="res://scripts/settings_menu.gd" id="1_48ojb"]
 [ext_resource type="Texture2D" uid="uid://cpfhv5akv2vp2" path="res://Assets/Backgrounds/HighResolution_MedievalTown2.png" id="2_n35ux"]
 [ext_resource type="PackedScene" uid="uid://bm18o0kocsj51" path="res://scenes/chess_background.tscn" id="3_fb6cq"]
 [ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="4_2ctot"]
 [ext_resource type="LabelSettings" uid="uid://bco61r5uaaytc" path="res://Assets/Themes/header.tres" id="4_fb6cq"]
+[ext_resource type="LabelSettings" uid="uid://mndgdf34w5s7" path="res://Assets/Themes/header2.tres" id="4_jrqig"]
 [ext_resource type="Theme" uid="uid://cr17p0avkxt5k" path="res://Assets/Themes/drop_down_theme.tres" id="5_2ctot"]
 [ext_resource type="PackedScene" uid="uid://dbxe12unkumgf" path="res://scenes/dynamic_button.tscn" id="5_jrqig"]
 [ext_resource type="Texture2D" uid="uid://cab25phsw1g0b" path="res://Assets/Buttons/GREEN_BG-export.png" id="6_fb6cq"]
+[ext_resource type="PackedScene" uid="uid://owiinoapivg8" path="res://scenes/volume_slider.tscn" id="6_jrqig"]
 [ext_resource type="Texture2D" uid="uid://cxjiegsk02ban" path="res://Assets/Buttons/RED_BG.png" id="7_2ctot"]
 [ext_resource type="PackedScene" uid="uid://dqrdpth8xiafq" path="res://scenes/notification.tscn" id="7_jpbdv"]
 
@@ -81,6 +83,44 @@ text = "VOLUME"
 label_settings = ExtResource("4_fb6cq")
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="chess_background/VBoxContainer"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 4
+
+[node name="Master_Label" type="Label" parent="chess_background/VBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "MASTER"
+label_settings = ExtResource("4_jrqig")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Master_Slider" parent="chess_background/VBoxContainer/VBoxContainer2" instance=ExtResource("6_jrqig")]
+layout_mode = 2
+
+[node name="Music_Label" type="Label" parent="chess_background/VBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "MUSIC"
+label_settings = ExtResource("4_jrqig")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Music_Slider" parent="chess_background/VBoxContainer/VBoxContainer2" instance=ExtResource("6_jrqig")]
+layout_mode = 2
+bus_name = 1
+
+[node name="SFX_Label" type="Label" parent="chess_background/VBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "SFX"
+label_settings = ExtResource("4_jrqig")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SFX_Slider" parent="chess_background/VBoxContainer/VBoxContainer2" instance=ExtResource("6_jrqig")]
+layout_mode = 2
+bus_name = 2
 
 [node name="Label_Toggles" type="Label" parent="chess_background/VBoxContainer"]
 layout_mode = 2

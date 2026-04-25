@@ -290,6 +290,7 @@ func play_sound(title : String):
 		"castle" : audioPlayer.stream = preload("res://Assets/Sounds/castle.mp3")
 		"explosion" : audioPlayer.stream = preload("res://Assets/Sounds/explosion.wav")
 	
+	audioPlayer.bus = "SFX"
 	audioPlayer.play()
 	audioPlayer.finished.connect(audioPlayer.queue_free)
 

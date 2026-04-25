@@ -10,6 +10,12 @@ var show_tooltips : bool = false
 func get_letters_for_history(pos : Vector2):
 	return [LETTERS[pos.x], pos.y + 1]
 
+enum VOLUME_BUSES {
+	MASTER,
+	MUSIC,
+	SFX
+}
+
 enum PLAYER { ONE, TWO }
 enum PLAYER_2_TYPE {
 	HUMAN, AI, NETWORK

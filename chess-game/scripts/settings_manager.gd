@@ -21,6 +21,9 @@ func load_settings():
 	if settings_data != null:
 		set_window_mode(settings_data.window_mode, settings_data.window_mode_index)
 		set_resolution(settings_data.resolution, settings_data.resolution_index)
+		set_master(settings_data.master_value)
+		set_music(settings_data.music_value)
+		set_sfx(settings_data.sfx_value)
 		
 		Globals.show_tooltips = settings_data.show_tooltips
 
@@ -42,6 +45,27 @@ func set_resolution(resolution : Vector2i, resolution_index : int):
 	get_tree().root.content_scale_size = resolution
 	settings_data.resolution = resolution
 	settings_data.resolution_index = resolution_index
+
+func set_master(master : float) -> void:
+	AudioServer.set_bus_volume_db(
+		0,
+		linear_to_db(master)
+	)
+	settings_data.master_value = master
+
+func set_music(music : float) -> void:
+	AudioServer.set_bus_volume_db(
+		1,
+		linear_to_db(music)
+	)
+	settings_data.music_value = music
+
+func set_sfx(sfx : float) -> void:
+	AudioServer.set_bus_volume_db(
+		2,
+		linear_to_db(sfx)
+	)
+	settings_data.sfx_value = sfx
 
 func get_settings() -> SettingsDataResource:
 	return settings_data

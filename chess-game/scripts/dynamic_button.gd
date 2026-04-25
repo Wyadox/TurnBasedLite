@@ -88,6 +88,7 @@ func _on_button_button_up() -> void:
 	add_child(audioPlayer)
 	audioPlayer.stream = preload("res://Assets/Sounds/button_click_cropped.mp3")
 	audioPlayer.volume_db = linear_to_db(0.5)
+	audioPlayer.bus = "SFX"
 	audioPlayer.play()
 	audioPlayer.finished.connect(audioPlayer.queue_free)
 	
