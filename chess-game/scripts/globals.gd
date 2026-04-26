@@ -1,6 +1,7 @@
 extends Node
 
-const PIECES_PER_SIDE = 7
+const DEFAULT_PIECES_PER_SIDE : int = 7
+var PIECES_PER_SIDE : int = 7
 
 const LETTERS = ["a", "b", "c", "d", "e", "f", "g", "h"]
 

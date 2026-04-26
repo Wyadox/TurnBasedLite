@@ -108,3 +108,6 @@ func set_dark_color(color : Color) -> void:
 
 func set_time_limit(num : int) -> void:
 	settings_data.ai_time_limit = num
+
+func set_piece_limit(num : int) -> void:
+	settings_data.local_piece_limit = num

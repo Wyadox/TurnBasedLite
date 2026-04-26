@@ -1,7 +1,7 @@
 [gd_scene load_steps=16 format=3 uid="uid://dpw4rdpashksu"]
 
 [ext_resource type="Script" uid="uid://etp6t4y62637" path="res://scripts/settings_menu.gd" id="1_48ojb"]
-[ext_resource type="Texture2D" uid="uid://cpfhv5akv2vp2" path="res://Assets/Backgrounds/HighResolution_MedievalTown2.png" id="2_n35ux"]
+[ext_resource type="Texture2D" uid="uid://dn8lr7dmyk66" path="res://Assets/Backgrounds/HR_Deep Forest.png" id="2_n0fy7"]
 [ext_resource type="PackedScene" uid="uid://bm18o0kocsj51" path="res://scenes/chess_background.tscn" id="3_fb6cq"]
 [ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="4_2ctot"]
 [ext_resource type="LabelSettings" uid="uid://bco61r5uaaytc" path="res://Assets/Themes/header.tres" id="4_fb6cq"]
@@ -35,7 +35,7 @@ script = ExtResource("1_48ojb")
 layout_mode = 0
 offset_right = 1920.0
 offset_bottom = 1080.0
-texture = ExtResource("2_n35ux")
+texture = ExtResource("2_n0fy7")
 
 [node name="chess_background" parent="." instance=ExtResource("3_fb6cq")]
 z_index = 1
@@ -397,7 +397,7 @@ background_texture = ExtResource("7_2ctot")
 
 [node name="Label_Computer" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX"]
 layout_mode = 2
-text = "COMPUTER"
+text = "CUSTOM"
 label_settings = ExtResource("4_fb6cq")
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -411,7 +411,7 @@ alignment = 1
 layout_mode = 2
 theme_override_fonts/font = SubResource("FontVariation_lurgd")
 theme_override_font_sizes/font_size = 40
-text = "TIME LIMIT FOR MOVE :"
+text = "COMPUTER TIME LIMIT (ms) :"
 horizontal_alignment = 1
 
 [node name="SpinBox" type="SpinBox" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/Network_HBox2"]
@@ -421,13 +421,28 @@ min_value = 1000.0
 max_value = 10000.0
 value = 1000.0
 rounded = true
+alignment = 1
 
-[node name="Label_Network" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX"]
+[node name="Network_HBox3" type="HBoxContainer" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX"]
 layout_mode = 2
-text = "NETWORK"
-label_settings = ExtResource("4_fb6cq")
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Label_Time" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/Network_HBox3"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_lurgd")
+theme_override_font_sizes/font_size = 40
+text = "LOCAL HUMAN PIECE COUNT :"
 horizontal_alignment = 1
-vertical_alignment = 1
+
+[node name="Piece_SpinBox" type="SpinBox" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/Network_HBox3"]
+layout_mode = 2
+theme = ExtResource("12_jpbdv")
+min_value = 7.0
+max_value = 12.0
+value = 12.0
+rounded = true
+alignment = 1
 
 [node name="Network_HBox" type="HBoxContainer" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX"]
 layout_mode = 2
@@ -438,7 +453,7 @@ alignment = 1
 layout_mode = 2
 theme_override_fonts/font = SubResource("FontVariation_lurgd")
 theme_override_font_sizes/font_size = 40
-text = "DISPLAY NAME :"
+text = "ONLINE NAME :"
 horizontal_alignment = 1
 
 [node name="LineEdit" type="LineEdit" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/Network_HBox"]

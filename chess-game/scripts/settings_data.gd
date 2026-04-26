@@ -22,4 +22,6 @@ class_name SettingsDataResource
 
 @export var ai_time_limit : int = 2000
 
+@export var local_piece_limit : int = 7
+
 @export var display_name : String = "Chess Player"

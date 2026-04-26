@@ -30,6 +30,8 @@ extends Control
 
 @onready var spin_box: SpinBox = $chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/Network_HBox2/SpinBox
 
+@onready var piece_spin_box: SpinBox = $chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/Network_HBox3/Piece_SpinBox
+
 var window_modes : Dictionary = {
 	" Fullscreen" : DisplayServer.WINDOW_MODE_FULLSCREEN,
 	" Window Maximized" : DisplayServer.WINDOW_MODE_MAXIMIZED,
@@ -112,12 +114,15 @@ func _ready() -> void:
 	line_edit.text = settings_data.display_name
 	
 	spin_box.value = settings_data.ai_time_limit
+	
+	piece_spin_box.value = settings_data.local_piece_limit
 
 func _on_button_exit_pressed() -> void:
 	SettingsManager.set_display_name(line_edit.text)
 	SettingsManager.set_light_color(light_color_picker.color)
 	SettingsManager.set_dark_color(dark_color_picker.color)
 	SettingsManager.set_time_limit(spin_box.value as int)
+	SettingsManager.set_piece_limit(piece_spin_box.value as int)
 	SettingsManager.save_settings()
 	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 

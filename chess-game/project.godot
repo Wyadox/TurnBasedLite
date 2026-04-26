@@ -31,6 +31,7 @@ Duplicator="*res://scripts/duplicator.gd"
 MagmaKnight="*res://scripts/magma_knight.gd"
 GuardianAngel="*res://scripts/guardian_angel.gd"
 SettingsManager="*res://scripts/settings_manager.gd"
+AudioManager="*res://scripts/audio_manager.gd"
 
 [display]
 
