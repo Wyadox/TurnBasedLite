@@ -105,3 +105,6 @@ func set_light_color(color : Color) -> void:
 
 func set_dark_color(color : Color) -> void:
 	settings_data.dark_color = color
+
+func set_time_limit(num : int) -> void:
+	settings_data.ai_time_limit = num

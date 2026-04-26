@@ -28,6 +28,7 @@ extends Control
 @onready var dark_color_picker: ColorPickerButton = $chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer3/HBoxContainer2/VBoxContainer2/HBoxContainer2/Dark_ColorPicker
 @onready var dark_reset_button: DynamicButton = $chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer3/HBoxContainer2/VBoxContainer2/HBoxContainer2/Dark_Reset_Button
 
+@onready var spin_box: SpinBox = $chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/Network_HBox2/SpinBox
 
 var window_modes : Dictionary = {
 	" Fullscreen" : DisplayServer.WINDOW_MODE_FULLSCREEN,
@@ -109,11 +110,14 @@ func _ready() -> void:
 	dark_color_picker.color = settings_data.dark_color
 	
 	line_edit.text = settings_data.display_name
+	
+	spin_box.value = settings_data.ai_time_limit
 
 func _on_button_exit_pressed() -> void:
 	SettingsManager.set_display_name(line_edit.text)
 	SettingsManager.set_light_color(light_color_picker.color)
 	SettingsManager.set_dark_color(dark_color_picker.color)
+	SettingsManager.set_time_limit(spin_box.value as int)
 	SettingsManager.save_settings()
 	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 

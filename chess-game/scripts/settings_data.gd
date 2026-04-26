@@ -20,4 +20,6 @@ class_name SettingsDataResource
 @export var light_color : Color = Color(0.8, 0.6, 0.4)
 @export var dark_color : Color = Color(0.4, 0.3, 0.2)
 
+@export var ai_time_limit : int = 2000
+
 @export var display_name : String = "Chess Player"

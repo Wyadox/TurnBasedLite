@@ -395,6 +395,33 @@ instant = true
 stay_down_on_select = true
 background_texture = ExtResource("7_2ctot")
 
+[node name="Label_Computer" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX"]
+layout_mode = 2
+text = "COMPUTER"
+label_settings = ExtResource("4_fb6cq")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Network_HBox2" type="HBoxContainer" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Label_Time" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/Network_HBox2"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_lurgd")
+theme_override_font_sizes/font_size = 40
+text = "TIME LIMIT FOR MOVE :"
+horizontal_alignment = 1
+
+[node name="SpinBox" type="SpinBox" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/Network_HBox2"]
+layout_mode = 2
+theme = ExtResource("12_jpbdv")
+min_value = 1000.0
+max_value = 10000.0
+value = 1000.0
+rounded = true
+
 [node name="Label_Network" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX"]
 layout_mode = 2
 text = "NETWORK"
