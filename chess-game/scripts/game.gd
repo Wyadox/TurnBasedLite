@@ -51,6 +51,8 @@ var failed_to_move : bool = false
 
 @onready var confirm_button: DynamicButton = $Confirm_Button
 
+@onready var evaluation_bar: Control = $evaluation_bar
+
 const MOVE_CLOCK_OFFSET : float = 300.0
 
 
@@ -125,6 +127,9 @@ func _ready():
 	thinking_indicator.hide()
 	confirm_button.hide()
 	setting_indicator.hide()
+	
+	if !SettingsManager.get_settings().show_eval:
+		evaluation_bar.hide()
 	
 	if ai_color == Globals.COLORS.WHITE:
 		LOWER_COLOR = Globals.COLORS.BLACK
@@ -806,8 +811,9 @@ func end_turn():
 		turn_indicator.texture = get_turn_indicator_tex(status)
 		
 		board.clear_highlights()
-		board.draw_highlight(previous_square.x, previous_square.y, PREVIOUS_MOVE_COLOR, false)
-		board.draw_highlight(current_square.x, current_square.y, PREVIOUS_MOVE_COLOR, false)
+		if SettingsManager.get_settings().show_previous:
+			board.draw_highlight(previous_square.x, previous_square.y, PREVIOUS_MOVE_COLOR, false)
+			board.draw_highlight(current_square.x, current_square.y, PREVIOUS_MOVE_COLOR, false)
 	
 	if board.num_pieces() == previous_piece_total:
 		turns_since_last_capture += 1
@@ -1110,8 +1116,9 @@ func sync_end_turn():
 		turn_indicator.texture = get_turn_indicator_tex(status)
 		
 		board.clear_highlights()
-		board.draw_highlight(previous_square.x, previous_square.y, PREVIOUS_MOVE_COLOR, false)
-		board.draw_highlight(current_square.x, current_square.y, PREVIOUS_MOVE_COLOR, false)
+		if SettingsManager.get_settings().show_previous:
+			board.draw_highlight(previous_square.x, previous_square.y, PREVIOUS_MOVE_COLOR, false)
+			board.draw_highlight(current_square.x, current_square.y, PREVIOUS_MOVE_COLOR, false)
 	
 	if board.num_pieces() == previous_piece_total:
 		turns_since_last_capture += 1

@@ -1,5 +1,13 @@
 extends Node
 
+enum TOGGLES {
+	TOOLTIPS,
+	EVAL,
+	PREVIOUS,
+	ANIMATIONS,
+	PARTICLES
+}
+
 var settings_data : SettingsDataResource
 
 var save_settings_path = "user://game_data"
@@ -73,5 +81,15 @@ func get_settings() -> SettingsDataResource:
 func save_settings():
 	ResourceSaver.save(settings_data, save_settings_path + save_file_name)
 
-func set_show_tooltips(flag : bool):
-	settings_data.show_tooltips = flag
+func set_toggle(type : TOGGLES, flag : bool):
+	match type:
+		TOGGLES.TOOLTIPS:
+			settings_data.show_tooltips = flag
+		TOGGLES.EVAL:
+			settings_data.show_eval = flag
+		TOGGLES.PREVIOUS:
+			settings_data.show_previous = flag
+		TOGGLES.ANIMATIONS:
+			settings_data.play_animations = flag
+		TOGGLES.PARTICLES:
+			settings_data.play_particles = flag

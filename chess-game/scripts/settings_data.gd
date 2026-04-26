@@ -10,4 +10,8 @@ class_name SettingsDataResource
 @export var music_value : float = 1.0
 @export var sfx_value : float = 1.0
 
-@export var show_tooltips : bool = false
+@export var show_tooltips : bool = true
+@export var show_eval : bool = true
+@export var show_previous : bool = true
+@export var play_animations : bool = true
+@export var play_particles : bool = true

@@ -191,14 +191,14 @@ theme_override_font_sizes/font_size = 40
 text = "SHOW EVAL BAR :"
 horizontal_alignment = 1
 
-[node name="Tool_On_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer3" instance=ExtResource("5_jrqig")]
+[node name="Eval_On_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer3" instance=ExtResource("5_jrqig")]
 layout_mode = 2
 button_text = "ON"
 instant = true
 stay_down_on_select = true
 background_texture = ExtResource("6_fb6cq")
 
-[node name="Tool_Off_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer3" instance=ExtResource("5_jrqig")]
+[node name="Eval_Off_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer3" instance=ExtResource("5_jrqig")]
 layout_mode = 2
 button_text = "OFF"
 instant = true
@@ -217,14 +217,14 @@ theme_override_font_sizes/font_size = 40
 text = "SHOW PREVIOUS MOVES :"
 horizontal_alignment = 1
 
-[node name="Tool_On_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer4" instance=ExtResource("5_jrqig")]
+[node name="Highlight_On_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer4" instance=ExtResource("5_jrqig")]
 layout_mode = 2
 button_text = "ON"
 instant = true
 stay_down_on_select = true
 background_texture = ExtResource("6_fb6cq")
 
-[node name="Tool_Off_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer4" instance=ExtResource("5_jrqig")]
+[node name="Highlight_Off_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer4" instance=ExtResource("5_jrqig")]
 layout_mode = 2
 button_text = "OFF"
 instant = true
@@ -236,21 +236,21 @@ layout_mode = 2
 theme_override_constants/separation = 8
 alignment = 2
 
-[node name="Label_Eval" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer5"]
+[node name="Label_Animations" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer5"]
 layout_mode = 2
 theme_override_fonts/font = SubResource("FontVariation_lurgd")
 theme_override_font_sizes/font_size = 40
 text = "PLAY ANIMATIONS :"
 horizontal_alignment = 1
 
-[node name="Tool_On_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer5" instance=ExtResource("5_jrqig")]
+[node name="Animations_On_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer5" instance=ExtResource("5_jrqig")]
 layout_mode = 2
 button_text = "ON"
 instant = true
 stay_down_on_select = true
 background_texture = ExtResource("6_fb6cq")
 
-[node name="Tool_Off_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer5" instance=ExtResource("5_jrqig")]
+[node name="Animations_Off_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer5" instance=ExtResource("5_jrqig")]
 layout_mode = 2
 button_text = "OFF"
 instant = true
@@ -262,21 +262,21 @@ layout_mode = 2
 theme_override_constants/separation = 8
 alignment = 2
 
-[node name="Label_Eval" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer6"]
+[node name="Label_Particles" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer6"]
 layout_mode = 2
 theme_override_fonts/font = SubResource("FontVariation_lurgd")
 theme_override_font_sizes/font_size = 40
 text = "PARTICLE EFFECTS :"
 horizontal_alignment = 1
 
-[node name="Tool_On_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer6" instance=ExtResource("5_jrqig")]
+[node name="Particles_On_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer6" instance=ExtResource("5_jrqig")]
 layout_mode = 2
 button_text = "ON"
 instant = true
 stay_down_on_select = true
 background_texture = ExtResource("6_fb6cq")
 
-[node name="Tool_Off_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer6" instance=ExtResource("5_jrqig")]
+[node name="Particles_Off_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer6" instance=ExtResource("5_jrqig")]
 layout_mode = 2
 button_text = "OFF"
 instant = true

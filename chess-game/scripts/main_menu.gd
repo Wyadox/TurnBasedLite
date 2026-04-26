@@ -19,6 +19,9 @@ func _ready() -> void:
 	options_button.button_triggered.connect(_on_options_button_pressed)
 
 func _process(delta: float) -> void:
+	if !SettingsManager.get_settings().play_animations:
+		return
+	
 	title.rotation += ROTATION_INCREMENT * direction * delta
 	if title.rotation > deg_to_rad(10.0) or title.rotation < deg_to_rad(-10):
 		direction *= -1

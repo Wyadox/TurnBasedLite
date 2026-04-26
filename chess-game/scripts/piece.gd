@@ -92,6 +92,9 @@ func update_sprite():
 		)
 		
 func play_animation(title : String):
+	if !SettingsManager.get_settings().play_animations:
+		return
+	
 	$AnimationPlayer.stop()
 	$AnimationPlayer.play(title)
 
