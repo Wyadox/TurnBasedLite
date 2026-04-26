@@ -15,3 +15,5 @@ class_name SettingsDataResource
 @export var show_previous : bool = true
 @export var play_animations : bool = true
 @export var play_particles : bool = true
+
+@export var display_name : String = "Chess Player"

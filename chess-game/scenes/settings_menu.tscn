@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://dpw4rdpashksu"]
+[gd_scene load_steps=16 format=3 uid="uid://dpw4rdpashksu"]
 
 [ext_resource type="Script" uid="uid://etp6t4y62637" path="res://scripts/settings_menu.gd" id="1_48ojb"]
 [ext_resource type="Texture2D" uid="uid://cpfhv5akv2vp2" path="res://Assets/Backgrounds/HighResolution_MedievalTown2.png" id="2_n35ux"]
@@ -12,8 +12,12 @@
 [ext_resource type="PackedScene" uid="uid://owiinoapivg8" path="res://scenes/volume_slider.tscn" id="6_jrqig"]
 [ext_resource type="Texture2D" uid="uid://cxjiegsk02ban" path="res://Assets/Buttons/RED_BG.png" id="7_2ctot"]
 [ext_resource type="PackedScene" uid="uid://dqrdpth8xiafq" path="res://scenes/notification.tscn" id="7_jpbdv"]
+[ext_resource type="Theme" uid="uid://cfvsrgiwgo8l0" path="res://Assets/Themes/slider_theme.tres" id="12_jpbdv"]
 
 [sub_resource type="FontVariation" id="FontVariation_lurgd"]
+base_font = ExtResource("4_2ctot")
+
+[sub_resource type="FontVariation" id="FontVariation_jpbdv"]
 base_font = ExtResource("4_2ctot")
 
 [node name="settings_menu" type="Control"]
@@ -102,7 +106,7 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(350, 0)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_constants/separation = 4
+theme_override_constants/separation = 16
 
 [node name="Master_Label" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer2"]
 layout_mode = 2
@@ -295,26 +299,20 @@ layout_mode = 2
 theme_override_constants/separation = 8
 alignment = 1
 
-[node name="Label_Highlights" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/HBoxContainer4"]
+[node name="Label_Name" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/HBoxContainer4"]
 layout_mode = 2
 theme_override_fonts/font = SubResource("FontVariation_lurgd")
 theme_override_font_sizes/font_size = 40
-text = "USERNAME :"
+text = "DISPLAY NAME :"
 horizontal_alignment = 1
 
-[node name="Tool_On_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/HBoxContainer4" instance=ExtResource("5_jrqig")]
+[node name="LineEdit" type="LineEdit" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/HBoxContainer4"]
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-button_text = "ON"
-instant = true
-stay_down_on_select = true
-background_texture = ExtResource("6_fb6cq")
-
-[node name="Tool_Off_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/HBoxContainer4" instance=ExtResource("5_jrqig")]
-layout_mode = 2
-button_text = "OFF"
-instant = true
-stay_down_on_select = true
-background_texture = ExtResource("7_2ctot")
+theme = ExtResource("12_jpbdv")
+theme_override_fonts/font = SubResource("FontVariation_jpbdv")
+theme_override_font_sizes/font_size = 30
+alignment = 1
 
 [node name="notification" parent="." instance=ExtResource("7_jpbdv")]
 layout_mode = 1

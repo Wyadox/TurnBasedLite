@@ -16,13 +16,15 @@ extends Control
 @onready var particles_on_button: DynamicButton = $chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer6/Particles_On_Button
 @onready var particles_off_button: DynamicButton = $chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer6/Particles_Off_Button
 
+@onready var line_edit: LineEdit = $chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/HBoxContainer4/LineEdit
+
 @onready var window_option_button: OptionButton = $chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer/Window_OptionButton
 @onready var resolution_option_button: OptionButton = $chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer/Resolution_OptionButton
 
 var window_modes : Dictionary = {
-	"Fullscreen" : DisplayServer.WINDOW_MODE_FULLSCREEN,
-	"Window" : DisplayServer.WINDOW_MODE_WINDOWED,
-	"Window Maximized" : DisplayServer.WINDOW_MODE_MAXIMIZED
+	" Fullscreen" : DisplayServer.WINDOW_MODE_FULLSCREEN,
+	" Window Maximized" : DisplayServer.WINDOW_MODE_MAXIMIZED,
+	" Window" : DisplayServer.WINDOW_MODE_WINDOWED
 }
 
 var resolutions : Dictionary = {
@@ -79,8 +81,11 @@ func _ready() -> void:
 		on_particle_on()
 	else:
 		on_particle_off()
+	
+	line_edit.text = SettingsManager.get_settings().display_name
 
 func _on_button_exit_pressed() -> void:
+	SettingsManager.set_display_name(line_edit.text)
 	SettingsManager.save_settings()
 	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
@@ -149,7 +154,6 @@ func on_particle_off():
 func _on_window_option_button_item_selected(index: int) -> void:
 	var window_mode = window_modes.get(window_option_button.get_item_text(index)) as int
 	SettingsManager.set_window_mode(window_mode, index)
-
 
 func _on_resolution_option_button_item_selected(index: int) -> void:
 	var resolution = resolutions.get(resolution_option_button.get_item_text(index)) as Vector2i

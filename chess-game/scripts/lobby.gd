@@ -117,7 +117,7 @@ func on_host_discovered(ip_address : String, data : Dictionary):
 	else:
 		color_string = "WHITE"
 	
-	entry.title = "Play as " + color_string
+	entry.title = "Play as " + color_string + " against " + data["name"]
 	entry.details = "Playing on " + Globals.DIFFICULTY.find_key(int(data["difficulty"])) + " difficulty, with " + find_time_limit(data["difficulty"]) + " on the Move Clock"
 	entry.description = "Playing on " + Board.BOARD_TYPE.find_key(int(data["map"]) - 1)
 	lobby_list.add_list_entry(entry)

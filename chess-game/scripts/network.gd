@@ -14,6 +14,8 @@ var opponent_id : int = -1
 var host_color : Globals.COLORS = Globals.COLORS.WHITE
 var client_color : Globals.COLORS = Globals.COLORS.BLACK
 
+var display_name : String = ""
+
 var game_info : Dictionary = {
 	"color" : Globals.COLORS.WHITE,
 	"map" : 1,
@@ -144,7 +146,7 @@ func _process(delta: float) -> void:
 func send_broadcast():
 	var data = {
 		"id" : GAME_IDENTIFIER,
-		"name" : "Match Entry",
+		"name" : SettingsManager.get_settings().display_name,
 		"port" : PORT,
 		"host_color" : game_info["color"],
 		"difficulty" : game_info["difficulty"],

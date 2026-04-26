@@ -93,3 +93,6 @@ func set_toggle(type : TOGGLES, flag : bool):
 			settings_data.play_animations = flag
 		TOGGLES.PARTICLES:
 			settings_data.play_particles = flag
+
+func set_display_name(title : String) -> void:
+	settings_data.display_name = title
