@@ -15,11 +15,19 @@ extends Control
 @onready var animations_off_button: DynamicButton = $chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer5/Animations_Off_Button
 @onready var particles_on_button: DynamicButton = $chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer6/Particles_On_Button
 @onready var particles_off_button: DynamicButton = $chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer6/Particles_Off_Button
+@onready var labels_on_button: DynamicButton = $chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer7/Labels_On_Button
+@onready var labels_off_button: DynamicButton = $chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer7/Labels_Off_Button
 
-@onready var line_edit: LineEdit = $chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/HBoxContainer4/LineEdit
+@onready var line_edit: LineEdit = $chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/Network_HBox/LineEdit
 
 @onready var window_option_button: OptionButton = $chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer/Window_OptionButton
 @onready var resolution_option_button: OptionButton = $chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer/Resolution_OptionButton
+
+@onready var light_color_picker: ColorPickerButton = $chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer3/HBoxContainer2/VBoxContainer/HBoxContainer/Light_ColorPicker
+@onready var light_reset_button: DynamicButton = $chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer3/HBoxContainer2/VBoxContainer/HBoxContainer/Light_Reset_Button
+@onready var dark_color_picker: ColorPickerButton = $chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer3/HBoxContainer2/VBoxContainer2/HBoxContainer2/Dark_ColorPicker
+@onready var dark_reset_button: DynamicButton = $chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer3/HBoxContainer2/VBoxContainer2/HBoxContainer2/Dark_Reset_Button
+
 
 var window_modes : Dictionary = {
 	" Fullscreen" : DisplayServer.WINDOW_MODE_FULLSCREEN,
@@ -35,14 +43,19 @@ var resolutions : Dictionary = {
 	"1920x1080" : Vector2i(1920, 1080)
 }
 
+const DEFAULT_LIGHT_COLOR : Color = Color(0.8, 0.6, 0.4)
+const DEFAULT_DARK_COLOR : Color = Color(0.4, 0.3, 0.2)
+
 func _ready() -> void:
+	var settings_data = SettingsManager.get_settings()
+	
 	for window_mode in window_modes:
 		window_option_button.add_item(window_mode)
-	window_option_button.select(SettingsManager.get_settings().window_mode_index)
+	window_option_button.select(settings_data.window_mode_index)
 	
 	for resolution in resolutions:
 		resolution_option_button.add_item(resolution)
-	resolution_option_button.select(SettingsManager.get_settings().resolution_index)
+	resolution_option_button.select(settings_data.resolution_index)
 	
 	return_button.button_triggered.connect(_on_button_exit_pressed)
 	
@@ -56,36 +69,51 @@ func _ready() -> void:
 	animations_off_button.button_triggered.connect(on_animation_off)
 	particles_on_button.button_triggered.connect(on_particle_on)
 	particles_off_button.button_triggered.connect(on_particle_off)
+	labels_on_button.button_triggered.connect(on_label_on)
+	labels_off_button.button_triggered.connect(on_label_off)
 	
-	if SettingsManager.get_settings().show_tooltips:
+	light_reset_button.button_triggered.connect(on_light_reset)
+	dark_reset_button.button_triggered.connect(on_dark_reset)
+	
+	if settings_data.show_tooltips:
 		on_tool_on_button()
 	else:
 		on_tool_off_button()
 	
-	if SettingsManager.get_settings().show_eval:
+	if settings_data.show_eval:
 		on_eval_on()
 	else:
 		on_eval_off()
 	
-	if SettingsManager.get_settings().show_previous:
+	if settings_data.show_previous:
 		on_highlight_on()
 	else:
 		on_highlight_off()
 	
-	if SettingsManager.get_settings().play_animations:
+	if settings_data.play_animations:
 		on_animation_on()
 	else:
 		on_animation_off()
 	
-	if SettingsManager.get_settings().play_particles:
+	if settings_data.play_particles:
 		on_particle_on()
 	else:
 		on_particle_off()
 	
-	line_edit.text = SettingsManager.get_settings().display_name
+	if settings_data.show_labels:
+		on_label_on()
+	else:
+		on_label_off()
+	
+	light_color_picker.color = settings_data.light_color
+	dark_color_picker.color = settings_data.dark_color
+	
+	line_edit.text = settings_data.display_name
 
 func _on_button_exit_pressed() -> void:
 	SettingsManager.set_display_name(line_edit.text)
+	SettingsManager.set_light_color(light_color_picker.color)
+	SettingsManager.set_dark_color(dark_color_picker.color)
 	SettingsManager.save_settings()
 	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
@@ -151,6 +179,18 @@ func on_particle_off():
 	particles_on_button.deselect()
 	particles_off_button.select()
 
+func on_label_on():
+	SettingsManager.set_toggle(SettingsManager.TOGGLES.LABELS, true)
+	
+	labels_on_button.select()
+	labels_off_button.deselect()
+
+func on_label_off():
+	SettingsManager.set_toggle(SettingsManager.TOGGLES.LABELS, false)
+	
+	labels_on_button.deselect()
+	labels_off_button.select()
+
 func _on_window_option_button_item_selected(index: int) -> void:
 	var window_mode = window_modes.get(window_option_button.get_item_text(index)) as int
 	SettingsManager.set_window_mode(window_mode, index)
@@ -158,3 +198,9 @@ func _on_window_option_button_item_selected(index: int) -> void:
 func _on_resolution_option_button_item_selected(index: int) -> void:
 	var resolution = resolutions.get(resolution_option_button.get_item_text(index)) as Vector2i
 	SettingsManager.set_resolution(resolution, index)
+
+func on_light_reset() -> void:
+	light_color_picker.color = DEFAULT_LIGHT_COLOR
+
+func on_dark_reset() -> void:
+	dark_color_picker.color = DEFAULT_DARK_COLOR

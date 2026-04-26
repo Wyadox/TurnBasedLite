@@ -1,9 +1,13 @@
-[gd_resource type="Theme" load_steps=6 format=3 uid="uid://cfvsrgiwgo8l0"]
+[gd_resource type="Theme" load_steps=8 format=3 uid="uid://cfvsrgiwgo8l0"]
 
 [ext_resource type="Texture2D" uid="uid://d4mm8hsd7xge4" path="res://Assets/Pawn.png" id="1_ntuyq"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wd3gt"]
+bg_color = Color(0.8509804, 0.627451, 0.4, 1)
+corner_detail = 12
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ntuyq"]
-bg_color = Color(0.4, 0.22352941, 0.19215687, 1)
+bg_color = Color(1, 1, 1, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
@@ -12,7 +16,8 @@ expand_margin_top = 8.0
 expand_margin_bottom = 8.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3h0fk"]
-bg_color = Color(0.4, 0.22352941, 0.19215687, 1)
+bg_color = Color(1, 1, 1, 1)
+border_color = Color(1, 1, 1, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
@@ -21,12 +26,12 @@ expand_margin_top = 8.0
 expand_margin_bottom = 8.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jpcc3"]
-bg_color = Color(0.8509804, 0.627451, 0.4, 1)
+bg_color = Color(0.4, 0.22352941, 0.19215687, 1)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
-border_color = Color(1, 1, 1, 1)
+border_color = Color(0.8509804, 0.627451, 0.4, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
@@ -36,21 +41,36 @@ expand_margin_top = 16.0
 expand_margin_right = 4.0
 expand_margin_bottom = 16.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_60dbf"]
-bg_color = Color(0.8509804, 0.627451, 0.4, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3dyn0"]
+bg_color = Color(0.4, 0.22352941, 0.19215687, 1)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_60dbf"]
+bg_color = Color(0.4, 0.22352941, 0.19215687, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.8509804, 0.627451, 0.4, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
 [resource]
+ColorPickerButton/styles/normal = SubResource("StyleBoxFlat_wd3gt")
 HSlider/icons/grabber = ExtResource("1_ntuyq")
 HSlider/icons/grabber_highlight = ExtResource("1_ntuyq")
 HSlider/styles/grabber_area = SubResource("StyleBoxFlat_ntuyq")
 HSlider/styles/grabber_area_highlight = SubResource("StyleBoxFlat_3h0fk")
 HSlider/styles/slider = SubResource("StyleBoxFlat_jpcc3")
+LineEdit/styles/focus = SubResource("StyleBoxFlat_3dyn0")
 LineEdit/styles/normal = SubResource("StyleBoxFlat_60dbf")

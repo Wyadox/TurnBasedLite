@@ -4,6 +4,7 @@ enum TOGGLES {
 	TOOLTIPS,
 	EVAL,
 	PREVIOUS,
+	LABELS,
 	ANIMATIONS,
 	PARTICLES
 }
@@ -89,6 +90,8 @@ func set_toggle(type : TOGGLES, flag : bool):
 			settings_data.show_eval = flag
 		TOGGLES.PREVIOUS:
 			settings_data.show_previous = flag
+		TOGGLES.LABELS:
+			settings_data.show_labels = flag
 		TOGGLES.ANIMATIONS:
 			settings_data.play_animations = flag
 		TOGGLES.PARTICLES:
@@ -96,3 +99,9 @@ func set_toggle(type : TOGGLES, flag : bool):
 
 func set_display_name(title : String) -> void:
 	settings_data.display_name = title
+
+func set_light_color(color : Color) -> void:
+	settings_data.light_color = color
+
+func set_dark_color(color : Color) -> void:
+	settings_data.dark_color = color

@@ -178,7 +178,7 @@ func draw_wall():
 func draw_cell(x, y):
 	var rect = ColorRect.new()
 	if selected_board == BOARD_TYPE.STANDARD:
-		rect.color = Color(0.8, 0.6, 0.4) if (x + y) % 2 == 0 else Color(0.4, 0.3, 0.2)
+		rect.color = SettingsManager.get_settings().light_color if (x + y) % 2 == 0 else SettingsManager.get_settings().dark_color
 	elif selected_board == BOARD_TYPE.RIVER:
 		rect.color = Color(0.378, 0.586, 1.0, 1.0) if (x + y) % 2 == 0 else Color(0.177, 0.306, 1.0, 1.0)
 	elif selected_board == BOARD_TYPE.FOREST:
@@ -191,7 +191,8 @@ func draw_cell(x, y):
 		y * CELL_SIZE
 	)
 	rect.position = cell_position
-	draw_letter(cell_position, x, y)
+	if SettingsManager.get_settings().show_labels:
+		draw_letter(cell_position, x, y)
 	rect.z_index = -100
 	add_child(rect)
 

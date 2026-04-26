@@ -13,7 +13,11 @@ class_name SettingsDataResource
 @export var show_tooltips : bool = true
 @export var show_eval : bool = true
 @export var show_previous : bool = true
+@export var show_labels : bool = true
 @export var play_animations : bool = true
 @export var play_particles : bool = true
+
+@export var light_color : Color = Color(0.8, 0.6, 0.4)
+@export var dark_color : Color = Color(0.4, 0.3, 0.2)
 
 @export var display_name : String = "Chess Player"
