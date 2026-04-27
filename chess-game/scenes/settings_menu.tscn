@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://dpw4rdpashksu"]
+[gd_scene load_steps=17 format=3 uid="uid://dpw4rdpashksu"]
 
 [ext_resource type="Script" uid="uid://etp6t4y62637" path="res://scripts/settings_menu.gd" id="1_48ojb"]
 [ext_resource type="Texture2D" uid="uid://dn8lr7dmyk66" path="res://Assets/Backgrounds/HR_Deep Forest.png" id="2_n0fy7"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://cab25phsw1g0b" path="res://Assets/Buttons/GREEN_BG-export.png" id="6_fb6cq"]
 [ext_resource type="PackedScene" uid="uid://owiinoapivg8" path="res://scenes/volume_slider.tscn" id="6_jrqig"]
 [ext_resource type="Texture2D" uid="uid://cxjiegsk02ban" path="res://Assets/Buttons/RED_BG.png" id="7_2ctot"]
+[ext_resource type="Theme" uid="uid://ujh1tq5d8vxg" path="res://Assets/Themes/color_picker.tres" id="9_jpbdv"]
 [ext_resource type="Theme" uid="uid://cfvsrgiwgo8l0" path="res://Assets/Themes/slider_theme.tres" id="12_jpbdv"]
 
 [sub_resource type="FontVariation" id="FontVariation_n0fy7"]
@@ -186,6 +187,7 @@ alignment = 1
 [node name="Light_ColorPicker" type="ColorPickerButton" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer3/HBoxContainer2/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
+theme = ExtResource("9_jpbdv")
 
 [node name="Light_Reset_Button" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer3/HBoxContainer2/VBoxContainer/HBoxContainer" instance=ExtResource("5_jrqig")]
 custom_minimum_size = Vector2(100, 64)
@@ -213,6 +215,7 @@ alignment = 1
 [node name="Dark_ColorPicker" type="ColorPickerButton" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer3/HBoxContainer2/VBoxContainer2/HBoxContainer2"]
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
+theme = ExtResource("9_jpbdv")
 
 [node name="Dark_Reset_Button" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer3/HBoxContainer2/VBoxContainer2/HBoxContainer2" instance=ExtResource("5_jrqig")]
 custom_minimum_size = Vector2(100, 64)
