@@ -81,7 +81,6 @@ func _on_button_button_up() -> void:
 	else:
 		if should_swap():
 			nine_patch_rect.texture = HOVER_TEXTURE
-			print("huh?")
 		else:
 			label.position = label_default_pos + press_offset
 	
@@ -89,6 +88,7 @@ func _on_button_button_up() -> void:
 	add_child(audioPlayer)
 	audioPlayer.stream = preload("res://Assets/Sounds/button_click_cropped.mp3")
 	audioPlayer.volume_db = linear_to_db(0.5)
+	audioPlayer.bus = "SFX"
 	audioPlayer.play()
 	audioPlayer.finished.connect(audioPlayer.queue_free)
 	
@@ -146,6 +146,7 @@ func select():
 	selected = true
 	if stay_down_on_select:
 		label.position = label_default_pos + press_offset
+		nine_patch_rect.texture = PRESS_TEXTURE
 
 func deselect():
 	selected = false

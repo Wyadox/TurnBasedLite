@@ -17,6 +17,9 @@ func explode_piece(dest_piece, selected_piece, board):
 	return
 
 func spawn_explosion(pos : Vector2):
+	if !SettingsManager.get_settings().play_particles:
+		return
+	
 	var actual_pos = Vector2(pos.x * 120 + 60, pos.y * 120 + 60)
 	actual_pos += board_handle.global_position
 	
@@ -25,6 +28,9 @@ func spawn_explosion(pos : Vector2):
 	add_child(explosion)
 
 func spawn_explosion_literal(pos : Vector2):
+	if !SettingsManager.get_settings().play_particles:
+		return
+	
 	var explosion = explosionScene.instantiate()
 	explosion.position = pos
 	explosion.z_index = 1000

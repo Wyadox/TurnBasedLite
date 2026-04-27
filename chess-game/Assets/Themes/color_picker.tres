@@ -1,0 +1,64 @@
+[gd_resource type="Theme" load_steps=9 format=3 uid="uid://ujh1tq5d8vxg"]
+
+[ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="1_bhqwt"]
+
+[sub_resource type="FontVariation" id="FontVariation_bhqwt"]
+base_font = ExtResource("1_bhqwt")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tdii2"]
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g7qvt"]
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bhqwt"]
+bg_color = Color(0.8509804, 0.627451, 0.4, 0.6862745)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.8509804, 0.627451, 0.4, 0.6862745)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="FontVariation" id="FontVariation_tdii2"]
+base_font = ExtResource("1_bhqwt")
+
+[sub_resource type="FontVariation" id="FontVariation_g7qvt"]
+base_font = ExtResource("1_bhqwt")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1d1x7"]
+bg_color = Color(0.8509804, 0.627451, 0.4, 0.6862745)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[resource]
+ColorPickerButton/fonts/font = SubResource("FontVariation_bhqwt")
+ColorPickerButton/styles/focus = SubResource("StyleBoxFlat_tdii2")
+ColorPickerButton/styles/hover = SubResource("StyleBoxFlat_g7qvt")
+ColorPickerButton/styles/normal = SubResource("StyleBoxFlat_bhqwt")
+PopupMenu/fonts/font = SubResource("FontVariation_tdii2")
+PopupPanel/fonts/title_font = SubResource("FontVariation_g7qvt")
+PopupPanel/styles/panel = SubResource("StyleBoxFlat_1d1x7")

@@ -19,6 +19,9 @@ func _ready() -> void:
 	options_button.button_triggered.connect(_on_options_button_pressed)
 
 func _process(delta: float) -> void:
+	if !SettingsManager.get_settings().play_animations:
+		return
+	
 	title.rotation += ROTATION_INCREMENT * direction * delta
 	if title.rotation > deg_to_rad(10.0) or title.rotation < deg_to_rad(-10):
 		direction *= -1
@@ -27,7 +30,7 @@ func _on_start_button_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/local_options_menu.tscn")
 
 func _on_options_button_pressed() -> void:
-	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+	get_tree().change_scene_to_file("res://scenes/settings_menu.tscn")
 
 func _on_quit_button_pressed() -> void:
 	get_tree().quit()

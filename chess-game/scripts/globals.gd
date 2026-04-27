@@ -1,13 +1,21 @@
 extends Node
 
-const PIECES_PER_SIDE = 7
+const DEFAULT_PIECES_PER_SIDE : int = 7
+var PIECES_PER_SIDE : int = 7
 
 const LETTERS = ["a", "b", "c", "d", "e", "f", "g", "h"]
+
+# Settings Variables
+var show_tooltips : bool = false
 
 func get_letters_for_history(pos : Vector2):
 	return [LETTERS[pos.x], pos.y + 1]
 
-var show_tooltips : bool = true
+enum VOLUME_BUSES {
+	MASTER,
+	MUSIC,
+	SFX
+}
 
 enum PLAYER { ONE, TWO }
 enum PLAYER_2_TYPE {

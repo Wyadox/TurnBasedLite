@@ -1,0 +1,525 @@
+[gd_scene load_steps=17 format=3 uid="uid://dpw4rdpashksu"]
+
+[ext_resource type="Script" uid="uid://etp6t4y62637" path="res://scripts/settings_menu.gd" id="1_48ojb"]
+[ext_resource type="Texture2D" uid="uid://dn8lr7dmyk66" path="res://Assets/Backgrounds/HR_Deep Forest.png" id="2_n0fy7"]
+[ext_resource type="PackedScene" uid="uid://bm18o0kocsj51" path="res://scenes/chess_background.tscn" id="3_fb6cq"]
+[ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="4_2ctot"]
+[ext_resource type="LabelSettings" uid="uid://bco61r5uaaytc" path="res://Assets/Themes/header.tres" id="4_fb6cq"]
+[ext_resource type="LabelSettings" uid="uid://mndgdf34w5s7" path="res://Assets/Themes/header2.tres" id="4_jrqig"]
+[ext_resource type="Theme" uid="uid://cr17p0avkxt5k" path="res://Assets/Themes/drop_down_theme.tres" id="5_2ctot"]
+[ext_resource type="PackedScene" uid="uid://dbxe12unkumgf" path="res://scenes/dynamic_button.tscn" id="5_jrqig"]
+[ext_resource type="Texture2D" uid="uid://cab25phsw1g0b" path="res://Assets/Buttons/GREEN_BG-export.png" id="6_fb6cq"]
+[ext_resource type="PackedScene" uid="uid://owiinoapivg8" path="res://scenes/volume_slider.tscn" id="6_jrqig"]
+[ext_resource type="Texture2D" uid="uid://cxjiegsk02ban" path="res://Assets/Buttons/RED_BG.png" id="7_2ctot"]
+[ext_resource type="Theme" uid="uid://ujh1tq5d8vxg" path="res://Assets/Themes/color_picker.tres" id="9_jpbdv"]
+[ext_resource type="Theme" uid="uid://cfvsrgiwgo8l0" path="res://Assets/Themes/slider_theme.tres" id="12_jpbdv"]
+
+[sub_resource type="FontVariation" id="FontVariation_n0fy7"]
+base_font = ExtResource("4_2ctot")
+
+[sub_resource type="FontVariation" id="FontVariation_lurgd"]
+base_font = ExtResource("4_2ctot")
+
+[sub_resource type="FontVariation" id="FontVariation_jpbdv"]
+base_font = ExtResource("4_2ctot")
+
+[node name="settings_menu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_48ojb")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+texture = ExtResource("2_n0fy7")
+
+[node name="chess_background" parent="." instance=ExtResource("3_fb6cq")]
+z_index = 1
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -546.5901
+offset_top = -456.76563
+offset_right = 546.5901
+offset_bottom = 456.76563
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="chess_background"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="HBoxContainer" type="HBoxContainer" parent="chess_background/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 50
+alignment = 1
+
+[node name="Display_Volume_VBOX" type="VBoxContainer" parent="chess_background/MarginContainer/HBoxContainer"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="Label_Screen" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX"]
+layout_mode = 2
+text = "DISPLAY"
+label_settings = ExtResource("4_fb6cq")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 12
+
+[node name="Window_OptionButton" type="OptionButton" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("5_2ctot")
+
+[node name="Resolution_OptionButton" type="OptionButton" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer"]
+visible = false
+layout_mode = 2
+theme = ExtResource("5_2ctot")
+
+[node name="Label_Volume" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX"]
+layout_mode = 2
+text = "AUDIO"
+label_settings = ExtResource("4_fb6cq")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 16
+
+[node name="Master_Label" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer2"]
+layout_mode = 2
+text = "MASTER"
+label_settings = ExtResource("4_jrqig")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Master_Slider" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer2" instance=ExtResource("6_jrqig")]
+layout_mode = 2
+
+[node name="Music_Label" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer2"]
+layout_mode = 2
+text = "MUSIC"
+label_settings = ExtResource("4_jrqig")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Music_Slider" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer2" instance=ExtResource("6_jrqig")]
+layout_mode = 2
+bus_name = 1
+
+[node name="SFX_Label" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer2"]
+layout_mode = 2
+text = "SFX"
+label_settings = ExtResource("4_jrqig")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SFX_Slider" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer2" instance=ExtResource("6_jrqig")]
+layout_mode = 2
+bus_name = 2
+
+[node name="Label_Board" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX"]
+layout_mode = 2
+text = "BOARD"
+label_settings = ExtResource("4_fb6cq")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 4
+
+[node name="Label_Board_Note" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer3"]
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = SubResource("FontVariation_n0fy7")
+theme_override_font_sizes/font_size = 24
+text = "(Only applies to Standard Map)"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer3"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer3/HBoxContainer2"]
+layout_mode = 2
+
+[node name="Label_Light" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer3/HBoxContainer2/VBoxContainer"]
+layout_mode = 2
+text = "LIGHT SQUARES -"
+label_settings = ExtResource("4_jrqig")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer3/HBoxContainer2/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Light_ColorPicker" type="ColorPickerButton" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer3/HBoxContainer2/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme = ExtResource("9_jpbdv")
+
+[node name="Light_Reset_Button" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer3/HBoxContainer2/VBoxContainer/HBoxContainer" instance=ExtResource("5_jrqig")]
+custom_minimum_size = Vector2(100, 64)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+button_text = "RESET"
+button_size = Vector2(100, 64)
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer3/HBoxContainer2"]
+layout_mode = 2
+
+[node name="Label_Dark" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer3/HBoxContainer2/VBoxContainer2"]
+layout_mode = 2
+text = "- DARK SQUARES"
+label_settings = ExtResource("4_jrqig")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer3/HBoxContainer2/VBoxContainer2"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Dark_ColorPicker" type="ColorPickerButton" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer3/HBoxContainer2/VBoxContainer2/HBoxContainer2"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme = ExtResource("9_jpbdv")
+
+[node name="Dark_Reset_Button" parent="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer3/HBoxContainer2/VBoxContainer2/HBoxContainer2" instance=ExtResource("5_jrqig")]
+custom_minimum_size = Vector2(100, 64)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+button_text = "RESET"
+button_size = Vector2(100, 64)
+
+[node name="Toggles_VBOX" type="VBoxContainer" parent="chess_background/MarginContainer/HBoxContainer"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="Label_Toggles" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX"]
+layout_mode = 2
+text = "TOGGLES"
+label_settings = ExtResource("4_fb6cq")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 2
+
+[node name="Label_Tooltips" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer2"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_lurgd")
+theme_override_font_sizes/font_size = 40
+text = "SHOW TOOLTIPS :"
+horizontal_alignment = 1
+
+[node name="Tool_On_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer2" instance=ExtResource("5_jrqig")]
+layout_mode = 2
+button_text = "ON"
+instant = true
+stay_down_on_select = true
+background_texture = ExtResource("6_fb6cq")
+
+[node name="Tool_Off_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer2" instance=ExtResource("5_jrqig")]
+layout_mode = 2
+button_text = "OFF"
+instant = true
+stay_down_on_select = true
+background_texture = ExtResource("7_2ctot")
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 2
+
+[node name="Label_Eval" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer3"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_lurgd")
+theme_override_font_sizes/font_size = 40
+text = "SHOW EVAL BAR :"
+horizontal_alignment = 1
+
+[node name="Eval_On_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer3" instance=ExtResource("5_jrqig")]
+layout_mode = 2
+button_text = "ON"
+instant = true
+stay_down_on_select = true
+background_texture = ExtResource("6_fb6cq")
+
+[node name="Eval_Off_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer3" instance=ExtResource("5_jrqig")]
+layout_mode = 2
+button_text = "OFF"
+instant = true
+stay_down_on_select = true
+background_texture = ExtResource("7_2ctot")
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 2
+
+[node name="Label_Highlights" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer4"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_lurgd")
+theme_override_font_sizes/font_size = 40
+text = "SHOW PREVIOUS MOVES :"
+horizontal_alignment = 1
+
+[node name="Highlight_On_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer4" instance=ExtResource("5_jrqig")]
+layout_mode = 2
+button_text = "ON"
+instant = true
+stay_down_on_select = true
+background_texture = ExtResource("6_fb6cq")
+
+[node name="Highlight_Off_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer4" instance=ExtResource("5_jrqig")]
+layout_mode = 2
+button_text = "OFF"
+instant = true
+stay_down_on_select = true
+background_texture = ExtResource("7_2ctot")
+
+[node name="HBoxContainer7" type="HBoxContainer" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 2
+
+[node name="Label_Labels" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer7"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_lurgd")
+theme_override_font_sizes/font_size = 40
+text = "SHOW SQUARE LABELS :"
+horizontal_alignment = 1
+
+[node name="Labels_On_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer7" instance=ExtResource("5_jrqig")]
+layout_mode = 2
+button_text = "ON"
+instant = true
+stay_down_on_select = true
+background_texture = ExtResource("6_fb6cq")
+
+[node name="Labels_Off_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer7" instance=ExtResource("5_jrqig")]
+layout_mode = 2
+button_text = "OFF"
+instant = true
+stay_down_on_select = true
+background_texture = ExtResource("7_2ctot")
+
+[node name="HBoxContainer5" type="HBoxContainer" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 2
+
+[node name="Label_Animations" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer5"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_lurgd")
+theme_override_font_sizes/font_size = 40
+text = "PLAY ANIMATIONS :"
+horizontal_alignment = 1
+
+[node name="Animations_On_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer5" instance=ExtResource("5_jrqig")]
+layout_mode = 2
+button_text = "ON"
+instant = true
+stay_down_on_select = true
+background_texture = ExtResource("6_fb6cq")
+
+[node name="Animations_Off_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer5" instance=ExtResource("5_jrqig")]
+layout_mode = 2
+button_text = "OFF"
+instant = true
+stay_down_on_select = true
+background_texture = ExtResource("7_2ctot")
+
+[node name="HBoxContainer6" type="HBoxContainer" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 2
+
+[node name="Label_Particles" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer6"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_lurgd")
+theme_override_font_sizes/font_size = 40
+text = "PARTICLE EFFECTS :"
+horizontal_alignment = 1
+
+[node name="Particles_On_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer6" instance=ExtResource("5_jrqig")]
+layout_mode = 2
+button_text = "ON"
+instant = true
+stay_down_on_select = true
+background_texture = ExtResource("6_fb6cq")
+
+[node name="Particles_Off_Button" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/VBoxContainer3/HBoxContainer6" instance=ExtResource("5_jrqig")]
+layout_mode = 2
+button_text = "OFF"
+instant = true
+stay_down_on_select = true
+background_texture = ExtResource("7_2ctot")
+
+[node name="Label_Computer" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX"]
+layout_mode = 2
+text = "CUSTOM"
+label_settings = ExtResource("4_fb6cq")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Network_HBox2" type="HBoxContainer" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Label_Time" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/Network_HBox2"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_lurgd")
+theme_override_font_sizes/font_size = 40
+text = "COMPUTER TIME LIMIT (ms) :"
+horizontal_alignment = 1
+
+[node name="SpinBox" type="SpinBox" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/Network_HBox2"]
+layout_mode = 2
+theme = ExtResource("12_jpbdv")
+min_value = 1000.0
+max_value = 10000.0
+value = 1000.0
+rounded = true
+alignment = 1
+
+[node name="Network_HBox3" type="HBoxContainer" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Label_Time" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/Network_HBox3"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_lurgd")
+theme_override_font_sizes/font_size = 40
+text = "LOCAL HUMAN PIECE COUNT :"
+horizontal_alignment = 1
+
+[node name="Piece_SpinBox" type="SpinBox" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/Network_HBox3"]
+layout_mode = 2
+theme = ExtResource("12_jpbdv")
+min_value = 7.0
+max_value = 12.0
+value = 12.0
+rounded = true
+alignment = 1
+
+[node name="Network_HBox" type="HBoxContainer" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Label_Name" type="Label" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/Network_HBox"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_lurgd")
+theme_override_font_sizes/font_size = 40
+text = "ONLINE NAME :"
+horizontal_alignment = 1
+
+[node name="LineEdit" type="LineEdit" parent="chess_background/MarginContainer/HBoxContainer/Toggles_VBOX/Network_HBox"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme = ExtResource("12_jpbdv")
+theme_override_fonts/font = SubResource("FontVariation_jpbdv")
+theme_override_font_sizes/font_size = 30
+alignment = 1
+
+[node name="Return_Button" parent="." instance=ExtResource("5_jrqig")]
+custom_minimum_size = Vector2(175, 64)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -320.0
+offset_top = 100.0
+offset_right = -145.0
+offset_bottom = 164.0
+grow_horizontal = 0
+button_text = "RETURN"
+button_size = Vector2(175, 64)
+
+[node name="Tooltip" parent="." instance=ExtResource("3_fb6cq")]
+layout_mode = 1
+offset_left = 50.0
+offset_top = 49.0
+offset_right = 370.90356
+offset_bottom = 195.0
+
+[node name="MarginContainer" type="MarginContainer" parent="Tooltip"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Tooltip/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="Title_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_2ctot")
+theme_override_font_sizes/font_size = 45
+text = "EXAMPLE TOOLTIP"
+horizontal_alignment = 1
+
+[node name="Desciption_Label" type="Label" parent="Tooltip/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_2ctot")
+theme_override_font_sizes/font_size = 25
+text = "This is where features will be explained"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[connection signal="item_selected" from="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer/Window_OptionButton" to="." method="_on_window_option_button_item_selected"]
+[connection signal="item_selected" from="chess_background/MarginContainer/HBoxContainer/Display_Volume_VBOX/VBoxContainer/Resolution_OptionButton" to="." method="_on_resolution_option_button_item_selected"]

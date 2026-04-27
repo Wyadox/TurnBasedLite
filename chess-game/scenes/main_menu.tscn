@@ -76,24 +76,28 @@ grow_vertical = 2
 custom_minimum_size = Vector2(200, 64)
 layout_mode = 2
 button_text = "LOCAL"
+stay_down_on_select = false
 button_size = Vector2(200, 64)
 
 [node name="Multiplayer_Button" parent="VBoxContainer" instance=ExtResource("12_7b55j")]
 custom_minimum_size = Vector2(200, 64)
 layout_mode = 2
 button_text = "MULTIPLAYER"
+stay_down_on_select = false
 button_size = Vector2(200, 64)
 
 [node name="Loadout_Button" parent="VBoxContainer" instance=ExtResource("12_7b55j")]
 custom_minimum_size = Vector2(200, 64)
 layout_mode = 2
 button_text = "LOADOUT"
+stay_down_on_select = false
 button_size = Vector2(200, 64)
 
 [node name="Options_Button" parent="VBoxContainer" instance=ExtResource("12_7b55j")]
 custom_minimum_size = Vector2(200, 64)
 layout_mode = 2
 button_text = "OPTIONS"
+stay_down_on_select = false
 button_size = Vector2(200, 64)
 
 [node name="Quit_Button" parent="VBoxContainer" instance=ExtResource("12_7b55j")]
@@ -101,4 +105,5 @@ custom_minimum_size = Vector2(200, 64)
 layout_mode = 2
 button_text = "QUIT"
 quit_game = true
+stay_down_on_select = false
 button_size = Vector2(200, 64)

@@ -14,11 +14,11 @@ var items = [
 	{"piece_type": Globals.PIECE_TYPES.ARCHBISHOP, "description": "Archbishop - Based on the Bishop, but this piece can switch diagonals"},
 	{"piece_type": Globals.PIECE_TYPES.EXPLODING_BISHOP, "description": "Exploding Bishop - Based on the Bishop, but this piece explodes when captured or when capturing"},
 	{"piece_type": Globals.PIECE_TYPES.ACROBISHOP, "description": "Acrobishop - Based on the Bishop, but can jump over pieces and is limited to moving 2 squares on any diagonal"},
-	{"piece_type": Globals.PIECE_TYPES.JOUST_BISHOP, "description": "Jouster - Based on the Bishop, but when this piece captures it will capture any piece directly behind it and when captured the opposing piece is also captured."},
+	{"piece_type": Globals.PIECE_TYPES.JOUST_BISHOP, "description": "Jouster - Based on the Bishop, but when this piece captures it will capture any piece directly behind it. When captured, the capturing piece will also be captured."},
 	
 	{"piece_type": Globals.PIECE_TYPES.HORSE_ARCHER, "description": "Archer - Based on the Knight, but this piece makes captures from a distance"},
 	{"piece_type": Globals.PIECE_TYPES.STUN_KNIGHT, "description": "Stun Knight - Based on the Knight, but when this piece is moved any opposing piece in orthogonal squares are stunned for one turn."},
-	{"piece_type": Globals.PIECE_TYPES.TROJAN_HORSE, "description": "Trojan Horse - Based on the Knight, but when this piece is captured two pawns are spawned."},
+	{"piece_type": Globals.PIECE_TYPES.TROJAN_HORSE, "description": "Trojan Horse - Based on the Knight, but when this piece is captured two pawns are spawned. This piece disguises as another knight."},
 	{"piece_type": Globals.PIECE_TYPES.MAGMA_KNIGHT, "description": "Magma Knight - Based on the Knight, but leaves an impassable magma tile that lasts for 3 turns when it leaves a tile."},
 	{"piece_type": Globals.PIECE_TYPES.WARHORSE, "description": "Warhorse - Based on the Knight, but can only move every other turn. In exchange, when it captures, it captures all pieces adjacent to its target as well."},
 	
@@ -56,7 +56,7 @@ func _ready():
 	
 func set_selected_square(pos):
 	selected_pos = pos
-	print("descriptions set pos: ", selected_pos)
+	#print("descriptions set pos: ", selected_pos)
 	
 func grab_region(piece_type):
 	var region_pos = Globals.SPRITE_MAPPING[color][piece_type]
@@ -100,4 +100,4 @@ func _on_exit_button_pressed() -> void:
 func _on_spawn_button_pressed() -> void:
 	#SignalBus.selected_square.emit(selected_pos)
 	SignalBus.setup_piece_by_type.emit(items[current_index]["piece_type"])
-	print("spawn button emitted: ", str(items[current_index]["piece_type"]))
+	#print("spawn button emitted: ", str(items[current_index]["piece_type"]))

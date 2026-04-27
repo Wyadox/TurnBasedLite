@@ -6,6 +6,7 @@ extends Control
 @onready var return_button: DynamicButton = $Return_Button
 @onready var human_button: DynamicButton = $chess_background/VBoxContainer/HBoxContainer2/Human_Button
 @onready var computer_button: DynamicButton = $chess_background/VBoxContainer/HBoxContainer2/Computer_Button
+@onready var tooltip: Control = $Tooltip
 
 var current_map : int = -1
 var current_difficulty : int = -1
@@ -21,6 +22,9 @@ func _ready() -> void:
 	computer_button.button_triggered.connect(on_computer_button)
 	
 	continue_button.condition = false
+	
+	if !SettingsManager.get_settings().show_tooltips:
+		tooltip.hide()
 	
 func _on_continue_button_pressed() -> void:
 	current_difficulty = difficulty_map_options_menu.difficulty

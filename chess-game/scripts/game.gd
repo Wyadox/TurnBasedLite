@@ -51,6 +51,8 @@ var failed_to_move : bool = false
 
 @onready var confirm_button: DynamicButton = $Confirm_Button
 
+@onready var evaluation_bar: Control = $evaluation_bar
+
 const MOVE_CLOCK_OFFSET : float = 300.0
 
 
@@ -126,6 +128,11 @@ func _ready():
 	confirm_button.hide()
 	setting_indicator.hide()
 	
+	AudioManager.play_game()
+	
+	if !SettingsManager.get_settings().show_eval:
+		evaluation_bar.hide()
+	
 	if ai_color == Globals.COLORS.WHITE:
 		LOWER_COLOR = Globals.COLORS.BLACK
 		UPPER_COLOR = Globals.COLORS.WHITE
@@ -167,6 +174,8 @@ func _ready():
 		else:
 			move_clock.global_position.y += MOVE_CLOCK_OFFSET
 			move_clock_2.global_position.y -= MOVE_CLOCK_OFFSET
+	elif player2_type != Globals.PLAYER_2_TYPE.AI:
+		Globals.PIECES_PER_SIDE = SettingsManager.get_settings().local_piece_limit
 	
 	$evaluation_bar.set_value(5.0)
 	if player_color == Globals.COLORS.BLACK:
@@ -237,7 +246,8 @@ func parse_save_string(save_string):
 			board.selected_pos = Vector2(int(coord_split[0]) + 1,int(coord_split[1]))
 		else:
 			board.selected_pos = Vector2(int(coord_split[0]) * -1 + 5,int(coord_split[1]) * -1 + 6)
-		board._on_setup_phase_ui_spawn_piece(int(spawn_split[0]))
+		SignalBus.setup_piece_by_type.emit(int(spawn_split[0]))
+		#board._on_setup_phase_ui_spawn_piece(int(spawn_split[0]))
 
 var previous_square
 var current_square
@@ -772,6 +782,7 @@ func set_win(color):
 
 
 func _on_button_pressed():
+	AudioManager.play_menu()
 	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
 func end_turn():
@@ -818,8 +829,9 @@ func end_turn():
 		turn_indicator.texture = get_turn_indicator_tex(status)
 		
 		board.clear_highlights()
-		board.draw_highlight(previous_square.x, previous_square.y, PREVIOUS_MOVE_COLOR, false)
-		board.draw_highlight(current_square.x, current_square.y, PREVIOUS_MOVE_COLOR, false)
+		if SettingsManager.get_settings().show_previous:
+			board.draw_highlight(previous_square.x, previous_square.y, PREVIOUS_MOVE_COLOR, false)
+			board.draw_highlight(current_square.x, current_square.y, PREVIOUS_MOVE_COLOR, false)
 	
 	if board.num_pieces() == previous_piece_total:
 		turns_since_last_capture += 1
@@ -1106,10 +1118,10 @@ func sync_end_turn():
 				piece.update_sprite()
 			elif piece.cool_counter == 0:
 				board.delete_piece(piece)
-		if piece.fireball_cooldown > 0:
-			piece.fireball_cooldown -= 1
-		if piece.teleport_cooldown > 0:
-			piece.teleport_cooldown -= 1
+		if piece.current_fireball_cooldown > 0:
+			piece.current_fireball_cooldown -= 1
+		if piece.current_teleport_cooldown > 0:
+			piece.current_teleport_cooldown -= 1
 	status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
 	
 	if status == Globals.COLORS.WHITE:
@@ -1123,8 +1135,9 @@ func sync_end_turn():
 		turn_indicator.texture = get_turn_indicator_tex(status)
 		
 		board.clear_highlights()
-		board.draw_highlight(previous_square.x, previous_square.y, PREVIOUS_MOVE_COLOR, false)
-		board.draw_highlight(current_square.x, current_square.y, PREVIOUS_MOVE_COLOR, false)
+		if SettingsManager.get_settings().show_previous:
+			board.draw_highlight(previous_square.x, previous_square.y, PREVIOUS_MOVE_COLOR, false)
+			board.draw_highlight(current_square.x, current_square.y, PREVIOUS_MOVE_COLOR, false)
 	
 	if board.num_pieces() == previous_piece_total:
 		turns_since_last_capture += 1

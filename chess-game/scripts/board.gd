@@ -178,7 +178,7 @@ func draw_wall():
 func draw_cell(x, y):
 	var rect = ColorRect.new()
 	if selected_board == BOARD_TYPE.STANDARD:
-		rect.color = Color(0.8, 0.6, 0.4) if (x + y) % 2 == 0 else Color(0.4, 0.3, 0.2)
+		rect.color = SettingsManager.get_settings().light_color if (x + y) % 2 == 0 else SettingsManager.get_settings().dark_color
 	elif selected_board == BOARD_TYPE.RIVER:
 		rect.color = Color(0.378, 0.586, 1.0, 1.0) if (x + y) % 2 == 0 else Color(0.177, 0.306, 1.0, 1.0)
 	elif selected_board == BOARD_TYPE.FOREST:
@@ -191,7 +191,8 @@ func draw_cell(x, y):
 		y * CELL_SIZE
 	)
 	rect.position = cell_position
-	draw_letter(cell_position, x, y)
+	if SettingsManager.get_settings().show_labels:
+		draw_letter(cell_position, x, y)
 	rect.z_index = -100
 	add_child(rect)
 
@@ -290,6 +291,7 @@ func play_sound(title : String):
 		"castle" : audioPlayer.stream = preload("res://Assets/Sounds/castle.mp3")
 		"explosion" : audioPlayer.stream = preload("res://Assets/Sounds/explosion.wav")
 	
+	audioPlayer.bus = "SFX"
 	audioPlayer.play()
 	audioPlayer.finished.connect(audioPlayer.queue_free)
 
@@ -515,14 +517,20 @@ func create_piece(type: Globals.PIECE_TYPES, col: Globals.COLORS, board_pos: Vec
 	var piece = piece_scene.instantiate()
 	add_child(piece)
 	piece.init_piece(type, col, board_pos, self)
+	
+	if is_loadout_board:
+		piece.loadout_piece = true
+		piece.update_sprite()
+	
 	pieces.append(piece)
+	
 	return piece
 
 var border_shape
 var borders = []
 
 func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
-	print("hi from spawn piece")
+	#print("hi from spawn piece")
 	# Determine color for current piece
 	var color
 	var total_pieces : int = num_pieces()
@@ -552,7 +560,7 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 		
 	
 	create_piece(piece_type, color, selected_pos)
-	print("emitting piece_added at ", selected_pos)
+	#print("emitting piece_added at ", selected_pos)
 	SignalBus.piece_added.emit()
 	
 	# Determine if color needs to swap
@@ -814,7 +822,7 @@ func num_pieces(color = Globals.COLORS.TILE):
 			black_count += 1
 	
 	if color == Globals.COLORS.WHITE:
-		print("white ", white_count)
+		#print("white ", white_count)
 		return white_count
 	elif color == Globals.COLORS.BLACK:
 		return black_count

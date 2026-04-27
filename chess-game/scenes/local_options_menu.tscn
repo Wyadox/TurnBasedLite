@@ -89,7 +89,6 @@ alignment = 1
 custom_minimum_size = Vector2(300, 64)
 layout_mode = 2
 button_text = "CONTINUE"
-stay_down_on_select = false
 button_size = Vector2(300, 64)
 
 [node name="notification" parent="." instance=ExtResource("3_inqc7")]
@@ -110,13 +109,12 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -420.0
+offset_left = -320.0
 offset_top = 100.0
-offset_right = -245.0
+offset_right = -145.0
 offset_bottom = 164.0
 grow_horizontal = 0
 button_text = "RETURN"
-stay_down_on_select = false
 button_size = Vector2(175, 64)
 
 [node name="Tooltip" parent="." instance=ExtResource("3_jiuty")]

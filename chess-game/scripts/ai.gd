@@ -149,7 +149,7 @@ func start_minimax(pieces : Array, white_to_play : bool, difficulty_dict : Dicti
 	board.register_king()
 	
 	var best_result = {}
-	var time_limit = difficulty_dict.get("time_limit", 2000)
+	var time_limit = SettingsManager.get_settings().ai_time_limit
 	var start = Time.get_ticks_msec()
 	var previous_best = null
 	var previous_score = 0.0
