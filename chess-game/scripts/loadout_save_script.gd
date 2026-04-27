@@ -1,6 +1,7 @@
 extends Node
 
-const SAVE_LOCATION = "user://Loadouts.json"
+const SAVE_LOCATION = "res://Assets/Loadouts/Loadouts.json"
+
 
 var loadouts_to_save : Dictionary = {
 	"loadout1" : "4:0.0,5.0_",
