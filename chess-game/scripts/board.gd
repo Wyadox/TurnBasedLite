@@ -530,6 +530,8 @@ func _on_setup_phase_ui_spawn_piece(piece_type: Globals.PIECE_TYPES) -> void:
 		color = Globals.COLORS.WHITE
 	elif !is_loadout_board:
 		color = Globals.COLORS.BLACK
+	if is_loadout_board:
+		color = Globals.COLORS.WHITE
 	
 	if selected_pos == Vector2(-1, -1) or !is_within_bounds(selected_pos):
 		selected_pos = find_viable_square(color)
