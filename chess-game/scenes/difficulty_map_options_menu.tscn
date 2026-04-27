@@ -1,15 +1,18 @@
-[gd_scene load_steps=12 format=3 uid="uid://bk8s3ckskgdde"]
+[gd_scene load_steps=15 format=3 uid="uid://bk8s3ckskgdde"]
 
 [ext_resource type="Script" uid="uid://bcq0g3f3sv1pl" path="res://scripts/difficulty_map_options_menu.gd" id="1_kvkiy"]
 [ext_resource type="FontFile" uid="uid://1osejr2vdovj" path="res://Assets/Buttons/Jersey10-Regular.ttf" id="2_dgpvi"]
 [ext_resource type="Texture2D" uid="uid://c0j7ln5th26il" path="res://Assets/Buttons/Easy_Button.png" id="3_c78vh"]
 [ext_resource type="PackedScene" uid="uid://dbxe12unkumgf" path="res://scenes/dynamic_button.tscn" id="3_dgpvi"]
-[ext_resource type="Texture2D" uid="uid://dsxn1xc4dr5bu" path="res://Assets/Buttons/LoadoutButton.png" id="4_1wcdk"]
 [ext_resource type="Texture2D" uid="uid://cab25phsw1g0b" path="res://Assets/Buttons/GREEN_BG-export.png" id="5_dgpvi"]
 [ext_resource type="Texture2D" uid="uid://b34njw1yrdya4" path="res://Assets/Buttons/Normal_Button_NEW.png" id="6_308i4"]
 [ext_resource type="Texture2D" uid="uid://4g18m48bgvun" path="res://Assets/Buttons/YELLOW_BG.png" id="7_dd6h8"]
 [ext_resource type="Texture2D" uid="uid://cxjiegsk02ban" path="res://Assets/Buttons/RED_BG.png" id="8_hmfiv"]
 [ext_resource type="Texture2D" uid="uid://cvdctnijl0xeb" path="res://Assets/Buttons/Hard_Button.png" id="9_wninj"]
+[ext_resource type="Texture2D" uid="uid://cmwjnva5pnulp" path="res://Assets/standardMap.png" id="10_hmfiv"]
+[ext_resource type="Texture2D" uid="uid://cfujfiextsncg" path="res://Assets/river_map.png" id="12_c78vh"]
+[ext_resource type="Texture2D" uid="uid://cxv5rohf2qfs0" path="res://Assets/forestMap.png" id="13_q27s5"]
+[ext_resource type="Texture2D" uid="uid://cg84t5w3n4gea" path="res://Assets/wallMap.png" id="14_pdoex"]
 
 [sub_resource type="FontVariation" id="FontVariation_2alwo"]
 base_font = ExtResource("2_dgpvi")
@@ -90,28 +93,35 @@ layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="Map1_Button" type="TextureButton" parent="VBoxContainer/HBoxContainer"]
+[node name="dynamic_button" parent="VBoxContainer/HBoxContainer" instance=ExtResource("3_dgpvi")]
+custom_minimum_size = Vector2(300, 300)
 layout_mode = 2
-texture_normal = ExtResource("4_1wcdk")
+button_text = "STANDARD"
+image = ExtResource("10_hmfiv")
+button_size = Vector2(300, 300)
 
-[node name="Map2_Button" type="TextureButton" parent="VBoxContainer/HBoxContainer"]
+[node name="dynamic_button2" parent="VBoxContainer/HBoxContainer" instance=ExtResource("3_dgpvi")]
+custom_minimum_size = Vector2(300, 300)
 layout_mode = 2
-texture_normal = ExtResource("4_1wcdk")
+button_text = "RIVER"
+image = ExtResource("12_c78vh")
+button_size = Vector2(300, 300)
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="Map3_Button" type="TextureButton" parent="VBoxContainer/HBoxContainer2"]
+[node name="dynamic_button3" parent="VBoxContainer/HBoxContainer2" instance=ExtResource("3_dgpvi")]
+custom_minimum_size = Vector2(300, 300)
 layout_mode = 2
-texture_normal = ExtResource("4_1wcdk")
+button_text = "FOREST"
+image = ExtResource("13_q27s5")
+button_size = Vector2(300, 300)
 
-[node name="Map4_Button" type="TextureButton" parent="VBoxContainer/HBoxContainer2"]
+[node name="dynamic_button4" parent="VBoxContainer/HBoxContainer2" instance=ExtResource("3_dgpvi")]
+custom_minimum_size = Vector2(300, 300)
 layout_mode = 2
-texture_normal = ExtResource("4_1wcdk")
-
-[connection signal="pressed" from="VBoxContainer/HBoxContainer/Map1_Button" to="." method="_on_map_1_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/HBoxContainer/Map2_Button" to="." method="_on_map_2_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/HBoxContainer2/Map3_Button" to="." method="_on_map_3_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/HBoxContainer2/Map4_Button" to="." method="_on_map_4_button_pressed"]
+button_text = "WALL"
+image = ExtResource("14_pdoex")
+button_size = Vector2(300, 300)

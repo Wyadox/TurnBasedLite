@@ -3,6 +3,12 @@ extends Control
 @onready var easy_button: DynamicButton = $VBoxContainer/Difficulty_Hbox/Easy_Button
 @onready var normal_button: DynamicButton = $VBoxContainer/Difficulty_Hbox/Normal_Button
 @onready var hard_button: DynamicButton = $VBoxContainer/Difficulty_Hbox/Hard_Button
+@onready var standard_button: DynamicButton = $VBoxContainer/HBoxContainer/dynamic_button
+@onready var river_button: DynamicButton = $VBoxContainer/HBoxContainer/dynamic_button2
+@onready var forest_button: DynamicButton = $VBoxContainer/HBoxContainer2/dynamic_button3
+@onready var wall_button: DynamicButton = $VBoxContainer/HBoxContainer2/dynamic_button4
+
+
 
 var difficulty : int = -1
 var map : int = -1
@@ -11,6 +17,10 @@ func _ready() -> void:
 	easy_button.button_triggered.connect(_on_easy_button_pressed)
 	normal_button.button_triggered.connect(_on_normal_button_pressed)
 	hard_button.button_triggered.connect(_on_hard_button_pressed)
+	standard_button.button_triggered.connect(_on_standard_button_pressed)
+	river_button.button_triggered.connect(_on_river_button_pressed)
+	forest_button.button_triggered.connect(_on_forest_button_pressed)
+	wall_button.button_triggered.connect(_on_wall_button_pressed)
 
 func _on_easy_button_pressed() -> void:
 	difficulty = 0
@@ -27,16 +37,16 @@ func _on_hard_button_pressed() -> void:
 	deselect_difficulties()
 	hard_button.select()
 
-func _on_map_1_button_pressed() -> void:
+func _on_standard_button_pressed() -> void:
 	map = 1
 
-func _on_map_2_button_pressed() -> void:
+func _on_river_button_pressed() -> void:
 	map = 2
 
-func _on_map_3_button_pressed() -> void:
+func _on_forest_button_pressed() -> void:
 	map = 3
 
-func _on_map_4_button_pressed() -> void:
+func _on_wall_button_pressed() -> void:
 	map = 4
 
 func deselect_difficulties():
