@@ -13,7 +13,8 @@ func explode_piece(dest_piece, selected_piece, board):
 			board.on_capture(piece_around, selected_piece, board, selected_piece.board_position)
 			
 			#board.delete_piece(piece_around)
-	board.delete_piece(selected_piece, true)
+
+	#board.delete_piece(selected_piece, true)
 	return
 
 func spawn_explosion(pos : Vector2):
