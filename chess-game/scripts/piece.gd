@@ -521,6 +521,7 @@ func get_mitosis_positions():
 	
 func perform_mitosis(new_pawn_pos: Vector2):
 	piece_type = Globals.PIECE_TYPES.PAWN
+	trojan_cloak_type = Globals.PIECE_TYPES.PAWN
 	update_sprite()
 	
 	var new_piece = board_handle.create_piece(
