@@ -39,7 +39,7 @@ func _ready() -> void:
 	
 	white_piece = randi_range(0, Globals.PIECE_TYPES.size() - 8) as Globals.PIECE_TYPES
 	black_piece = white_piece
-	while black_piece == white_piece:
+	while black_piece == white_piece or black_piece == Globals.PIECE_TYPES.JUGGERNAUT1 or black_piece == Globals.PIECE_TYPES.JUGGERNAUT2:
 		black_piece = randi_range(0, Globals.PIECE_TYPES.size() - 8) as Globals.PIECE_TYPES
 	
 	white_button.set_texture(grab_region(white_piece, Globals.COLORS.WHITE))

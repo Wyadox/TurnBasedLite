@@ -77,7 +77,6 @@ alignment = 1
 custom_minimum_size = Vector2(175, 64)
 layout_mode = 2
 button_text = "CONTINUE"
-stay_down_on_select = false
 button_size = Vector2(175, 64)
 
 [node name="Return_Button" parent="." instance=ExtResource("6_ch0dw")]
@@ -93,5 +92,4 @@ offset_right = -245.0
 offset_bottom = 164.0
 grow_horizontal = 0
 button_text = "RETURN"
-stay_down_on_select = false
 button_size = Vector2(175, 64)

@@ -29,10 +29,17 @@ texture = ExtResource("2_jiuty")
 [node name="chess_background" parent="." instance=ExtResource("3_jiuty")]
 z_index = 1
 layout_mode = 1
-offset_left = 730.0
-offset_top = 200.0
-offset_right = 1200.0
-offset_bottom = 904.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -235.0
+offset_top = -449.5
+offset_right = 235.0
+offset_bottom = 449.5
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="chess_background"]
 layout_mode = 1
@@ -98,8 +105,8 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_top = 404.0
-offset_bottom = 404.0
+offset_top = 478.0
+offset_bottom = 478.0
 grow_horizontal = 2
 grow_vertical = 2
 

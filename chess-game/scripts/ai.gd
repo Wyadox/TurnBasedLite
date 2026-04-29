@@ -331,6 +331,7 @@ func snapshot_board(pieces : Array):
 			"starting_rank" : piece.starting_rank,
 			"color" : piece.color,
 			"piece_type" : piece.piece_type,
+			"is_thrown" : piece.is_thrown,
 			"alive": true
 		})
 	snap.append({
@@ -361,6 +362,7 @@ func restore_board(snapshot : Array, pieces : Array):
 		piece.starting_rank = it["starting_rank"]
 		piece.color = it["color"]
 		piece.piece_type = it["piece_type"]
+		piece.is_thrown = it["is_thrown"]
 		if not piece in pieces:
 			pieces.append(piece)
 			

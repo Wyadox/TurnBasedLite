@@ -39,17 +39,31 @@ func _on_hard_button_pressed() -> void:
 
 func _on_standard_button_pressed() -> void:
 	map = 1
+	deselect_maps()
+	standard_button.select()
 
 func _on_river_button_pressed() -> void:
 	map = 2
+	deselect_maps()
+	river_button.select()
 
 func _on_forest_button_pressed() -> void:
 	map = 3
+	deselect_maps()
+	forest_button.select()
 
 func _on_wall_button_pressed() -> void:
 	map = 4
+	deselect_maps()
+	wall_button.select()
 
 func deselect_difficulties():
 	easy_button.deselect()
 	normal_button.deselect()
 	hard_button.deselect()
+
+func deselect_maps():
+	standard_button.deselect()
+	river_button.deselect()
+	forest_button.deselect()
+	wall_button.deselect()
