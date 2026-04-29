@@ -151,34 +151,109 @@ func _on_mitosis_button_pressed() -> void:
 	if (valid_spawn(Globals.PIECE_TYPES.MITOSIS_PAWN)):
 		SignalBus.emit_signal("spawn_piece", Globals.PIECE_TYPES.MITOSIS_PAWN)
 		
-static func determineAiPieces(color):
-	#var board_type = 
-	var piecesToSpawn = []
-	var pieces = [
-	Globals.PIECE_TYPES.HORSE_ARCHER,
-	Globals.PIECE_TYPES.ARCHBISHOP,
-	Globals.PIECE_TYPES.MITOSIS_PAWN,
-	Globals.PIECE_TYPES.SHIELD_KING,
-	Globals.PIECE_TYPES.DUCK,
-	Globals.PIECE_TYPES.WORM,
-	Globals.PIECE_TYPES.CHECKER]
+
+const STANDARD_EASY = "res://Assets/Loadouts/AILoadoutsStandardEasy.json"
+const STANDARD_NORMAL = "res://Assets/Loadouts/AILoadoutsStandardNormal.json"
+const STANDARD_HARD = "res://Assets/Loadouts/AILoadoutsStandardHard.json"
+
+const RIVER_EASY = "res://Assets/Loadouts/AILoadoutsRiverEasy.json"
+const RIVER_NORMAL = "res://Assets/Loadouts/AILoadoutsRiverNormal.json"
+const RIVER_HARD = "res://Assets/Loadouts/AILoadoutsRiverHard.json"
+
+const FOREST_EASY = "res://Assets/Loadouts/AILoadoutsForestEasy.json"
+const FOREST_NORMAL = "res://Assets/Loadouts/AILoadoutsForestNormal.json"
+const FOREST_HARD = "res://Assets/Loadouts/AILoadoutsForestHard.json"
+
+const WALL_EASY = "res://Assets/Loadouts/AILoadoutsWallEasy.json"
+const WALL_NORMAL = "res://Assets/Loadouts/AILoadoutsWallNormal.json"
+const WALL_HARD = "res://Assets/Loadouts/AILoadoutsWallHard.json"
+
+static func determineAiPieces(color, selected_board, difficulty):
+	var randMapSelector = randi_range(1,3)
+	var mapDifficultyJson
 	
-	var y
-	if color == Globals.COLORS.BLACK:
-		y = 0
-	else:
-		y = 6
-	
-	var pos
-	for i in 7:
-		var roll = randi() % pieces.size()
-		pos = Vector2(i, y)
-		piecesToSpawn.push_back(pieces[roll])
-		piecesToSpawn.push_back(pos)
-		pieces.remove_at(roll)
-		print(pos)
+	var loadouts : Dictionary = {
+	"loadout1" : "",
+	"loadout2" : "",
+	"loadout3" : "",
+	}
+	match selected_board:
+		Board.BOARD_TYPE.STANDARD:
+			match difficulty:
+				0:
+					mapDifficultyJson = STANDARD_EASY
+				1:
+					mapDifficultyJson = STANDARD_NORMAL
+				2:
+					mapDifficultyJson = STANDARD_HARD
+		Board.BOARD_TYPE.RIVER:
+			match difficulty:
+				0:
+					mapDifficultyJson = RIVER_EASY
+				1:
+					mapDifficultyJson = RIVER_NORMAL
+				2:
+					mapDifficultyJson = RIVER_HARD
+		Board.BOARD_TYPE.FOREST:
+			match difficulty:
+				0:
+					mapDifficultyJson = FOREST_EASY
+				1:
+					mapDifficultyJson = FOREST_NORMAL
+				2:
+					mapDifficultyJson = FOREST_HARD
+		Board.BOARD_TYPE.WALL:
+			match difficulty:
+				0:
+					mapDifficultyJson = WALL_EASY
+				1:
+					mapDifficultyJson = WALL_NORMAL
+				2:
+					mapDifficultyJson = WALL_HARD
+	if FileAccess.file_exists(mapDifficultyJson):
+		var file = FileAccess.open(mapDifficultyJson, FileAccess.READ)
+		var data = file.get_var()
+		file.close()
 		
-	return piecesToSpawn
+		var save_data = data.duplicate()
+		loadouts.loadout1 = save_data.loadout1
+		loadouts.loadout2 = save_data.loadout2
+		loadouts.loadout3 = save_data.loadout3
+		match randMapSelector:
+			1:
+				return loadouts.loadout1
+			2:
+				return loadouts.loadout2
+			3:
+				return loadouts.loadout3
+	return 
+	#var board_type = 
+	#var piecesToSpawn = []
+	#var pieces = [
+	#Globals.PIECE_TYPES.HORSE_ARCHER,
+	#Globals.PIECE_TYPES.ARCHBISHOP,
+	#Globals.PIECE_TYPES.MITOSIS_PAWN,
+	#Globals.PIECE_TYPES.SHIELD_KING,
+	#Globals.PIECE_TYPES.DUCK,
+	#Globals.PIECE_TYPES.WORM,
+	#Globals.PIECE_TYPES.CHECKER]
+	#
+	#var y
+	#if color == Globals.COLORS.BLACK:
+		#y = 0
+	#else:
+		#y = 6
+	#
+	#var pos
+	#for i in 7:
+		#var roll = randi() % pieces.size()
+		#pos = Vector2(i, y)
+		#piecesToSpawn.push_back(pieces[roll])
+		#piecesToSpawn.push_back(pos)
+		#pieces.remove_at(roll)
+		#print(pos)
+		#
+	#return piecesToSpawn
 	
 
 

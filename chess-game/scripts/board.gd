@@ -42,6 +42,7 @@ var is_loadout_board : bool = false
 
 var first_color : Globals.COLORS
 var second_color : Globals.COLORS
+var currentDifficulty
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -59,6 +60,7 @@ func _ready() -> void:
 	SignalBus.selected_square.connect(_on_game_selected_square)
 	
 	SignalBus.change_map.connect(_on_set_board_type)
+	SignalBus.set_difficulty.connect(_on_set_difficulty)
 
 func draw_board():
 	clear_labels()
@@ -830,16 +832,34 @@ func num_pieces(color = Globals.COLORS.TILE):
 	else:
 		return white_count + black_count
 
-
+func _on_set_difficulty(difficulty):
+	currentDifficulty = difficulty
+	
+func parse_save_string(save_string, color):
+	var spawn_array = save_string.split("_", false)
+	var status_equal = color == LOWER_COLOR
+	for spawn in spawn_array:
+		var spawn_split = spawn.split(":")
+		var coord_split = spawn_split[1].split(",")
+		if status_equal:
+			selected_pos = Vector2(int(coord_split[0]) + 1,int(coord_split[1]))
+		else:
+			selected_pos = Vector2(int(coord_split[0]) * -1 + 5,int(coord_split[1]) * -1 + 6)
+		SignalBus.setup_piece_by_type.emit(int(spawn_split[0]))
+		#board._on_setup_phase_ui_spawn_piece(int(spawn_split[0]))
+		
 func _on_game_init_ai(color) -> void:
-	var piecesToSpawn = []
-	piecesToSpawn = setup_script.determineAiPieces(color)
+	var piecesToSpawn : String
+	piecesToSpawn = setup_script.determineAiPieces(color, selected_board, currentDifficulty)
+	
+	
 	
 	var i = 0
-	for it in piecesToSpawn.size() / 2:
-		create_piece(piecesToSpawn[i], color, piecesToSpawn[i + 1] + Vector2(0, 0 if color == Globals.COLORS.BLACK else -5))
-		SignalBus.piece_added.emit()
-		i += 2
+	parse_save_string(piecesToSpawn, color)
+	#for it in piecesToSpawn.size() / 2:
+		#create_piece(piecesToSpawn[i], color, piecesToSpawn[i + 1] + Vector2(0, 0 if color == Globals.COLORS.BLACK else -5))
+		#SignalBus.piece_added.emit()
+		#i += 2
 		
 	var colorSet
 	var total_pieces : int = num_pieces()

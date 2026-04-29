@@ -190,12 +190,15 @@ func difficulty_settings() -> Dictionary:
 	match difficulty:
 		Globals.DIFFICULTY.EASY:
 			set_clock_durations(3.0)
+			SignalBus.emit_signal("set_difficulty", difficulty)
 			return {"depth" : 1, "noise" : 2.0, "slice_num" : 9}
 		Globals.DIFFICULTY.NORMAL:
 			set_clock_durations(2.0)
+			SignalBus.emit_signal("set_difficulty", difficulty)
 			return {"depth" : 2, "noise" : 1.0, "slice_num" : 3}
 		Globals.DIFFICULTY.HARD:
 			set_clock_durations(1.0)
+			SignalBus.emit_signal("set_difficulty", difficulty)
 			return {"depth" : 2, "noise" : 0.0, "slice_num" : 3}
 	return {"depth" : 3, "noise" : 0.0, "slice_num" : 3}
 

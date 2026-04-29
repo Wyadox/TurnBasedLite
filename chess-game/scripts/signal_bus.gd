@@ -50,6 +50,10 @@ signal captured_piece(color, piece_type)
 @warning_ignore("unused_signal")
 signal change_map(current_map)
 
+# Used to pass the difficulty for AI loadout spawn
+@warning_ignore("unused_signal")
+signal set_difficulty(difficulty)
+
 # Used for Previous Move display
 @warning_ignore("unused_signal")
 signal previous_move(piece_type, color, old_pos, new_pos)
