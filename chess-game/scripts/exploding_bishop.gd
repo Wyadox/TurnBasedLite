@@ -26,6 +26,8 @@ func spawn_explosion(pos : Vector2):
 	var explosion = explosionScene.instantiate()
 	explosion.position = actual_pos
 	add_child(explosion)
+	
+	play_sound()
 
 func spawn_explosion_literal(pos : Vector2):
 	if !SettingsManager.get_settings().play_particles:
@@ -35,6 +37,8 @@ func spawn_explosion_literal(pos : Vector2):
 	explosion.position = pos
 	explosion.z_index = 1000
 	add_child(explosion)
+	
+	play_sound()
 
 func explode_king(dest_piece, selected_piece, board):
 	board_handle = board
@@ -64,6 +68,8 @@ func explode_king(dest_piece, selected_piece, board):
 	else:
 		explode_piece(dest_piece, selected_piece, board)
 		board.delete_piece(selected_piece)
+	
+	play_sound()
 
 func explosion_radius(piece, board):
 	board_handle = board
@@ -73,3 +79,13 @@ func explosion_radius(piece, board):
 		if piece_position != null:
 			spawn_explosion(position)
 	return
+
+func play_sound():
+	var audioPlayer = AudioStreamPlayer2D.new()
+	add_child(audioPlayer)
+	
+	audioPlayer.stream = preload("res://Assets/Sounds/explosion.wav")
+	
+	audioPlayer.bus = "SFX"
+	audioPlayer.play()
+	audioPlayer.finished.connect(audioPlayer.queue_free)
