@@ -253,6 +253,7 @@ var previous_square
 var current_square
 var color_to_be_moved : Globals.COLORS
 var square
+var is_throwing = false
 
 func _input(event):
 	if game_over:
@@ -366,7 +367,7 @@ func _input(event):
 					return
 				
 				# If playerA has made valid move, then switch to other player's move
-				if is_valid_move:
+				if is_valid_move and not is_throwing:
 					player2_move()
 		
 		selected_piece = null
@@ -438,7 +439,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 	var is_shooting = false
 	var is_jousting = false
 	var piece_died = false
-	var is_throwing = false
+	is_throwing = false
 	var thrown_piece
 	
 	var to_move
@@ -583,8 +584,10 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 						end_turn()
 			else:
 				board.update_indicators()
-				player2_move()
-				print("calling player2 move")
+				if !is_throwing:
+					player2_move()
+					print("calling player2 move")
+					print("is_throwing : ", is_throwing)
 		print(board.shield_king)
 		return true
 	return false
