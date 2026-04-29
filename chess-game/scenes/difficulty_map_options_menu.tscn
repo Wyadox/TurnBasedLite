@@ -18,7 +18,7 @@
 base_font = ExtResource("2_dgpvi")
 
 [node name="difficulty_map_options_menu" type="Control"]
-custom_minimum_size = Vector2(440, 462)
+custom_minimum_size = Vector2(440, 656)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -94,18 +94,22 @@ theme_override_constants/separation = 10
 alignment = 1
 
 [node name="dynamic_button" parent="VBoxContainer/HBoxContainer" instance=ExtResource("3_dgpvi")]
-custom_minimum_size = Vector2(300, 300)
+custom_minimum_size = Vector2(200, 200)
 layout_mode = 2
 button_text = "STANDARD"
 image = ExtResource("10_hmfiv")
-button_size = Vector2(300, 300)
+instant = true
+stay_down_on_select = true
+button_size = Vector2(200, 200)
 
 [node name="dynamic_button2" parent="VBoxContainer/HBoxContainer" instance=ExtResource("3_dgpvi")]
-custom_minimum_size = Vector2(300, 300)
+custom_minimum_size = Vector2(200, 200)
 layout_mode = 2
 button_text = "RIVER"
 image = ExtResource("12_c78vh")
-button_size = Vector2(300, 300)
+instant = true
+stay_down_on_select = true
+button_size = Vector2(200, 200)
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -113,15 +117,19 @@ theme_override_constants/separation = 10
 alignment = 1
 
 [node name="dynamic_button3" parent="VBoxContainer/HBoxContainer2" instance=ExtResource("3_dgpvi")]
-custom_minimum_size = Vector2(300, 300)
+custom_minimum_size = Vector2(200, 200)
 layout_mode = 2
 button_text = "FOREST"
 image = ExtResource("13_q27s5")
-button_size = Vector2(300, 300)
+instant = true
+stay_down_on_select = true
+button_size = Vector2(200, 200)
 
 [node name="dynamic_button4" parent="VBoxContainer/HBoxContainer2" instance=ExtResource("3_dgpvi")]
-custom_minimum_size = Vector2(300, 300)
+custom_minimum_size = Vector2(200, 200)
 layout_mode = 2
 button_text = "WALL"
 image = ExtResource("14_pdoex")
-button_size = Vector2(300, 300)
+instant = true
+stay_down_on_select = true
+button_size = Vector2(200, 200)
