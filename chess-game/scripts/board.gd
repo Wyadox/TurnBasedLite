@@ -360,6 +360,7 @@ func wipe_pieces(if_white = true, if_black = true):
 			pieces_to_remove.append(piece)
 	
 	for piece in pieces_to_remove:
+		SignalBus.refund_piece.emit(piece.piece_type)
 		piece.queue_free()
 		pieces.erase(piece)
 
