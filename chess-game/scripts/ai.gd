@@ -127,6 +127,7 @@ var game_scene
 var board
 
 func start_minimax(pieces : Array, white_to_play : bool, difficulty_dict : Dictionary) -> Dictionary:
+	ExplodingBishop.show_explosions = false
 	game_scene = GAME_SCENE.instantiate()
 	game_scene.real_game = false
 	
@@ -154,7 +155,7 @@ func start_minimax(pieces : Array, white_to_play : bool, difficulty_dict : Dicti
 	var start = Time.get_ticks_msec()
 	var previous_best = null
 	var previous_score = 0.0
-	var prune_window = 2.0
+	var prune_window = 4.0
 	
 	for level in range(1, difficulty_dict["depth"] + 1):
 		var alpha = previous_score - prune_window
@@ -178,6 +179,7 @@ func start_minimax(pieces : Array, white_to_play : bool, difficulty_dict : Dicti
 	board.queue_free()
 	game_scene.queue_free()
 	
+	ExplodingBishop.show_explosions = true
 	return best_result
 
 func minimax(pieces : Array, depth : int, alpha : float, beta : float, maximizingPlayer : bool, noise : float, slice_num : int, previous_best) -> Dictionary:
