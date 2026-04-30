@@ -440,6 +440,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 	var is_jousting = false
 	var piece_died = false
 	is_throwing = false
+	var local_is_throwing = false
 	var thrown_piece
 	
 	var to_move
@@ -483,6 +484,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 			selected_piece.position = previous_position
 			print("throwing")
 			is_throwing = true
+			local_is_throwing = true
 			for piece in board.pieces:
 				if piece.color != Globals.COLORS.TILE:
 					piece.stun_counter = 1
@@ -584,7 +586,10 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 						end_turn()
 			else:
 				board.update_indicators()
-				if !is_throwing:
+				if local_is_throwing:
+					if status == ai_color:
+						player2_move()
+				else:
 					player2_move()
 					print("calling player2 move")
 					print("is_throwing : ", is_throwing)
@@ -717,12 +722,13 @@ func player2_move():
 					   " got: ", Globals.PIECE_TYPES.keys()[real_piece.piece_type])
 			return
 		
+		thinking_indicator.hide()
+		
 		selected_piece = real_piece
 		previous_position = selected_piece.position
 		previous_square = selected_piece.board_position
 		print ("drop_piece result: ", drop_piece(false, minimax_result["pos"]))
 		
-		thinking_indicator.hide()
 
 func evaluate_end_game():
 	# Check whether the current user can make any legal move
@@ -808,9 +814,11 @@ func end_turn():
 			piece.cool_counter -= 1
 			if piece.cool_counter == 4:
 				piece.piece_type = Globals.PIECE_TYPES.MAGMA_MED
+				piece.trojan_cloak_type = Globals.PIECE_TYPES.MAGMA_MED
 				piece.update_sprite()
 			elif piece.cool_counter == 2:
 				piece.piece_type = Globals.PIECE_TYPES.MAGMA_LOW
+				piece.trojan_cloak_type = Globals.PIECE_TYPES.MAGMA_LOW
 				piece.update_sprite()
 			elif piece.cool_counter == 0:
 				board.delete_piece(piece)
@@ -1115,9 +1123,11 @@ func sync_end_turn():
 			piece.cool_counter -= 1
 			if piece.cool_counter == 4:
 				piece.piece_type = Globals.PIECE_TYPES.MAGMA_MED
+				piece.trojan_cloak_type = Globals.PIECE_TYPES.MAGMA_MED
 				piece.update_sprite()
 			elif piece.cool_counter == 2:
 				piece.piece_type = Globals.PIECE_TYPES.MAGMA_LOW
+				piece.trojan_cloak_type = Globals.PIECE_TYPES.MAGMA_LOW
 				piece.update_sprite()
 			elif piece.cool_counter == 0:
 				board.delete_piece(piece)

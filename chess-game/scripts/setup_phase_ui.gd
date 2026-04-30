@@ -155,7 +155,7 @@ static func determineAiPieces(color):
 	#var board_type = 
 	var piecesToSpawn = []
 	var pieces = [
-	Globals.PIECE_TYPES.HORSE_ARCHER,
+	Globals.PIECE_TYPES.SUMO,
 	Globals.PIECE_TYPES.ARCHBISHOP,
 	Globals.PIECE_TYPES.MITOSIS_PAWN,
 	Globals.PIECE_TYPES.SHIELD_KING,

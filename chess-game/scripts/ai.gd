@@ -142,6 +142,7 @@ func start_minimax(pieces : Array, white_to_play : bool, difficulty_dict : Dicti
 		copy.moved = piece.moved
 		copy.current_health = piece.current_health
 		copy.starting_rank = piece.starting_rank
+		copy.is_thrown = piece.is_thrown
 		new_pieces.append(copy)
 	
 	game_scene.board = board
