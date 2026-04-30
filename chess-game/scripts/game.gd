@@ -246,8 +246,11 @@ func parse_save_string(save_string):
 			board.selected_pos = Vector2(int(coord_split[0]) + 1,int(coord_split[1]))
 		else:
 			board.selected_pos = Vector2(int(coord_split[0]) * -1 + 5,int(coord_split[1]) * -1 + 6)
-		SignalBus.setup_piece_by_type.emit(int(spawn_split[0]))
-		#board._on_setup_phase_ui_spawn_piece(int(spawn_split[0]))
+		
+		if online_game and status != Network.my_color:
+			SignalBus.spawn_piece.emit(int(spawn_split[0]))
+		else:
+			SignalBus.setup_piece_by_type.emit(int(spawn_split[0]))
 
 var previous_square
 var current_square
@@ -978,6 +981,7 @@ func on_confirm_loadout() -> void:
 	previous_status = status
 	status = Globals.COLORS.BLACK
 	setup_ui.status = status
+	SignalBus.set_status.emit(Globals.COLORS.BLACK)
 	board.clear_selection_box()
 	if player2_type != Globals.PLAYER_2_TYPE.AI:
 		if status == LOWER_COLOR:
