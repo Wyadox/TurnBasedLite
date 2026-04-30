@@ -9,7 +9,7 @@ const LETTERS = ["a", "b", "c", "d", "e", "f", "g", "h"]
 var show_tooltips : bool = false
 
 func get_letters_for_history(pos : Vector2):
-	return [LETTERS[pos.x], pos.y + 1]
+	return [LETTERS[pos.x], abs(pos.y - 7)]
 
 enum VOLUME_BUSES {
 	MASTER,

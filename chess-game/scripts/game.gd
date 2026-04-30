@@ -570,9 +570,9 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 			if online_game and Network.my_color == Globals.COLORS.BLACK:
 				var flip_old_pos = abs(old_pos - Vector2(Board.BOARD_WIDTH, Board.BOARD_HEIGHT) + Vector2(1,1))
 				var flip_to_move = abs(to_move - Vector2(Board.BOARD_WIDTH, Board.BOARD_HEIGHT) + Vector2(1,1))
-				SignalBus.previous_move.emit(selected_piece.piece_type, selected_piece.color, flip_old_pos, flip_to_move)
+				SignalBus.previous_move.emit(selected_piece.piece_type, selected_piece.trojan_cloak_type, selected_piece.color, flip_old_pos, flip_to_move)
 			else:
-				SignalBus.previous_move.emit(selected_piece.piece_type, selected_piece.color, old_pos, to_move)
+				SignalBus.previous_move.emit(selected_piece.piece_type, selected_piece.trojan_cloak_type, selected_piece.color, old_pos, to_move)
 				
 		if piece_died:
 			board.on_capture(selected_piece, dest_piece, board, old_pos)

@@ -17,7 +17,7 @@ func _ready():
 	
 	SignalBus.archive_move.connect(process_archive_move)
 	
-func process_archive_move(piece_type : Globals.PIECE_TYPES, newColor : Globals.COLORS, old_pos : Vector2, new_pos : Vector2):
+func process_archive_move(_piece_type : Globals.PIECE_TYPES, new_cloak : Globals.PIECE_TYPES, newColor : Globals.COLORS, old_pos : Vector2, new_pos : Vector2):
 	show()
 	
 	color = newColor
@@ -28,7 +28,7 @@ func process_archive_move(piece_type : Globals.PIECE_TYPES, newColor : Globals.C
 	var move_entry = ENTRY_SCENE.instantiate()
 	v_box_container.add_child(move_entry)
 	v_box_container.move_child(move_entry, 0)
-	move_entry.set_display(grab_region(piece_type), get_label())
+	move_entry.set_display(grab_region(new_cloak), get_label())
 	
 	await get_tree().process_frame
 	scroll_container.scroll_vertical = scroll_container.get_v_scroll_bar().min_value as int
@@ -49,6 +49,8 @@ func grab_region(piece_type):
 	return atlas
 	
 func get_label():
-	var start_vector = Globals.get_letters_for_history(start_pos)
-	var end_vector = Globals.get_letters_for_history(end_pos)
+	var start_vector
+	var end_vector
+	start_vector = Globals.get_letters_for_history(start_pos)
+	end_vector = Globals.get_letters_for_history(end_pos)
 	return str("(", start_vector[0] as String, ",", start_vector[1] as int, ") : (", end_vector[0] as String, ",", end_vector[1] as int, ")")
