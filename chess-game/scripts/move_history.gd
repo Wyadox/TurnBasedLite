@@ -11,6 +11,7 @@ const SPRITE_SIZE = 32
 var current_index = 0
 var start_pos : Vector2
 var end_pos : Vector2
+var flip : bool = false
 
 func _ready():
 	hide()
@@ -53,4 +54,7 @@ func get_label():
 	var end_vector
 	start_vector = Globals.get_letters_for_history(start_pos)
 	end_vector = Globals.get_letters_for_history(end_pos)
+	if flip:
+		start_vector = Globals.get_letters_for_history_inverted(start_pos)
+		end_vector = Globals.get_letters_for_history_inverted(end_pos)
 	return str("(", start_vector[0] as String, ",", start_vector[1] as int, ") : (", end_vector[0] as String, ",", end_vector[1] as int, ")")

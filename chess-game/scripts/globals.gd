@@ -11,6 +11,9 @@ var show_tooltips : bool = false
 func get_letters_for_history(pos : Vector2):
 	return [LETTERS[pos.x], abs(pos.y - 7)]
 
+func get_letters_for_history_inverted(pos : Vector2):
+	return [LETTERS[abs(pos.x - 6)], pos.y + 1]
+
 enum VOLUME_BUSES {
 	MASTER,
 	MUSIC,

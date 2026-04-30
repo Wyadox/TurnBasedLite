@@ -880,7 +880,10 @@ func get_turn_indicator_tex(color):
 		atlas.region = region
 		
 		return atlas
-	
+
+@onready var previous_move: Control = $previous_move
+@onready var move_history: Control = $move_history
+
 func _on_board_setup_complete() -> void:
 	setup_complete = true
 	board.clear_selection_box()
@@ -896,6 +899,10 @@ func _on_board_setup_complete() -> void:
 	turn_indicator.texture = get_turn_indicator_tex(status)
 	turn_indicator.show()
 	update_eval()
+	
+	if not online_game:
+		previous_move.flip = (LOWER_COLOR == Globals.COLORS.BLACK)
+		move_history.flip = previous_move.flip
 	
 	move_clock.start_turn()
 	toggle_resign_buttons()

@@ -12,6 +12,7 @@ var current_index = 0
 var cloak = 0
 var start_pos : Vector2
 var end_pos : Vector2
+var flip : bool = false
 
 var first_entry = true
 
@@ -26,7 +27,7 @@ func process_previous_move(piece_type : Globals.PIECE_TYPES, new_cloak : Globals
 	if first_entry:
 		first_entry = false
 	else:
-		SignalBus.archive_move.emit(current_index, new_cloak, color, start_pos, end_pos)
+		SignalBus.archive_move.emit(current_index, cloak, color, start_pos, end_pos)
 	
 	current_index = piece_type
 	cloak = new_cloak
@@ -59,4 +60,7 @@ func update_display():
 	var end_vector
 	start_vector = Globals.get_letters_for_history(start_pos)
 	end_vector = Globals.get_letters_for_history(end_pos)
+	if flip:
+		start_vector = Globals.get_letters_for_history_inverted(start_pos)
+		end_vector = Globals.get_letters_for_history_inverted(end_pos)
 	description_label.text = str("(", start_vector[0] as String, ",", start_vector[1] as int, ") : (", end_vector[0] as String, ",", end_vector[1] as int, ")")
