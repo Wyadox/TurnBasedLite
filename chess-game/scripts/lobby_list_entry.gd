@@ -44,11 +44,11 @@ func set_textures(difficulty_param : Globals.DIFFICULTY, host_color_param : Glob
 	
 	map = map_param
 	match map:
-		1: 
-			map_image.texture = preload("res://Assets/Buttons/LoadoutButton.png")
-		2: 
-			map_image.texture = preload("res://Assets/Buttons/LoadoutButton.png")
-		3: 
-			map_image.texture = preload("res://Assets/Buttons/LoadoutButton.png")
-		4: 
-			map_image.texture = preload("res://Assets/Buttons/LoadoutButton.png")
+		1:
+			map_image.texture = preload("res://Assets/standardMap.png")
+		2:
+			map_image.texture = preload("res://Assets/river_map.png")
+		3:
+			map_image.texture = preload("res://Assets/forestMap.png")
+		4:
+			map_image.texture = preload("res://Assets/wallMap.png")
