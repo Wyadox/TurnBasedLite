@@ -106,6 +106,8 @@ func _ready():
 	SignalBus.piece_added.connect(on_setup_board_updated)
 	SignalBus.piece_refunded.connect(on_setup_board_updated)
 	
+	SignalBus.minimax_time.connect(decrement_computer_clock)
+	
 	main_menu_button.button_triggered.connect(_on_button_pressed)
 	upper_resign_button.button_triggered.connect(on_resign)
 	lower_resign_button.button_triggered.connect(on_resign)
@@ -149,6 +151,8 @@ func _ready():
 	elif !online_game:
 		move_clock.global_position.y += MOVE_CLOCK_OFFSET
 		move_clock_2.global_position.y -= MOVE_CLOCK_OFFSET
+	
+	Globals.PIECES_PER_SIDE = Globals.DEFAULT_PIECES_PER_SIDE
 	
 	if online_game:
 		player_color = Network.my_color
@@ -686,7 +690,7 @@ func unique(arr: Array) -> Array:
 	return dict.keys()
 
 const MINIMUM_WAIT_TIME : float = 1.0
-const MAXIMUM_WAIT_TIME : float = 3.0
+const MAXIMUM_WAIT_TIME : float = 2.0
 
 func player2_move():
 	print("player2 reached")
@@ -1250,3 +1254,10 @@ func flip_color(color : Globals.COLORS):
 	if color == Globals.COLORS.WHITE:
 		return Globals.COLORS.BLACK
 	return Globals.COLORS.WHITE
+
+func decrement_computer_clock(ms : int):
+	var time_taken = ms as float / 1000
+	if ai_color == Globals.COLORS.WHITE:
+		move_clock.decrement_time(time_taken)
+	else:
+		move_clock_2.decrement_time(time_taken)

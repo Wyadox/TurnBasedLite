@@ -179,6 +179,8 @@ func start_minimax(pieces : Array, white_to_play : bool, difficulty_dict : Dicti
 	board.queue_free()
 	game_scene.queue_free()
 	
+	SignalBus.minimax_time.emit(Time.get_ticks_msec() - start)
+	
 	ExplodingBishop.show_explosions = true
 	return best_result
 

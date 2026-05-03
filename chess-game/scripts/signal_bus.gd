@@ -69,3 +69,7 @@ signal piece_added()
 # Used when Setup Phase piece is refunded
 @warning_ignore("unused_signal")
 signal piece_refunded()
+
+# Sends the time that Minimax took
+@warning_ignore("unused_signal")
+signal minimax_time(ms : int)
