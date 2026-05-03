@@ -265,6 +265,10 @@ var is_throwing = false
 func _input(event):
 	if game_over:
 		return
+	
+	if player2_type == Globals.PLAYER_2_TYPE.AI and status == ai_color:
+		return
+	
 	# Mouse left clicks/drags
 	if Input.is_action_just_pressed("left_click"):
 		square = get_square_under_mouse()
