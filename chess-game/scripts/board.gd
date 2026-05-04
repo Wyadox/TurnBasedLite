@@ -296,19 +296,23 @@ func play_sound(title : String):
 	audioPlayer.finished.connect(audioPlayer.queue_free)
 
 func on_capture(dest_piece, selected_piece, board, previous_position):
+	print("In on capture")
 	if selected_piece == null:
 		return
 	if dest_piece.piece_type == Globals.PIECE_TYPES.SHIELD_KING:
+		print("King array before deletion: " + str(shield_king))
 		for king in shield_king:
 			if king == dest_piece:
 				shield_king.erase(king)
+		print("King array after deletion: " + str(shield_king))
 	if dest_piece.piece_type == Globals.PIECE_TYPES.WEB and selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER:
 		if dest_piece.piece_type == Globals.PIECE_TYPES.WEB and selected_piece.piece_type != Globals.PIECE_TYPES.WIZARD:
 			selected_piece.stun_counter = 3
-	if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP:
+	if dest_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP and dest_piece.exploded == false:
 		ExplodingBishop.explode_piece(dest_piece, selected_piece, board)
-		if selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER and selected_piece.piece_type != Globals.PIECE_TYPES.WIZARD:
-			delete_piece(selected_piece)
+		if selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER and selected_piece.piece_type != Globals.PIECE_TYPES.WIZARD and selected_piece.exploded == false:
+			selected_piece.exploded = true
+			on_capture(selected_piece, selected_piece, board, previous_position)
 	elif selected_piece.piece_type == Globals.PIECE_TYPES.INFECTOR and dest_piece.piece_type != Globals.PIECE_TYPES.WEB:
 		Infector.InfectPiece(dest_piece, selected_piece)
 		return

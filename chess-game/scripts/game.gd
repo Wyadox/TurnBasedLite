@@ -301,15 +301,16 @@ func _input(event):
 		for it in highlight_moves:
 			var color : Color
 			var dest_piece = board.get_piece(Vector2(it.x, it.y))
-			if dest_piece != null and !board.piece_is_protected(dest_piece) and (dest_piece.color != Globals.COLORS.TILE or dest_piece.piece_type == Globals.PIECE_TYPES.WEB):
+			if dest_piece != null and (dest_piece.color != Globals.COLORS.TILE or dest_piece.piece_type == Globals.PIECE_TYPES.WEB):
 				if dest_piece.color == selected_piece.color:
 					color = Color(0.0, 0.648, 0.158, 0.5)
 					dest_piece.play_animation("sway")
 					board.draw_border(it.x, it.y, color, false, Globals.BORDER_STYLE.FRIENDLY)
 				else:
-					color = Color(1.0, 0.0, 0.0, 0.3)
-					dest_piece.play_animation("cower")
-					board.draw_border(it.x, it.y, color, false, Globals.BORDER_STYLE.TARGET)
+					if !board.piece_is_protected(dest_piece):
+						color = Color(1.0, 0.0, 0.0, 0.3)
+						dest_piece.play_animation("cower")
+						board.draw_border(it.x, it.y, color, false, Globals.BORDER_STYLE.TARGET)
 			elif dest_piece == null:
 				color = Color(1.0, 1.0, 0.0, 0.3)
 				board.draw_border(it.x, it.y, color, false, Globals.BORDER_STYLE.CIRCLE)
@@ -492,13 +493,14 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 				thrown_piece.color = selected_piece.color
 			
 			#dest_piece = null
+		if selected_piece.piece_type == Globals.PIECE_TYPES.GUARDIAN_ANGEL and dest_piece != null and dest_piece.color == selected_piece.color:
+			dest_piece.move_position(old_pos)
+			GuardianAngel.Purify(dest_piece)
 		if selected_piece.piece_type == Globals.PIECE_TYPES.DUPLICATOR and dest_piece != null and dest_piece.color == selected_piece.color:
 			Duplicator.Duplicate(selected_piece, dest_piece, board)
 			is_shooting = true
 			selected_piece.position = previous_position
-		if selected_piece.piece_type == Globals.PIECE_TYPES.GUARDIAN_ANGEL and dest_piece != null and dest_piece.color == selected_piece.color:
-			dest_piece.move_position(old_pos)
-			GuardianAngel.Purify(dest_piece)
+		
 		# Delete only if the target piece is of different color
 		if selected_piece.piece_type == Globals.PIECE_TYPES.WIZARD and abs(old_pos.x - to_move.x)>1:
 			print("teleported")
@@ -519,7 +521,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 		if dest_piece != null and dest_piece.color != selected_piece.color: #and dest_piece.color != Globals.COLORS.TILE:
 			if selected_piece.piece_type == Globals.PIECE_TYPES.EXPLODING_BISHOP and dest_piece.piece_type != Globals.PIECE_TYPES.WEB:
 				shield_king_killed = ExplodingBishop.explode_king(dest_piece, selected_piece, board)
-			if dest_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP and selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER:
+			if dest_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP and selected_piece.piece_type != Globals.PIECE_TYPES.HORSE_ARCHER and selected_piece.piece_type != Globals.PIECE_TYPES.WIZARD and selected_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP:
 				piece_died = true
 			if selected_piece.piece_type == Globals.PIECE_TYPES.WARHORSE:
 				Warhorse.WarhorseCapture(board, selected_piece, dest_piece)
@@ -528,14 +530,14 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 				piece_captured = true
 			#selected_piece.move_position(selected_piece.board_position)
 			if selected_piece.piece_type == Globals.PIECE_TYPES.HORSE_ARCHER or selected_piece.piece_type == Globals.PIECE_TYPES.WIZARD or (selected_piece.piece_type == Globals.PIECE_TYPES.INFECTOR and dest_piece.piece_type != Globals.PIECE_TYPES.WEB):
-				#if not is_throwing:
+				if not selected_piece.is_thrown:
 					is_shooting = true
 					selected_piece.position = previous_position
 			if selected_piece.piece_type == Globals.PIECE_TYPES.JOUST_BISHOP:
 				if dest_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP and dest_piece.piece_type != Globals.PIECE_TYPES.JOUST_BISHOP:
 					is_jousting = true
 		if is_shooting == true or juggernaut_hit == true:
-			#if not is_throwing:
+			if not selected_piece.is_thrown:
 				current_square = dest_piece.board_position
 		if is_shooting == false and juggernaut_hit == false:
 			selected_piece.move_position(to_move)
@@ -585,7 +587,6 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 				board.update_indicators()
 				player2_move()
 				print("calling player2 move")
-		print(board.shield_king)
 		return true
 	return false
 
@@ -604,7 +605,10 @@ func valid_move(from_pos, to_pos):
 		return false
 	
 	var dest_piece = board.get_piece(to_pos)
-	if dest_piece != null and ((board.piece_is_protected(dest_piece) && src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP) or dest_piece.piece_type == Globals.PIECE_TYPES.DUCK or (dest_piece.color == Globals.COLORS.TILE and (dest_piece.piece_type != Globals.PIECE_TYPES.WEB and dest_piece.piece_type != Globals.PIECE_TYPES.TREE))):
+	var protect = false
+	if dest_piece != null and dest_piece.color == src_piece.color and (src_piece.piece_type == Globals.PIECE_TYPES.SUMO or src_piece.piece_type == Globals.PIECE_TYPES.GUARDIAN_ANGEL or src_piece.piece_type == Globals.PIECE_TYPES.DUPLICATOR):
+		protect = true
+	if dest_piece != null and not protect and ((board.piece_is_protected(dest_piece) && src_piece.piece_type != Globals.PIECE_TYPES.EXPLODING_BISHOP) or dest_piece.piece_type == Globals.PIECE_TYPES.DUCK or (dest_piece.color == Globals.COLORS.TILE and (dest_piece.piece_type != Globals.PIECE_TYPES.WEB and dest_piece.piece_type != Globals.PIECE_TYPES.TREE))):
 		#if dest_piece.piece_type == Globals.PIECE_TYPES.TREE and src_piece.piece_type == Globals.PIECE_TYPES.WIZARD:
 			#print("is wizard and is tree")
 		#else: return false
@@ -729,7 +733,6 @@ func evaluate_end_game():
 		stop_clocks()
 		set_win(status)
 		return true
-		
 	# Check if Duck is only remaining piece
 	var white_piece_count : int = 0
 	var white_duck : bool = false
@@ -746,6 +749,11 @@ func evaluate_end_game():
 				black_duck = true
 				
 	if white_piece_count == 1 and white_duck or black_piece_count == 1 and black_duck:
+		game_over = true
+		stop_clocks()
+		set_win(status)
+		return true
+	if white_piece_count == 0 or black_piece_count == 0:
 		game_over = true
 		stop_clocks()
 		set_win(status)
@@ -817,6 +825,8 @@ func end_turn():
 			piece.current_teleport_cooldown -= 1
 			print(piece.current_teleport_cooldown)
 	status = Globals.COLORS.BLACK if status == Globals.COLORS.WHITE else Globals.COLORS.WHITE
+	print(status)
+	#evaluate_end_game()
 	
 	if status == Globals.COLORS.WHITE:
 		move_clock.start_turn()
