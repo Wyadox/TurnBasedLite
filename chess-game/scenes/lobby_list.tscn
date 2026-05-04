@@ -75,7 +75,6 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("4_cbk5k")
 expand_mode = 1
-stretch_mode = 2
 
 [node name="DescriptionLabel" type="Label" parent="HBoxContainer/chess_background"]
 custom_minimum_size = Vector2(600, 0)
@@ -136,7 +135,6 @@ offset_bottom = -22.0
 grow_horizontal = 2
 grow_vertical = 0
 button_text = "JOIN MATCH"
-stay_down_on_select = false
 button_size = Vector2(200, 64)
 
 [node name="TitleLabel" type="Label" parent="HBoxContainer/chess_background"]

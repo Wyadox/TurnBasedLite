@@ -45,3 +45,6 @@ func prime_clock():
 	duration_timer.wait_time = duration * 60
 	duration_timer.start()
 	duration_timer.paused = true
+
+func decrement_time(seconds : float):
+	duration_timer.start(max(duration_timer.time_left - seconds, 0))

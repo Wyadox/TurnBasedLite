@@ -66,3 +66,12 @@ func set_textures():
 			color_rect.texture = BLACK_TEXTURE
 		Globals.COLORS.BLACK:
 			color_rect.texture = WHITE_TEXTURE
+	match current_entry.map:
+		1:
+			map_rect.texture = preload("res://Assets/standardMap.png")
+		2:
+			map_rect.texture = preload("res://Assets/river_map.png")
+		3:
+			map_rect.texture = preload("res://Assets/forestMap.png")
+		4:
+			map_rect.texture = preload("res://Assets/wallMap.png")

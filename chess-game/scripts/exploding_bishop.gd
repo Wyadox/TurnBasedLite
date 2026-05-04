@@ -4,6 +4,8 @@ var explosionScene = preload("res://scenes/Explosion.tscn")
 
 var board_handle
 
+var show_explosions : bool = true
+
 func explode_piece(dest_piece, selected_piece, board):
 	explosion_radius(dest_piece, board)
 	for position in dest_piece.bishop_explode_positions():
@@ -17,7 +19,7 @@ func explode_piece(dest_piece, selected_piece, board):
 	return
 
 func spawn_explosion(pos : Vector2):
-	if !SettingsManager.get_settings().play_particles:
+	if !SettingsManager.get_settings().play_particles or not show_explosions:
 		return
 	
 	var actual_pos = Vector2(pos.x * 120 + 60, pos.y * 120 + 60)
@@ -26,15 +28,19 @@ func spawn_explosion(pos : Vector2):
 	var explosion = explosionScene.instantiate()
 	explosion.position = actual_pos
 	add_child(explosion)
+	
+	play_sound()
 
 func spawn_explosion_literal(pos : Vector2):
-	if !SettingsManager.get_settings().play_particles:
+	if !SettingsManager.get_settings().play_particles or not show_explosions:
 		return
 	
 	var explosion = explosionScene.instantiate()
 	explosion.position = pos
 	explosion.z_index = 1000
 	add_child(explosion)
+	
+	play_sound()
 
 func explode_king(dest_piece, selected_piece, board):
 	board_handle = board
@@ -55,7 +61,8 @@ func explode_king(dest_piece, selected_piece, board):
 			for king in board.shield_king:
 				if king == piece_around:
 					board.shield_king.erase(piece_around)
-			SignalBus.captured_piece.emit(piece_around.color, piece_around.piece_type)
+			if board_handle.real_board:
+				SignalBus.captured_piece.emit(piece_around.color, piece_around.piece_type)
 			king_killed = true
 			# When we have multiple shield kings on board, will need to fix this.
 	spawn_explosion(dest_piece.board_position)
@@ -64,6 +71,8 @@ func explode_king(dest_piece, selected_piece, board):
 	else:
 		explode_piece(dest_piece, selected_piece, board)
 		board.delete_piece(selected_piece)
+	
+	play_sound()
 
 func explosion_radius(piece, board):
 	board_handle = board
@@ -73,3 +82,16 @@ func explosion_radius(piece, board):
 		if piece_position != null:
 			spawn_explosion(position)
 	return
+
+func play_sound():
+	if not show_explosions:
+		return
+	
+	var audioPlayer = AudioStreamPlayer2D.new()
+	add_child(audioPlayer)
+	
+	audioPlayer.stream = preload("res://Assets/Sounds/explosion.wav")
+	
+	audioPlayer.bus = "SFX"
+	audioPlayer.play()
+	audioPlayer.finished.connect(audioPlayer.queue_free)

@@ -106,6 +106,8 @@ func _ready():
 	SignalBus.piece_added.connect(on_setup_board_updated)
 	SignalBus.piece_refunded.connect(on_setup_board_updated)
 	
+	SignalBus.minimax_time.connect(decrement_computer_clock)
+	
 	main_menu_button.button_triggered.connect(_on_button_pressed)
 	upper_resign_button.button_triggered.connect(on_resign)
 	lower_resign_button.button_triggered.connect(on_resign)
@@ -149,6 +151,8 @@ func _ready():
 	elif !online_game:
 		move_clock.global_position.y += MOVE_CLOCK_OFFSET
 		move_clock_2.global_position.y -= MOVE_CLOCK_OFFSET
+	
+	Globals.PIECES_PER_SIDE = Globals.DEFAULT_PIECES_PER_SIDE
 	
 	if online_game:
 		player_color = Network.my_color
@@ -249,8 +253,11 @@ func parse_save_string(save_string):
 			board.selected_pos = Vector2(int(coord_split[0]) + 1,int(coord_split[1]))
 		else:
 			board.selected_pos = Vector2(int(coord_split[0]) * -1 + 5,int(coord_split[1]) * -1 + 6)
-		SignalBus.setup_piece_by_type.emit(int(spawn_split[0]))
-		#board._on_setup_phase_ui_spawn_piece(int(spawn_split[0]))
+		
+		if online_game and status != Network.my_color:
+			SignalBus.spawn_piece.emit(int(spawn_split[0]))
+		else:
+			SignalBus.setup_piece_by_type.emit(int(spawn_split[0]))
 
 var previous_square
 var current_square
@@ -261,6 +268,10 @@ var is_throwing = false
 func _input(event):
 	if game_over:
 		return
+	
+	if player2_type == Globals.PLAYER_2_TYPE.AI and status == ai_color:
+		return
+	
 	# Mouse left clicks/drags
 	if Input.is_action_just_pressed("left_click"):
 		square = get_square_under_mouse()
@@ -443,6 +454,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 	var is_jousting = false
 	var piece_died = false
 	is_throwing = false
+	var local_is_throwing = false
 	var thrown_piece
 	
 	var to_move
@@ -486,6 +498,7 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 			selected_piece.position = previous_position
 			print("throwing")
 			is_throwing = true
+			local_is_throwing = true
 			for piece in board.pieces:
 				if piece.color != Globals.COLORS.TILE:
 					piece.stun_counter = 1
@@ -568,9 +581,9 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 			if online_game and Network.my_color == Globals.COLORS.BLACK:
 				var flip_old_pos = abs(old_pos - Vector2(Board.BOARD_WIDTH, Board.BOARD_HEIGHT) + Vector2(1,1))
 				var flip_to_move = abs(to_move - Vector2(Board.BOARD_WIDTH, Board.BOARD_HEIGHT) + Vector2(1,1))
-				SignalBus.previous_move.emit(selected_piece.piece_type, selected_piece.color, flip_old_pos, flip_to_move)
+				SignalBus.previous_move.emit(selected_piece.piece_type, selected_piece.trojan_cloak_type, selected_piece.color, flip_old_pos, flip_to_move)
 			else:
-				SignalBus.previous_move.emit(selected_piece.piece_type, selected_piece.color, old_pos, to_move)
+				SignalBus.previous_move.emit(selected_piece.piece_type, selected_piece.trojan_cloak_type, selected_piece.color, old_pos, to_move)
 				
 		if piece_died:
 			board.on_capture(selected_piece, dest_piece, board, old_pos)
@@ -587,7 +600,10 @@ func drop_piece(use_mouse = true, non_mouse_pos = Vector2(0,0)):
 						end_turn()
 			else:
 				board.update_indicators()
-				if !is_throwing:
+				if local_is_throwing:
+					if status == ai_color:
+						player2_move()
+				else:
 					player2_move()
 					print("calling player2 move")
 					print("is_throwing : ", is_throwing)
@@ -681,7 +697,7 @@ func unique(arr: Array) -> Array:
 	return dict.keys()
 
 const MINIMUM_WAIT_TIME : float = 1.0
-const MAXIMUM_WAIT_TIME : float = 3.0
+const MAXIMUM_WAIT_TIME : float = 2.0
 
 func player2_move():
 	print("player2 reached")
@@ -720,12 +736,13 @@ func player2_move():
 					   " got: ", Globals.PIECE_TYPES.keys()[real_piece.piece_type])
 			return
 		
+		thinking_indicator.hide()
+		
 		selected_piece = real_piece
 		previous_position = selected_piece.position
 		previous_square = selected_piece.board_position
 		print ("drop_piece result: ", drop_piece(false, minimax_result["pos"]))
 		
-		thinking_indicator.hide()
 
 func evaluate_end_game():
 	# Check whether the current user can make any legal move
@@ -811,9 +828,11 @@ func end_turn():
 			piece.cool_counter -= 1
 			if piece.cool_counter == 4:
 				piece.piece_type = Globals.PIECE_TYPES.MAGMA_MED
+				piece.trojan_cloak_type = Globals.PIECE_TYPES.MAGMA_MED
 				piece.update_sprite()
 			elif piece.cool_counter == 2:
 				piece.piece_type = Globals.PIECE_TYPES.MAGMA_LOW
+				piece.trojan_cloak_type = Globals.PIECE_TYPES.MAGMA_LOW
 				piece.update_sprite()
 			elif piece.cool_counter == 0:
 				board.delete_piece(piece)
@@ -872,7 +891,10 @@ func get_turn_indicator_tex(color):
 		atlas.region = region
 		
 		return atlas
-	
+
+@onready var previous_move: Control = $previous_move
+@onready var move_history: Control = $move_history
+
 func _on_board_setup_complete() -> void:
 	setup_complete = true
 	board.clear_selection_box()
@@ -888,6 +910,10 @@ func _on_board_setup_complete() -> void:
 	turn_indicator.texture = get_turn_indicator_tex(status)
 	turn_indicator.show()
 	update_eval()
+	
+	if not online_game:
+		previous_move.flip = (LOWER_COLOR == Globals.COLORS.BLACK)
+		move_history.flip = previous_move.flip
 	
 	move_clock.start_turn()
 	toggle_resign_buttons()
@@ -973,6 +999,7 @@ func on_confirm_loadout() -> void:
 	previous_status = status
 	status = Globals.COLORS.BLACK
 	setup_ui.status = status
+	SignalBus.set_status.emit(Globals.COLORS.BLACK)
 	board.clear_selection_box()
 	if player2_type != Globals.PLAYER_2_TYPE.AI:
 		if status == LOWER_COLOR:
@@ -1118,9 +1145,11 @@ func sync_end_turn():
 			piece.cool_counter -= 1
 			if piece.cool_counter == 4:
 				piece.piece_type = Globals.PIECE_TYPES.MAGMA_MED
+				piece.trojan_cloak_type = Globals.PIECE_TYPES.MAGMA_MED
 				piece.update_sprite()
 			elif piece.cool_counter == 2:
 				piece.piece_type = Globals.PIECE_TYPES.MAGMA_LOW
+				piece.trojan_cloak_type = Globals.PIECE_TYPES.MAGMA_LOW
 				piece.update_sprite()
 			elif piece.cool_counter == 0:
 				board.delete_piece(piece)
@@ -1232,3 +1261,10 @@ func flip_color(color : Globals.COLORS):
 	if color == Globals.COLORS.WHITE:
 		return Globals.COLORS.BLACK
 	return Globals.COLORS.WHITE
+
+func decrement_computer_clock(ms : int):
+	var time_taken = ms as float / 1000
+	if ai_color == Globals.COLORS.WHITE:
+		move_clock.decrement_time(time_taken)
+	else:
+		move_clock_2.decrement_time(time_taken)

@@ -37,10 +37,12 @@ func _ready() -> void:
 	audioPlayer = AudioStreamPlayer2D.new()
 	add_child(audioPlayer)
 	
-	white_piece = randi_range(0, Globals.PIECE_TYPES.size() - 8) as Globals.PIECE_TYPES
+	white_piece = randi_range(0, Globals.PIECE_TYPES.size() - 11) as Globals.PIECE_TYPES
+	while white_piece == Globals.PIECE_TYPES.KNIGHT or white_piece == Globals.PIECE_TYPES.KING or white_piece == Globals.PIECE_TYPES.BISHOP or white_piece == Globals.PIECE_TYPES.JUGGERNAUT1 or white_piece == Globals.PIECE_TYPES.JUGGERNAUT2:
+		white_piece = randi_range(0, Globals.PIECE_TYPES.size() - 11) as Globals.PIECE_TYPES
 	black_piece = white_piece
-	while black_piece == white_piece or black_piece == Globals.PIECE_TYPES.JUGGERNAUT1 or black_piece == Globals.PIECE_TYPES.JUGGERNAUT2:
-		black_piece = randi_range(0, Globals.PIECE_TYPES.size() - 8) as Globals.PIECE_TYPES
+	while black_piece == white_piece or black_piece == Globals.PIECE_TYPES.JUGGERNAUT1 or black_piece == Globals.PIECE_TYPES.JUGGERNAUT2 or black_piece == Globals.PIECE_TYPES.KNIGHT or black_piece == Globals.PIECE_TYPES.KING or black_piece == Globals.PIECE_TYPES.BISHOP:
+		black_piece = randi_range(0, Globals.PIECE_TYPES.size() - 11) as Globals.PIECE_TYPES
 	
 	white_button.set_texture(grab_region(white_piece, Globals.COLORS.WHITE))
 	black_button.set_texture(grab_region(black_piece, Globals.COLORS.BLACK))
