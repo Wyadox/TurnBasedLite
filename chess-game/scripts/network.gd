@@ -99,7 +99,7 @@ signal host_lost(ip_address : String)
 
 const BROADCAST_PORT = 7778
 const BROADCAST_INTERVAL = 1.0
-const GAME_IDENTIFIER = "CHAOS_CHESS_V1"
+const GAME_IDENTIFIER = "CHAOS_CHESS_DEMO"
 
 var udp_server : UDPServer
 var broadcast_socket : PacketPeerUDP
