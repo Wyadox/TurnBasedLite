@@ -5,6 +5,9 @@ Chaos Chess is a unique variant of Chess. Players choose from a roster of pieces
 
 # Contributors
 Joseph Carreras
+
 Ryan Fuga
+
 Kaleb Lewis
+
 Cat Shader
